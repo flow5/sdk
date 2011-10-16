@@ -1,0 +1,27 @@
+
+
+
+
+
+
+
+
+***** Tools setup:
+
+nodejs
+nodelint
+https://github.com/mkitt/nodelint.tmbundle
+	seems that it's necessary to symlink from the Support/bin/nodelint folder to the node lint installation location
+	
+TODO: list npm installs required
+
+	
+***** Tools use:
+
+DOT visualization
+
+	node script_which_uses_dumpToDOT | nop | mate
+
+		OR
+
+	node script_which_uses_dumpToDOT > file_graphviz_points_to
