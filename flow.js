@@ -1,3 +1,32 @@
+/***********************************************************************************************************************
+
+	Copyright (c) 2011 Paul Greyson
+
+	Permission is hereby granted, free of charge, to any person 
+	obtaining a copy of this software and associated documentation 
+	files (the "Software"), to deal in the Software without 
+	restriction, including without limitation the rights to use, 
+	copy, modify, merge, publish, distribute, sublicense, and/or 
+	sell copies of the Software, and to permit persons to whom the 
+	Software is furnished to do so, subject to the following 
+	conditions:
+
+	The above copyright notice and this permission notice shall be 
+	included in all copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, 
+	EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES 
+	OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
+	NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT 
+	HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+	WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
+	FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR 
+	OTHER DEALINGS IN THE SOFTWARE.
+
+***********************************************************************************************************************/
+
+
+
 (function () {
 	
 
@@ -5,7 +34,8 @@
 	static definition of a state represents the full state hierarchy at the time the state is entered
 	
 	
-	usually transitions and conditions will not be implemented on states of type mutex or flow. they usually are implemented
+	usually transitions and conditions will not be implemented on states of type mutex or flow.
+	they usually are implemented
 	at the leaf node level
 	
 	
@@ -24,12 +54,14 @@
 		if the transition is complex (array) the the flow will call up through the hierachy to get the option
 			this may result in a web service call or a modal dialog
 				
-	mutex schema: state with multiple children only one of which may be active at a time. movement between states is controlled by selection
+	mutex schema: state with multiple children only one of which may be active at a time. 
+		movement between states is controlled by selection
 	
 		selection
 		children
 		
-	flow schema: state with multiple children only one of which may be active. movement between states is controlled by transitions
+	flow schema: state with multiple children only one of which may be active. 
+		movement between states is controlled by transitions
 	
 		start: State // the initial (sub) state
 
