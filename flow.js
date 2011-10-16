@@ -25,11 +25,6 @@
 
 ***********************************************************************************************************************/
 
-
-
-(function () {
-	
-
 /*
 	static definition of a state represents the full state hierarchy at the time the state is entered
 	
@@ -83,7 +78,13 @@
 
 */
 
+(function () {
+
 	function P_Flow() {
+
+		// used by forEach. is there a better way?
+		var that = this;
+		
 		
 		this.nodes = {};
 				
@@ -92,21 +93,24 @@
 		// do error checking
 		this.injectGraph = function (graphSpec) {
 			
+			var nodeSpecs = [];
+			
 			function createNodesRecursive(nodeSpec, context) {
 				if (context === undefined) {
 					context = [];
 				}
 				
+				nodeSpecs.push(nodeSpec);
+				
 				context = context.concat(nodeSpec.id);
 				var path = context.join('/');
 								
-				var node = {id: nodeSpec.id, path: path};
+				var node = {id: nodeSpec.id, path: path, type: nodeSpec.type};
 				this.nodes[path] = node;
-				
+								
 				switch (nodeSpec.type) {
 				case 'mutex':
 					node.children = [];
-					var that = this;
 					nodeSpec.children.forEach(function (nodeSpec) {
 						node.children.push(createNodesRecursive.apply(that, [nodeSpec, context]));
 					});
@@ -115,16 +119,30 @@
 					node.children = [];
 					node.children.push(createNodesRecursive.apply(this, [nodeSpec.start, context]));
 					break;
-				}
+				}	
+				
+				node.spec = nodeSpec;						
 				
 				return node;
 			}
 			
 			// TODO: utility to keep this around in forEach?
-			var that = this;
 			graphSpec.forEach(function (nodeSpec) {
 				createNodesRecursive.apply(that, [nodeSpec]);
-			});				
+			});	
+			
+			this.nodes.forEach(function (path, node) {
+				if (node.spec.transitions) {
+					node.transitions = {};
+					node.spec.transitions.forEach(function (id, transition) {
+						node.transitions[id] = that.nodes[transition.to];
+					});
+				}
+
+				if (node.spec.decisions) {
+
+				}
+			});			
 		};				
 	}
 	
@@ -136,5 +154,5 @@
 
 	
 	exports.Flow = Flow;
-				
+					
 }());

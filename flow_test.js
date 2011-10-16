@@ -38,18 +38,22 @@
 			id: 'start',
 			type: 'mutex',
 			selection: 'a',
+			transitions: {
+				finishOuter: {
+					to: 'finish'
+				}
+			},
 			children: [
 				{
 					id: 'a',
 					type: 'flow',
 					start: {
 						id: 'start',
-						transitions: [
-							{
-								name: 'finish',
+						transitions: {
+							finishInner: {
 								to: 'finish'
 							}
-						]
+						}
 					}
 				},
 				{
@@ -57,15 +61,14 @@
 					type: 'flow',
 					start: {
 						id: 'start',
-						decisions: [
-							{
-								id: 'confirm',
+						decisions: {
+							confirm: {
 								to: {
 									yes: 'finish',
 									no: null
 								}
 							}
-						]
+						}
 					}
 				}
 			]				

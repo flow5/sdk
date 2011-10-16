@@ -36,4 +36,13 @@
 		}
 	};	
 	
+	// TODO: this is wrong for functions
+	Object.prototype.isObject = function (arg) {
+		return typeof arg === 'object';
+	};
+	
+	String.isString = function (arg) {
+		return typeof arg === 'string';
+	};
+	
 }());

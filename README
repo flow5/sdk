@@ -26,6 +26,11 @@
 ***********************************************************************************************************************/
 
 
+TODO: 
+
+- make dumpToDOT use another pipe for output to allow debugging with console.log or attach console.log to stderr
+
+
 
 
 

@@ -53,7 +53,7 @@
 				}
 
 				verify(nodeSpec.id, 'id field required');
-				verify(typeof nodeSpec.id === 'string', 'id field must be a string');
+				verify(String.isString(nodeSpec.id), 'id field must be a string');
 				
 				context = context.concat(nodeSpec.id);
 				var path = context.join('/');
@@ -62,28 +62,26 @@
 				
 				
 				if (nodeSpec.transitions) {
-					verify(Array.isArray(nodeSpec.transitions), 'transitions must be array');
-					nodeSpec.transitions.forEach(function (transition) {
-						verify(typeof transition === 'object', 'transitions must be any object');
-						verify(transition.name, 'transition requires a name field');
+					verify(Object.isObject(nodeSpec.transitions), 'transitions must be object');
+					nodeSpec.transitions.forEach(function (id, transition) {
+						verify(Object.isObject(transition), 'transitions must be an object');
 						verify(transition.to, 'transition requires a to field');
 					});
 				}
 				
 				if (nodeSpec.decisions) {
-					verify(Array.isArray(nodeSpec.decisions), 'decisions must be array');
-					nodeSpec.decisions.forEach(function (decision) {
-						verify(decision.id, 'decision requires an id field');
+					verify(Object.isObject(nodeSpec.decisions), 'decisions must be object');
+					nodeSpec.decisions.forEach(function (id, decision) {
 						verify(decision.to, 'decision requires a to field');
-						verify(typeof decision.to === 'object', 'a decision to field must be an object');
+						verify(Object.isObject(decision.to), 'a decision to field must be an object');
 						decision.to.forEach(function (name, to) {
-							verify(!to || typeof to === 'string', 'type of a decision choice must be null or string');
+							verify(!to || String.isString(to), 'type of a decision choice must be null or string');
 						});
 					});
 				}
 				
 				if (nodeSpec.type) {
-					verify(typeof nodeSpec.type === 'string', 'type must be string');						
+					verify(String.isString(nodeSpec.type), 'type must be string');						
 					
 					switch (nodeSpec.type) {
 					case 'mutex':
@@ -115,41 +113,138 @@
 		Flow.prototype.logToDOT = function () {
 
 			var result = '';
+			var visited = {};					
 
 			function quote(s) {
 				return '\"' + s + '\"';
 			}
 			
-			result += 'digraph {compound=true;rankdir=LR;';
+			function makeNodeLabel(s) {
+				return 'label=' + quote(s);
+			}
 			
+			function makeHead(head) {
+				return 'lhead=' + quote(head);
+			}
 			
-			var visited = {};					
-			function visitNode(path, node) {
+			function makeTail(tail) {
+				return 'ltail=' + quote(tail);
+			}			
+			
+			function makeClusterLabel(s) {
+				return 'cluster:' + s;
+			}
+			
+			function makeEdge(from, to) {
+				return quote(from.path) + '->' + quote(to.path);
+			}
+			
+			function formatAttributes(attributes) {
+				var statement = ' [';
+				
+				attributes.forEach(function (attribute) {
+					statement += attribute + ',';
+				});
+				
+				statement += ']';
+				
+				return statement;
+			}
+			
+			function addNode(node) {
+				result += quote(node.path) + formatAttributes([makeNodeLabel(node.id)]);
+			}
+						
+			function addEdge(id, from, to) {
+				
+				// NOTE: graphviz doesn't support edges between clusters
+				// the workaround is to make the edge between leaf nodes (which one doesn't matter)
+				// then explicitly set the edge head and tail to the clusters
+				// see: https://mailman.research.att.com/pipermail/graphviz-interest/2010q3/007276.html	
+				
+				// TODO: consolidate into a single function DRY!
+																	
+				var tail = from.path;
+				var head = to.path;
+
+				if (from.children) {
+					tail = makeClusterLabel(from.path);
+					while (from.children) {
+						from = from.children[0];
+					}
+				}										
+				if (to.children) {
+					head = makeClusterLabel(to.path);
+					while (to.children) {
+						to = to.children[0];
+					}
+				}
+				
+				result += makeEdge(from, to) + formatAttributes([makeNodeLabel(id), makeHead(head), makeTail(tail)]);
+			}
+			
+			function digraphStart() {
+				result += 'digraph {compound=true;rankdir=LR;';
+			}
+			
+			function digraphFinish() {
+				result += '}';				
+			}
+
+			function subgraphStart(node) {
+				result += 'subgraph ' + quote(makeClusterLabel(node.path)) + ' {';
+				result += makeNodeLabel(node.id);
+			}
+			
+			function subgraphFinish() {
+				result += '}';
+			}
+																			
+			function visitNodeRecursive(path, node) {
 				if (visited[path]) {
 					return;			
 				}
-				visited[path] = true;
 
 				if (node.children) {
-					result += 'subgraph ' + quote('cluster:' + path) + ' {';			
-					result += 'label=' + quote(node.id);
+					subgraphStart(node);					
 
 					node.children.forEach(function (child) {
-						visitNode(child.path, child);
+						visitNodeRecursive(child.path, child);
 					});
 
-					result += '}';
+					subgraphFinish();
 				} else {			
-					result += quote(path) + ' [label=' + quote(node.id) + '];';					
-				}									
+					addNode(node);					
+				}										
+				
+				visited[path] = node;									
 			}
 			
+			
+			// traverse the graph
+			// the DOT output is written into result
+			
+			digraphStart();
+						
+			// create the nodes
 			this.nodes.forEach(function (path, node) {
-				visitNode(path, node);
+				visitNodeRecursive(path, node);
 			});	
 			
-			result += '}';
+			// create the simple transition edges			
+			visited.forEach(function (path, fromNode) {
+				if (fromNode.transitions) {
+					fromNode.transitions.forEach(function (id, toNode) {						
+						addEdge(id, fromNode, toNode);																						
+					});
+				}
+			});
 			
+			// TODO: create the decision nodes and transitions
+				
+			digraphFinish();
+			
+
 			return result;		
 
 		};		
