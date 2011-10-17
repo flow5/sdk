@@ -25,18 +25,18 @@
 
 ***********************************************************************************************************************/
 
+require('./require.js');
 
 (function () {
 	
-	var Flow = require('./flow.js').Flow;				
-	
+	var Flow = require('./flow.js').Flow;					
 	var flow = new Flow();		
 	require('./flow_diags.js').instrument(Flow);	
 		
 	var graphSpec = [
 		{
 			id: 'start',
-			type: 'mutex',
+			type: 'selection',
 			selection: 'a',
 			transitions: {
 				finishOuter: {
@@ -61,12 +61,10 @@
 					type: 'flow',
 					start: {
 						id: 'start',
-						decisions: {
-							confirm: {
-								to: {
-									yes: 'finish',
-									no: null
-								}
+						transitions: {
+							finishInner: {
+								level: 2,
+								to: 'finish'
 							}
 						}
 					}
@@ -82,6 +80,6 @@
 	flow.validateGraphSpec(graphSpec);
 	
 	flow.injectGraph(graphSpec);
-	console.log(flow.logToDOT());
-	
+
+	flow.toDOT('stderr');	
 }());

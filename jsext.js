@@ -24,9 +24,9 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
+/*global define*/
 
-
-(function () {
+define('jsext', exports, function (exports) {
 	
 	Object.prototype.forEach = function (fn) {
 		for (var name in this) {
@@ -45,4 +45,4 @@
 		return typeof arg === 'string';
 	};
 	
-}());
+});

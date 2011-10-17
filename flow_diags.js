@@ -24,18 +24,17 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
+/*global define*/
 
-
-(function () {
+define('flow_diags', exports, function (exports) {
 	
 	require('./jsext.js');
-	
 	
 	function instrument(Flow) {
 		
 		// TODO: consider https://github.com/akidee/schema.js or related as a general schema validation solution
 		
-		
+		// TODO: maybe wrap injectGraphSpec and validate in debug builds
 		Flow.prototype.validateGraphSpec = function (graphSpec) {
 			
 			var paths = {};
@@ -60,7 +59,7 @@
 				verify(!paths[path], 'duplicate node path:' + path);
 				paths[path] = true;
 				
-				
+				// TODO: make sure that the level for a transition is not too large for the hierarchy
 				if (nodeSpec.transitions) {
 					verify(Object.isObject(nodeSpec.transitions), 'transitions must be object');
 					nodeSpec.transitions.forEach(function (id, transition) {
@@ -84,9 +83,9 @@
 					verify(String.isString(nodeSpec.type), 'type must be string');						
 					
 					switch (nodeSpec.type) {
-					case 'mutex':
-						verify(nodeSpec.selection, 'mutex requries a selection field');
-						verify(nodeSpec.children, 'mutex requires a children field');				
+					case 'selection':
+						verify(nodeSpec.selection, 'selection requries a selection field');
+						verify(nodeSpec.children, 'selection requires a children field');				
 						nodeSpec.children.forEach(function (nodeSpec) {
 							validateNodeSpecRecursive(nodeSpec, context);
 						});
@@ -110,7 +109,7 @@
 
 		// creates DOT output representing the current Flow graph
 		// TODO: highlight active children and double highlight active paths
-		Flow.prototype.logToDOT = function () {
+		Flow.prototype.toDOT = function (outputStream) {
 
 			var result = '';
 			var visited = {};					
@@ -244,12 +243,14 @@
 				
 			digraphFinish();
 			
-
-			return result;		
-
+			
+			if (outputStream === 'stderr') {
+				console.error(result);
+			} else {
+				console.log(result);
+			}			
 		};		
 	}
 	
 	exports.instrument = instrument;
-	
-}());
+});

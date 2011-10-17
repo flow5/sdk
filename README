@@ -26,17 +26,6 @@
 ***********************************************************************************************************************/
 
 
-TODO: 
-
-- make dumpToDOT use another pipe for output to allow debugging with console.log or attach console.log to stderr
-
-
-
-
-
-
-
-
 ***** Tools setup:
 
 nodejs
@@ -56,3 +45,8 @@ DOT visualization
 		OR
 
 	node script_which_uses_dumpToDOT > file_graphviz_points_to
+	
+	
+To see the output
+	
+	node script_which_uses_dumpToDOT 2>&1 >/dev/null | nop | mate
