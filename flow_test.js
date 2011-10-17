@@ -51,6 +51,7 @@ require('./require.js');
 						id: 'start',
 						transitions: {
 							finishInner: {
+								level: 1,
 								to: 'finish'
 							}
 						}
@@ -81,5 +82,6 @@ require('./require.js');
 	
 	flow.injectGraph(graphSpec);
 
-	flow.toDOT('stderr');	
+//	flow.toDOT('stderr');	
+	flow.toJSON('stderr');
 }());

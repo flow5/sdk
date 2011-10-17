@@ -106,6 +106,40 @@ define('flow_diags', exports, function (exports) {
 				validateNodeSpecRecursive(nodeSpec);
 			});
 		};
+		
+		Flow.prototype.toJSON = function (outputStream) {
+			
+			var filteredCopy = {};
+			
+			function filterNodesRecursive(obj, filteredCopy) {
+				for (var name in obj) {
+					if (obj.hasOwnProperty(name)) {
+						if (name === 'parent' && obj.parent) {
+							filteredCopy.parent = obj.parent.path;
+						} else if (name === 'to' && obj.to) {
+							filteredCopy.to = obj.to.path;
+						} else {
+							if (typeof obj[name] === 'object') {
+								if (name !== 'spec') {
+									filteredCopy[name] = {};
+									filterNodesRecursive(obj[name], filteredCopy[name]);									
+								}
+							} else {
+								filteredCopy[name] = obj[name];
+							}												
+						}						
+					}
+				}
+			}
+			
+			filterNodesRecursive(this.nodes, filteredCopy);
+			
+			if (outputStream === 'stderr') {
+				console.error(JSON.stringify(filteredCopy));
+			} else {
+				console.log(JSON.stringify(filteredCopy));
+			}
+		};
 
 		// creates DOT output representing the current Flow graph
 		// TODO: highlight active children and double highlight active paths
@@ -199,8 +233,8 @@ define('flow_diags', exports, function (exports) {
 				result += '}';
 			}
 																			
-			function visitNodeRecursive(path, node) {
-				if (visited[path]) {
+			function visitNodeRecursive(node) {
+				if (visited[node.path]) {
 					return;			
 				}
 
@@ -208,7 +242,7 @@ define('flow_diags', exports, function (exports) {
 					subgraphStart(node);					
 
 					node.children.forEach(function (child) {
-						visitNodeRecursive(child.path, child);
+						visitNodeRecursive(child);
 					});
 
 					subgraphFinish();
@@ -216,7 +250,7 @@ define('flow_diags', exports, function (exports) {
 					addNode(node);					
 				}										
 				
-				visited[path] = node;									
+				visited[node.path] = node;									
 			}
 			
 			
@@ -227,7 +261,7 @@ define('flow_diags', exports, function (exports) {
 						
 			// create the nodes
 			this.nodes.forEach(function (path, node) {
-				visitNodeRecursive(path, node);
+				visitNodeRecursive(node);
 			});	
 			
 			// create the simple transition edges			

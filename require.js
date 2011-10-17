@@ -1,5 +1,8 @@
 /*global define:true require:true exports:true*/
 
+// TODO: bring up to final spec
+// see: http://nodejs.org/docs/v0.5.0/api/modules.html
+
 (function () {
 	var modules = {};
 	var defs = {};
