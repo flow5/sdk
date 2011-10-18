@@ -166,7 +166,7 @@ define('flow_diags', exports, function (exports) {
 				}
 			}			
 			
-			function makeNodeLabel(s) {
+			function makeLabel(s) {
 				return 'label=' + quote(s);
 			}
 			
@@ -196,7 +196,7 @@ define('flow_diags', exports, function (exports) {
 			
 			function addNode(node) {
 				var attributes = [
-					makeNodeLabel(node.id),
+					makeLabel(node.id),
 					'fontname=courier',
 					'style=rounded',
 					'shape=box'
@@ -207,7 +207,7 @@ define('flow_diags', exports, function (exports) {
 			function addTransitionSource(node) {
 				// height=0 and width=0 makes the box just accomodate the text				
 				var attributes = [
-					makeNodeLabel(node.id),
+					makeLabel(node.id),
 					'fontname="courier new italic"',
 					'fontsize=12',
 					'margin="0.02"',
@@ -216,13 +216,14 @@ define('flow_diags', exports, function (exports) {
 					'width=0'
 				];				
 				result += quote(node.path) + formatAttributes(attributes); 
+				console.log(node.path);
 			}						
 			
 			function cluster(node) {
 				return node.children || node.transitions || node.subflows;
 			}
 						
-			function addEdge(id, from, to) {
+			function addEdge(from, to) {
 																												
 				// NOTE: graphviz doesn't support edges between clusters
 				// the workaround is to make the edge between leaf nodes
@@ -236,6 +237,11 @@ define('flow_diags', exports, function (exports) {
 					while (to.children) {
 						to = getAProperty(to.children);
 					}
+					
+					if (to.type === 'menu') {
+						to = {path: to.path + '.' + getAnId(to.subflows)};
+					}
+
 					// if the to node has transitions, then use one of them
 					if (to.transitions) {
 						to = {path: to.path + '.' + getAnId(to.transitions)};
@@ -251,12 +257,12 @@ define('flow_diags', exports, function (exports) {
 //					'dir="both"',
 //					'arrowtail="obox"',
 				];				
-				result += makeEdge(from.path + '.' + id, to.path) + formatAttributes(attributes);
+				result += makeEdge(from, to.path) + formatAttributes(attributes);
 			}
 			
 			function digraphStart() {
 				// splines="ortho";
-				result += 'digraph {compound=true; rankdir=LR; fontname=courier; nodesep=2.0;';
+				result += 'digraph {compound=true; rankdir=LR; fontname=courier;';
 			}
 			
 			function digraphFinish() {
@@ -264,8 +270,8 @@ define('flow_diags', exports, function (exports) {
 			}
 
 			function clusterStart(node) {
-				result += 'subgraph ' + quote(makeClusterLabel(node.path)) + ' {style=rounded;';
-				result += makeNodeLabel(node.id);
+				result += 'subgraph ' + quote(makeClusterLabel(node.path)) + ' {style=rounded;fontname="courier bold";';
+				result += makeLabel(node.id);
 			}
 			
 			function clusterFinish() {
@@ -273,9 +279,11 @@ define('flow_diags', exports, function (exports) {
 			}
 			
 			function menuStart(id, subflow) {
-				result += 'subgraph ' + quote(makeClusterLabel(subflow.root.path + '.' + id)) + ' {style=square;';
-				result += makeNodeLabel(id);
-				console.log(subflow.root.path + '.' + id);
+				var clusterLabel = quote(makeClusterLabel(subflow.path));
+//				console.log(clusterLabel);
+				result += 'subgraph ' + clusterLabel + ' {style=square;fontname="courier";';
+				result += makeLabel('choose');
+				console.log(subflow.path);
 			}				
 			
 			function menuFinish() {
@@ -285,7 +293,7 @@ define('flow_diags', exports, function (exports) {
 			function visitSubflowRecursive(id, subflow) {
 				if (subflow.type === 'menu') {
 					menuStart(id, subflow);
-					subflow.subflows.forEach(function (id, subflow) {
+					subflow.subflows.forEach(function (id) {
 						addTransitionSource({path: subflow.path + '.' + id, id: id});
 					});
 					menuFinish();
@@ -296,6 +304,8 @@ define('flow_diags', exports, function (exports) {
 				} else if (subflow.type === 'transition') {
 					
 				}
+				
+				visited[subflow.root.path + '.' + id] = subflow;
 			}
 																			
 			function visitNodeRecursive(node) {
@@ -321,7 +331,7 @@ define('flow_diags', exports, function (exports) {
 					// subflows are treated as transitions out
 					if (node.subflows) {
 						node.subflows.forEach(function (id, subflow) {
-							addTransitionSource({path: subflow.path + '.' + id, id: id});
+							addTransitionSource({path: subflow.path, id: id});
 						});							
 					}
 
@@ -352,14 +362,30 @@ define('flow_diags', exports, function (exports) {
 				visitNodeRecursive(node);
 			});	
 			
-			// create the simple transition edges			
 			visited.forEach(function (path, fromNode) {
+				// create the simple transition edges			
 				if (fromNode.transitions) {
 					fromNode.transitions.forEach(function (id, toNode) {						
-						addEdge(id, fromNode, toNode);																						
+						addEdge(fromNode.path + '.' + id, toNode);																						
 					});
 				}
-			});
+				// create subflow edges
+				if (fromNode.subflows) {
+					fromNode.subflows.forEach(function (id, choice) {
+						if (choice.type === 'transition') {
+							var to = choice.to;
+							// null transition
+							if (!to) {
+								to = fromNode.root;
+							}
+							addEdge(fromNode.path + '.' + id, to);							
+						} else if (choice.type === 'menu') {
+							// the choice and the cluster representing the menu are the same
+							addEdge(fromNode.path + '.' + id, choice);
+						}
+					});
+				}
+			});						
 										
 			digraphFinish();
 			

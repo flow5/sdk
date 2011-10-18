@@ -40,7 +40,27 @@ define('flow', exports, function (exports) {
 			// So this function does not need to do error checking
 		that.injectGraph = function (graphSpec) {
 			
-			var nodes = {};			
+			var nodes = {};	
+			
+			function getContainer(node, containerLevel) {
+				if (!containerLevel) {
+					return null;
+				}
+				while (containerLevel) {
+					node = node.parent;
+					containerLevel -= 1;
+				}
+				return node;
+			}
+			
+			function getPath(node) {
+				var path = [];
+				while (node) {
+					path.push(node.id);
+					node = node.parent;
+				}
+				return path.reverse().join('/');
+			}					
 			
 			function injectNodeRecursive(id, nodeSpec, parent) {										
 				var node = {id: id, type: nodeSpec.type, parent: parent, spec: nodeSpec};
@@ -59,16 +79,17 @@ define('flow', exports, function (exports) {
 				}
 				
 				function injectSubflowRecursive(id, subflowSpec, parent, root) {					
-//					console.log({id: node.id, type: node.type});
-					
-					var node;
+					var node = {id: id, 
+								type: subflowSpec.type, 
+								path: getPath(root) + '.' + id,
+								root: root, 
+								spec: subflowSpec};
 					if (subflowSpec.type === 'menu') {
-						node = {id: id, type: subflowSpec.type, root: root, spec: subflowSpec, subflows: {}};
+						node.subflows = {};
 						subflowSpec.choices.forEach(function (id, choiceSpec) {
 							injectSubflowRecursive(id, choiceSpec, node, root);
 						});
-					} else if (subflowSpec.type === 'transition') {
-						node = {id: id, type: subflowSpec.type, root: root, spec: subflowSpec};						
+					} else if (subflowSpec.type === 'transition') {					
 						// console.log('transition to: ' + node.to);
 					}
 					
@@ -89,27 +110,7 @@ define('flow', exports, function (exports) {
 				}
 								
 				return node;
-			}
-			
-			function getContainer(node, containerLevel) {
-				if (!containerLevel) {
-					return null;
-				}
-				while (containerLevel) {
-					node = node.parent;
-					containerLevel -= 1;
-				}
-				return node;
-			}
-			
-			function getPath(node) {
-				var path = [];
-				while (node) {
-					path.push(node.id);
-					node = node.parent;
-				}
-				return path.reverse().join('/');
-			}
+			}			
 						
 			function resolveTransitionsRecursive(node) {
 				
@@ -161,7 +162,6 @@ define('flow', exports, function (exports) {
 					} else {
 						node.to = null;
 					}
-					console.log('transition');
 				}
 				
 				// recurse
@@ -171,7 +171,6 @@ define('flow', exports, function (exports) {
 					});
 				}				
 				if (node.subflows) {
-					console.log('subflow');
 					node.subflows.forEach(function (id, subflow) {
 						resolveTransitionsRecursive(subflow);
 					});
