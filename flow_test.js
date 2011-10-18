@@ -27,10 +27,12 @@
 
 require('./require.js');
 
+/*global flow:true*/
+
 (function () {
 	
 	var Flow = require('./flow.js').Flow;					
-	var flow = new Flow();		
+	flow = new Flow();		
 	require('./flow_diags.js').instrument(Flow);	
 		
 	var graphSpec = {
