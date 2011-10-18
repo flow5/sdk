@@ -391,7 +391,11 @@ define('flow_diags', exports, function (exports) {
 			if (outputStream === 'stderr') {
 				console.error(result);
 			} else if (outputStream === 'devserv') {
-				utils.post('http://localhost:8008', result);
+				utils.post('http://localhost:8008', result, function (response) {
+					if (typeof document !== 'undefined') {
+						document.body.innerHTML = response;
+					}
+				});
 			} else {
 				console.log(result);								
 			}

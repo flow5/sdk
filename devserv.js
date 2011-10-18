@@ -31,10 +31,14 @@ var http = require('http'),
 	fs = require('fs'),
 	cli = require('cli'),
 	path = require('path'),
-	paperboy = require('paperboy'), 
+	paperboy = require('paperboy'),
+	exec = require('child_process').exec,	 
 	sys = require('sys');
 	
 var WEBROOT = path.dirname(__filename);	
+
+
+
 
 function doPOST(req, res) {
 	var dump = '';
@@ -53,8 +57,11 @@ function doPOST(req, res) {
 				if (err) {
 					throw err;
 				} else {
-					res.writeHead(200, 'OK');
-					res.end();
+					exec("dot -T svg flow.dot", function (error, stdout, stderr) {
+						res.writeHead(200, {'Content-Type': 'image/svg+xml'});
+						res.write(stdout);
+						res.end();
+					});														
 				}
 			});
 		});
