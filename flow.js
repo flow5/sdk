@@ -58,6 +58,30 @@ define('flow', exports, function (exports) {
 					break;
 				}
 				
+				function injectSubflowRecursive(id, subflowSpec, parent, root) {					
+//					console.log({id: node.id, type: node.type});
+					
+					var node;
+					if (subflowSpec.type === 'menu') {
+						node = {id: id, type: subflowSpec.type, root: root, spec: subflowSpec, subflows: {}};
+						subflowSpec.choices.forEach(function (id, choiceSpec) {
+							injectSubflowRecursive(id, choiceSpec, node, root);
+						});
+					} else if (subflowSpec.type === 'transition') {
+						node = {id: id, type: subflowSpec.type, root: root, spec: subflowSpec};						
+						// console.log('transition to: ' + node.to);
+					}
+					
+					parent.subflows[id] = node;
+				}
+				
+				if (nodeSpec.subflows) {
+					node.subflows = {};
+					nodeSpec.subflows.forEach(function (id, subflowSpec) {
+						injectSubflowRecursive(id, subflowSpec, node, node);
+					});
+				}
+				
 				if (node.parent) {
 					parent.children[id] = node;
 				} else {
@@ -88,45 +112,70 @@ define('flow', exports, function (exports) {
 			}
 						
 			function resolveTransitionsRecursive(node) {
+				
+				function resolveTransition(node, to, containerLevel) {
+					
+					// inject states based on requested transitions
+					// NOTE: containerLevel = 0 means use the root
+					var container = getContainer(node, containerLevel);
+
+					// TODO: Move to validation
+					if (container && container.type === 'selector') {
+						throw new Error('Cannot transition inside a selector');
+					}
+										
+					var target = nodes[to];	
+					
+					// look for this state in the container
+					var child;
+					if (container && container.children) {
+						child = container.children[target.id];
+					} else {
+						child = nodes[target.id];
+					}
+					
+					if (child) {
+						target = child;
+					} else {
+						target = injectNodeRecursive(target.id, target.spec, container);							
+					}
+					
+					return target;
+				}
+				
+				// normal flows
 				if (node.spec.transitions) {
 					node.transitions = {};
-					node.spec.transitions.forEach(function (id, transition) {	
-														
-						// inject states based on requested transitions
-						// NOTE: containerLevel = 0 means use the root
-						var container = getContainer(node, transition.containerLevel);
+					node.spec.transitions.forEach(function (id, transition) {															
+						node.transitions[id] = resolveTransition(node, transition.to, transition.containerLevel);																			
+						resolveTransitionsRecursive(node.transitions[id]);
 
-						// TODO: Move to validation
-						if (container && container.type === 'selector') {
-							throw new Error('Cannot transition inside a selector');
-						}
-
-						var target = nodes[transition.to];	
-						
-						// look for this state in the container
-						var child;
-						if (container) {
-							child = container.children[target.id];
-						} else {
-							child = nodes[target.id];
-						}
-						
-						if (child) {
-							target = child;
-						} else {
-							target = injectNodeRecursive(target.id, target.spec, container);							
-						}
-												
-						resolveTransitionsRecursive(target);
-
-						node.transitions[id] = target;							
 					});
 				}
+				
+				// subflows
+				if (node.spec.type === 'transition') {
+					if (node.spec.to) {
+						node.to = resolveTransition(node, node.spec.to, node.spec.containerLevel);																			
+						resolveTransitionsRecursive(node.to);						
+					} else {
+						node.to = null;
+					}
+					console.log('transition');
+				}
+				
+				// recurse
 				if (node.children) {
 					node.children.forEach(function (id, child) {
 						resolveTransitionsRecursive(child);
 					});
 				}				
+				if (node.subflows) {
+					console.log('subflow');
+					node.subflows.forEach(function (id, subflow) {
+						resolveTransitionsRecursive(subflow);
+					});
+				}								
 			}
 			
 			function setPathRecursive(node) {
@@ -174,6 +223,26 @@ define('flow', exports, function (exports) {
 
 
 /*
+
+SCHEMA
+
+subflow
+	subflows are flows that operate within a single node of the flow graph
+	subflows allow a series of simple decisions to be made as in a flow chart
+	each subflow corresponds to a controller method for getting a decision
+		the children of the subflow represent the actions to follow the decision
+		the choice is returned asynchronously by the controller
+		the controller can decide however it likes:
+			user input (via a standard diaglog interace, customizable)
+			computation/examining the data model
+			querying a webservice
+		a subflow choice may not be 'to'
+			'to' indicates that the subflow ends with a transition
+			TODO: flag explicitly?
+
+
+
+
 
 Flow Documentation
 

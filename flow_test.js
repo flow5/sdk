@@ -35,7 +35,7 @@ require('./require.js');
 		
 	var graphSpec = {
 		
-		start: {
+		home: {
 			type: 'selector',
 			active: 'a',
 			children: {
@@ -49,6 +49,31 @@ require('./require.js');
 									containerLevel: 1,
 									to: 'middle'
 								}								
+							},
+							subflows: {
+								goSomewhere: {
+									type: 'menu',
+									choices: {
+										pickPlace: {
+											type: 'menu',
+											choices: {
+												middle: {
+													type: 'transition',
+													to: 'middle',
+													containerLevel: 1
+												},											
+												done: {
+													type: 'transition',												
+													to: 'done'
+												}													
+											}
+										},
+										cancel: {
+											type: 'transition',
+											to: null
+										}										
+									}
+								}
 							}													
 						}
 					}

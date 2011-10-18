@@ -219,7 +219,7 @@ define('flow_diags', exports, function (exports) {
 			}						
 			
 			function cluster(node) {
-				return node.children || node.transitions;
+				return node.children || node.transitions || node.subflows;
 			}
 						
 			function addEdge(id, from, to) {
@@ -271,6 +271,32 @@ define('flow_diags', exports, function (exports) {
 			function clusterFinish() {
 				result += '}';
 			}
+			
+			function menuStart(id, subflow) {
+				result += 'subgraph ' + quote(makeClusterLabel(subflow.root.path + '.' + id)) + ' {style=square;';
+				result += makeNodeLabel(id);
+				console.log(subflow.root.path + '.' + id);
+			}				
+			
+			function menuFinish() {
+				result += '}';
+			}
+						
+			function visitSubflowRecursive(id, subflow) {
+				if (subflow.type === 'menu') {
+					menuStart(id, subflow);
+					subflow.subflows.forEach(function (id, subflow) {
+						addTransitionSource({path: subflow.path + '.' + id, id: id});
+					});
+					menuFinish();
+					subflow.subflows.forEach(function (id, subflow) {
+						visitSubflowRecursive(id, subflow);
+					});
+					
+				} else if (subflow.type === 'transition') {
+					
+				}
+			}
 																			
 			function visitNodeRecursive(node) {
 				if (visited[node.path]) {
@@ -292,10 +318,25 @@ define('flow_diags', exports, function (exports) {
 						});						
 					}
 
+					// subflows are treated as transitions out
+					if (node.subflows) {
+						node.subflows.forEach(function (id, subflow) {
+							addTransitionSource({path: subflow.path + '.' + id, id: id});
+						});							
+					}
+
 					clusterFinish();
 				} else {			
 					addNode(node);					
-				}														
+				}	
+				
+				// put the subflows outside the box for clarity
+				if (node.subflows) {
+					node.subflows.forEach(function (id, subflow) {
+						visitSubflowRecursive(id, subflow);
+					});							
+				}
+																	
 				
 				visited[node.path] = node;									
 			}
@@ -319,7 +360,7 @@ define('flow_diags', exports, function (exports) {
 					});
 				}
 			});
-							
+										
 			digraphFinish();
 			
 			
