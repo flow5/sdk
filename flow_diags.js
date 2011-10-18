@@ -216,7 +216,6 @@ define('flow_diags', exports, function (exports) {
 					'width=0'
 				];				
 				result += quote(node.path) + formatAttributes(attributes); 
-				console.log(node.path);
 			}						
 			
 			function cluster(node) {
@@ -280,10 +279,8 @@ define('flow_diags', exports, function (exports) {
 			
 			function menuStart(id, subflow) {
 				var clusterLabel = quote(makeClusterLabel(subflow.path));
-//				console.log(clusterLabel);
 				result += 'subgraph ' + clusterLabel + ' {style=square;fontname="courier";';
 				result += makeLabel('choose');
-				console.log(subflow.path);
 			}				
 			
 			function menuFinish() {
@@ -389,12 +386,11 @@ define('flow_diags', exports, function (exports) {
 										
 			digraphFinish();
 			
-			
 			if (outputStream === 'stderr') {
 				console.error(result);
 			} else {
-				console.log(result);
-			}			
+				console.log(result);				
+			}
 		};		
 	}
 	

@@ -43,6 +43,12 @@ define('flow', exports, function (exports) {
 			var nodes = {};	
 			
 			function getContainer(node, containerLevel) {
+				// TODO: obscure. if this is a subflow it has a 'root'
+				// the transition container is based on the subflow root
+				if (node.root) {
+					node = node.root;
+				}
+				
 				if (!containerLevel) {
 					return null;
 				}
