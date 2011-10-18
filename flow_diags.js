@@ -150,15 +150,27 @@ define('flow_diags', exports, function (exports) {
 				return '\"' + s + '\"';
 			}
 			
+			function getAProperty(obj) {
+				for (var name in obj) {
+					if (obj.hasOwnProperty(name)) {
+						return obj[name];
+					}
+				}
+			}
+
+			function getAnId(obj) {
+				for (var name in obj) {
+					if (obj.hasOwnProperty(name)) {
+						return name;
+					}
+				}
+			}			
+			
 			function makeNodeLabel(s) {
 				return 'label=' + quote(s);
 			}
 			
-			function makeHead(head) {
-				if (!head) {
-					console.log('wtf?');
-				}
-				
+			function makeHead(head) {				
 				return 'lhead=' + quote(head);
 			}
 						
@@ -183,39 +195,35 @@ define('flow_diags', exports, function (exports) {
 			}
 			
 			function addNode(node) {
-				result += quote(node.path) + formatAttributes([makeNodeLabel(node.id), 
-						'shape=box', 'style=rounded', 'fontname=courier']);
+				var attributes = [
+					makeNodeLabel(node.id),
+					'fontname=courier',
+					'style=rounded',
+					'shape=box'
+				];				
+				result += quote(node.path) + formatAttributes(attributes);
 			}
 			
 			function addTransitionSource(node) {
-				result += quote(node.path) + formatAttributes([makeNodeLabel(node.id), 
-						'shape=none', 'fontname="courier new italic"', 'fontsize=12', 'margin="0.02"', 'height=0', 'width=0']);
-			}
-			
-			
-			function getProperty(obj) {
-				for (var name in obj) {
-					if (obj.hasOwnProperty(name)) {
-						return obj[name];
-					}
-				}
-			}
-
-			function getId(obj) {
-				for (var name in obj) {
-					if (obj.hasOwnProperty(name)) {
-						return name;
-					}
-				}
-			}
-
+				// height=0 and width=0 makes the box just accomodate the text				
+				var attributes = [
+					makeNodeLabel(node.id),
+					'fontname="courier new italic"',
+					'fontsize=12',
+					'margin="0.02"',
+					'shape=none', 
+					'height=0', 
+					'width=0'
+				];				
+				result += quote(node.path) + formatAttributes(attributes); 
+			}						
 			
 			function cluster(node) {
 				return node.children || node.transitions;
 			}
 						
 			function addEdge(id, from, to) {
-																								
+																												
 				// NOTE: graphviz doesn't support edges between clusters
 				// the workaround is to make the edge between leaf nodes
 				// then explicitly set the edge head and tail to the clusters
@@ -226,21 +234,29 @@ define('flow_diags', exports, function (exports) {
 				if (cluster(to)) {
 					head = makeClusterLabel(to.path);
 					while (to.children) {
-						to = getProperty(to.children);
+						to = getAProperty(to.children);
 					}
 					// if the to node has transitions, then use one of them
 					if (to.transitions) {
-						to = {path: to.path + '.' + getId(to.transitions)};
+						to = {path: to.path + '.' + getAnId(to.transitions)};
 					}
 				}
 				
-				result += makeEdge(from.path + '.' + id, to.path) + formatAttributes(
-					[makeHead(head), 'fontname="courier new"', 
-						'arrowhead="vee"', 'minlen=2', 'tailport="e"']);
+				var attributes = [
+					makeHead(head),
+					'fontname="courier new"',
+					'arrowhead="vee"',
+					'minlen=2',
+					'tailport="e"'
+//					'dir="both"',
+//					'arrowtail="obox"',
+				];				
+				result += makeEdge(from.path + '.' + id, to.path) + formatAttributes(attributes);
 			}
 			
 			function digraphStart() {
-				result += 'digraph {compound=true;rankdir=LR;fontname=courier;splines="orthoX";';
+				// splines="ortho";
+				result += 'digraph {compound=true; rankdir=LR; fontname=courier; nodesep=2.0;';
 			}
 			
 			function digraphFinish() {
