@@ -24,38 +24,54 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
+/*global define*/
 
 
-***** TOOLS *****
-
-* Install
-
-nodejs
-nodelint
-paperboy
-https://github.com/mkitt/nodelint.tmbundle
-	seems that it's necessary to symlink from the Support/bin/nodelint folder to the node lint installation location
+define('utils', exports, function (exports) {
 	
-TODO: list npm installs required
+	function post(url, body, success, error) {
+		var xhr = new XMLHttpRequest();
+		xhr.open('POST', url, true);
+		
+		xhr.onreadystatechange = function (e) {
+			switch (xhr.readyState) {
+			case xhr.UNSENT:
+//				console.log('XMLHttpRequest.UNSENT');
+				break;
+			case xhr.OPENED:
+//				console.log('XMLHttpRequest.OPENED');				
+				break;
+			case xhr.HEADERS_RECEIVED:
+//				console.log('XMLHttpRequest.HEADERS_RECEIVED');					
+				break;
+			case xhr.LOADING:
+//				console.log('XMLHttpRequest.LOADING');					
+				break;
+			case xhr.DONE:	
+				if (xhr.status === 200) {
+					if (success) {
+						success(xhr.responseText);
+					}
+				} else {
+					if (error) {
+						error(xhr.responseText);
+					}
+				}
+//				console.log('XMLHttpRequest.LOADING');
+				break;				
+			}								
+		};
+		
+		// WORKAROUND: it seems that xhr.send can cause pending events to fire with reentrancy
+		// TODO: build test case. need something that takes a long time right after send, and then
+		// some queued events
+		setTimeout(function () {
+			xhr.send(body);
+		}, 0);		
+	}	
+	
+	exports.post = post;	
+});
 
-	
-* Usage
 
-DOT visualization
 
-	node script_which_uses_dumpToDOT | nop | mate
-
-		OR
-
-	node script_which_uses_dumpToDOT > file_graphviz_points_to
-	
-	
-To see the output
-	
-	node script_which_uses_dumpToDOT 2>&1 >/dev/null | nop | mate
-	
-	
-	
-Chrome flags:
-
-	/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --allow-file-access-from-files	

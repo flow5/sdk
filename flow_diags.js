@@ -30,6 +30,8 @@ define('flow_diags', exports, function (exports) {
 	
 	require('./jsext.js');
 	
+	var utils = require('./utils.js');
+	
 	function instrument(Flow) {
 		
 		// OPTION: consider https://github.com/akidee/schema.js or related as a general schema validation solution
@@ -388,8 +390,10 @@ define('flow_diags', exports, function (exports) {
 			
 			if (outputStream === 'stderr') {
 				console.error(result);
+			} else if (outputStream === 'devserv') {
+				utils.post('http://localhost:8008', result);
 			} else {
-				console.log(result);				
+				console.log(result);								
 			}
 		};		
 	}

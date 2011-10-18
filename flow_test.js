@@ -116,6 +116,6 @@ require('./require.js');
 	
 	flow.injectGraph(graphSpec);
 
-	flow.toDOT('stderr');	
+	flow.toDOT('devserv');	
 //	flow.toJSON('stderr');
 }());
