@@ -161,17 +161,13 @@ define('flow_diags', exports, function (exports) {
 				
 				return 'lhead=' + quote(head);
 			}
-			
-			function makeTail(tail) {
-				return 'ltail=' + quote(tail);
-			}			
-			
+						
 			function makeClusterLabel(s) {
 				return 'cluster:' + s;
 			}
 			
 			function makeEdge(from, to) {
-				return quote(from.path) + '->' + quote(to.path);
+				return quote(from) + '->' + quote(to);
 			}
 			
 			function formatAttributes(attributes) {
@@ -187,8 +183,15 @@ define('flow_diags', exports, function (exports) {
 			}
 			
 			function addNode(node) {
-				result += quote(node.path) + formatAttributes([makeNodeLabel(node.id)]);
+				result += quote(node.path) + formatAttributes([makeNodeLabel(node.id), 
+						'shape=box', 'style=rounded', 'fontname=courier']);
 			}
+			
+			function addTransitionSource(node) {
+				result += quote(node.path) + formatAttributes([makeNodeLabel(node.id), 
+						'shape=none', 'fontname="courier new italic"', 'fontsize=12', 'margin="0.02"', 'height=0', 'width=0']);
+			}
+			
 			
 			function getProperty(obj) {
 				for (var name in obj) {
@@ -197,49 +200,59 @@ define('flow_diags', exports, function (exports) {
 					}
 				}
 			}
+
+			function getId(obj) {
+				for (var name in obj) {
+					if (obj.hasOwnProperty(name)) {
+						return name;
+					}
+				}
+			}
+
+			
+			function cluster(node) {
+				return node.children || node.transitions;
+			}
 						
 			function addEdge(id, from, to) {
-				
+																								
 				// NOTE: graphviz doesn't support edges between clusters
-				// the workaround is to make the edge between leaf nodes (which one doesn't matter)
+				// the workaround is to make the edge between leaf nodes
 				// then explicitly set the edge head and tail to the clusters
-				// see: https://mailman.research.att.com/pipermail/graphviz-interest/2010q3/007276.html	
-				
-				// TODO: consolidate into a single function DRY!
-																	
-				var tail = from.path;
-				var head = to.path;
-
-				if (from.children) {
-					tail = makeClusterLabel(from.path);
-					while (from.children) {
-						from = getProperty(from.children);
-					}
-				}										
-				if (to.children) {
+				// in this case only the head needs the workaround since the tail
+				// is always attached to the transitionSource node
+				// see: https://mailman.research.att.com/pipermail/graphviz-interest/2010q3/007276.html
+				var head = to.path;				
+				if (cluster(to)) {
 					head = makeClusterLabel(to.path);
 					while (to.children) {
 						to = getProperty(to.children);
 					}
+					// if the to node has transitions, then use one of them
+					if (to.transitions) {
+						to = {path: to.path + '.' + getId(to.transitions)};
+					}
 				}
 				
-				result += makeEdge(from, to) + formatAttributes([makeNodeLabel(id), makeHead(head), makeTail(tail)]);
+				result += makeEdge(from.path + '.' + id, to.path) + formatAttributes(
+					[makeHead(head), 'fontname="courier new"', 
+						'arrowhead="vee"', 'minlen=2', 'tailport="e"']);
 			}
 			
 			function digraphStart() {
-				result += 'digraph {compound=true;rankdir=LR;';
+				result += 'digraph {compound=true;rankdir=LR;fontname=courier;splines="orthoX";';
 			}
 			
 			function digraphFinish() {
 				result += '}';				
 			}
 
-			function subgraphStart(node) {
-				result += 'subgraph ' + quote(makeClusterLabel(node.path)) + ' {';
+			function clusterStart(node) {
+				result += 'subgraph ' + quote(makeClusterLabel(node.path)) + ' {style=rounded;';
 				result += makeNodeLabel(node.id);
 			}
 			
-			function subgraphFinish() {
+			function clusterFinish() {
 				result += '}';
 			}
 																			
@@ -248,17 +261,25 @@ define('flow_diags', exports, function (exports) {
 					return;			
 				}
 
-				if (node.children) {
-					subgraphStart(node);					
+				if (cluster(node)) {
+					clusterStart(node);		
+					
+					if (node.transitions) {
+						node.transitions.forEach(function (id, transition) {
+							addTransitionSource({path: node.path + '.' + id, id: id});							
+						});						
+					}
 
-					node.children.forEach(function (id, child) {
-						visitNodeRecursive(child);
-					});
+					if (node.children) {
+						node.children.forEach(function (id, child) {
+							visitNodeRecursive(child);
+						});						
+					}
 
-					subgraphFinish();
+					clusterFinish();
 				} else {			
 					addNode(node);					
-				}										
+				}														
 				
 				visited[node.path] = node;									
 			}

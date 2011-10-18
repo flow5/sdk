@@ -38,11 +38,6 @@ require('./require.js');
 		start: {
 			type: 'selector',
 			active: 'a',
-			transitions: {
-	//			middle: {
-	//				to: 'middle'
-	//			}
-			},
 			children: {
 				a: {
 					type: 'flow',
@@ -50,10 +45,10 @@ require('./require.js');
 					children: {
 						start: {
 							transitions: {
-								middle: {
+								goToMiddle: {
 									containerLevel: 1,
 									to: 'middle'
-								}
+								}								
 							}													
 						}
 					}
@@ -64,8 +59,8 @@ require('./require.js');
 					children: {
 						start: {
 							transitions: {
-								middle: {
-									containerLevel: 1,
+								goToMiddle: {
+									containerLevel: 3,
 									to: 'middle'
 								}
 							}													
@@ -80,7 +75,7 @@ require('./require.js');
 			children: {
 				middleStart: {
 					transitions: {
-						done: {
+						beDone: {
 							containerLevel: 0,
 							to: 'done'
 						}

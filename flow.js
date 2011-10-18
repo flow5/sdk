@@ -114,7 +114,7 @@ define('flow', exports, function (exports) {
 						if (child) {
 							target = child;
 						} else {
-							target = injectNodeRecursive(id, target.spec, container);							
+							target = injectNodeRecursive(target.id, target.spec, container);							
 						}
 												
 						resolveTransitionsRecursive(target);
