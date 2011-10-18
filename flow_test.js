@@ -33,55 +33,69 @@ require('./require.js');
 	var flow = new Flow();		
 	require('./flow_diags.js').instrument(Flow);	
 		
-	var graphSpec = [
-		{
-			id: 'start',
-			type: 'selection',
-			selection: 'a',
+	var graphSpec = {
+		
+		start: {
+			type: 'selector',
+			active: 'a',
 			transitions: {
-				finishOuter: {
-					to: 'finish'
-				}
+	//			middle: {
+	//				to: 'middle'
+	//			}
 			},
-			children: [
-				{
-					id: 'a',
+			children: {
+				a: {
 					type: 'flow',
-					start: {
-						id: 'start',
-						transitions: {
-							finishInner: {
-								level: 1,
-								to: 'finish'
-							}
+					active: 'start',
+					children: {
+						start: {
+							transitions: {
+								middle: {
+									containerLevel: 1,
+									to: 'middle'
+								}
+							}													
 						}
 					}
 				},
-				{
-					id: 'b',
+				b: {
 					type: 'flow',
-					start: {
-						id: 'start',
-						transitions: {
-							finishInner: {
-								level: 2,
-								to: 'finish'
-							}
+					active: 'start',
+					children: {
+						start: {
+							transitions: {
+								middle: {
+									containerLevel: 1,
+									to: 'middle'
+								}
+							}													
 						}
 					}
 				}
-			]				
+			}				
+		},	
+		middle: {
+			type: 'flow',
+			active: 'middleStart',
+			children: {
+				middleStart: {
+					transitions: {
+						done: {
+							containerLevel: 0,
+							to: 'done'
+						}
+					}
+				}
+			}		
 		},
-	
-		{
-			id: 'finish'		
-		}
-	];
+		done: {
+		}		
+	};
 	
 	flow.validateGraphSpec(graphSpec);
 	
 	flow.injectGraph(graphSpec);
 
-//	flow.toDOT('stderr');	
-	flow.toJSON('stderr');
+	flow.toDOT('stderr');	
+//	flow.toJSON('stderr');
 }());

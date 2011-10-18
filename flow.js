@@ -36,30 +36,30 @@ define('flow', exports, function (exports) {
 		that.nodes = {};
 				
 		// NOTE: considering making it possible to inject graphs, children, transitions on the fly
-		// NOTE: in debug builds, validateSpec is called first. So this function does not need to 
-		// do error checking
+		// NOTE: in debug builds, validateSpec is called first. 
+			// So this function does not need to do error checking
 		that.injectGraph = function (graphSpec) {
 			
 			var nodes = {};			
 			
-			function injectNodeRecursive(nodeSpec, parent) {										
-				var node = {id: nodeSpec.id, type: nodeSpec.type, parent: parent, spec: nodeSpec};
+			function injectNodeRecursive(id, nodeSpec, parent) {										
+				var node = {id: id, type: nodeSpec.type, parent: parent, spec: nodeSpec};
 								
 				switch (nodeSpec.type) {
-				case 'selection':
-					node.children = [];
-					nodeSpec.children.forEach(function (nodeSpec) {
-						injectNodeRecursive(nodeSpec, node);
+				case 'selector':
+					node.children = {};
+					nodeSpec.children.forEach(function (id, nodeSpec) {
+						injectNodeRecursive(id, nodeSpec, node);
 					});
 					break;
 				case 'flow':
-					node.children = [];
-					injectNodeRecursive(nodeSpec.start, node);
+					node.children = {};
+					injectNodeRecursive(nodeSpec.active, nodeSpec.children[nodeSpec.active], node);
 					break;
 				}
 				
 				if (node.parent) {
-					parent.children.push(node);
+					parent.children[id] = node;
 				} else {
 					nodes[node.id] = node;
 				}
@@ -67,10 +67,13 @@ define('flow', exports, function (exports) {
 				return node;
 			}
 			
-			function getAncestor(node, generations) {
-				while (generations) {
+			function getContainer(node, containerLevel) {
+				if (!containerLevel) {
+					return null;
+				}
+				while (containerLevel) {
 					node = node.parent;
-					generations -= 1;
+					containerLevel -= 1;
 				}
 				return node;
 			}
@@ -83,23 +86,44 @@ define('flow', exports, function (exports) {
 				}
 				return path.reverse().join('/');
 			}
-			
+						
 			function resolveTransitionsRecursive(node) {
 				if (node.spec.transitions) {
 					node.transitions = {};
 					node.spec.transitions.forEach(function (id, transition) {	
-						var target = nodes[transition.to];									
-						if (transition.level) {
-							// the transition is occuring within the source container hierarchy
-							// so synthesize the target state
-							var container = getAncestor(node, transition.level);
-							target = injectNodeRecursive(target.spec, container);
+														
+						// inject states based on requested transitions
+						// NOTE: containerLevel = 0 means use the root
+						var container = getContainer(node, transition.containerLevel);
+
+						// TODO: Move to validation
+						if (container && container.type === 'selector') {
+							throw new Error('Cannot transition inside a selector');
 						}
+
+						var target = nodes[transition.to];	
+						
+						// look for this state in the container
+						var child;
+						if (container) {
+							child = container.children[target.id];
+						} else {
+							child = nodes[target.id];
+						}
+						
+						if (child) {
+							target = child;
+						} else {
+							target = injectNodeRecursive(id, target.spec, container);							
+						}
+												
+						resolveTransitionsRecursive(target);
+
 						node.transitions[id] = target;							
 					});
 				}
 				if (node.children) {
-					node.children.forEach(function (child) {
+					node.children.forEach(function (id, child) {
 						resolveTransitionsRecursive(child);
 					});
 				}				
@@ -108,29 +132,31 @@ define('flow', exports, function (exports) {
 			function setPathRecursive(node) {
 				node.path = getPath(node);
 				if (node.children) {
-					node.children.forEach(function (child) {
+					node.children.forEach(function (id, child) {
 						setPathRecursive(child);
 					});
 				}
 			}
 									
-			graphSpec.forEach(function (nodeSpec) {
-				injectNodeRecursive(nodeSpec);
+			// inject nodes
+			graphSpec.forEach(function (id, nodeSpec) {
+				injectNodeRecursive(id, nodeSpec);
 			});	
 			
 			// resolve transitions
 			nodes.forEach(function (id, node) {
 				resolveTransitionsRecursive(node);								
-				// delete node.spec?
 			});	
 
-			
 			// set paths
 			nodes.forEach(function (id, node) {
 				setPathRecursive(node);				
 				// only record the top level states
 				that.nodes[node.path] = node;					
 			});	
+			
+			// TODO: prune unreachable paths after initialization
+			// OPTION: remove the node specs?
 		};				
 	}
 	
@@ -154,7 +180,7 @@ Flow Documentation
 - each step in the flow can have:
 		
 	- selection
-		legal only for selection type step
+		legal only for selector type step
 		activates a child
 		no interaction with controller
 

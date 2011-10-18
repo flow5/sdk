@@ -32,14 +32,14 @@ define('flow_diags', exports, function (exports) {
 	
 	function instrument(Flow) {
 		
-		// TODO: consider https://github.com/akidee/schema.js or related as a general schema validation solution
+		// OPTION: consider https://github.com/akidee/schema.js or related as a general schema validation solution
 		
-		// TODO: maybe wrap injectGraphSpec and validate in debug builds
+		// OPTION: maybe wrap injectGraphSpec and validate in debug builds
 		Flow.prototype.validateGraphSpec = function (graphSpec) {
 			
 			var paths = {};
 
-			function validateNodeSpecRecursive(nodeSpec, context) {
+			function validateNodeSpecRecursive(id, nodeSpec, context) {
 				
 				if (context === undefined) {
 					context = [];
@@ -47,14 +47,12 @@ define('flow_diags', exports, function (exports) {
 								
 				function verify(condition, description) {
 					if (!condition) {
-						throw new Error(description + ' @' + JSON.stringify(nodeSpec)); // TODO: probably don't want to see the whole subtree						
+						// OPTION: probably don't want to see the whole subtree
+						throw new Error(description + ' @' + JSON.stringify(nodeSpec));						
 					}
 				}
 
-				verify(nodeSpec.id, 'id field required');
-				verify(String.isString(nodeSpec.id), 'id field must be a string');
-				
-				context = context.concat(nodeSpec.id);
+				context = context.concat(id);
 				var path = context.join('/');
 				verify(!paths[path], 'duplicate node path:' + path);
 				paths[path] = true;
@@ -83,16 +81,16 @@ define('flow_diags', exports, function (exports) {
 					verify(String.isString(nodeSpec.type), 'type must be string');						
 					
 					switch (nodeSpec.type) {
-					case 'selection':
-						verify(nodeSpec.selection, 'selection requries a selection field');
-						verify(nodeSpec.children, 'selection requires a children field');				
-						nodeSpec.children.forEach(function (nodeSpec) {
-							validateNodeSpecRecursive(nodeSpec, context);
+					case 'selector':
+						verify(nodeSpec.active, 'selector requries a active field');
+						verify(nodeSpec.children, 'selector requires a children field');				
+						nodeSpec.children.forEach(function (id, nodeSpec) {
+							validateNodeSpecRecursive(id, nodeSpec, context);
 						});
 						break;
 					case 'flow':
-						verify(nodeSpec.start, 'No start defined for flow');
-						validateNodeSpecRecursive(nodeSpec.start, context);
+						verify(nodeSpec.active, 'No start defined for flow');
+						validateNodeSpecRecursive(nodeSpec.active, nodeSpec.children[nodeSpec.active], context);
 						break;
 					default:
 						verify(false, 'Unknow node type:' + nodeSpec.type);
@@ -102,8 +100,8 @@ define('flow_diags', exports, function (exports) {
 			
 			}
 
-			graphSpec.forEach(function (nodeSpec) {
-				validateNodeSpecRecursive(nodeSpec);
+			graphSpec.forEach(function (id, nodeSpec) {
+				validateNodeSpecRecursive(id, nodeSpec);
 			});
 		};
 		
@@ -157,6 +155,10 @@ define('flow_diags', exports, function (exports) {
 			}
 			
 			function makeHead(head) {
+				if (!head) {
+					console.log('wtf?');
+				}
+				
 				return 'lhead=' + quote(head);
 			}
 			
@@ -187,6 +189,14 @@ define('flow_diags', exports, function (exports) {
 			function addNode(node) {
 				result += quote(node.path) + formatAttributes([makeNodeLabel(node.id)]);
 			}
+			
+			function getProperty(obj) {
+				for (var name in obj) {
+					if (obj.hasOwnProperty(name)) {
+						return obj[name];
+					}
+				}
+			}
 						
 			function addEdge(id, from, to) {
 				
@@ -203,13 +213,13 @@ define('flow_diags', exports, function (exports) {
 				if (from.children) {
 					tail = makeClusterLabel(from.path);
 					while (from.children) {
-						from = from.children[0];
+						from = getProperty(from.children);
 					}
 				}										
 				if (to.children) {
 					head = makeClusterLabel(to.path);
 					while (to.children) {
-						to = to.children[0];
+						to = getProperty(to.children);
 					}
 				}
 				
@@ -241,7 +251,7 @@ define('flow_diags', exports, function (exports) {
 				if (node.children) {
 					subgraphStart(node);					
 
-					node.children.forEach(function (child) {
+					node.children.forEach(function (id, child) {
 						visitNodeRecursive(child);
 					});
 
@@ -260,7 +270,7 @@ define('flow_diags', exports, function (exports) {
 			digraphStart();
 						
 			// create the nodes
-			this.nodes.forEach(function (path, node) {
+			this.nodes.forEach(function (id, node) {
 				visitNodeRecursive(node);
 			});	
 			
@@ -272,9 +282,7 @@ define('flow_diags', exports, function (exports) {
 					});
 				}
 			});
-			
-			// TODO: create the decision nodes and transitions
-				
+							
 			digraphFinish();
 			
 			

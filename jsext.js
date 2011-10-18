@@ -36,7 +36,7 @@ define('jsext', exports, function (exports) {
 		}
 	};	
 	
-	// TODO: this is wrong for functions
+	// FIX: this is wrong for functions
 	Object.prototype.isObject = function (arg) {
 		return typeof arg === 'object';
 	};
