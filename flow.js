@@ -61,7 +61,7 @@ define('flow', exports, function (exports) {
 				return path.reverse().join('/');
 			}	
 										
-			// climbs up the hiearchy until a template or child with this name is found
+			// returns the spec if object or finds a matching template
 			function resolveSpec(node, spec) {
 				function resolveSpecUp(node, name) {
 					if (node.spec.templates && node.spec.templates[name]) {
@@ -89,22 +89,25 @@ define('flow', exports, function (exports) {
 					Utils.assert(false, 'Could not find name: ' + name);
 				}
 			}
-			
+						
 			function injectNodeRecursive(id, nodeSpec, parent) {										
 				var node = {id: id, type: nodeSpec.type, parent: parent, spec: nodeSpec, active: false};
 								
-				if (node.type === 'subflow') {
-					node.node = parent;
-				} else {
-					if (nodeSpec.children) {
-						node.children = {};
-						nodeSpec.children.forEach(function (id, childSpec) {
-							var child = injectNodeRecursive(id, resolveSpec(node, childSpec), node);
-							if (id === nodeSpec.active) {
-								child.active = true;
-							}
-						});					
-					}					
+				if (nodeSpec.children) {
+					node.children = {};
+					nodeSpec.children.forEach(function (id, childSpec) {
+						var child = injectNodeRecursive(id, resolveSpec(node, childSpec), node);
+						if (id === nodeSpec.active) {
+							child.active = true;
+						}
+					});					
+				}			
+				
+				if (nodeSpec.subflows) {
+					node.subflows = {};
+					nodeSpec.subflows.forEach(function (id, subflowSpec) {
+						node.subflows[id] = {id: id, type: 'subflow', spec: resolveSpec(node, subflowSpec)};
+					});
 				}
 												
 				if (node.parent) {
@@ -116,7 +119,6 @@ define('flow', exports, function (exports) {
 						
 			function resolveTransitionsRecursive(node) {				
 				
-				// normal flows
 				if (node.spec.transitions) {
 					node.transitions = {};
 					node.spec.transitions.forEach(function (id, transition) {
@@ -125,16 +127,7 @@ define('flow', exports, function (exports) {
 
 					});
 				}
-				
-				if (node.spec.type === 'transition') {
-					if (node.spec.to) {
-						node.to = node.parent.children[node.spec.to];
-						resolveTransitionsRecursive(node.to);						
-					} else {
-						node.to = null;
-					}
-				}
-				
+								
 				// recurse
 				if (node.children) {
 					node.children.forEach(function (id, child) {

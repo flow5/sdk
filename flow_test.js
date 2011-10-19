@@ -78,11 +78,19 @@ require('./require.js');
 							done: 'beDone'											
 						},
 						cancel: null										
-					}													
+					},
+					goSomewhereElse: {
+						type: 'subflow',
+						pickWhere: {
+							middle: 'goToMiddle',
+							done: 'beDone'											
+						},
+						cancel: null										
+					}																		
 				},
 				type: 'selector',
 				active: 'a',
-				children: {					
+				children: {			
 					a: {
 						type: 'flow',
 						active: 'start',
@@ -97,12 +105,12 @@ require('./require.js');
 										to: 'done'
 									}
 								},
-								children: {
+								subflows: {
 									goSomewhere: 'goSomewhere'
 								}
 							},
 							middle: 'middle',
-							done: 'done',							
+							done: 'done'													
 						},
 						
 					},
@@ -119,6 +127,7 @@ require('./require.js');
 								}													
 							},
 							middle: 'middle'
+							
 						}
 					}
 				}				

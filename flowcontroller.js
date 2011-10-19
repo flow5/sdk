@@ -29,7 +29,7 @@
 define('flowcontroller', exports, function (exports) {
 		
 	var Utils = require('./utils.js');	
-		
+			
 	function FlowController(flow, observerCb) {
 		
 		function isActive(node) {
@@ -46,7 +46,7 @@ define('flowcontroller', exports, function (exports) {
 		};
 		
 		// select the child of node with the given id
-		this.select = function (node, id) {		
+		this.doSelection = function (node, id) {		
 			Utils.assert(isActive(node), 'Attempt to select on an inactive node');	
 			Utils.assert(node.type === 'selector', 'Can only select on node of type selector');
 			Utils.assert(node.children[id], 'No child with id: ' + id);
@@ -60,7 +60,7 @@ define('flowcontroller', exports, function (exports) {
 		};
 				
 		// use the transition with the given id 
-		this.transition = function (node, id, parameters) {
+		this.doTransition = function (node, id, parameters) {
 			Utils.assert(isActive(node), 'Attempt to transition from an inactive node');	
 			Utils.assert(id === 'back' || node.transitions[id], 'No transition with id: ' + id);
 
@@ -101,7 +101,45 @@ define('flowcontroller', exports, function (exports) {
 			
 
 			observerCb();			
-		};		
+		};	
+		
+		this.doSubflowPrompt = function () {
+			Utils.assert(this.activeSubflow, 'No active subflow');
+			console.log(this.activeSubflow.id);
+			this.activeSubflow.spec.forEach(function (id, subflowSpec) {
+				console.log('* ' + id);
+			});
+		};
+		
+		this.doSubflowChoice = function (id) {
+			Utils.assert(this.activeSubflow, 'No active subflow');
+			Utils.assert(this.activeSubflow.spec.hasOwnProperty(id), 'No such choice');
+			
+			var spec = this.activeSubflow.spec[id];
+			if (typeof spec === 'object') {
+				this.activeSubflow = {node: this.activeSubflow.node, id: id, spec: spec};				
+			} else {
+				var subflow = this.activeSubflow;
+				this.activeSubflow = null;
+				// TODO: should use node controller method
+				this.doTransition(subflow.node, spec);
+			}
+			if (this.activeSubflow) {
+				this.doSubflowPrompt();
+			} else {
+				console.log('subflow complete');
+			}
+		};	
+		
+		// callback?
+		this.doSubflow = function (node, id) {
+			Utils.assert(isActive(node), 'Attempt to execute subflow from an inactive node');	
+			Utils.assert(node.subflows && node.subflows[id], 'No such subflow');
+			Utils.assert(!this.activeSubflow, 'Subflow already in progress');
+			
+			this.activeSubflow = {node: node, id: id, spec: node.subflows[id].spec};
+			this.doSubflowPrompt();
+		};
 	}	
 	
 	exports.FlowController = FlowController;	

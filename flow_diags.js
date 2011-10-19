@@ -288,9 +288,7 @@ define('flow_diags', exports, function (exports) {
 			}
 																			
 			function visitNodeRecursive(node) {
-				if (node.type === 'subflow') {
-					visitSubflow(node);
-				} else if (isCluster(node)) {
+				if (isCluster(node)) {
 					clusterStart(node);		
 					
 					if (node.transitions) {
@@ -304,12 +302,18 @@ define('flow_diags', exports, function (exports) {
 							visitNodeRecursive(child);
 						});						
 					}
+					
+					if (node.subflows) {
+						node.subflows.forEach(function (id, subflow) {
+							visitSubflow(subflow);
+						});
+					}					
 
 					clusterFinish();
 				} else {			
 					addNode(node);					
 				}	
-								
+												
 				visited[node.path] = node;									
 			}
 			
@@ -366,7 +370,7 @@ define('flow_diags', exports, function (exports) {
 							var path = parts[0];
 							var id = parts[1];
 							
-							flowController.transition(that.getNode(path), id);							
+							flowController.doTransition(that.getNode(path), id);							
 						};
 					}
 					if (typeof document !== 'undefined') {
