@@ -19,6 +19,8 @@
 
 <body>
 	<script>
+		/*global theFlowController:true theFlow:true*/
+		
 		var Utils = require('./utils.js');	
 		var FlowHarness = require('./flowharness.js').FlowHarness;
 		
@@ -32,6 +34,9 @@
 		
 		try {
 			var flowHarness = new FlowHarness(getURLParams().flowFile, function (flowController, flow) {
+				theFlowController = flowController;
+				theFlow = flow;				
+				
 				Utils.post('dot2svg', flow.toDOT(), function (response) {
 					function makeClick(el) {
 						el.onclick = function () {	
