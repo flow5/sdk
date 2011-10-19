@@ -44,84 +44,90 @@ require('./require.js');
 	});		
 	
 	require('./flow_diags.js').instrument(flow);	
-		
+
 	var graphSpec = {
-		
-		home: {
-			type: 'selector',
-			active: 'a',
-			children: {
-				a: {
-					type: 'flow',
-					active: 'start',
-					children: {
-						start: {
-							transitions: {
-								goToMiddle: {
-									containerLevel: 1,
-									to: 'middle'
-								}								
-							},
-							subflows: {
-								goSomewhere: {
-									type: 'menu',
-									choices: {
-										pickWhere: {
-											type: 'menu',
-											choices: {
-												middle: {
-													type: 'transition',
-													to: 'middle',
-													containerLevel: 1
-												},											
-												done: {
-													type: 'transition',												
-													to: 'done'
-												}													
-											}
-										},
-										cancel: {
-											type: 'transition',
-											to: null
-										}										
+		type: 'flow',
+		children: {	
+			done: {
+			},
+			home: {
+				templates: {
+					middle: {
+						type: 'flow',
+						active: 'middleStart',
+						children: {
+							middleStart: {
+								transitions: {
+									beDone: {
+										to: 'done'
 									}
 								}
-							}													
+							}
+						}		
+					},
+					goSomewhere: {
+						type: 'subflow',
+						choices: {
+							pickWhere: {
+								type: 'subflow',
+								choices: {
+									middle: {
+										type: 'transition',
+										to: 'middle',
+									},											
+									done: {
+										type: 'transition',												
+										to: 'done'
+									}													
+								}
+							},
+							cancel: {
+								type: 'transition',
+								to: null
+							}										
 						}
 					}
 				},
-				b: {
-					type: 'flow',
-					active: 'start',
-					children: {
-						start: {
-							transitions: {
-								goToMiddle: {
-									containerLevel: 3,
-									to: 'middle'
+				type: 'selector',
+				active: 'a',
+				children: {
+					a: {
+						type: 'flow',
+						active: 'start',
+						children: {
+							start: {
+								transitions: {
+									goToMiddle: {
+										to: 'middle'
+									},
+									goSomewhere: {
+										to: 'goSomewhere'
+									},
+
 								}
-							}													
+							},
+							middle: 'middle',
+							done: 'done',
+							goSomewhere: 'goSomewhere'
+						}
+					},
+					b: {
+						type: 'flow',
+						active: 'start',
+						children: {
+							start: {
+								transitions: {
+									goToMiddle: {
+										to: 'middle'
+									}
+								}													
+							},
+							middle: 'middle',
 						}
 					}
-				}
-			}				
-		},	
-		middle: {
-			type: 'flow',
-			active: 'middleStart',
-			children: {
-				middleStart: {
-					transitions: {
-						beDone: {
-							containerLevel: 0,
-							to: 'done'
-						}
-					}
-				}
-			}		
-		},
-		done: {
-		}		
+				}				
+			}
+		}	
 	};
 	
 	flow.validateGraphSpec(graphSpec);

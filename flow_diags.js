@@ -263,7 +263,7 @@ define('flow_diags', exports, function (exports) {
 						to = getAProperty(to.children);
 					}
 					
-					if (to.type === 'menu') {
+					if (to.type === 'subflow') {
 						to = {path: to.path + '.' + getAnId(to.subflows)};
 					}
 
@@ -314,7 +314,7 @@ define('flow_diags', exports, function (exports) {
 				result += '}';
 			}
 			
-			function menuStart(id, subflow) {
+			function subflowStart(id, subflow) {
 				var attributes = [
 					'style=square',
 					'fontname="courier"',
@@ -330,17 +330,17 @@ define('flow_diags', exports, function (exports) {
 				result += makeLabel('choose');
 			}				
 			
-			function menuFinish() {
+			function subflowFinish() {
 				result += '}';
 			}
 						
 			function visitSubflowRecursive(id, subflow) {
-				if (subflow.type === 'menu') {
-					menuStart(id, subflow);
+				if (subflow.type === 'subflow') {
+					subflowStart(id, subflow);
 					subflow.subflows.forEach(function (id) {
 						addTransitionSource({path: subflow.path + '.' + id, id: id});
 					});
-					menuFinish();
+					subflowFinish();
 					subflow.subflows.forEach(function (id, subflow) {
 						visitSubflowRecursive(id, subflow);
 					});
@@ -423,8 +423,8 @@ define('flow_diags', exports, function (exports) {
 								to = fromNode.root;
 							}
 							addEdge(fromNode.path + '.' + id, to);							
-						} else if (choice.type === 'menu') {
-							// the choice and the cluster representing the menu are the same
+						} else if (choice.type === 'subflow') {
+							// the choice and the cluster representing the subflow are the same
 							addEdge(fromNode.path + '.' + id, choice);
 						}
 					});

@@ -33,10 +33,7 @@ define('flow', exports, function (exports) {
 	function Flow() {
 
 		var that = this;
-		
-				
-		that.root = {type: 'flow', active: true, children: {}};
-		
+						
 		that.getNode = function (path) {
 			function getChildRecursive(node, components) {
 				if (components.length) {
@@ -47,33 +44,15 @@ define('flow', exports, function (exports) {
 					return node;
 				}
 			}
-			return getChildRecursive(that.root, path.split('/'));
+			return getChildRecursive(that.root, path.split('/').slice(1));
 		};
 				
-		// NOTE: considering making it possible to inject graphs, children, transitions on the fly
 		// NOTE: in debug builds, validateSpec is called first. 
 			// So this function does not need to do error checking
 		that.injectGraph = function (graphSpec) {
 			
 			var nodes = {};	
-			
-			function getContainer(node, containerLevel) {
-				// TODO: obscure. if this is a subflow it has a 'root'
-				// the transition container is based on the subflow root
-				if (node.root) {
-					node = node.root;
-				}
-				
-				if (!containerLevel) {
-					return null;
-				}
-				while (containerLevel) {
-					node = node.parent;
-					containerLevel -= 1;
-				}
-				return node;
-			}
-			
+						
 			function getPath(node) {
 				var path = [];
 				while (node) {
@@ -81,53 +60,52 @@ define('flow', exports, function (exports) {
 					node = node.parent;
 				}
 				return path.reverse().join('/');
-			}					
+			}	
+										
+			function resolveSpec(node, spec) {
+				// climbs up the hiearchy until a template with this name is found
+				function resolveSpecRecursive(node, name) {
+					if (node.children && node.children[name]) {
+						return node.children[name];
+					} else if (node.spec.templates && node.spec.templates[name]) {
+						return node.spec.templates[name];
+					} else if (node.parent) {
+						return resolveSpecRecursive(node.parent, name);
+					} else {
+						Utils.assert(false, 'Could not find template: ' + name);
+					}
+				}
+				
+				if (typeof spec === 'object') {
+					return spec;
+				} else {
+					return resolveSpecRecursive(node, spec);
+				}
+			}
+			
+			function findNodeUp(node, name) {
+				if (node.children && node.children[name]) {
+					return node.children[name];
+				} else if (node.parent) {
+					return findNodeUp(node.parent, name);
+				} else {
+					Utils.assert(false, 'Could not find name: ' + name);
+				}
+			}
 			
 			function injectNodeRecursive(id, nodeSpec, parent) {										
 				var node = {id: id, type: nodeSpec.type, parent: parent, spec: nodeSpec, active: false};
 								
-				switch (nodeSpec.type) {
-				case 'selector':
+				if (nodeSpec.children) {
 					node.children = {};
 					nodeSpec.children.forEach(function (id, childSpec) {
-						var child = injectNodeRecursive(id, childSpec, node);
+						var child = injectNodeRecursive(id, resolveSpec(node, childSpec), node);
 						if (id === nodeSpec.active) {
 							child.active = true;
 						}
-					});
-					break;
-				case 'flow':
-					node.children = {};
-					var child = injectNodeRecursive(nodeSpec.active, nodeSpec.children[nodeSpec.active], node);
-					child.active = true;
-					break;
+					});					
 				}
-				
-				function injectSubflowRecursive(id, subflowSpec, parent, root) {					
-					var node = {id: id, 
-								type: subflowSpec.type, 
-								path: getPath(root) + '.' + id,
-								root: root, 
-								spec: subflowSpec};
-					if (subflowSpec.type === 'menu') {
-						node.subflows = {};
-						subflowSpec.choices.forEach(function (id, choiceSpec) {
-							injectSubflowRecursive(id, choiceSpec, node, root);
-						});
-					} else if (subflowSpec.type === 'transition') {					
-						// console.log('transition to: ' + node.to);
-					}
-					
-					parent.subflows[id] = node;
-				}
-				
-				if (nodeSpec.subflows) {
-					node.subflows = {};
-					nodeSpec.subflows.forEach(function (id, subflowSpec) {
-						injectSubflowRecursive(id, subflowSpec, node, node);
-					});
-				}
-				
+												
 				if (node.parent) {
 					parent.children[id] = node;
 				} else {
@@ -137,50 +115,21 @@ define('flow', exports, function (exports) {
 				return node;
 			}			
 						
-			function resolveTransitionsRecursive(node) {
-				
-				function resolveTransition(node, to, containerLevel) {
-					
-					// inject states based on requested transitions
-					// NOTE: containerLevel = 0 means use the root
-					var container = getContainer(node, containerLevel);
-
-					// TODO: Move to validation
-					Utils.assert(!container || container.type !== 'selector', 'Cannot transition inside a selector');
-										
-					var target = nodes[to];	
-					
-					// look for this state in the container
-					var child;
-					if (container && container.children) {
-						child = container.children[target.id];
-					} else {
-						child = nodes[target.id];
-					}
-					
-					if (child) {
-						target = child;
-					} else {
-						target = injectNodeRecursive(target.id, target.spec, container);							
-					}
-					
-					return target;
-				}
+			function resolveTransitionsRecursive(node) {				
 				
 				// normal flows
 				if (node.spec.transitions) {
 					node.transitions = {};
-					node.spec.transitions.forEach(function (id, transition) {															
-						node.transitions[id] = resolveTransition(node, transition.to, transition.containerLevel);																			
+					node.spec.transitions.forEach(function (id, transition) {
+						node.transitions[id] = findNodeUp(node, transition.to);
 						resolveTransitionsRecursive(node.transitions[id]);
 
 					});
 				}
 				
-				// subflows
 				if (node.spec.type === 'transition') {
 					if (node.spec.to) {
-						node.to = resolveTransition(node, node.spec.to, node.spec.containerLevel);																			
+						node.to = node.parent.children[node.spec.to];
 						resolveTransitionsRecursive(node.to);						
 					} else {
 						node.to = null;
@@ -193,11 +142,6 @@ define('flow', exports, function (exports) {
 						resolveTransitionsRecursive(child);
 					});
 				}				
-				if (node.subflows) {
-					node.subflows.forEach(function (id, subflow) {
-						resolveTransitionsRecursive(subflow);
-					});
-				}								
 			}
 			
 			function setPathRecursive(node) {
@@ -210,24 +154,17 @@ define('flow', exports, function (exports) {
 			}
 									
 			// inject nodes
-			graphSpec.forEach(function (id, nodeSpec) {
-				injectNodeRecursive(id, nodeSpec);
-			});	
+			that.root = injectNodeRecursive('root', graphSpec);
 			
 			// resolve transitions
 			nodes.forEach(function (id, node) {
 				resolveTransitionsRecursive(node);								
 			});	
+			
+			setPathRecursive(that.root);
 
-			// set paths
-			nodes.forEach(function (id, node) {
-				setPathRecursive(node);				
-				// only record the top level states
-				that.root.children[node.path] = node;	
-				node.parent = that.root;				
-			});	
+			that.root.active = true;
 						
-			// TODO: prune unreachable paths after initialization
 			// OPTION: remove the nodeSpecs?
 		};				
 	}
@@ -237,6 +174,33 @@ define('flow', exports, function (exports) {
 
 
 
+/*
+function injectSubflowRecursive(id, subflowSpec, parent, root) {					
+	var node = {id: id, 
+				type: subflowSpec.type, 
+				path: getPath(root) + '.' + id,
+				root: root, 
+				spec: subflowSpec};
+	if (subflowSpec.type === 'subflow') {
+		node.subflows = {};
+		subflowSpec.choices.forEach(function (id, choiceSpec) {
+			injectSubflowRecursive(id, resolveSpec(root, choiceSpec), node, root);
+		});
+	} else if (subflowSpec.type === 'transition') {					
+		// console.log('transition to: ' + node.to);
+	}
+	
+	parent.subflows[id] = node;
+}
+
+if (nodeSpec.subflows) {
+	node.subflows = {};
+	nodeSpec.subflows.forEach(function (id, subflowSpec) {
+		injectSubflowRecursive(id, resolveSpec(node, subflowSpec), node, node);
+	});
+}
+
+*/
 
 
 /*
@@ -290,7 +254,7 @@ Flow Documentation
 		});
 						
 				
-	- invocation
+	- subflow
 		delegates to the controller method of that name
 		controller can do whatever it likes		
 			- perform a computation
@@ -310,6 +274,7 @@ Flow Documentation
 				no:
 			}
 		}
+
 
 flowcontroller prototype is what does everything except the delegate methods which include
 	initialize

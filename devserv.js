@@ -25,8 +25,6 @@
 
 ***********************************************************************************************************************/
 
-/*global Buffer*/
-
 var http = require('http'),
 	fs = require('fs'),
 	cli = require('cli'),
@@ -38,45 +36,38 @@ var http = require('http'),
 	
 var WEBROOT = path.dirname(__filename);	
 
+cli.setUsage("node devserv.js [OPTIONS]");
+
+cli.parse({
+	port: ['p', 'port', 'number'],
+});
+
 
 function dot2svg(req, res) {
-	
-	res.writeHead(200, {'Content-Type': 'image/svg+xml'});
-	
+		
 	var child = spawn('dot', ['-Tsvg']);		
 	
 	req.on('data', function (chunk) {
 		child.stdin.write(chunk);
-	});
-	
+	});	
 	req.on('end', function () {
 		child.stdin.end();
 	});
 	
 	child.stdout.on('data', function (data) {
 		res.write(data);
-	});	
-	
+	});		
 	child.on('exit', function (code) {
 		res.end();
-	});	
-	
+	});		
 	child.stderr.on('data', function (data) {
 //		sys.puts(data);
-	});		
+	});	
+	
+	res.writeHead(200, {'Content-Type': 'image/svg+xml'});		
 }
 
-
-cli.setUsage("devserv.js [OPTIONS]");
-
-cli.parse({
-	port: ['p', 'port', 'number'],
-});
-
-//---------------------------------------------------------------------------------------
-
 // http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
-
 cli.main(function (args, options) {
 
 	options.port = options.port ? options.port : 8008;
