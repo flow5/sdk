@@ -41,6 +41,8 @@ define('flowcontroller', exports, function (exports) {
 			return active;
 		}
 		
+		flow.controller = this;
+		
 		this.start = function (id) {
 			observerCb(this, flow);
 		};
@@ -153,9 +155,7 @@ define('flowcontroller', exports, function (exports) {
 			observerCb(this, flow);			
 		};
 		
-		this.doBack = function () {
-			Utils.assert(!flow.activeSubflow, 'Cannot go back with a subflow active');				
-			
+		function findBackNode() {
 			// find an active leaf node
 			// then look for the first node with 'back' set
 			var leaf = flow.root;
@@ -176,9 +176,25 @@ define('flowcontroller', exports, function (exports) {
 				leaf = leaf.parent;
 			}
 			
-			Utils.assert(leaf.back, 'Cannot go back');
+			if (leaf.back) {
+				return leaf;
+			} else {
+				return null;
+			}
+		}
+		
+		this.canGoBack = function () {
+			return findBackNode();
+		};
+		
+		this.doBack = function () {
+			Utils.assert(!flow.activeSubflow, 'Cannot go back with a subflow active');				
+			
+			var backNode = findBackNode();
+			
+			Utils.assert(backNode, 'Cannot go back');
 
-			this.doTransition(leaf, 'back');
+			this.doTransition(backNode, 'back');
 		};
 	}	
 	

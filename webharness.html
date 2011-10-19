@@ -56,6 +56,8 @@
 									flowController.doSubflow(flow.getNode(nodePath), id);
 								} else if (method === 'doSubflowChoice') {
 									flowController.doSubflowChoice(id);
+								} else if (method === 'doSelection') {
+									flowController.doSelection(flow.getNode(nodePath), id);
 								}
 							} catch (e) {
 								console.log('Exception: ' + e.message);

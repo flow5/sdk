@@ -168,15 +168,47 @@ define('flow_diags', exports, function (exports) {
 				
 				result += quote(node.path) + formatAttributes(attributes);
 			}
-			
-			function addBackButton() {
+
+			function addSelectionButton(parent, id) {
+				var fillColor;
+				if (isPathActive(parent)) {
+					fillColor = 'fillcolor="lightblue"';
+				} else {
+					fillColor = 'fillcolor="grey"';
+				}				
+				var idAttribute = 'id=' + quote(parent.path + '.' + id + '-doSelection');
 				var attributes = [
-					makeLabel('<=='),
+					makeLabel('Select'),
 					'fontname=courier',
 					'style="filled,rounded"',
 					'shape=box',
-					'fontsize=12',
-					'id="back-button"'					
+					'width=0',
+					'height=0',
+					'fontsize=10',
+					fillColor,
+					idAttribute
+				];				
+				
+				result += quote(parent.path + '.' + id) + formatAttributes(attributes);
+			}
+						
+			function addBackButton() {
+				var fillColor;
+				if (that.controller.canGoBack()) {
+					fillColor = 'fillcolor="lightblue"';
+				} else {
+					fillColor = 'fillcolor="grey"';
+				}				
+				var attributes = [
+					makeLabel('Back'),
+					'fontname=courier',
+					'style="filled,rounded"',
+					'shape=box',
+					'width=0',
+					'height=0',
+					'fontsize=10',
+					'id="back-button"',
+					fillColor					
 				];				
 				
 				result += quote('back-button') + formatAttributes(attributes);
@@ -184,7 +216,7 @@ define('flow_diags', exports, function (exports) {
 			
 			function addTransitionSource(source, node) {
 				var fillColor;
-				if (isPathActive(node)) {
+				if (isPathActive(node) && !that.activeSubflow) {
 					fillColor = 'fillcolor="lightblue"';
 				} else {
 					fillColor = 'fillcolor="grey"';
@@ -284,7 +316,7 @@ define('flow_diags', exports, function (exports) {
 			function addSubflowNode(id, path, node) {
 				function isSubflowAvailable() {
 					function isFirstChoice() {						
-						return path.split('.').length == 2;
+						return path.split('.').length === 2;
 					}
 					function isNextChoice() {
 						return that.activeSubflow.spec.hasOwnProperty(id);
@@ -350,11 +382,16 @@ define('flow_diags', exports, function (exports) {
 				
 				subflowFinish();				
 			}
-																			
-			function visitNodeRecursive(node) {
+									
+			var count = 0;
+			function visitNodeRecursive(node, parent) {
 				if (isCluster(node)) {
 					clusterStart(node);		
 					
+					if (parent.type === 'selector') {
+						addSelectionButton(parent, node.id);
+					}
+										
 					if (node.transitions) {
 						node.transitions.forEach(function (id, transition) {
 							addTransitionSource({path: node.path + '.' + id, id: id}, node);							
@@ -363,7 +400,7 @@ define('flow_diags', exports, function (exports) {
 
 					if (node.children) {
 						node.children.forEach(function (id, child) {
-							visitNodeRecursive(child);
+							visitNodeRecursive(child, node);
 						});						
 					}
 					
@@ -391,7 +428,7 @@ define('flow_diags', exports, function (exports) {
 									
 			// create the nodes
 			this.root.children.forEach(function (id, node) {
-				visitNodeRecursive(node);
+				visitNodeRecursive(node, that.root);
 			});	
 			
 			// create the transition edges
