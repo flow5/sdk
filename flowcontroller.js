@@ -176,11 +176,9 @@ define('flowcontroller', exports, function (exports) {
 				leaf = leaf.parent;
 			}
 			
-			if (!leaf.back) {
-				console.log('Cannot go back');
-			} else {
-				this.doTransition(leaf, 'back');
-			}
+			Utils.assert(leaf.back, 'Cannot go back');
+
+			this.doTransition(leaf, 'back');
 		};
 	}	
 	

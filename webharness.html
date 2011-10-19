@@ -40,22 +40,27 @@
 				Utils.post('dot2svg', flow.toDOT(), function (response) {
 					
 					function makeClick(el) {
-						el.onclick = function () {															
-							var parts = el.id.split('-');
-							var fullPath = parts[0];
-							var method = parts[1];
-							
-							var components = fullPath.split('.');
-							var nodePath = components[0];
-							var id = components.reverse()[0];																					
+						el.onclick = function () {	
+							try {
+								var parts = el.id.split('-');
+								var fullPath = parts[0];
+								var method = parts[1];
 
-							if (method === 'doTransition') {
-								flowController.doTransition(flow.getNode(nodePath), id);															
-							} else if (method === 'doSubflow') {
-								flowController.doSubflow(flow.getNode(nodePath), id);
-							} else if (method === 'doSubflowChoice') {
-								flowController.doSubflowChoice(id);
-							}
+								var components = fullPath.split('.');
+								var nodePath = components[0];
+								var id = components.reverse()[0];																					
+
+								if (method === 'doTransition') {
+									flowController.doTransition(flow.getNode(nodePath), id);															
+								} else if (method === 'doSubflow') {
+									flowController.doSubflow(flow.getNode(nodePath), id);
+								} else if (method === 'doSubflowChoice') {
+									flowController.doSubflowChoice(id);
+								}
+							} catch (e) {
+								console.log('Exception: ' + e.message);
+							}													
+
 						};
 					}
 					if (typeof document !== 'undefined') {
@@ -76,7 +81,11 @@
 						}
 						
 						document.getElementById('back-button').onclick = function () {
-							flowController.doBack();
+							try {
+								flowController.doBack();								
+							} catch (e) {
+								console.log('Exception: ' + e.message);
+							}
 						};
 					}
 				});
