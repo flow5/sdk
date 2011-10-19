@@ -48,6 +48,7 @@ define('flowcontroller', exports, function (exports) {
 		// select the child of node with the given id
 		this.doSelection = function (node, id) {		
 			Utils.assert(isActive(node), 'Attempt to select on an inactive node');	
+			Utils.assert(!flow.activeSubflow, 'Cannot select with a subflow active');				
 			Utils.assert(node.type === 'selector', 'Can only select on node of type selector');
 			Utils.assert(node.children[id], 'No child with id: ' + id);
 			
@@ -61,7 +62,8 @@ define('flowcontroller', exports, function (exports) {
 				
 		// use the transition with the given id 
 		this.doTransition = function (node, id, parameters) {
-			Utils.assert(isActive(node), 'Attempt to transition from an inactive node');	
+			Utils.assert(isActive(node), 'Attempt to transition from an inactive node');
+			Utils.assert(!flow.activeSubflow, 'Cannot transition with a subflow active');	
 			Utils.assert(id === 'back' || node.transitions[id], 'No transition with id: ' + id);
 
 			var container;
@@ -149,6 +151,36 @@ define('flowcontroller', exports, function (exports) {
 			this.doSubflowPrompt();
 			
 			observerCb(this, flow);			
+		};
+		
+		this.doBack = function () {
+			Utils.assert(!flow.activeSubflow, 'Cannot go back with a subflow active');				
+			
+			// find an active leaf node
+			// then look for the first node with 'back' set
+			var leaf = flow.root;
+			function findActiveChild(node) {
+				var activeChild;
+				node.children.forEach(function (id, child) {
+					if (child.active) {
+						activeChild = child;
+					}
+				});
+				return activeChild;
+			}
+			while (leaf.active && leaf.children) {
+				leaf = findActiveChild(leaf);
+			}
+
+			while (!leaf.back && leaf.parent) {
+				leaf = leaf.parent;
+			}
+			
+			if (!leaf.back) {
+				console.log('Cannot go back');
+			} else {
+				this.doTransition(leaf, 'back');
+			}
 		};
 	}	
 	

@@ -164,6 +164,19 @@ define('flow_diags', exports, function (exports) {
 				result += quote(node.path) + formatAttributes(attributes);
 			}
 			
+			function addBackButton() {
+				var attributes = [
+					makeLabel('<=='),
+					'fontname=courier',
+					'style="filled,rounded"',
+					'shape=box',
+					'fontsize=12',
+					'id="back-button"'					
+				];				
+				
+				result += quote('back-button') + formatAttributes(attributes);
+			}			
+			
 			function addTransitionSource(node) {
 				// height=0 and width=0 makes the box just accomodate the text				
 				var attributes = [
@@ -177,7 +190,7 @@ define('flow_diags', exports, function (exports) {
 					'shape=box', 
 					'height=0', 
 					'width=1.25',
-					'id=' + quote(node.path)
+					'id=' + quote(node.path + '-doTransition')
 				];				
 				result += quote(node.path) + formatAttributes(attributes); 
 			}						
@@ -229,8 +242,9 @@ define('flow_diags', exports, function (exports) {
 			
 			function subflowStart(path, id) {
 				var fillColor;
-				// NOTE: add the id to avoid having /a/b/c matching /a/b/c1.a.b.c
-				if (that.activeSubflow && (that.activeSubflow.path + '.' + 'id').match(path + '.' + 'id')) {
+				// TODO: this can do the wrong thing if the name of one subflow
+				// is a substring of another one
+				if (that.activeSubflow && that.activeSubflow.path.match(path)) {
 					fillColor = 'fillcolor="lightgreen"';
 				} else {
 					fillColor = 'fillcolor="grey"';
@@ -265,6 +279,13 @@ define('flow_diags', exports, function (exports) {
 				if (terminate) {
 					fillColor = 'fillcolor="lightblue"';
 				}
+				var idAttribute;
+				if (path.split('.').length > 2) {
+					idAttribute = 'id=' + quote(path + '-doSubflowChoice');	
+				} else {
+					idAttribute = 'id=' + quote(path + '-doSubflow');	
+				}
+				
 				var attributes = [
 					makeLabel(id),
 					'fontname="courier new"',
@@ -276,6 +297,7 @@ define('flow_diags', exports, function (exports) {
 					'height=0',
 					'margin="0.1,0.0"',
 					'fontsize=10',
+					idAttribute
 				];				
 				
 				result += quote(path) + formatAttributes(attributes);
@@ -341,7 +363,9 @@ define('flow_diags', exports, function (exports) {
 			// the DOT output is written into result
 			
 			digraphStart();
-						
+			
+			addBackButton();
+									
 			// create the nodes
 			this.root.children.forEach(function (id, node) {
 				visitNodeRecursive(node);
