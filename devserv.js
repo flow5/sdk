@@ -61,7 +61,7 @@ function dot2svg(req, res) {
 		res.end();
 	});		
 	child.stderr.on('data', function (data) {
-//		sys.puts(data);
+		sys.puts(data);
 	});	
 	
 	res.writeHead(200, {'Content-Type': 'image/svg+xml'});		

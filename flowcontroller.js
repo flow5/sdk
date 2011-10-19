@@ -42,7 +42,6 @@ define('flowcontroller', exports, function (exports) {
 		}
 		
 		this.start = function (id) {
-			flow.root.children[id].active = true;
 			observerCb();
 		};
 		

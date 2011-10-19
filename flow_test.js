@@ -44,12 +44,17 @@ require('./require.js');
 	});		
 	
 	require('./flow_diags.js').instrument(flow);	
-
+	
+	
 	var graphSpec = {
 		type: 'flow',
-		children: {	
+		active: 'home',
+		templates: {
 			done: {
-			},
+			}
+		},
+		children: {	
+			done: 'done',
 			home: {
 				templates: {
 					middle: {
@@ -57,6 +62,7 @@ require('./require.js');
 						active: 'middleStart',
 						children: {
 							middleStart: {
+								type: 'flow',
 								transitions: {
 									beDone: {
 										to: 'done'
@@ -67,62 +73,52 @@ require('./require.js');
 					},
 					goSomewhere: {
 						type: 'subflow',
-						choices: {
-							pickWhere: {
-								type: 'subflow',
-								choices: {
-									middle: {
-										type: 'transition',
-										to: 'middle',
-									},											
-									done: {
-										type: 'transition',												
-										to: 'done'
-									}													
-								}
-							},
-							cancel: {
-								type: 'transition',
-								to: null
-							}										
-						}
-					}
+						pickWhere: {
+							middle: 'goToMiddle',
+							done: 'beDone'											
+						},
+						cancel: null										
+					}													
 				},
 				type: 'selector',
 				active: 'a',
-				children: {
+				children: {					
 					a: {
 						type: 'flow',
 						active: 'start',
 						children: {
 							start: {
+								type: 'flow',
 								transitions: {
 									goToMiddle: {
 										to: 'middle'
 									},
-									goSomewhere: {
-										to: 'goSomewhere'
-									},
-
+									beDone: {
+										to: 'done'
+									}
+								},
+								children: {
+									goSomewhere: 'goSomewhere'
 								}
 							},
 							middle: 'middle',
-							done: 'done',
-							goSomewhere: 'goSomewhere'
-						}
+							done: 'done',							
+						},
+						
 					},
 					b: {
 						type: 'flow',
 						active: 'start',
 						children: {
 							start: {
+								type: 'flow',
 								transitions: {
 									goToMiddle: {
 										to: 'middle'
 									}
 								}													
 							},
-							middle: 'middle',
+							middle: 'middle'
 						}
 					}
 				}				
@@ -130,9 +126,7 @@ require('./require.js');
 		}	
 	};
 	
-	flow.validateGraphSpec(graphSpec);
-	
 	flow.injectGraph(graphSpec);
 	
-	flowController.start('home');
+	flowController.start();
 }());

@@ -51,8 +51,6 @@ define('flow', exports, function (exports) {
 			// So this function does not need to do error checking
 		that.injectGraph = function (graphSpec) {
 			
-			var nodes = {};	
-						
 			function getPath(node) {
 				var path = [];
 				while (node) {
@@ -62,15 +60,13 @@ define('flow', exports, function (exports) {
 				return path.reverse().join('/');
 			}	
 										
+			// climbs up the hiearchy until a template or child with this name is found
 			function resolveSpec(node, spec) {
-				// climbs up the hiearchy until a template with this name is found
-				function resolveSpecRecursive(node, name) {
-					if (node.children && node.children[name]) {
-						return node.children[name];
-					} else if (node.spec.templates && node.spec.templates[name]) {
+				function resolveSpecUp(node, name) {
+					if (node.spec.templates && node.spec.templates[name]) {
 						return node.spec.templates[name];
 					} else if (node.parent) {
-						return resolveSpecRecursive(node.parent, name);
+						return resolveSpecUp(node.parent, name);
 					} else {
 						Utils.assert(false, 'Could not find template: ' + name);
 					}
@@ -79,7 +75,7 @@ define('flow', exports, function (exports) {
 				if (typeof spec === 'object') {
 					return spec;
 				} else {
-					return resolveSpecRecursive(node, spec);
+					return resolveSpecUp(node, spec);
 				}
 			}
 			
@@ -96,20 +92,22 @@ define('flow', exports, function (exports) {
 			function injectNodeRecursive(id, nodeSpec, parent) {										
 				var node = {id: id, type: nodeSpec.type, parent: parent, spec: nodeSpec, active: false};
 								
-				if (nodeSpec.children) {
-					node.children = {};
-					nodeSpec.children.forEach(function (id, childSpec) {
-						var child = injectNodeRecursive(id, resolveSpec(node, childSpec), node);
-						if (id === nodeSpec.active) {
-							child.active = true;
-						}
-					});					
+				if (node.type === 'subflow') {
+					node.node = parent;
+				} else {
+					if (nodeSpec.children) {
+						node.children = {};
+						nodeSpec.children.forEach(function (id, childSpec) {
+							var child = injectNodeRecursive(id, resolveSpec(node, childSpec), node);
+							if (id === nodeSpec.active) {
+								child.active = true;
+							}
+						});					
+					}					
 				}
 												
 				if (node.parent) {
 					parent.children[id] = node;
-				} else {
-					nodes[node.id] = node;
 				}
 								
 				return node;
@@ -157,9 +155,7 @@ define('flow', exports, function (exports) {
 			that.root = injectNodeRecursive('root', graphSpec);
 			
 			// resolve transitions
-			nodes.forEach(function (id, node) {
-				resolveTransitionsRecursive(node);								
-			});	
+			resolveTransitionsRecursive(that.root);								
 			
 			setPathRecursive(that.root);
 
@@ -175,53 +171,39 @@ define('flow', exports, function (exports) {
 
 
 /*
-function injectSubflowRecursive(id, subflowSpec, parent, root) {					
-	var node = {id: id, 
-				type: subflowSpec.type, 
-				path: getPath(root) + '.' + id,
-				root: root, 
-				spec: subflowSpec};
-	if (subflowSpec.type === 'subflow') {
-		node.subflows = {};
-		subflowSpec.choices.forEach(function (id, choiceSpec) {
-			injectSubflowRecursive(id, resolveSpec(root, choiceSpec), node, root);
-		});
-	} else if (subflowSpec.type === 'transition') {					
-		// console.log('transition to: ' + node.to);
-	}
-	
-	parent.subflows[id] = node;
-}
 
-if (nodeSpec.subflows) {
-	node.subflows = {};
-	nodeSpec.subflows.forEach(function (id, subflowSpec) {
-		injectSubflowRecursive(id, resolveSpec(node, subflowSpec), node, node);
-	});
-}
-
-*/
-
-
-/*
+TODO: CLEAN THIS UP
 
 SCHEMA
 
-subflow
-	subflows are flows that operate within a single node of the flow graph
-	subflows allow a series of simple decisions to be made as in a flow chart
-	each subflow corresponds to a controller method for getting a decision
-		the children of the subflow represent the actions to follow the decision
-		the choice is returned asynchronously by the controller
-		the controller can decide however it likes:
-			user input (via a standard diaglog interace, customizable)
-			computation/examining the data model
-			querying a webservice
-		a subflow choice may not be 'to'
-			'to' indicates that the subflow ends with a transition
-			TODO: flag explicitly?
+(root): node
+	type: selector|flow|subflow
+	active: id 
+	templates
+		nodes
+	children
+		nodes
+		alises (parser will go through templates until it finds a template with that name)
+	transitions
+		to: id (parser will go up until it finds a node with that name)
+	
 
 
+
+subflows
+	subflows allow flowchart semantics to be attached to states
+	subflows are a linked series of controller actions where the result of one action triggers the next
+		callbacks are async
+		default behavior is to request data from the user
+		client may provide a subflow controller (uses same mapping logic) to delegate subflow actions
+			to examine the data model
+			to request data from a server
+	
+	the subflow has a reference to the node that uses it
+
+	logically a subflow operates within a state
+
+	a controller action may trigger a transition (I think this is needed for things like login flow)
 
 
 
@@ -263,24 +245,11 @@ Flow Documentation
 			- examine the data model
 		calls back with result
 		result can be evaluated and further invocations can be chained into a decision tree
-		
-		invocations: {
-			simple:null, // just invoke
-			complex:{ // result selects next action
-				yes:{
-					type:invocation, ??
-					
-				}
-				no:
-			}
-		}
 
 
 flowcontroller prototype is what does everything except the delegate methods which include
 	initialize
 	valueChange
-
-
 
 
 	static definition of a state represents the full state hierarchy at the time the state is entered
@@ -291,46 +260,8 @@ flowcontroller prototype is what does everything except the delegate methods whi
 	at the leaf node level
 	
 	
-	generic state schema:	
-		*type selection | flow | undefined=leaf
-		*transitions
-
-	transition schema:
-		name: {spec} | [option1:{spec},option2:{spec}]
-	
-		transition spec:
-			*to: State
-			parameters (maybe): {}
-		
-		if the transition is simple (just an object) then the transition executes immediately
-		if the transition is complex (array) the the flow will call up through the hierachy to get the option
-			this may result in a web service call or a modal dialog
-				
-	selection schema: state with multiple children only one of which may be active at a time. 
-		movement between states is controlled by selection
-	
-		selection
-		children
-		
-	flow schema: state with multiple children only one of which may be active. 
-		movement between states is controlled by transitions
-	
-		start: State // the initial (sub) state
 
 	(maybe) group schema: state with multiple children all of which are active simultaneously
 		children
 	
-
-	the Flow() object manages 'activeChild' as transitions and selections occur
-	it also synthesizes back transitions, parent child relationships etc, paths etc.
-	it also synthesizes nested state hierarchies based on transitions
-	
-	
-	??? how to specify the transition root ????
-
-
-	flow_diags
-		schema validation with rich reporting
-		dot output
-
 */
