@@ -44,6 +44,7 @@ define('flow', exports, function (exports) {
 					return node;
 				}
 			}
+			// slice(1) because paths start with '/'
 			return getChildRecursive(that.root, path.split('/').slice(1));
 		};
 				
@@ -152,7 +153,7 @@ define('flow', exports, function (exports) {
 			}
 									
 			// inject nodes
-			that.root = injectNodeRecursive('root', graphSpec);
+			that.root = injectNodeRecursive('', graphSpec);
 			
 			// resolve transitions
 			resolveTransitionsRecursive(that.root);								

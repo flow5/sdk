@@ -180,37 +180,19 @@ define('flow_diags', exports, function (exports) {
 				result += quote(node.path) + formatAttributes(attributes); 
 			}						
 									
-			function addEdge(from, to) {
-																												
-				// NOTE: graphviz doesn't support edges between clusters
-				// the workaround is to make the edge between leaf nodes
-				// then explicitly set the edge head and tail to the clusters
-				// in this case only the head needs the workaround since the tail
-				// is always attached to the transitionSource node
-				// see: https://mailman.research.att.com/pipermail/graphviz-interest/2010q3/007276.html
-				var head = to.path;				
-				if (isCluster(to)) {
-					head = makeClusterLabel(to.path);
-					while (to.children) {
-						to = getAProperty(to.children);
-					}
-					
-					// if the to node has transitions, then use one of them
-					if (to.transitions) {
-						to = {path: to.path + '.' + getAnId(to.transitions)};
-					}
-				}
-				
+			function addEdge(from, to, head) {																																
 				var attributes = [
-					makeHead(head),
 					'fontname="courier new"',
 					'arrowhead="vee"',
 					'arrowsize=.5',
 					'minlen=2',
 //					'dir="both"',
 //					'arrowtail="odot"',
-				];				
-				result += makeEdge(from, to.path) + formatAttributes(attributes);
+				];			
+				if (head) {
+					attributes.push(makeHead(head));					
+				}	
+				result += makeEdge(from, to) + formatAttributes(attributes);
 			}
 			
 			function digraphStart() {
@@ -286,7 +268,7 @@ define('flow_diags', exports, function (exports) {
 						addSubflowNode(id, path);						
 						spec.forEach(function (id, child) {
 							var childPath = path + '.' + id;
-							addEdge(path, {path: childPath});						
+							addEdge(path, childPath);						
 							visitSubflowRecursive(id, childPath, child);							
 						});
 					} else if (spec) {
@@ -345,8 +327,28 @@ define('flow_diags', exports, function (exports) {
 			// create the transition edges
 			visited.forEach(function (path, fromNode) {
 				if (fromNode.transitions) {
-					fromNode.transitions.forEach(function (id, toNode) {						
-						addEdge(fromNode.path + '.' + id, toNode);																						
+					fromNode.transitions.forEach(function (id, toNode) {
+						// NOTE: graphviz doesn't support edges between clusters
+						// the workaround is to make the edge between leaf nodes
+						// then explicitly set the edge head and tail to the clusters
+						// in this case only the head needs the workaround since the tail
+						// is always attached to the transitionSource node
+						// see: https://mailman.research.att.com/pipermail/graphviz-interest/2010q3/007276.html
+						var head;
+						var toPath = toNode.path			
+						if (isCluster(toNode)) {
+							head = makeClusterLabel(toNode.path);
+							while (toNode.children) {
+								toNode = getAProperty(toNode.children);
+							}
+							toPath = toNode.path;
+
+							// if the to node has transitions, then use one of them
+							if (toNode.transitions) {
+								toPath = toNode.path + '.' + getAnId(toNode.transitions);
+							}
+						}												
+						addEdge(fromNode.path + '.' + id, toPath, head);																						
 					});
 				}
 			});						
@@ -368,7 +370,12 @@ define('flow_diags', exports, function (exports) {
 						};
 					}
 					if (typeof document !== 'undefined') {
+						document.body.style['background-color'] = 'darkslategray';
 						document.body.innerHTML = response;
+						document.body.style['text-align'] = 'center';
+						
+						document.getElementById('graph1').querySelector('polygon').setAttribute('fill', 'darkslategray');
+						document.getElementById('graph1').querySelector('polygon').setAttribute('stroke', '');
 						var clickable = document.querySelectorAll('[id*=xx]');
 						for (var i = 0; i < clickable.length; i += 1) {
 							makeClick(clickable[i]);
