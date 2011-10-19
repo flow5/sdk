@@ -105,7 +105,6 @@ cli.main(function (args, options) {
 				})
 				.otherwise(function () {
 					res.writeHead(404, {'Content-Type': 'text/plain'});
-					res.write('NOT FOUND');
 					res.end();
 				});		
 			break;
