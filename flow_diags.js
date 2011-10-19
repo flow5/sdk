@@ -30,14 +30,14 @@ define('flow_diags', exports, function (exports) {
 	
 	require('./jsext.js');
 	
-	var utils = require('./utils.js');
+	var Utils = require('./utils.js');
 	
-	function instrument(Flow) {
+	function instrument(flow) {
 		
 		// OPTION: consider https://github.com/akidee/schema.js or related as a general schema validation solution
 		
 		// OPTION: maybe wrap injectGraphSpec and validate in debug builds
-		Flow.prototype.validateGraphSpec = function (graphSpec) {
+		flow.validateGraphSpec = function (graphSpec) {
 			
 			var paths = {};
 
@@ -107,7 +107,7 @@ define('flow_diags', exports, function (exports) {
 			});
 		};
 		
-		Flow.prototype.toJSON = function (outputStream) {
+		flow.toJSON = function (outputStream) {
 			
 			var filteredCopy = {};
 			
@@ -132,7 +132,7 @@ define('flow_diags', exports, function (exports) {
 				}
 			}
 			
-			filterNodesRecursive(this.nodes, filteredCopy);
+			filterNodesRecursive(this.root.children, filteredCopy);
 			
 			if (outputStream === 'stderr') {
 				console.error(JSON.stringify(filteredCopy));
@@ -143,7 +143,7 @@ define('flow_diags', exports, function (exports) {
 
 		// creates DOT output representing the current Flow graph
 		// TODO: highlight active children and double highlight active paths
-		Flow.prototype.toDOT = function (outputStream) {
+		flow.toDOT = function (outputStream) {
 
 			var result = '';
 			var visited = {};					
@@ -196,13 +196,47 @@ define('flow_diags', exports, function (exports) {
 				return statement;
 			}
 			
+			function isCluster(node) {
+				return node.children || node.transitions || node.subflows;
+			}
+			
+			function getActiveStyle(node) {
+				var nodeActive = node.active;
+				var pathActive = node.active;
+				while (pathActive && node.parent) {
+					node = node.parent;
+					pathActive = node.active;
+				}
+				
+				if (isCluster(node)) {
+					if (pathActive) {
+						return 'color="blue";penwidth=2.0;';
+					} else if (nodeActive) {
+						return 'color="blue";penwidth=1.0;';
+					} else {
+						return 'color="black";penwidth=1.0;';										
+					}									
+				} else {
+					if (pathActive) {
+						return ['color="blue"','penwidth=2.0'];
+					} else if (nodeActive) {
+						return ['color="blue"','penwidth=1.0'];
+					} else {
+						return ['color="black"','penwidth=1.0'];
+					}
+				}
+			}
+			
+			
 			function addNode(node) {
 				var attributes = [
 					makeLabel(node.id),
 					'fontname=courier',
 					'style=rounded',
-					'shape=box'
+					'shape=box',
 				];				
+				attributes = attributes.concat(getActiveStyle(node));
+				
 				result += quote(node.path) + formatAttributes(attributes);
 			}
 			
@@ -212,18 +246,14 @@ define('flow_diags', exports, function (exports) {
 					makeLabel(node.id),
 					'fontname="courier new italic"',
 					'fontsize=12',
-					'margin="0.02"',
+					'margin="0.0"',
 					'shape=none', 
 					'height=0', 
 					'width=0'
 				];				
 				result += quote(node.path) + formatAttributes(attributes); 
 			}						
-			
-			function cluster(node) {
-				return node.children || node.transitions || node.subflows;
-			}
-						
+									
 			function addEdge(from, to) {
 																												
 				// NOTE: graphviz doesn't support edges between clusters
@@ -233,7 +263,7 @@ define('flow_diags', exports, function (exports) {
 				// is always attached to the transitionSource node
 				// see: https://mailman.research.att.com/pipermail/graphviz-interest/2010q3/007276.html
 				var head = to.path;				
-				if (cluster(to)) {
+				if (isCluster(to)) {
 					head = makeClusterLabel(to.path);
 					while (to.children) {
 						to = getAProperty(to.children);
@@ -253,10 +283,10 @@ define('flow_diags', exports, function (exports) {
 					makeHead(head),
 					'fontname="courier new"',
 					'arrowhead="vee"',
+					'arrowsize=.5',
 					'minlen=2',
-					'tailport="e"'
 //					'dir="both"',
-//					'arrowtail="obox"',
+//					'arrowtail="odot"',
 				];				
 				result += makeEdge(from, to.path) + formatAttributes(attributes);
 			}
@@ -271,7 +301,10 @@ define('flow_diags', exports, function (exports) {
 			}
 
 			function clusterStart(node) {
-				result += 'subgraph ' + quote(makeClusterLabel(node.path)) + ' {style=rounded;fontname="courier bold";';
+				var attributes = 'style=rounded;fontname="courier bold"';
+				attributes += getActiveStyle(node);
+
+				result += 'subgraph ' + quote(makeClusterLabel(node.path)) + ' {' + attributes;
 				result += makeLabel(node.id);
 			}
 			
@@ -280,8 +313,10 @@ define('flow_diags', exports, function (exports) {
 			}
 			
 			function menuStart(id, subflow) {
+				var attributes = 'style=square;fontname="courier";color="black"';
+				
 				var clusterLabel = quote(makeClusterLabel(subflow.path));
-				result += 'subgraph ' + clusterLabel + ' {style=square;fontname="courier";';
+				result += 'subgraph ' + clusterLabel + ' {' + attributes;
 				result += makeLabel('choose');
 			}				
 			
@@ -312,7 +347,7 @@ define('flow_diags', exports, function (exports) {
 					return;			
 				}
 
-				if (cluster(node)) {
+				if (isCluster(node)) {
 					clusterStart(node);		
 					
 					if (node.transitions) {
@@ -357,7 +392,7 @@ define('flow_diags', exports, function (exports) {
 			digraphStart();
 						
 			// create the nodes
-			this.nodes.forEach(function (id, node) {
+			this.root.children.forEach(function (id, node) {
 				visitNodeRecursive(node);
 			});	
 			
@@ -391,7 +426,7 @@ define('flow_diags', exports, function (exports) {
 			if (outputStream === 'stderr') {
 				console.error(result);
 			} else if (outputStream === 'devserv') {
-				utils.post('http://localhost:8008', result, function (response) {
+				Utils.post('http://localhost:8008', result, function (response) {
 					if (typeof document !== 'undefined') {
 						document.body.innerHTML = response;
 					}

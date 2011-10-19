@@ -28,12 +28,14 @@
 
 define('flow', exports, function (exports) {
 	
-	function P_Flow() {
+	var Utils = require('./utils.js');
+	
+	function Flow() {
 
 		var that = this;
 		
 				
-		that.nodes = {};
+		that.root = {type: 'flow', active: true, children: {}};
 				
 		// NOTE: considering making it possible to inject graphs, children, transitions on the fly
 		// NOTE: in debug builds, validateSpec is called first. 
@@ -69,18 +71,22 @@ define('flow', exports, function (exports) {
 			}					
 			
 			function injectNodeRecursive(id, nodeSpec, parent) {										
-				var node = {id: id, type: nodeSpec.type, parent: parent, spec: nodeSpec};
+				var node = {id: id, type: nodeSpec.type, parent: parent, spec: nodeSpec, active: false};
 								
 				switch (nodeSpec.type) {
 				case 'selector':
 					node.children = {};
-					nodeSpec.children.forEach(function (id, nodeSpec) {
-						injectNodeRecursive(id, nodeSpec, node);
+					nodeSpec.children.forEach(function (id, childSpec) {
+						var child = injectNodeRecursive(id, childSpec, node);
+						if (id === nodeSpec.active) {
+							child.active = true;
+						}
 					});
 					break;
 				case 'flow':
 					node.children = {};
-					injectNodeRecursive(nodeSpec.active, nodeSpec.children[nodeSpec.active], node);
+					var child = injectNodeRecursive(nodeSpec.active, nodeSpec.children[nodeSpec.active], node);
+					child.active = true;
 					break;
 				}
 				
@@ -127,9 +133,7 @@ define('flow', exports, function (exports) {
 					var container = getContainer(node, containerLevel);
 
 					// TODO: Move to validation
-					if (container && container.type === 'selector') {
-						throw new Error('Cannot transition inside a selector');
-					}
+					Utils.assert(!container || container.type !== 'selector', 'Cannot transition inside a selector');
 										
 					var target = nodes[to];	
 					
@@ -206,20 +210,15 @@ define('flow', exports, function (exports) {
 			nodes.forEach(function (id, node) {
 				setPathRecursive(node);				
 				// only record the top level states
-				that.nodes[node.path] = node;					
+				that.root.children[node.path] = node;	
+				node.parent = that.root;				
 			});	
-			
+						
 			// TODO: prune unreachable paths after initialization
-			// OPTION: remove the node specs?
+			// OPTION: remove the nodeSpecs?
 		};				
 	}
-	
-
-	function Flow() {
 		
-	}
-	Flow.prototype = new P_Flow();
-	
 	exports.Flow = Flow;
 });
 

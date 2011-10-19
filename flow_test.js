@@ -25,15 +25,25 @@
 
 ***********************************************************************************************************************/
 
-require('./require.js');
+/*global flow:true flowController:true*/
 
-/*global flow:true*/
+// make the define method available in the nodejs environment
+// TODO: upgrade to v5 where define is built in
+require('./require.js');
 
 (function () {
 	
-	var Flow = require('./flow.js').Flow;					
-	flow = new Flow();		
-	require('./flow_diags.js').instrument(Flow);	
+	var Flow = require('./flow.js').Flow;
+						
+	flow = new Flow();
+	
+	var FlowController = require('./flowcontroller.js').FlowController;
+	flowController = new FlowController(flow, function () {
+		flow.toDOT('devserv');	
+		//	flow.toJSON('stderr');		
+	});		
+	
+	require('./flow_diags.js').instrument(flow);	
 		
 	var graphSpec = {
 		
@@ -117,7 +127,6 @@ require('./require.js');
 	flow.validateGraphSpec(graphSpec);
 	
 	flow.injectGraph(graphSpec);
-
-	flow.toDOT('devserv');	
-//	flow.toJSON('stderr');
+	
+	flowController.start('home');
 }());

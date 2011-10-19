@@ -70,7 +70,15 @@ define('utils', exports, function (exports) {
 		}, 0);		
 	}	
 	
-	exports.post = post;	
+	function assert(condition, message) {
+		// TODO: disable in release builds?
+		if (!condition) {
+			throw new Error(message);
+		}
+	}
+	
+	exports.post = post;
+	exports.assert = assert;	
 });
 
 
