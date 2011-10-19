@@ -33,40 +33,37 @@ var http = require('http'),
 	path = require('path'),
 	paperboy = require('paperboy'),
 	exec = require('child_process').exec,	 
+	spawn = require('child_process').spawn,	 
 	sys = require('sys');
 	
 var WEBROOT = path.dirname(__filename);	
 
 
-
-
 function doPOST(req, res) {
-	var dump = '';
+	
+	res.writeHead(200, {'Content-Type': 'image/svg+xml'});
+	
+	var child = spawn('dot', ['-Tsvg']);		
 	
 	req.on('data', function (chunk) {
-		dump += chunk.toString();
+		child.stdin.write(chunk);
 	});
-
+	
 	req.on('end', function () {
-		var tmpFilePath = './flow.dot.tmp';
-		var filePath = './flow.dot';
-		var writeStream = fs.createWriteStream(tmpFilePath, {flags: 'w'});
-
-		writeStream.on('close', function () {
-			fs.rename(tmpFilePath, filePath, function (err) {
-				if (err) {
-					throw err;
-				} else {
-					exec("dot -T svg flow.dot", function (error, stdout, stderr) {
-						res.writeHead(200, {'Content-Type': 'image/svg+xml'});
-						res.write(stdout);
-						res.end();
-					});														
-				}
-			});
-		});
-		writeStream.end(dump);
+		child.stdin.end();
 	});
+	
+	child.stdout.on('data', function (data) {
+		res.write(data);
+	});	
+	
+	child.on('exit', function (code) {
+		res.end();
+	});	
+	
+	child.stderr.on('data', function (data) {
+//		sys.puts(data);
+	});		
 }
 
 
@@ -91,12 +88,6 @@ cli.main(function (args, options) {
 		case 'GET':
 			paperboy
 				.deliver(WEBROOT, req, res)
-//				.before(function () {
-//					sys.puts('About to deliver: ' + req.url);
-//				})
-//				.after(function () {
-//					sys.puts('Delivered: ' + req.url);
-//				})
 				.error(function () {
 					sys.puts('Error delivering: ' + req.url);
 				})

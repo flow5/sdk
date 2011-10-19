@@ -36,6 +36,19 @@ define('flow', exports, function (exports) {
 		
 				
 		that.root = {type: 'flow', active: true, children: {}};
+		
+		that.getNode = function (path) {
+			function getChildRecursive(node, components) {
+				if (components.length) {
+					var child = node.children[components[0]];
+					Utils.assert(child, 'Bad path');
+					return getChildRecursive(child, components.slice(1));
+				} else {
+					return node;
+				}
+			}
+			return getChildRecursive(that.root, path.split('/'));
+		};
 				
 		// NOTE: considering making it possible to inject graphs, children, transitions on the fly
 		// NOTE: in debug builds, validateSpec is called first. 

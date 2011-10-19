@@ -144,6 +144,8 @@ define('flow_diags', exports, function (exports) {
 		// creates DOT output representing the current Flow graph
 		// TODO: highlight active children and double highlight active paths
 		flow.toDOT = function (outputStream) {
+			
+			var that = this;
 
 			var result = '';
 			var visited = {};					
@@ -224,6 +226,7 @@ define('flow_diags', exports, function (exports) {
 					'fontname=courier',
 					'style=rounded',
 					'shape=box',
+					'fontsize=12',					
 				].concat(getActiveStyle(node));				
 				
 				result += quote(node.path) + formatAttributes(attributes);
@@ -233,12 +236,14 @@ define('flow_diags', exports, function (exports) {
 				// height=0 and width=0 makes the box just accomodate the text				
 				var attributes = [
 					makeLabel(node.id),
-					'fontname="courier new italic"',
-					'fontsize=12',
-					'margin="0.0"',
-					'shape=none', 
+					'fontname="courier new"',
+					'fontsize=10',
+					'margin="0.1,0.0"',
+					'penwidth=0.2',
+					'shape=box', 
 					'height=0', 
-					'width=0'
+					'width=1.25',
+					'id=' + quote('xx' + node.path)
 				];				
 				result += quote(node.path) + formatAttributes(attributes); 
 			}						
@@ -297,7 +302,8 @@ define('flow_diags', exports, function (exports) {
 			function clusterStart(node) {
 				var attributes = [
 					'style=rounded',
-					'fontname="courier bold"'					
+					'fontname="courier"',
+					'fontsize=12',														
 				].concat(getActiveStyle(node)).join(';');
 
 				result += 'subgraph ' + quote(makeClusterLabel(node.path)) + ' {' + attributes;
@@ -315,8 +321,9 @@ define('flow_diags', exports, function (exports) {
 					'fontsize=12',
 					'fontcolor="green"',
 					'color="black"',
-					'penwidth=1.0'
-				].join(';');
+					'penwidth=1.0',
+					'bgcolor=lightgray'
+				].concat(getActiveStyle(subflow)).join(';');
 				
 				var clusterLabel = quote(makeClusterLabel(subflow.path));
 				result += 'subgraph ' + clusterLabel + ' {' + attributes;
@@ -426,12 +433,26 @@ define('flow_diags', exports, function (exports) {
 										
 			digraphFinish();
 			
+			// TODO: REFACTOR
 			if (outputStream === 'stderr') {
 				console.error(result);
 			} else if (outputStream === 'devserv') {
 				Utils.post('http://localhost:8008', result, function (response) {
+					function makeClick(el) {
+						el.onclick = function () {	
+							var parts = el.id.replace('xx', '').split('.');
+							var path = parts[0];
+							var id = parts[1];
+							
+							flowController.transition(that.getNode(path), id);							
+						};
+					}
 					if (typeof document !== 'undefined') {
 						document.body.innerHTML = response;
+						var clickable = document.querySelectorAll('[id*=xx]');
+						for (var i = 0; i < clickable.length; i += 1) {
+							makeClick(clickable[i]);
+						}
 					}
 				});
 			} else {
