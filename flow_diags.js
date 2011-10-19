@@ -208,22 +208,12 @@ define('flow_diags', exports, function (exports) {
 					pathActive = node.active;
 				}
 				
-				if (isCluster(node)) {
-					if (pathActive) {
-						return 'color="blue";penwidth=2.0;';
-					} else if (nodeActive) {
-						return 'color="blue";penwidth=1.0;';
-					} else {
-						return 'color="black";penwidth=1.0;';										
-					}									
+				if (pathActive) {
+					return ['color="blue"', 'penwidth=2.0'];
+				} else if (nodeActive) {
+					return ['color="blue"', 'penwidth=1.0'];
 				} else {
-					if (pathActive) {
-						return ['color="blue"', 'penwidth=2.0'];
-					} else if (nodeActive) {
-						return ['color="blue"', 'penwidth=1.0'];
-					} else {
-						return ['color="black"', 'penwidth=1.0'];
-					}
+					return ['color="black"', 'penwidth=1.0'];
 				}
 			}
 			
@@ -234,8 +224,7 @@ define('flow_diags', exports, function (exports) {
 					'fontname=courier',
 					'style=rounded',
 					'shape=box',
-				];				
-				attributes = attributes.concat(getActiveStyle(node));
+				].concat(getActiveStyle(node));				
 				
 				result += quote(node.path) + formatAttributes(attributes);
 			}
@@ -292,8 +281,13 @@ define('flow_diags', exports, function (exports) {
 			}
 			
 			function digraphStart() {
-				// splines="ortho";
-				result += 'digraph {compound=true; rankdir=LR; fontname=courier;';
+				var attributes = [
+					'compound=true',
+					'rankdir=LR',
+					'fontname=courier',
+//					'splines="ortho"'				
+				].join(';');
+				result += 'digraph {' + attributes + ';';
 			}
 			
 			function digraphFinish() {
@@ -301,8 +295,10 @@ define('flow_diags', exports, function (exports) {
 			}
 
 			function clusterStart(node) {
-				var attributes = 'style=rounded;fontname="courier bold"';
-				attributes += getActiveStyle(node);
+				var attributes = [
+					'style=rounded',
+					'fontname="courier bold"'					
+				].concat(getActiveStyle(node)).join(';');
 
 				result += 'subgraph ' + quote(makeClusterLabel(node.path)) + ' {' + attributes;
 				result += makeLabel(node.id);
@@ -313,7 +309,14 @@ define('flow_diags', exports, function (exports) {
 			}
 			
 			function menuStart(id, subflow) {
-				var attributes = 'style=square;fontname="courier";color="black";penwidth=1.0;';
+				var attributes = [
+					'style=square',
+					'fontname="courier"',
+					'fontsize=12',
+					'fontcolor="green"',
+					'color="black"',
+					'penwidth=1.0'
+				].join(';');
 				
 				var clusterLabel = quote(makeClusterLabel(subflow.path));
 				result += 'subgraph ' + clusterLabel + ' {' + attributes;
