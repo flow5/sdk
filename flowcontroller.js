@@ -115,7 +115,7 @@ define('flowcontroller', exports, function (exports) {
 			});
 		};
 		
-		this.doSubflowChoice = function (id) {
+		this.doSubflowChoice = function (node, id) {
 			Utils.assert(flow.activeSubflow, 'No active subflow');
 			Utils.assert(flow.activeSubflow.spec.hasOwnProperty(id), 'No such choice');
 			

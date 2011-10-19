@@ -169,9 +169,9 @@ define('flow_diags', exports, function (exports) {
 				result += quote(node.path) + formatAttributes(attributes);
 			}
 
-			function addSelectionButton(parent, id) {
+			function addSelectionButton(node, parent, id) {
 				var fillColor;
-				if (isPathActive(parent)) {
+				if (isPathActive(parent) && !that.activeSubflow && !node.active) {
 					fillColor = 'fillcolor="lightblue"';
 				} else {
 					fillColor = 'fillcolor="grey"';
@@ -389,7 +389,7 @@ define('flow_diags', exports, function (exports) {
 					clusterStart(node);		
 					
 					if (parent.type === 'selector') {
-						addSelectionButton(parent, node.id);
+						addSelectionButton(node, parent, node.id);
 					}
 										
 					if (node.transitions) {

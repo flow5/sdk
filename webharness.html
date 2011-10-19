@@ -48,17 +48,9 @@
 
 								var components = fullPath.split('.');
 								var nodePath = components[0];
-								var id = components.reverse()[0];																					
-
-								if (method === 'doTransition') {
-									flowController.doTransition(flow.getNode(nodePath), id);															
-								} else if (method === 'doSubflow') {
-									flowController.doSubflow(flow.getNode(nodePath), id);
-								} else if (method === 'doSubflowChoice') {
-									flowController.doSubflowChoice(id);
-								} else if (method === 'doSelection') {
-									flowController.doSelection(flow.getNode(nodePath), id);
-								}
+								var id = components.reverse()[0];	
+								
+								flowController[method](flow.getNode(nodePath), id);																
 							} catch (e) {
 								console.log('Exception: ' + e.message);
 							}													
