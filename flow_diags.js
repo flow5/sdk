@@ -218,11 +218,11 @@ define('flow_diags', exports, function (exports) {
 					}									
 				} else {
 					if (pathActive) {
-						return ['color="blue"','penwidth=2.0'];
+						return ['color="blue"', 'penwidth=2.0'];
 					} else if (nodeActive) {
-						return ['color="blue"','penwidth=1.0'];
+						return ['color="blue"', 'penwidth=1.0'];
 					} else {
-						return ['color="black"','penwidth=1.0'];
+						return ['color="black"', 'penwidth=1.0'];
 					}
 				}
 			}
@@ -313,7 +313,7 @@ define('flow_diags', exports, function (exports) {
 			}
 			
 			function menuStart(id, subflow) {
-				var attributes = 'style=square;fontname="courier";color="black"';
+				var attributes = 'style=square;fontname="courier";color="black";penwidth=1.0;';
 				
 				var clusterLabel = quote(makeClusterLabel(subflow.path));
 				result += 'subgraph ' + clusterLabel + ' {' + attributes;
