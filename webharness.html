@@ -1,0 +1,71 @@
+<html>
+
+<head>
+
+	<script src='require.js'></script>	
+	<script src='jsext.js'></script>
+
+	<script src='utils.js'></script>
+
+	<script src='flow.js'></script>
+	<script src='flow_diags.js'></script>		
+	<script src='flowcontroller.js'></script>
+	
+	<script src='flowharness.js'></script>
+		
+	<script src='flows/basic_flow.js'></script>		
+	<script src='flows/minimal_flow.js'></script>		
+</head>
+
+<body>
+	<script>
+		var Utils = require('./utils.js');	
+		var FlowHarness = require('./flowharness.js').FlowHarness;
+		
+		function getURLParams() {
+			var params = {};
+			window.location.search.substring(1).split('&').forEach(function (pair) {
+				params[pair.split('=')[0]] = pair.split('=')[1];
+			});			
+			return params;
+		}
+		
+		try {
+			var flowHarness = new FlowHarness(getURLParams().flowFile, function (flowController, flow) {
+				Utils.post('dot2svg', flow.toDOT(), function (response) {
+					function makeClick(el) {
+						el.onclick = function () {	
+							var parts = el.id.replace('xx', '').split('.');
+							var path = parts[0];
+							var id = parts[1];
+
+							flowController.doTransition(flow.getNode(path), id);							
+						};
+					}
+					if (typeof document !== 'undefined') {
+						document.body.innerHTML = response;
+
+						document.body.style['background-color'] = 'darkslategray';
+						document.body.style['text-align'] = 'center';
+
+						// Make the main poly the same color as background
+						// OPTION: would be nice to do this on the DOT side
+						document.getElementById('graph1').querySelector('polygon').setAttribute('fill', 'darkslategray');
+						document.getElementById('graph1').querySelector('polygon').setAttribute('stroke', '');
+
+						// the clickable elements have id with xx prefix
+						var clickable = document.querySelectorAll('[id*=xx]');
+						for (var i = 0; i < clickable.length; i += 1) {
+							makeClick(clickable[i]);
+						}
+					}
+				});
+			});
+		} catch (e) {
+			document.body.innerHTML = e.message;
+		}
+			
+	</script>
+</body>
+
+</html>

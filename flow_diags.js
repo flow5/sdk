@@ -30,8 +30,6 @@ define('flow_diags', exports, function (exports) {
 	
 	require('./jsext.js');
 	
-	var Utils = require('./utils.js');
-	
 	function instrument(flow) {
 		
 		// OPTION: consider https://github.com/akidee/schema.js or related as a general schema validation solution
@@ -71,8 +69,7 @@ define('flow_diags', exports, function (exports) {
 		};
 
 		// creates DOT output representing the current Flow graph
-		// TODO: highlight active children and double highlight active paths
-		flow.toDOT = function (outputStream) {
+		flow.toDOT = function () {
 			
 			var that = this;
 
@@ -339,7 +336,7 @@ define('flow_diags', exports, function (exports) {
 						// is always attached to the transitionSource node
 						// see: https://mailman.research.att.com/pipermail/graphviz-interest/2010q3/007276.html
 						var head;
-						var toPath = toNode.path			
+						var toPath = toNode.path;
 						if (isCluster(toNode)) {
 							head = makeClusterLabel(toNode.path);
 							while (toNode.children) {
@@ -359,36 +356,7 @@ define('flow_diags', exports, function (exports) {
 										
 			digraphFinish();
 			
-			// TODO: REFACTOR
-			if (outputStream === 'stderr') {
-				console.error(result);
-			} else if (outputStream === 'devserv') {
-				Utils.post('dot2svg', result, function (response) {
-					function makeClick(el) {
-						el.onclick = function () {	
-							var parts = el.id.replace('xx', '').split('.');
-							var path = parts[0];
-							var id = parts[1];
-							
-							flowController.doTransition(that.getNode(path), id);							
-						};
-					}
-					if (typeof document !== 'undefined') {
-						document.body.style['background-color'] = 'darkslategray';
-						document.body.innerHTML = response;
-						document.body.style['text-align'] = 'center';
-						
-						document.getElementById('graph1').querySelector('polygon').setAttribute('fill', 'darkslategray');
-						document.getElementById('graph1').querySelector('polygon').setAttribute('stroke', '');
-						var clickable = document.querySelectorAll('[id*=xx]');
-						for (var i = 0; i < clickable.length; i += 1) {
-							makeClick(clickable[i]);
-						}
-					}
-				});
-			} else {
-				console.log(result);								
-			}
+			return result;			
 		};		
 	}
 	

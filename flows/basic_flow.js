@@ -24,29 +24,11 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
+/*global define*/
 
-/*global flow:true flowController:true*/
-
-// make the define method available in the nodejs environment
-// TODO: upgrade to v5 where define is built in
-require('./require.js');
-
-(function () {
+define('basic_flow', exports, function (exports) {
 	
-	var Flow = require('./flow.js').Flow;
-						
-	flow = new Flow();
-	
-	var FlowController = require('./flowcontroller.js').FlowController;
-	flowController = new FlowController(flow, function () {
-		flow.toDOT('devserv');	
-		//	flow.toJSON('stderr');		
-	});		
-	
-	require('./flow_diags.js').instrument(flow);	
-	
-	
-	var graphSpec = {
+	exports.root = {
 		type: 'flow',
 		active: 'home',
 		templates: {
@@ -112,7 +94,7 @@ require('./require.js');
 							middle: 'middle',
 							done: 'done'													
 						},
-						
+					
 					},
 					b: {
 						type: 'flow',
@@ -127,15 +109,11 @@ require('./require.js');
 								}													
 							},
 							middle: 'middle'
-							
+						
 						}
 					}
 				}				
 			}
 		}	
 	};
-	
-	flow.injectGraph(graphSpec);
-	
-	flowController.start();
-}());
+});

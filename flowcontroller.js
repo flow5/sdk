@@ -42,7 +42,7 @@ define('flowcontroller', exports, function (exports) {
 		}
 		
 		this.start = function (id) {
-			observerCb();
+			observerCb(this, flow);
 		};
 		
 		// select the child of node with the given id
@@ -56,7 +56,7 @@ define('flowcontroller', exports, function (exports) {
 			});
 			node.children[id].active = true;
 			
-			observerCb();
+			observerCb(this, flow);
 		};
 				
 		// use the transition with the given id 
@@ -100,7 +100,7 @@ define('flowcontroller', exports, function (exports) {
 			newActiveChild.active = true;
 			
 
-			observerCb();			
+			observerCb(this, flow);			
 		};	
 		
 		this.doSubflowPrompt = function () {
