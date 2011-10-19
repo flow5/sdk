@@ -66,7 +66,7 @@ require('./require.js');
 								goSomewhere: {
 									type: 'menu',
 									choices: {
-										pickPlace: {
+										pickWhere: {
 											type: 'menu',
 											choices: {
 												middle: {

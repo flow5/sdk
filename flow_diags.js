@@ -437,7 +437,7 @@ define('flow_diags', exports, function (exports) {
 			if (outputStream === 'stderr') {
 				console.error(result);
 			} else if (outputStream === 'devserv') {
-				Utils.post('flow', result, function (response) {
+				Utils.post('dot2svg', result, function (response) {
 					function makeClick(el) {
 						el.onclick = function () {	
 							var parts = el.id.replace('xx', '').split('.');

@@ -39,7 +39,7 @@ var http = require('http'),
 var WEBROOT = path.dirname(__filename);	
 
 
-function doPOST(req, res) {
+function dot2svg(req, res) {
 	
 	res.writeHead(200, {'Content-Type': 'image/svg+xml'});
 	
@@ -67,7 +67,6 @@ function doPOST(req, res) {
 }
 
 
-
 cli.setUsage("devserv.js [OPTIONS]");
 
 cli.parse({
@@ -76,6 +75,8 @@ cli.parse({
 
 //---------------------------------------------------------------------------------------
 
+// http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
+
 cli.main(function (args, options) {
 
 	options.port = options.port ? options.port : 8008;
@@ -83,7 +84,18 @@ cli.main(function (args, options) {
 	http.createServer(function (req, res) {
 		switch (req.method) {
 		case 'POST':
-			doPOST(req, res);
+			switch (req.url) {
+			case '/dot2svg':
+				dot2svg(req, res);
+				break;
+			case '/shutupJSlint': // want to use case, but no other methods yet
+				res.writeHead(404);
+				res.end();
+				break;
+			default:
+				res.writeHead(404);
+				res.end();
+			}
 			break;
 		case 'GET':
 			paperboy
@@ -92,7 +104,6 @@ cli.main(function (args, options) {
 					sys.puts('Error delivering: ' + req.url);
 				})
 				.otherwise(function () {
-					sys.puts('No such file: ' + req.url);
 					res.writeHead(404, {'Content-Type': 'text/plain'});
 					res.write('NOT FOUND');
 					res.end();
@@ -111,8 +122,8 @@ cli.main(function (args, options) {
 			res.end();
 			break;
 		default:
-			res.writeHead(500);
-			res.end(req.method + ' method not supported');
+			res.writeHead(405);
+			res.end();
 			break;
 		}
 	}).listen(options.port);
