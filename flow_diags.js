@@ -137,6 +137,11 @@ define('flow_diags', exports, function (exports) {
 					pathActive = node.active;
 				}
 				
+				if (that.activeSubflow) {
+					pathActive = false;
+					nodeActive = false;
+				}
+				
 				if (pathActive) {
 					return ['color="blue"', 'penwidth=2.0', 'fillcolor="white"'];
 				} else if (nodeActive) {
@@ -172,7 +177,7 @@ define('flow_diags', exports, function (exports) {
 					'shape=box', 
 					'height=0', 
 					'width=1.25',
-					'id=' + quote('xx' + node.path)
+					'id=' + quote(node.path)
 				];				
 				result += quote(node.path) + formatAttributes(attributes); 
 			}						
@@ -223,6 +228,14 @@ define('flow_diags', exports, function (exports) {
 			}
 			
 			function subflowStart(path, id) {
+				var fillColor;
+				// NOTE: add the id to avoid having /a/b/c matching /a/b/c1.a.b.c
+				if (that.activeSubflow && (that.activeSubflow.path + '.' + 'id').match(path + '.' + 'id')) {
+					fillColor = 'fillcolor="lightgreen"';
+				} else {
+					fillColor = 'fillcolor="grey"';
+				}
+				
 				var attributes = [
 					'fontname="courier"',
 					'fontsize=12',
@@ -230,7 +243,7 @@ define('flow_diags', exports, function (exports) {
 					'color="black"',
 					'penwidth=.6',
 					'style="filled"',
-					'fillcolor="lightgreen"'
+					fillColor
 				].join(';');
 				
 				var clusterLabel = quote(makeClusterLabel(path));
@@ -243,11 +256,20 @@ define('flow_diags', exports, function (exports) {
 			}
 			
 			function addSubflowNode(id, path, terminate) {
+				var fillColor;
+				if (that.activeSubflow && path === that.activeSubflow.path) {
+					fillColor = 'fillcolor="dodgerblue"';
+				} else {
+					fillColor = 'fillcolor="white"';
+				}
+				if (terminate) {
+					fillColor = 'fillcolor="lightblue"';
+				}
 				var attributes = [
 					makeLabel(id),
 					'fontname="courier new"',
 					'style="filled"',
-					terminate ? 'fillcolor="lightblue"' : 'fillcolor="white"',
+					fillColor,
 					'shape=box',
 					'penwidth=.6',
 					'width=0',
@@ -259,7 +281,7 @@ define('flow_diags', exports, function (exports) {
 				result += quote(path) + formatAttributes(attributes);
 			}
 									
-			function visitSubflow(subflow) {
+			function visitSubflow(subflow, subflowPath) {
 				function visitSubflowRecursive(id, path, spec) {					
 					if (spec && typeof spec === 'object') {
 						addSubflowNode(id, path);						
@@ -275,11 +297,11 @@ define('flow_diags', exports, function (exports) {
 					}
 				}
 				
-				subflowStart(subflow.path, subflow.id);
+				subflowStart(subflowPath, subflow.id);
 								
 				var spec = subflow.spec;
 				delete spec.type;
-				visitSubflowRecursive(subflow.id, subflow.path, spec);
+				visitSubflowRecursive(subflow.id, subflowPath, spec);
 				
 				subflowFinish();				
 			}
@@ -302,7 +324,7 @@ define('flow_diags', exports, function (exports) {
 					
 					if (node.subflows) {
 						node.subflows.forEach(function (id, subflow) {
-							visitSubflow(subflow);
+							visitSubflow(subflow, node.path + '.' + id);
 						});
 					}					
 

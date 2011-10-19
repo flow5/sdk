@@ -40,7 +40,7 @@
 				Utils.post('dot2svg', flow.toDOT(), function (response) {
 					function makeClick(el) {
 						el.onclick = function () {	
-							var parts = el.id.replace('xx', '').split('.');
+							var parts = el.id.split('.');
 							var path = parts[0];
 							var id = parts[1];
 
@@ -58,8 +58,8 @@
 						document.getElementById('graph1').querySelector('polygon').setAttribute('fill', 'darkslategray');
 						document.getElementById('graph1').querySelector('polygon').setAttribute('stroke', '');
 
-						// the clickable elements have id with xx prefix
-						var clickable = document.querySelectorAll('[id*=xx]');
+						// the clickable elements have id with / prefix
+						var clickable = document.querySelectorAll('[id^="/"]');
 						for (var i = 0; i < clickable.length; i += 1) {
 							makeClick(clickable[i]);
 						}

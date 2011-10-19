@@ -104,41 +104,51 @@ define('flowcontroller', exports, function (exports) {
 		};	
 		
 		this.doSubflowPrompt = function () {
-			Utils.assert(this.activeSubflow, 'No active subflow');
-			console.log(this.activeSubflow.id);
-			this.activeSubflow.spec.forEach(function (id, subflowSpec) {
+			Utils.assert(flow.activeSubflow, 'No active subflow');
+			console.log(flow.activeSubflow.id);
+			flow.activeSubflow.spec.forEach(function (id, subflowSpec) {
 				console.log('* ' + id);
 			});
 		};
 		
 		this.doSubflowChoice = function (id) {
-			Utils.assert(this.activeSubflow, 'No active subflow');
-			Utils.assert(this.activeSubflow.spec.hasOwnProperty(id), 'No such choice');
+			Utils.assert(flow.activeSubflow, 'No active subflow');
+			Utils.assert(flow.activeSubflow.spec.hasOwnProperty(id), 'No such choice');
 			
-			var spec = this.activeSubflow.spec[id];
-			if (typeof spec === 'object') {
-				this.activeSubflow = {node: this.activeSubflow.node, id: id, spec: spec};				
+			var spec = flow.activeSubflow.spec[id];
+			if (spec && typeof spec === 'object') {
+				flow.activeSubflow = {node: flow.activeSubflow.node, 
+										id: id, 
+										spec: spec, 
+										path: flow.activeSubflow.path + '.' + id};				
 			} else {
-				var subflow = this.activeSubflow;
-				this.activeSubflow = null;
+				var subflow = flow.activeSubflow;
+				flow.activeSubflow = null;
 				// TODO: should use node controller method
-				this.doTransition(subflow.node, spec);
+				// null spec means just end the subflow
+				if (spec) {
+					this.doTransition(subflow.node, spec);					
+				}
 			}
-			if (this.activeSubflow) {
+			if (flow.activeSubflow) {
 				this.doSubflowPrompt();
 			} else {
 				console.log('subflow complete');
 			}
+			
+			observerCb(this, flow);			
 		};	
 		
 		// callback?
 		this.doSubflow = function (node, id) {
 			Utils.assert(isActive(node), 'Attempt to execute subflow from an inactive node');	
 			Utils.assert(node.subflows && node.subflows[id], 'No such subflow');
-			Utils.assert(!this.activeSubflow, 'Subflow already in progress');
+			Utils.assert(!flow.activeSubflow, 'Subflow already in progress');
 			
-			this.activeSubflow = {node: node, id: id, spec: node.subflows[id].spec};
+			flow.activeSubflow = {node: node, id: id, spec: node.subflows[id].spec, path: node.path + '.' + id};
 			this.doSubflowPrompt();
+			
+			observerCb(this, flow);			
 		};
 	}	
 	

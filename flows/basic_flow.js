@@ -56,19 +56,20 @@ define('basic_flow', exports, function (exports) {
 					goSomewhere: {
 						type: 'subflow',
 						pickWhere: {
-							middle: 'goToMiddle',
-							done: 'beDone'											
+							goToMiddle: 'goToMiddle',
+							beDone: 'beDone'											
 						},
 						cancel: null										
 					},
-					goSomewhereElse: {
+					goSomewhere2: {
 						type: 'subflow',
 						pickWhere: {
-							middle: 'goToMiddle',
-							done: 'beDone'											
+							goToMiddle: 'goToMiddle',
+							beDone: 'beDone'											
 						},
 						cancel: null										
-					}																		
+					}
+					
 				},
 				type: 'selector',
 				active: 'a',
@@ -88,7 +89,8 @@ define('basic_flow', exports, function (exports) {
 									}
 								},
 								subflows: {
-									goSomewhere: 'goSomewhere'
+									goSomewhere: 'goSomewhere',
+									goSomewhere2: 'goSomewhere'
 								}
 							},
 							middle: 'middle',

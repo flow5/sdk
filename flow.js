@@ -33,6 +33,8 @@ define('flow', exports, function (exports) {
 	function Flow() {
 
 		var that = this;
+		
+		that.activeSubflow = null;
 						
 		that.getNode = function (path) {
 			function getChildRecursive(node, components) {
