@@ -115,8 +115,20 @@ define('flow_diags', exports, function (exports) {
 				return node.type;
 			}
 			
-			var activeColorAttribute = 'fillcolor="lightblue"';
-			var inactiveColorAttribute = 'fillcolor="grey"';
+			function activeColorAttribute(attr) {
+				var colors = {
+					color: '="blue"',
+					fillcolor: '="lightblue"'
+				};
+				return attr + colors[attr];
+			}
+			function inactiveColorAttribute(attr) {
+				var colors = {
+					color: '="grey"',
+					fillcolor: '="grey"'
+				};
+				return attr + colors[attr];
+			}
 						
 			function getActiveNodeStyle(node) {
 				var nodeActive = node.active;
@@ -151,9 +163,11 @@ define('flow_diags', exports, function (exports) {
 			function addSelectionButton(node, parent, id) {
 				var fillColor;
 				if (that.isNodePathActive(parent) && !that.activeSubflow && !node.active) {
-					fillColor = activeColorAttribute
+					fillColor = activeColorAttribute('fillcolor');
+					color = activeColorAttribute('color');					
 				} else {
-					fillColor = inactiveColorAttribute
+					fillColor = inactiveColorAttribute('fillcolor');
+					color = inactiveColorAttribute('color');					
 				}				
 				var idAttribute = 'id=' + quote(parent.path + '.' + id + '-doSelection');
 				var attributes = [
@@ -165,6 +179,7 @@ define('flow_diags', exports, function (exports) {
 					'height=0',
 					'fontsize=10',
 					fillColor,
+					color,
 					idAttribute
 				];				
 				
@@ -174,9 +189,11 @@ define('flow_diags', exports, function (exports) {
 			function addBackButton() {
 				var fillColor;
 				if (that.controller.canGoBack()) {
-					fillColor = activeColorAttribute;
+					fillColor = activeColorAttribute('fillcolor');
+					color = activeColorAttribute('color');
 				} else {
-					fillColor = inactiveColorAttribute;
+					fillColor = inactiveColorAttribute('fillcolor');
+					color = inactiveColorAttribute('color');
 				}				
 				var attributes = [
 					makeLabel('Back'),
@@ -187,18 +204,21 @@ define('flow_diags', exports, function (exports) {
 					'height=0',
 					'fontsize=10',
 					'id="back-button"',
-					fillColor					
+					fillColor,
+					color				
 				];				
 				
 				result += quote('back-button') + formatAttributes(attributes);
 			}			
 			
 			function addTransitionSource(source, node) {
-				var fillColor;
+				var fillColor, color;
 				if (that.isNodePathActive(node) && !that.activeSubflow) {
-					fillColor = activeColorAttribute;
+					fillColor = activeColorAttribute('fillcolor');
+					color = activeColorAttribute('color');
 				} else {
-					fillColor = inactiveColorAttribute;
+					fillColor = inactiveColorAttribute('fillcolor');
+					color = inactiveColorAttribute('color');
 				}
 				
 				// height=0 and width=0 makes the box just accomodate the text				
@@ -210,6 +230,7 @@ define('flow_diags', exports, function (exports) {
 					'margin="0.1,0.0"',
 					'penwidth=0.6',
 					fillColor,
+					color,					
 					'shape=box', 
 					'height=0', 
 					'width=1.25',
@@ -268,9 +289,9 @@ define('flow_diags', exports, function (exports) {
 				// TODO: this can do the wrong thing if the name of one subflow
 				// is a substring of another one
 				if (that.activeSubflow && that.activeSubflow.path.match(path)) {
-					fillColor = 'fillcolor="green"';
+					fillColor = 'fillcolor="lightskyblue"'
 				} else {
-					fillColor = inactiveColorAttribute;
+					fillColor = inactiveColorAttribute('fillcolor');
 				}
 				
 				var attributes = [
@@ -304,14 +325,17 @@ define('flow_diags', exports, function (exports) {
 					return that.activeSubflow && isNextChoice() || !that.activeSubflow && isFirstChoice();
 				}				
 				
-				var fillColor;
+				var fillColor, color;
 				
 				if (that.activeSubflow && path === that.activeSubflow.path) {
 					fillColor = 'fillcolor="dodgerblue"';
+					color = 'fillcolor="dodgerblue"';
 				} else if (that.isNodePathActive(node) && isSubflowAvailable()) {
-					fillColor = activeColorAttribute;						
+					fillColor = activeColorAttribute('fillcolor');	
+					color = activeColorAttribute('color');	
 				} else {
-					fillColor = inactiveColorAttribute;
+					fillColor = inactiveColorAttribute('fillcolor');
+					color = inactiveColorAttribute('fillcolor');
 				}
 				var idAttribute;
 				if (path.split('.').length > 2) {
@@ -325,6 +349,7 @@ define('flow_diags', exports, function (exports) {
 					'fontname="courier new"',
 					'style="filled"',
 					fillColor,
+					color,
 					'shape=box',
 					'penwidth=.6',
 					'width=0',
