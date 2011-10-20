@@ -218,7 +218,7 @@ define('flow_diags', exports, function (exports) {
 					color = activeColorAttribute('color');
 				} else {
 					fillColor = inactiveColorAttribute('fillcolor');
-					color = inactiveColorAttribute('color');
+					color = 'color="black"';
 				}
 				
 				// height=0 and width=0 makes the box just accomodate the text				
