@@ -134,7 +134,7 @@ define('flow_diags', exports, function (exports) {
 				var nodeActive = node.active;
 				var pathActive = that.isNodePathActive(node);
 				
-				if (that.activeSubflow) {
+				if (that.isSubflowActive(node)) {
 					pathActive = false;
 					nodeActive = false;
 				}
@@ -162,7 +162,7 @@ define('flow_diags', exports, function (exports) {
 
 			function addSelectionButton(node, parent, id) {
 				var fillColor, color;
-				if (that.isNodePathActive(parent) && !that.activeSubflow && !node.active) {
+				if (that.isNodePathActive(parent) && !that.isSubflowActive(parent) && !node.active) {
 					fillColor = activeColorAttribute('fillcolor');
 					color = activeColorAttribute('color');					
 				} else {
@@ -213,7 +213,7 @@ define('flow_diags', exports, function (exports) {
 			
 			function addTransitionSource(source, node) {
 				var fillColor, color;
-				if (that.isNodePathActive(node) && !that.activeSubflow) {
+				if (that.isNodePathActive(node) && !that.isSubflowActive(node)) {
 					fillColor = activeColorAttribute('fillcolor');
 					color = activeColorAttribute('color');
 				} else {
@@ -284,11 +284,11 @@ define('flow_diags', exports, function (exports) {
 				result += '}';
 			}
 			
-			function subflowStart(path, id) {
+			function subflowStart(node, path, id) {
 				var fillColor;
 				// TODO: this can do the wrong thing if the name of one subflow
 				// is a substring of another one
-				if (that.activeSubflow && that.activeSubflow.path.match(path)) {
+				if (that.isNodePathActive(node) && node.activeSubflow && node.activeSubflow.path.match(path)) {
 					fillColor = 'fillcolor="lightskyblue"';
 				} else {
 					fillColor = inactiveColorAttribute('fillcolor');
@@ -317,12 +317,10 @@ define('flow_diags', exports, function (exports) {
 				// TODO: this logic fails if a subflow has more than one node with the same name
 				function isSubflowAvailable() {
 					function isSubflowStart() {	
-						return !that.activeSubflow && node.subflows[id];					
+						return !node.activeSubflow && node.subflows[id];					
 					}
 					function isCurrentSubflowChoice() {
-						return that.activeSubflow &&
-								that.activeSubflow.node === node && 
-								that.activeSubflow.spec.hasOwnProperty(id);
+						return node.activeSubflow && node.activeSubflow.spec.hasOwnProperty(id);
 					}
 					
 					return that.isNodePathActive(node) && (isSubflowStart() || isCurrentSubflowChoice());
@@ -378,7 +376,7 @@ define('flow_diags', exports, function (exports) {
 					}
 				}
 				
-				subflowStart(subflowPath, subflow.id);
+				subflowStart(node, subflowPath, subflow.id);
 								
 				var spec = subflow.spec;
 				delete spec.type;

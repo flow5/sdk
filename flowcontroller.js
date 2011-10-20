@@ -37,9 +37,9 @@ define('flowcontroller', exports, function (exports) {
 		flow.controller = this;
 		
 		// TODO: move this to debug layer
-		function doSubflowPrompt() {
-			console.log(flow.activeSubflow.id);
-			flow.activeSubflow.spec.forEach(function (id, subflowSpec) {
+		function doSubflowPrompt(node) {
+			console.log(node.activeSubflow.id);
+			node.activeSubflow.spec.forEach(function (id, subflowSpec) {
 				console.log('* ' + id);
 			});
 		}		
@@ -48,9 +48,11 @@ define('flowcontroller', exports, function (exports) {
 			function doOnActiveSubflowsRecursive(node, cb) {
 				if (node) {
 					if (node.subflows && node.subflows.onactivate) {
-						that.doSubflow(node, 'onactivate', function () {
-							doOnActiveSubflowsRecursive(node.activeChild, cb);
-						});
+						if (!node.activeSubflow) {
+							that.doSubflow(node, 'onactivate', function () {
+								doOnActiveSubflowsRecursive(node.activeChild, cb);
+							});							
+						}
 					} else {
 						doOnActiveSubflowsRecursive(node.activeChild, cb);
 					}				
@@ -77,7 +79,7 @@ define('flowcontroller', exports, function (exports) {
 		// select the child of node with the given id
 		this.doSelection = function (node, id) {		
 			Utils.assert(flow.isNodePathActive(node), 'Attempt to select on an inactive node');	
-			Utils.assert(!flow.activeSubflow, 'Cannot select with a subflow active');				
+			Utils.assert(!flow.isSubflowActive(node), 'Cannot select with a subflow active');				
 			Utils.assert(node.type === 'selector', 'Can only select on node of type selector');
 			Utils.assert(node.children[id], 'No child with id: ' + id);
 			
@@ -98,7 +100,8 @@ define('flowcontroller', exports, function (exports) {
 		// NOTE: parameters are specified in the flowgraph
 		this.doTransition = function (node, id) {
 			Utils.assert(flow.isNodePathActive(node), 'Attempt to transition from an inactive node');
-			Utils.assert(!flow.activeSubflow, 'Cannot transition with a subflow active');	
+			Utils.assert(!flow.isSubflowActive(node), 'Cannot transition with a subflow active');	
+			Utils.assert(id === 'back' || node.transitions, 'No transitions defined for node: ' + node.path);
 			Utils.assert(id === 'back' || node.transitions[id], 'No transition with id: ' + id);
 
 			var container;
@@ -139,54 +142,46 @@ define('flowcontroller', exports, function (exports) {
 			observerCb(this, flow);			
 		};	
 		
-		// no args prompts
 		this.doSubflowChoice = function (node, id) {			
-			Utils.assert(flow.activeSubflow, 'No active subflow');
-
-			if (!node) {
-				doSubflowPrompt();
-			} else {
-				flow.activeSubflow.cb(node, id);						
-			}												
+			Utils.assert(node.activeSubflow, 'No active subflow');
+			node.activeSubflow.cb(node, id);						
 		};	
 		
 		this.doSubflow = function (node, id, cb) {
 			Utils.assert(flow.isNodePathActive(node), 'Attempt to execute subflow from an inactive node');	
 			Utils.assert(node.subflows && node.subflows[id], 'No such subflow');
-			Utils.assert(!flow.activeSubflow, 'Subflow already in progress');
+			Utils.assert(!flow.isSubflowActive(node), 'Subflow already in progress');
 			
-			flow.activeSubflow = {node: node, id: id, spec: node.subflows[id].spec, path: node.path + '.' + id};
+			node.activeSubflow = {node: node, id: id, spec: node.subflows[id].spec, path: node.path + '.' + id};
 			
 			function doSubflowChoice(node, id) {												
-				Utils.assert(flow.activeSubflow.spec.hasOwnProperty(id), 'No such choice');			
-				Utils.assert(node === flow.activeSubflow.node, 'Wrong node for current subflow');
+				Utils.assert(node.activeSubflow.spec.hasOwnProperty(id), 'No such choice');			
 				
-				delete flow.activeSubflow.cb;
+				delete node.activeSubflow.cb;
 								
-				var spec = flow.activeSubflow.spec[id];
+				var spec = node.activeSubflow.spec[id];
 				if (spec && typeof spec === 'object') {
-					flow.activeSubflow = {node: flow.activeSubflow.node, 
-											id: id, 
-											spec: spec, 
-											path: flow.activeSubflow.path + '.' + id};				
+					node.activeSubflow = {id: id, 
+										  spec: spec, 
+										  path: node.activeSubflow.path + '.' + id};
+												
 				} else {
-					var subflow = flow.activeSubflow;
-					flow.activeSubflow = null;
+					node.activeSubflow = null;
 					// TODO: should use node controller method
 					// null spec means just end the subflow
 					// TODO: could always delegate up to the controller
 					// rather than hard code the semantics, but then there's
 					// redundant code since often it's just a transition
 					if (spec) {
-						that.doTransition(subflow.node, spec);					
+						that.doTransition(node, spec);					
 					}
 				}
 				
 				observerCb(that, flow);
 											
-				if (flow.activeSubflow) {
-					flow.activeSubflow.cb = doSubflowChoice;
-					doSubflowPrompt();
+				if (node.activeSubflow) {
+					node.activeSubflow.cb = doSubflowChoice;
+					doSubflowPrompt(node);
 				} else {
 					console.log('subflow complete');
 					// TODO: I think this will be required
@@ -196,8 +191,8 @@ define('flowcontroller', exports, function (exports) {
 				}	
 			}
 			
-			flow.activeSubflow.cb = doSubflowChoice;
-			doSubflowPrompt();								
+			node.activeSubflow.cb = doSubflowChoice;
+			doSubflowPrompt(node);								
 
 			observerCb(that, flow);	
 		};
@@ -225,10 +220,10 @@ define('flowcontroller', exports, function (exports) {
 			return findBackNode();
 		};
 		
-		this.doBack = function () {
-			Utils.assert(!flow.activeSubflow, 'Cannot go back with a subflow active');				
-			
+		this.doBack = function () {			
 			var backNode = findBackNode();
+			
+			Utils.assert(!flow.isSubflowActive(backNode), 'Cannot go back with a subflow active');							
 			
 			Utils.assert(backNode, 'Cannot go back');
 
@@ -253,6 +248,10 @@ For subflows and invocations the controller will delegate to client provided del
 Flow controller also manages transition state. e.g. during an async operation, the flow controller will 
 indicate that there is a transition underway to lock out further operations
 
+subflow rules:
+	can select away from a node that contains an active subflow
+	can't select or transition away from a node that has an ancestor with an active subflow
+	
 
 
 */

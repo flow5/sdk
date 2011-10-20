@@ -87,7 +87,18 @@ define('jitc_flow', exports, function (exports) {
 						}
 					},
 					account: {
-						
+						type: 'flow',
+						subflows: {
+							onactivate: {
+								signedin: null,
+								notsignedin: 'signin'
+							}
+						},	
+						transitions: {
+							signin: {
+								to: 'signin'
+							}
+						}					
 					},
 					directory: {
 						

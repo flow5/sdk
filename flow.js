@@ -34,8 +34,6 @@ define('flow', exports, function (exports) {
 
 		var that = this;
 		
-		that.activeSubflow = null;
-						
 		that.getNode = function (path) {
 			function getChildRecursive(node, components) {
 				if (components.length) {
@@ -58,6 +56,13 @@ define('flow', exports, function (exports) {
 			}
 			return active;
 		};	
+		
+		this.isSubflowActive = function (node) {
+			while (!node.activeSubflow && node.parent) {
+				node = node.parent;
+			}
+			return node.activeSubflow;
+		};
 				
 		// NOTE: in debug builds, validateSpec is called first. 
 			// So this function does not need to do error checking
