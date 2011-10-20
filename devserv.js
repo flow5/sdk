@@ -31,8 +31,11 @@ var http = require('http'),
 	path = require('path'),
 	paperboy = require('paperboy'),
 	exec = require('child_process').exec,	 
-	spawn = require('child_process').spawn,	 
+	spawn = require('child_process').spawn,	
 	sys = require('sys');
+
+/*global Iuppiter*/
+require('./Iuppiter.js');
 	
 var WEBROOT = path.dirname(__filename);	
 
@@ -46,11 +49,15 @@ cli.parse({
 function dot2svg(req, res) {
 		
 	var child = spawn('dot', ['-Tsvg']);		
+
+	req.buffer = '';
 	
 	req.on('data', function (chunk) {
-		child.stdin.write(chunk);
+		req.buffer += chunk;
+//		child.stdin.write(chunk);
 	});	
 	req.on('end', function () {
+		child.stdin.write(Iuppiter.decompress(Iuppiter.Base64.decode(Iuppiter.toByteArray(req.buffer))));
 		child.stdin.end();
 	});
 	

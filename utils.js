@@ -66,7 +66,9 @@ define('utils', exports, function (exports) {
 		// TODO: build test case. need something that takes a long time right after send, and then
 		// some queued events
 		setTimeout(function () {
-			xhr.send(body);
+			/*global Iuppiter*/
+			var compressed = Iuppiter.Base64.encode(Iuppiter.compress(body));
+			xhr.send(compressed);
 		}, 0);		
 	}	
 	
