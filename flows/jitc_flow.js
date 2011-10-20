@@ -13,6 +13,9 @@ define('jitc_flow', exports, function (exports) {
 	exports.root = {
 		type: 'flow',
 		activeChild: 'splashScreen',
+		templates: {
+		
+		},
 		children: {
 			splashScreen: {
 				type: 'flow',
@@ -45,7 +48,8 @@ define('jitc_flow', exports, function (exports) {
 							share: {
 								email: null,
 								tweet: null,
-								like: null
+								like: null,
+								cancel: null
 							}
 						},
 						transitions: {
@@ -94,13 +98,13 @@ define('jitc_flow', exports, function (exports) {
 				type: 'flow',
 				subflows: {
 					onactivate: {
-						signedin: {
-							submitInfo: {
-								error: null,
-								showConfirmation: 'back'
-							}
-						},
-						notsignedin: 'signin'						
+						signedin: null,
+						notsignedin: 'signin',
+						cancelledSignin: 'back'						
+					},
+					submitInfo: {
+						error: null,
+						showConfirmation: 'back'
 					}
 				},
 				transitions: {
@@ -110,8 +114,13 @@ define('jitc_flow', exports, function (exports) {
 				}
 			},
 			signin: {
-				
-			}			
+				subflows: {
+					submitCredentials: {
+						ok: 'back',
+						error: null
+					}					
+				}
+			}						
 		}					
 	};
 });

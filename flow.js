@@ -62,7 +62,7 @@ define('flow', exports, function (exports) {
 		// NOTE: in debug builds, validateSpec is called first. 
 			// So this function does not need to do error checking
 		that.injectGraph = function (graphSpec) {
-			
+						
 			function getPath(node) {
 				var path = [];
 				while (node) {
@@ -123,7 +123,7 @@ define('flow', exports, function (exports) {
 				if (nodeSpec.subflows) {
 					node.subflows = {};
 					nodeSpec.subflows.forEach(function (id, subflowSpec) {
-						node.subflows[id] = {id: id, type: 'subflow', spec: resolveSpec(node, subflowSpec)};
+						node.subflows[id] = {id: id, type: 'subflow', spec: subflowSpec};
 					});
 				}
 												
@@ -132,7 +132,7 @@ define('flow', exports, function (exports) {
 				}
 								
 				return node;
-			}			
+			}	
 						
 			function resolveTransitionsRecursive(node) {				
 				

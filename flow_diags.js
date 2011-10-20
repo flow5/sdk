@@ -112,7 +112,7 @@ define('flow_diags', exports, function (exports) {
 			
 			function isCluster(node) {
 				// all but leaf nodes which don't specify type
-				return node.type || node.parent.type === 'selector';
+				return node.type || node.parent.type === 'selector' || node.subflows;
 			}
 			
 			function activeColorAttribute(attr) {
