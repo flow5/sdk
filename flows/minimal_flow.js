@@ -29,7 +29,7 @@
 define('minimal_flow', exports, function (exports) {	
 	exports.root = {
 		type: 'flow',
-		active: 'home',
+		activeChild: 'home',
 		children: {
 			home: {
 			}

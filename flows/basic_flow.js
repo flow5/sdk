@@ -30,7 +30,7 @@ define('basic_flow', exports, function (exports) {
 	
 	exports.root = {
 		type: 'flow',
-		active: 'home',
+		activeChild: 'home',
 		templates: {
 			done: {
 			}
@@ -38,10 +38,16 @@ define('basic_flow', exports, function (exports) {
 		children: {	
 			done: 'done',
 			home: {
+				subflows: {
+					onactivate: {
+						yes: null,
+						no: null,
+					},
+				},
 				templates: {
 					middle: {
 						type: 'flow',
-						active: 'middleStart',
+						activeChild: 'middleStart',
 						children: {
 							middleStart: {
 								type: 'flow',
@@ -63,11 +69,11 @@ define('basic_flow', exports, function (exports) {
 					}
 				},
 				type: 'selector',
-				active: 'a',
+				activeChild: 'a',
 				children: {			
 					a: {
 						type: 'flow',
-						active: 'start',
+						activeChild: 'start',
 						children: {
 							start: {
 								type: 'flow',
@@ -80,6 +86,10 @@ define('basic_flow', exports, function (exports) {
 									}
 								},
 								subflows: {
+									onactivate: {
+										yes: null,
+										no: null,
+									},
 									goSomewhere: 'goSomewhere'
 								}
 							},
@@ -90,7 +100,7 @@ define('basic_flow', exports, function (exports) {
 					},
 					b: {
 						type: 'flow',
-						active: 'start',
+						activeChild: 'start',
 						children: {
 							start: {
 								type: 'flow',

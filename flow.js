@@ -102,14 +102,19 @@ define('flow', exports, function (exports) {
 			}
 						
 			function injectNodeRecursive(id, nodeSpec, parent) {										
-				var node = {id: id, type: nodeSpec.type, parent: parent, spec: nodeSpec, active: false};
+				var node = {id: id, 
+							type: nodeSpec.type, 
+							parent: parent, 
+							spec: nodeSpec, 
+							active: false};
 								
 				if (nodeSpec.children) {
 					node.children = {};
-					Utils.assert(nodeSpec.active, 'Parent nodes must declare their active child');
+					Utils.assert(nodeSpec.activeChild, 'Parent nodes must declare their active child');
 					nodeSpec.children.forEach(function (id, childSpec) {
 						var child = injectNodeRecursive(id, resolveSpec(node, childSpec), node);
-						if (id === nodeSpec.active) {
+						if (id === nodeSpec.activeChild) {
+							node.activeChild = child;
 							child.active = true;
 						}
 					});					

@@ -314,23 +314,22 @@ define('flow_diags', exports, function (exports) {
 			}
 			
 			function addSubflowNode(id, path, node) {
+				// TODO: this logic fails if a subflow has more than one node with the same name
 				function isSubflowAvailable() {
-					function isFirstChoice() {						
-						return path.split('.').length === 2;
+					function isSubflowStart() {	
+						return !that.activeSubflow && node.subflows[id];					
 					}
-					function isNextChoice() {
-						return that.activeSubflow.spec.hasOwnProperty(id);
+					function isCurrentSubflowChoice() {
+						return that.activeSubflow &&
+								that.activeSubflow.node === node && 
+								that.activeSubflow.spec.hasOwnProperty(id);
 					}
 					
-					return that.activeSubflow && isNextChoice() || !that.activeSubflow && isFirstChoice();
+					return that.isNodePathActive(node) && (isSubflowStart() || isCurrentSubflowChoice());
 				}				
 				
-				var fillColor, color;
-				
-				if (that.activeSubflow && path === that.activeSubflow.path) {
-					fillColor = 'fillcolor="dodgerblue"';
-					color = 'fillcolor="dodgerblue"';
-				} else if (that.isNodePathActive(node) && isSubflowAvailable()) {
+				var fillColor, color;				
+				if (isSubflowAvailable()) {
 					fillColor = activeColorAttribute('fillcolor');	
 					color = activeColorAttribute('color');	
 				} else {

@@ -32,9 +32,45 @@ define('flowcontroller', exports, function (exports) {
 			
 	function FlowController(flow, observerCb) {
 				
+		var that = this;
+				
 		flow.controller = this;
 		
-		this.start = function () {
+		// TODO: move this to debug layer
+		function doSubflowPrompt() {
+			console.log(flow.activeSubflow.id);
+			flow.activeSubflow.spec.forEach(function (id, subflowSpec) {
+				console.log('* ' + id);
+			});
+		}		
+				
+		function activateNode(node, cb) {
+			function doOnActiveSubflowsRecursive(node, cb) {
+				if (node) {
+					if (node.subflows && node.subflows.onactivate) {
+						that.doSubflow(node, 'onactivate', function () {
+							doOnActiveSubflowsRecursive(node.activeChild, cb);
+						});
+					} else {
+						doOnActiveSubflowsRecursive(node.activeChild, cb);
+					}				
+				} else {
+					cb();
+				}		
+			}
+						
+			node.active = true;
+			doOnActiveSubflowsRecursive(node, function () {
+				console.log('activated');
+			});
+		}
+	
+		// cb?
+		this.start = function () {						
+			activateNode(flow.root, function () {
+				
+			});
+						
 			observerCb(this, flow);
 		};
 		
@@ -48,7 +84,12 @@ define('flowcontroller', exports, function (exports) {
 			node.children.forEach(function (id, child) {
 				child.active = false;
 			});
-			node.children[id].active = true;
+			node.activeChild = node.children[id];
+			
+			activateNode(node.activeChild, function () {
+				// TODO: does this delay the selection?
+				// I don't think so.
+			});
 			
 			observerCb(this, flow);
 		};
@@ -75,95 +116,98 @@ define('flowcontroller', exports, function (exports) {
 			
 			Utils.assert(container.type === 'flow', 'Transition container is not a flow. Why?');
 									
-			var newActiveChild;			
-			if (id === 'back') {
-				newActiveChild = container.children[node.back];
-				delete node.back;
-			} else {
-				newActiveChild = node.transitions[id];
-				// find the correct back target
-				var find = node;
-				while (find.parent !== container) {
-					find = find.parent;
-				}
-				newActiveChild.back = find.id;
-			}
-			
 			container.children.forEach(function (id, child) {
 				child.active = false;
-			});
-			
-			newActiveChild.active = true;
-			
+			});									
+			if (id === 'back') {
+				container.activeChild = node.back;
+				delete node.back;
+			} else {
+				container.activeChild = node.transitions[id];
+				// find the correct back target
+				var back = node;
+				while (back.parent !== container) {
+					back = back.parent;
+				}
+				container.activeChild.back = back;
+			}			
+			activateNode(container.activeChild, function () {
+				// TODO: does this delay the selection?
+				// I don't think so
+			});			
 
 			observerCb(this, flow);			
 		};	
 		
-		// TODO: MOVE TO DEBUG LAYER
-		this.doSubflowPrompt = function () {
+		// no args prompts
+		this.doSubflowChoice = function (node, id) {			
 			Utils.assert(flow.activeSubflow, 'No active subflow');
-			console.log(flow.activeSubflow.id);
-			flow.activeSubflow.spec.forEach(function (id, subflowSpec) {
-				console.log('* ' + id);
-			});
-		};
-		
-		// move on to the next stage of the subflow
-		this.doSubflowChoice = function (node, id) {
-			Utils.assert(flow.activeSubflow, 'No active subflow');
-			Utils.assert(flow.activeSubflow.spec.hasOwnProperty(id), 'No such choice');
-			Utils.assert(node === flow.activeSubflow.node, 'Wrong node for current subflow');
-			
-			var spec = flow.activeSubflow.spec[id];
-			if (spec && typeof spec === 'object') {
-				flow.activeSubflow = {node: flow.activeSubflow.node, 
-										id: id, 
-										spec: spec, 
-										path: flow.activeSubflow.path + '.' + id};				
+
+			if (!node) {
+				doSubflowPrompt();
 			} else {
-				var subflow = flow.activeSubflow;
-				flow.activeSubflow = null;
-				// TODO: should use node controller method
-				// null spec means just end the subflow
-				if (spec) {
-					this.doTransition(subflow.node, spec);					
-				}
-			}
-			if (flow.activeSubflow) {
-				this.doSubflowPrompt();
-			} else {
-				console.log('subflow complete');
-			}
-			
-			observerCb(this, flow);			
+				flow.activeSubflow.cb(node, id);						
+			}												
 		};	
 		
-		this.doSubflow = function (node, id) {
+		this.doSubflow = function (node, id, cb) {
 			Utils.assert(flow.isNodePathActive(node), 'Attempt to execute subflow from an inactive node');	
 			Utils.assert(node.subflows && node.subflows[id], 'No such subflow');
 			Utils.assert(!flow.activeSubflow, 'Subflow already in progress');
 			
 			flow.activeSubflow = {node: node, id: id, spec: node.subflows[id].spec, path: node.path + '.' + id};
-			this.doSubflowPrompt();
 			
-			observerCb(this, flow);			
+			function doSubflowChoice(node, id) {												
+				Utils.assert(flow.activeSubflow.spec.hasOwnProperty(id), 'No such choice');			
+				Utils.assert(node === flow.activeSubflow.node, 'Wrong node for current subflow');
+				
+				delete flow.activeSubflow.cb;
+								
+				var spec = flow.activeSubflow.spec[id];
+				if (spec && typeof spec === 'object') {
+					flow.activeSubflow = {node: flow.activeSubflow.node, 
+											id: id, 
+											spec: spec, 
+											path: flow.activeSubflow.path + '.' + id};				
+				} else {
+					var subflow = flow.activeSubflow;
+					flow.activeSubflow = null;
+					// TODO: should use node controller method
+					// null spec means just end the subflow
+					// TODO: could always delegate up to the controller
+					// rather than hard code the semantics, but then there's
+					// redundant code since often it's just a transition
+					if (spec) {
+						that.doTransition(subflow.node, spec);					
+					}
+				}
+				
+				observerCb(that, flow);
+											
+				if (flow.activeSubflow) {
+					flow.activeSubflow.cb = doSubflowChoice;
+					doSubflowPrompt();
+				} else {
+					console.log('subflow complete');
+					// TODO: I think this will be required
+					if (cb) {
+						cb();
+					}
+				}	
+			}
+			
+			flow.activeSubflow.cb = doSubflowChoice;
+			doSubflowPrompt();								
+
+			observerCb(that, flow);	
 		};
 		
 		// find an active leaf node
 		// then climb up the stack for the first node with 'back'
 		function findBackNode() {
 			var leaf = flow.root;
-			function findActiveChild(node) {
-				var activeChild;
-				node.children.forEach(function (id, child) {
-					if (child.active) {
-						activeChild = child;
-					}
-				});
-				return activeChild;
-			}
-			while (leaf.active && leaf.children) {
-				leaf = findActiveChild(leaf);
+			while (leaf.activeChild) {
+				leaf = leaf.activeChild;
 			}
 
 			while (!leaf.back && leaf.parent) {
