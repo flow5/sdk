@@ -53,8 +53,9 @@ define('flowcontroller', exports, function (exports) {
 			observerCb(this, flow);
 		};
 				
-		// use the transition with the given id 
-		this.doTransition = function (node, id, parameters) {
+		// use the transition on the node with the given id 
+		// NOTE: parameters are specified in the flowgraph
+		this.doTransition = function (node, id) {
 			Utils.assert(flow.isNodePathActive(node), 'Attempt to transition from an inactive node');
 			Utils.assert(!flow.activeSubflow, 'Cannot transition with a subflow active');	
 			Utils.assert(id === 'back' || node.transitions[id], 'No transition with id: ' + id);
@@ -107,9 +108,11 @@ define('flowcontroller', exports, function (exports) {
 			});
 		};
 		
+		// move on to the next stage of the subflow
 		this.doSubflowChoice = function (node, id) {
 			Utils.assert(flow.activeSubflow, 'No active subflow');
 			Utils.assert(flow.activeSubflow.spec.hasOwnProperty(id), 'No such choice');
+			Utils.assert(node === flow.activeSubflow.node, 'Wrong node for current subflow');
 			
 			var spec = flow.activeSubflow.spec[id];
 			if (spec && typeof spec === 'object') {
@@ -135,7 +138,6 @@ define('flowcontroller', exports, function (exports) {
 			observerCb(this, flow);			
 		};	
 		
-		// callback?
 		this.doSubflow = function (node, id) {
 			Utils.assert(flow.isNodePathActive(node), 'Attempt to execute subflow from an inactive node');	
 			Utils.assert(node.subflows && node.subflows[id], 'No such subflow');
@@ -147,9 +149,9 @@ define('flowcontroller', exports, function (exports) {
 			observerCb(this, flow);			
 		};
 		
+		// find an active leaf node
+		// then climb up the stack for the first node with 'back'
 		function findBackNode() {
-			// find an active leaf node
-			// then look for the first node with 'back' set
 			var leaf = flow.root;
 			function findActiveChild(node) {
 				var activeChild;
@@ -175,7 +177,7 @@ define('flowcontroller', exports, function (exports) {
 			}
 		}
 		
-		this.canGoBack = function () {
+		this.hasBack = function () {
 			return findBackNode();
 		};
 		

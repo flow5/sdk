@@ -161,7 +161,7 @@ define('flow_diags', exports, function (exports) {
 			}
 
 			function addSelectionButton(node, parent, id) {
-				var fillColor;
+				var fillColor, color;
 				if (that.isNodePathActive(parent) && !that.activeSubflow && !node.active) {
 					fillColor = activeColorAttribute('fillcolor');
 					color = activeColorAttribute('color');					
@@ -187,8 +187,8 @@ define('flow_diags', exports, function (exports) {
 			}
 						
 			function addBackButton() {
-				var fillColor;
-				if (that.controller.canGoBack()) {
+				var fillColor, color;
+				if (that.controller.hasBack()) {
 					fillColor = activeColorAttribute('fillcolor');
 					color = activeColorAttribute('color');
 				} else {
@@ -289,7 +289,7 @@ define('flow_diags', exports, function (exports) {
 				// TODO: this can do the wrong thing if the name of one subflow
 				// is a substring of another one
 				if (that.activeSubflow && that.activeSubflow.path.match(path)) {
-					fillColor = 'fillcolor="lightskyblue"'
+					fillColor = 'fillcolor="lightskyblue"';
 				} else {
 					fillColor = inactiveColorAttribute('fillcolor');
 				}
