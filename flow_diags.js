@@ -74,27 +74,13 @@ define('flow_diags', exports, function (exports) {
 			var that = this;
 
 			var result = '';
+			
+			// TODO: I think this can go away
 			var visited = {};					
 
 			function quote(s) {
 				return '\"' + s + '\"';
-			}
-			
-			function getAProperty(obj) {
-				for (var name in obj) {
-					if (obj.hasOwnProperty(name)) {
-						return obj[name];
-					}
-				}
-			}
-
-			function getAnId(obj) {
-				for (var name in obj) {
-					if (obj.hasOwnProperty(name)) {
-						return name;
-					}
-				}
-			}			
+			}						
 			
 			function makeLabel(s) {
 				return 'label=' + quote(s);
@@ -129,18 +115,12 @@ define('flow_diags', exports, function (exports) {
 				return node.type;
 			}
 			
-			function isPathActive(node) {
-				var pathActive = node.active;
-				while (pathActive && node.parent) {
-					node = node.parent;
-					pathActive = node.active;
-				}
-				return pathActive;
-			}
-			
-			function getActiveStyle(node) {
+			var activeColorAttribute = 'fillcolor="lightblue"';
+			var inactiveColorAttribute = 'fillcolor="grey"';
+						
+			function getActiveNodeStyle(node) {
 				var nodeActive = node.active;
-				var pathActive = isPathActive(node);
+				var pathActive = that.isNodePathActive(node);
 				
 				if (that.activeSubflow) {
 					pathActive = false;
@@ -148,15 +128,14 @@ define('flow_diags', exports, function (exports) {
 				}
 				
 				if (pathActive) {
-					return ['color="blue"', 'penwidth=2.0', 'fillcolor="white"'];
-				} else if (nodeActive) {
-					return ['color="black"', 'penwidth=1.0', 'fillcolor="darkgrey"'];
+					return ['color="blue"', 'penwidth=1.0', 'fillcolor="lightskyblue"'];
+				} else if (nodeActive) { 
+					return ['color="blue"', 'penwidth=.5', 'fillcolor="grey"'];
 				} else {
 					return ['color="black"', 'penwidth=1.0', 'fillcolor="grey"'];
 				}
 			}
-			
-			
+						
 			function addNode(node) {
 				var attributes = [
 					makeLabel(node.id),
@@ -164,17 +143,17 @@ define('flow_diags', exports, function (exports) {
 					'style="filled,rounded"',
 					'shape=box',
 					'fontsize=12',					
-				].concat(getActiveStyle(node));				
+				].concat(getActiveNodeStyle(node));				
 				
 				result += quote(node.path) + formatAttributes(attributes);
 			}
 
 			function addSelectionButton(node, parent, id) {
 				var fillColor;
-				if (isPathActive(parent) && !that.activeSubflow && !node.active) {
-					fillColor = 'fillcolor="lightblue"';
+				if (that.isNodePathActive(parent) && !that.activeSubflow && !node.active) {
+					fillColor = activeColorAttribute
 				} else {
-					fillColor = 'fillcolor="grey"';
+					fillColor = inactiveColorAttribute
 				}				
 				var idAttribute = 'id=' + quote(parent.path + '.' + id + '-doSelection');
 				var attributes = [
@@ -195,9 +174,9 @@ define('flow_diags', exports, function (exports) {
 			function addBackButton() {
 				var fillColor;
 				if (that.controller.canGoBack()) {
-					fillColor = 'fillcolor="lightblue"';
+					fillColor = activeColorAttribute;
 				} else {
-					fillColor = 'fillcolor="grey"';
+					fillColor = inactiveColorAttribute;
 				}				
 				var attributes = [
 					makeLabel('Back'),
@@ -216,10 +195,10 @@ define('flow_diags', exports, function (exports) {
 			
 			function addTransitionSource(source, node) {
 				var fillColor;
-				if (isPathActive(node) && !that.activeSubflow) {
-					fillColor = 'fillcolor="lightblue"';
+				if (that.isNodePathActive(node) && !that.activeSubflow) {
+					fillColor = activeColorAttribute;
 				} else {
-					fillColor = 'fillcolor="grey"';
+					fillColor = inactiveColorAttribute;
 				}
 				
 				// height=0 and width=0 makes the box just accomodate the text				
@@ -274,7 +253,7 @@ define('flow_diags', exports, function (exports) {
 					'fontname="courier"',
 					'fontsize=12',	
 					'bgcolor="gray"'													
-				].concat(getActiveStyle(node)).join(';');
+				].concat(getActiveNodeStyle(node)).join(';');
 
 				result += 'subgraph ' + quote(makeClusterLabel(node.path)) + ' {' + attributes;
 				result += makeLabel(node.id);
@@ -289,9 +268,9 @@ define('flow_diags', exports, function (exports) {
 				// TODO: this can do the wrong thing if the name of one subflow
 				// is a substring of another one
 				if (that.activeSubflow && that.activeSubflow.path.match(path)) {
-					fillColor = 'fillcolor="white"';
+					fillColor = 'fillcolor="green"';
 				} else {
-					fillColor = 'fillcolor="grey"';
+					fillColor = inactiveColorAttribute;
 				}
 				
 				var attributes = [
@@ -329,10 +308,10 @@ define('flow_diags', exports, function (exports) {
 				
 				if (that.activeSubflow && path === that.activeSubflow.path) {
 					fillColor = 'fillcolor="dodgerblue"';
-				} else if (isPathActive(node) && isSubflowAvailable()) {
-					fillColor = 'fillcolor="lightblue"';						
+				} else if (that.isNodePathActive(node) && isSubflowAvailable()) {
+					fillColor = activeColorAttribute;						
 				} else {
-					fillColor = 'fillcolor="grey"';
+					fillColor = inactiveColorAttribute;
 				}
 				var idAttribute;
 				if (path.split('.').length > 2) {
@@ -441,6 +420,20 @@ define('flow_diags', exports, function (exports) {
 						// in this case only the head needs the workaround since the tail
 						// is always attached to the transitionSource node
 						// see: https://mailman.research.att.com/pipermail/graphviz-interest/2010q3/007276.html
+						function getAProperty(obj) {
+							for (var name in obj) {
+								if (obj.hasOwnProperty(name)) {
+									return obj[name];
+								}
+							}
+						}
+						function getAnId(obj) {
+							for (var name in obj) {
+								if (obj.hasOwnProperty(name)) {
+									return name;
+								}
+							}
+						}						
 						var head;
 						var toPath = toNode.path;
 						if (isCluster(toNode)) {

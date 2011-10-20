@@ -33,7 +33,9 @@
 		}
 		
 		try {
+			// function is called back on each action that changes flow state
 			var flowHarness = new FlowHarness(getURLParams().flowFile, function (flowController, flow) {
+				// make these global for the console
 				theFlowController = flowController;
 				theFlow = flow;				
 				

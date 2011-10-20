@@ -49,6 +49,15 @@ define('flow', exports, function (exports) {
 			// slice(1) because paths start with '/'
 			return getChildRecursive(that.root, path.split('/').slice(1));
 		};
+		
+		this.isNodePathActive = function (node) {
+			var active = node.active;
+			while (active && node.parent) {
+				node = node.parent;
+				active = node.active;
+			}
+			return active;
+		};	
 				
 		// NOTE: in debug builds, validateSpec is called first. 
 			// So this function does not need to do error checking

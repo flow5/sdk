@@ -31,25 +31,16 @@ define('flowcontroller', exports, function (exports) {
 	var Utils = require('./utils.js');	
 			
 	function FlowController(flow, observerCb) {
-		
-		function isActive(node) {
-			var active = node.active;
-			while (active && node.parent) {
-				node = node.parent;
-				active = node.active;
-			}
-			return active;
-		}
-		
+				
 		flow.controller = this;
 		
-		this.start = function (id) {
+		this.start = function () {
 			observerCb(this, flow);
 		};
 		
 		// select the child of node with the given id
 		this.doSelection = function (node, id) {		
-			Utils.assert(isActive(node), 'Attempt to select on an inactive node');	
+			Utils.assert(flow.isNodePathActive(node), 'Attempt to select on an inactive node');	
 			Utils.assert(!flow.activeSubflow, 'Cannot select with a subflow active');				
 			Utils.assert(node.type === 'selector', 'Can only select on node of type selector');
 			Utils.assert(node.children[id], 'No child with id: ' + id);
@@ -64,7 +55,7 @@ define('flowcontroller', exports, function (exports) {
 				
 		// use the transition with the given id 
 		this.doTransition = function (node, id, parameters) {
-			Utils.assert(isActive(node), 'Attempt to transition from an inactive node');
+			Utils.assert(flow.isNodePathActive(node), 'Attempt to transition from an inactive node');
 			Utils.assert(!flow.activeSubflow, 'Cannot transition with a subflow active');	
 			Utils.assert(id === 'back' || node.transitions[id], 'No transition with id: ' + id);
 
@@ -107,6 +98,7 @@ define('flowcontroller', exports, function (exports) {
 			observerCb(this, flow);			
 		};	
 		
+		// TODO: MOVE TO DEBUG LAYER
 		this.doSubflowPrompt = function () {
 			Utils.assert(flow.activeSubflow, 'No active subflow');
 			console.log(flow.activeSubflow.id);
@@ -145,7 +137,7 @@ define('flowcontroller', exports, function (exports) {
 		
 		// callback?
 		this.doSubflow = function (node, id) {
-			Utils.assert(isActive(node), 'Attempt to execute subflow from an inactive node');	
+			Utils.assert(flow.isNodePathActive(node), 'Attempt to execute subflow from an inactive node');	
 			Utils.assert(node.subflows && node.subflows[id], 'No such subflow');
 			Utils.assert(!flow.activeSubflow, 'Subflow already in progress');
 			
