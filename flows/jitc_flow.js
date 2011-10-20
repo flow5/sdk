@@ -29,9 +29,7 @@ define('jitc_flow', exports, function (exports) {
 						'firstLaunch': {
 							'askToEnablePush': {
 								'useCurrentLocation': 'home',
-								'dontUseCurrentLocation': {
-									'useEverywhere': 'home'
-								}
+								'useEverywhere': 'home'
 							},
 						},
 						'notFirstLaunch' : 'home'
@@ -88,6 +86,7 @@ define('jitc_flow', exports, function (exports) {
 					},
 					account: {
 						type: 'flow',
+						activeChild: 'accountInfo',
 						subflows: {
 							onactivate: {
 								signedin: null,
@@ -97,11 +96,63 @@ define('jitc_flow', exports, function (exports) {
 						transitions: {
 							signin: {
 								to: 'signin'
+							},
+							signout: {
+								to: 'signout'
 							}
-						}					
+						},
+						children: {
+							accountInfo: {
+								type: 'flow',
+								transitions: {
+									editAccount: {
+										to: 'editAccount'
+									}
+								} 
+							},
+							editAccount: {
+								subflows: {
+									submit: {
+										fieldsValid: 'back',
+										error: null
+									}
+								}
+							}
+						}				
 					},
 					directory: {
-						
+						type: 'flow',
+						activeChild: 'merchantListing',
+						children: {
+							merchantListing: {
+								type: 'flow',
+								activeChild: 'listView',
+								children: {
+									listView: {
+										type: 'flow',
+										transitions: {
+											viewMap: {
+												to: 'mapView'
+											},
+											showDetail: {
+												to: 'merchantDetail'
+											}											
+										}										
+									},
+									mapView: {
+										type: 'flow',
+										transitions: {
+											showDetail: {
+												to: 'merchantDetail'
+											}
+										}
+									}
+								},
+							},
+							merchantDetail: {
+								
+							}
+						}
 					}
 				}
 			},
@@ -129,9 +180,31 @@ define('jitc_flow', exports, function (exports) {
 					submitCredentials: {
 						ok: 'back',
 						error: null
-					}					
+					},
+					createAccount: {
+						fieldsValid: 'back',
+						cancel: null
+					},
+					facebookConnect: {
+						allow: 'back',
+						cancelOrDontAllow: null
+					},
+					forgotPassword: {
+						validEmail: {
+							reset: null,
+							cancel: null
+						}
+					}
 				}
-			}						
+			},
+			signout: {
+				subflows: {
+					onactivate: {
+						confirm: 'back',
+						cancel: 'back'
+					}
+				}
+			}					
 		}					
 	};
 });

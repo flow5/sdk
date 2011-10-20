@@ -115,7 +115,7 @@ define('flow', exports, function (exports) {
 								
 				if (nodeSpec.children) {
 					node.children = {};
-					Utils.assert(nodeSpec.activeChild, 'Parent nodes must declare their active child');
+					Utils.assert(nodeSpec.activeChild, 'Parent node must declare active child: ' + id);
 					nodeSpec.children.forEach(function (id, childSpec) {
 						var child = injectNodeRecursive(id, resolveSpec(node, childSpec), node);
 						if (id === nodeSpec.activeChild) {
