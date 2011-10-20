@@ -112,7 +112,7 @@ define('flow_diags', exports, function (exports) {
 			
 			function isCluster(node) {
 				// all but leaf nodes which don't specify type
-				return node.type;
+				return node.type || node.parent.type === 'selector';
 			}
 			
 			function activeColorAttribute(attr) {
@@ -167,7 +167,7 @@ define('flow_diags', exports, function (exports) {
 					color = activeColorAttribute('color');					
 				} else {
 					fillColor = inactiveColorAttribute('fillcolor');
-					color = inactiveColorAttribute('color');					
+					color = 'color="black"';					
 				}				
 				var idAttribute = 'id=' + quote(parent.path + '.' + id + '-doSelection');
 				var attributes = [
@@ -371,7 +371,8 @@ define('flow_diags', exports, function (exports) {
 							visitSubflowRecursive(id, childPath, child);							
 						});
 					} else if (spec) {
-						addSubflowNode(spec, path, node);
+						// TODO: show the transition name?
+						addSubflowNode(id, path, node);
 					} else {
 						addSubflowNode(id, path, node);
 					}
@@ -467,9 +468,16 @@ define('flow_diags', exports, function (exports) {
 							}
 							toPath = toNode.path;
 
-							// if the to node has transitions, then use one of them
+							// if the toNode has transitions, then use one of them
 							if (toNode.transitions) {
 								toPath = toNode.path + '.' + getAnId(toNode.transitions);
+							} 
+							// if the toNode is the child of a selector then it's a cluster
+							// for the selection button. so grab the button
+							else if (toNode.parent.type === 'selector') {
+								toPath = toNode.parent.path + '.' + toNode.id;
+							} else if (toNode.subflows) {
+								toPath = toNode.path + '.' + getAnId(toNode.subflows);
 							}
 						}												
 						addEdge(fromNode.path + '.' + id, toPath, head);																						

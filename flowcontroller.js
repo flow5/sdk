@@ -61,7 +61,7 @@ define('flowcontroller', exports, function (exports) {
 						
 			node.active = true;
 			doOnActiveSubflowsRecursive(node, function () {
-				console.log('activated');
+//				console.log('activated');
 			});
 		}
 	
