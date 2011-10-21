@@ -143,7 +143,6 @@ define('flowcontroller', exports, function (exports) {
 		};	
 		
 		this.doSubflowChoice = function (node, id) {	
-			console.log(id);		
 			Utils.assert(node.activeSubflow, 'No active subflow');
 			node.activeSubflow.cb(node, id);						
 		};	
@@ -177,9 +176,7 @@ define('flowcontroller', exports, function (exports) {
 						that.doTransition(node, spec);					
 					}
 				}
-				
-				observerCb(that, flow);
-											
+															
 				if (node.activeSubflow) {
 					node.activeSubflow.cb = doSubflowChoice;
 					doSubflowPrompt(node);
@@ -190,6 +187,8 @@ define('flowcontroller', exports, function (exports) {
 						cb();
 					}
 				}	
+				
+				observerCb(that, flow);				
 			}
 			
 			node.activeSubflow.cb = doSubflowChoice;
