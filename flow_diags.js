@@ -317,12 +317,23 @@ define('flow_diags', exports, function (exports) {
 			}
 			
 			function addSubflowNode(id, path, spec, node) {
-				// TODO: this logic fails if a subflow has more than one node with the same name
 				function isSubflowStart() {	
 					return path.split('.')[1] === id;					
 				}
 				function isCurrentSubflowChoice() {
-					return node.activeSubflow && node.activeSubflow.spec.hasOwnProperty(id);
+					if (!node.activeSubflow) {
+						return false;
+					}
+					
+					// TODO: simplify?
+					var activeSubflowPath = node.activeSubflow.path.split('.');
+					var subflowPath = path.split('.');
+					var result = true;
+					while (result && subflowPath.length && activeSubflowPath.length) {
+						result = subflowPath.shift() === activeSubflowPath.shift();
+					}
+					return result && subflowPath.length === 1 && 
+						node.activeSubflow.spec.hasOwnProperty(subflowPath.pop());
 				}	
 				function isTransition() {
 					return (typeof spec === 'string') && 

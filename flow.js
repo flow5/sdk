@@ -114,7 +114,7 @@ define('flow', exports, function (exports) {
 					Utils.assert(false, 'Could not find name: ' + name);
 				}
 			}
-						
+									
 			function injectNodeRecursive(id, nodeSpec, parent) {										
 				var node = {id: id, 
 							type: nodeSpec.type, 
@@ -174,7 +174,7 @@ define('flow', exports, function (exports) {
 					node.children.forEach(function (id, child) {
 						setPathRecursive(child);
 					});
-				}
+				}				
 			}
 									
 			// inject nodes
