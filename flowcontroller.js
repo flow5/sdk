@@ -184,14 +184,14 @@ define('flowcontroller', exports, function (exports) {
 					doSubflowPrompt(node);
 				} else {
 					console.log('subflow complete');
-					
-					observerCb(that, flow);	
-					
+										
 					// TODO: I think this will be required
 					if (cb) {
 						cb();
 					}
-				}					
+				}	
+				
+				observerCb(that, flow);									
 			}
 			
 			node.activeSubflow.cb = doSubflowChoice;
