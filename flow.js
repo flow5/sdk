@@ -128,7 +128,7 @@ define('flow', exports, function (exports) {
 				if (nodeSpec.subflows) {
 					node.subflows = {};
 					nodeSpec.subflows.forEach(function (id, subflowSpec) {
-						node.subflows[id] = {id: id, type: 'subflow', spec: subflowSpec};
+						node.subflows[id] = {id: id, type: 'subflow', spec: resolveSpec(node, subflowSpec)};
 					});
 				}
 												

@@ -48,7 +48,7 @@ define('flowcontroller', exports, function (exports) {
 			function doOnActiveSubflowsRecursive(node, cb) {
 				if (node) {
 					if (node.subflows && node.subflows.onactivate) {
-						if (!node.activeSubflow) {
+						if (!flow.isSubflowActive(node)) {
 							that.doSubflow(node, 'onactivate', function () {
 								doOnActiveSubflowsRecursive(node.activeChild, cb);
 							});							
@@ -70,10 +70,8 @@ define('flowcontroller', exports, function (exports) {
 		// cb?
 		this.start = function () {						
 			activateNode(flow.root, function () {
-				
+				observerCb(this, flow);
 			});
-						
-			observerCb(this, flow);
 		};
 		
 		// select the child of node with the given id
@@ -182,13 +180,14 @@ define('flowcontroller', exports, function (exports) {
 					doSubflowPrompt(node);
 				} else {
 					console.log('subflow complete');
+					
+					observerCb(that, flow);	
+					
 					// TODO: I think this will be required
 					if (cb) {
 						cb();
 					}
-				}	
-				
-				observerCb(that, flow);				
+				}					
 			}
 			
 			node.activeSubflow.cb = doSubflowChoice;

@@ -33,12 +33,7 @@ define('flowspec', exports, function (exports) {
 		activeChild: 'home',
 		templates: {
 			done: {
-			},
-//			shared: {
-//				type: 'subflow',
-//				a: null,
-//				b: null
-//			}
+			}
 		},
 		children: {	
 			done: 'done',
@@ -47,8 +42,7 @@ define('flowspec', exports, function (exports) {
 					onactivate: {
 						yes: null,
 						no: null,
-					},
-//					shared: 'shared'
+					}
 				},
 				templates: {
 					middle: {

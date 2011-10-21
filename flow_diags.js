@@ -323,7 +323,8 @@ define('flow_diags', exports, function (exports) {
 						return node.activeSubflow && node.activeSubflow.spec.hasOwnProperty(id);
 					}
 					
-					return that.isNodePathActive(node) && (isSubflowStart() || isCurrentSubflowChoice());
+					return that.isNodePathActive(node) && !that.isSubflowActive(node.parent) && 
+								(isSubflowStart() || isCurrentSubflowChoice());
 				}				
 				
 				var fillColor, color;				
