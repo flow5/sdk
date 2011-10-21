@@ -34,11 +34,11 @@ define('flowspec', exports, function (exports) {
 		templates: {
 			done: {
 			},
-			shared: {
-				type: 'subflow',
-				a: null,
-				b: null
-			}
+//			shared: {
+//				type: 'subflow',
+//				a: null,
+//				b: null
+//			}
 		},
 		children: {	
 			done: 'done',
@@ -48,7 +48,7 @@ define('flowspec', exports, function (exports) {
 						yes: null,
 						no: null,
 					},
-					shared: 'shared'
+//					shared: 'shared'
 				},
 				templates: {
 					middle: {
