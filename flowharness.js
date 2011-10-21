@@ -31,7 +31,7 @@
 /*global define*/
 
 define('flowharness', exports, function (exports) {							
-	function FlowHarness(flowFile, observer) {
+	function FlowHarness(observer) {
 		var Utils = require('./utils.js');
 		var Flow = require('./flow.js').Flow;
 
@@ -43,7 +43,7 @@ define('flowharness', exports, function (exports) {
 		
 		flowController = new FlowController(flow, observer);
 
-		flow.injectGraph(require(flowFile).root);
+		flow.injectGraph(require('flowspec.js').root);
 
 		flowController.start();		
 	}

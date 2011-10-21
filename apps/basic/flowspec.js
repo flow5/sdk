@@ -26,7 +26,7 @@
 ***********************************************************************************************************************/
 /*global define*/
 
-define('basic_flow', exports, function (exports) {
+define('flowspec', exports, function (exports) {
 	
 	exports.root = {
 		type: 'flow',

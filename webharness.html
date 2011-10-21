@@ -1,6 +1,16 @@
 <html>
 
 <head>
+	
+	<script>
+		function getURLParams() {
+			var params = {};
+			window.location.search.substring(1).split('&').forEach(function (pair) {
+				params[pair.split('=')[0]] = pair.split('=')[1];
+			});			
+			return params;
+		}
+	</script>
 
 	<script src='Iuppiter.js'></script>
 
@@ -14,12 +24,11 @@
 	<script src='flowcontroller.js'></script>
 	
 	<script src='flowharness.js'></script>
-		
-	<script src='flows/basic_flow.js'></script>		
-	<script src='flows/minimal_flow.js'></script>	
-	
-	<!-- app scripts -->
-	<script src='apps/jitc/flowspec.js'></script>		
+				
+	<script>
+		/*jslint evil: true*/
+		document.write('<script src="apps/' + getURLParams().app + '/flowspec.js"><\/script>');
+	</script>
 </head>
 
 <body>
@@ -27,19 +36,11 @@
 		/*global theFlowController:true theFlow:true*/
 		
 		var Utils = require('./utils.js');	
-		var FlowHarness = require('./flowharness.js').FlowHarness;
-		
-		function getURLParams() {
-			var params = {};
-			window.location.search.substring(1).split('&').forEach(function (pair) {
-				params[pair.split('=')[0]] = pair.split('=')[1];
-			});			
-			return params;
-		}
+		var FlowHarness = require('./flowharness.js').FlowHarness;		
 		
 		try {
 			// function is called back on each action that changes flow state
-			var flowHarness = new FlowHarness(getURLParams().flowFile, function (flowController, flow) {
+			var flowHarness = new FlowHarness(function (flowController, flow) {
 				// make these global for the console
 				theFlowController = flowController;
 				theFlow = flow;				
