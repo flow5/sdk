@@ -89,7 +89,7 @@ define('flowcontroller', exports, function (exports) {
 			
 			if (!cb) {
 				cb = function () {
-					console.log('transition complete');
+					console.log('selection complete');
 				};
 			}
 			
@@ -160,6 +160,7 @@ define('flowcontroller', exports, function (exports) {
 		
 		this.doSubflowChoice = function (node, id) {	
 			Utils.assert(node.activeSubflow, 'No active subflow');
+			console.log('choose: ' + id);
 			node.activeSubflow.cb(node, id);						
 		};	
 		
