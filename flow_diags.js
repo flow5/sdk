@@ -313,18 +313,21 @@ define('flow_diags', exports, function (exports) {
 				result += '}';
 			}
 			
-			function addSubflowNode(id, path, node) {
+			function addSubflowNode(id, path, spec, node) {
 				// TODO: this logic fails if a subflow has more than one node with the same name
-				function isSubflowAvailable() {
-					function isSubflowStart() {	
-						return !node.activeSubflow && node.subflows[id];					
-					}
-					function isCurrentSubflowChoice() {
-						return node.activeSubflow && node.activeSubflow.spec.hasOwnProperty(id);
-					}
-					
+				function isSubflowStart() {	
+					return path.split('.')[1] === id;					
+				}
+				function isCurrentSubflowChoice() {
+					return node.activeSubflow && node.activeSubflow.spec.hasOwnProperty(id);
+				}	
+				function isTransition() {
+					return (typeof spec === 'string') && 
+						(node.transitions && node.transitions[spec]) || spec === 'back';
+				}			
+				function isSubflowAvailable() {					
 					return that.isNodePathActive(node) && !that.isSubflowActive(node.parent) && 
-								(isSubflowStart() || isCurrentSubflowChoice());
+						(!that.isSubflowActive(node) && isSubflowStart() || isCurrentSubflowChoice());
 				}				
 				
 				var fillColor, color;				
@@ -342,13 +345,27 @@ define('flow_diags', exports, function (exports) {
 					idAttribute = 'id=' + quote(path + '-doSubflow');	
 				}
 				
+				var shapeAttribute;
+				if (isSubflowStart() || isTransition()) {
+					shapeAttribute = 'shape=box';
+				} else {
+					shapeAttribute = 'shape=ellipse';
+				}
+				
+				var label;
+				if (isTransition()) {
+					label = id + ' (>' + spec + ')';
+				} else {
+					label = id;
+				}
+				
 				var attributes = [
-					makeLabel(id),
+					makeLabel(label),
 					'fontname="courier new"',
 					'style="filled"',
 					fillColor,
 					color,
-					'shape=box',
+					shapeAttribute,
 					'penwidth=.6',
 					'width=0',
 					'height=0',
@@ -363,17 +380,14 @@ define('flow_diags', exports, function (exports) {
 			function visitSubflow(subflow, subflowPath, node) {
 				function visitSubflowRecursive(id, path, spec) {					
 					if (spec && typeof spec === 'object') {
-						addSubflowNode(id, path, node);						
+						addSubflowNode(id, path, spec, node);						
 						spec.forEach(function (id, child) {
 							var childPath = path + '.' + id;
 							addEdge(path, childPath);						
 							visitSubflowRecursive(id, childPath, child);							
 						});
-					} else if (spec) {
-						// TODO: show the transition name?
-						addSubflowNode(id, path, node);
 					} else {
-						addSubflowNode(id, path, node);
+						addSubflowNode(id, path, spec, node);
 					}
 				}
 				
