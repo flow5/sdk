@@ -140,7 +140,7 @@ define('flow_diags', exports, function (exports) {
 				}
 				
 				if (pathActive) {
-					return ['color="blue"', 'penwidth=1.0', 'fillcolor="lightskyblue"'];
+					return ['color="blue"', 'penwidth=2.5', 'fillcolor="lightskyblue"'];
 				} else if (nodeActive) { 
 					return ['color="blue"', 'penwidth=.5', 'fillcolor="grey"'];
 				} else {
@@ -154,7 +154,8 @@ define('flow_diags', exports, function (exports) {
 					'fontname=courier',
 					'style="filled,rounded"',
 					'shape=box',
-					'fontsize=12',					
+					'fontsize=12',		
+					'id=' + quote(node.path)			
 				].concat(getActiveNodeStyle(node));				
 				
 				result += quote(node.path) + formatAttributes(attributes);
@@ -273,7 +274,8 @@ define('flow_diags', exports, function (exports) {
 					'style="filled,rounded"',
 					'fontname="courier"',
 					'fontsize=12',	
-					'bgcolor="gray"'													
+					'bgcolor="gray"',
+					'id=' + quote(node.path)												
 				].concat(getActiveNodeStyle(node)).join(';');
 
 				result += 'subgraph ' + quote(makeClusterLabel(node.path)) + ' {' + attributes;
@@ -301,7 +303,8 @@ define('flow_diags', exports, function (exports) {
 					'color="black"',
 					'penwidth=.6',
 					'style="filled"',
-					fillColor
+					fillColor,
+					'id=' + quote(node.path + id)
 				].join(';');
 				
 				var clusterLabel = quote(makeClusterLabel(path));

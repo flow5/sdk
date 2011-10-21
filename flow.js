@@ -63,6 +63,15 @@ define('flow', exports, function (exports) {
 			}
 			return node.activeSubflow;
 		};
+		
+		// TODO: use with caution. there may eventually be more than one
+		this.getActiveLeafNode = function () {
+			var node = this.root;
+			while (node.activeChild) {
+				node = node.activeChild;
+			}
+			return node;
+		};
 				
 		// NOTE: in debug builds, validateSpec is called first. 
 			// So this function does not need to do error checking

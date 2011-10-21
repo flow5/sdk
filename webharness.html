@@ -89,6 +89,18 @@
 								console.log('Exception: ' + e.message);
 							}
 						};
+						
+						var activeLeafNode = flow.getActiveLeafNode();
+						var svgElementBBox = document.getElementById(activeLeafNode.path).getBBox();
+						var svgRootBBox = document.querySelector('svg').getBBox();
+						var offset = {x: svgElementBBox.x, y: svgRootBBox.height + svgElementBBox.y};
+						
+						var tmp = document.createElement('div');
+						tmp.style.position = 'absolute';
+						tmp.style.top = offset.y + 'px';
+						tmp.style.left = offset.x + 'px';
+						document.body.appendChild(tmp);
+						tmp.scrollIntoView();
 					}
 					
 					cb();
