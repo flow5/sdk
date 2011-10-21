@@ -142,7 +142,8 @@ define('flowcontroller', exports, function (exports) {
 			observerCb(this, flow);			
 		};	
 		
-		this.doSubflowChoice = function (node, id) {			
+		this.doSubflowChoice = function (node, id) {	
+			console.log(id);		
 			Utils.assert(node.activeSubflow, 'No active subflow');
 			node.activeSubflow.cb(node, id);						
 		};	
