@@ -33,6 +33,11 @@ define('basic_flow', exports, function (exports) {
 		activeChild: 'home',
 		templates: {
 			done: {
+			},
+			shared: {
+				type: 'subflow',
+				a: null,
+				b: null
 			}
 		},
 		children: {	
@@ -43,6 +48,7 @@ define('basic_flow', exports, function (exports) {
 						yes: null,
 						no: null,
 					},
+					shared: 'shared'
 				},
 				templates: {
 					middle: {
