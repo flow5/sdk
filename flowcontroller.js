@@ -43,6 +43,10 @@ define('flowcontroller', exports, function (exports) {
 				console.log('* ' + id);
 			});
 		}		
+		
+		this.refresh = function () {
+			observerCb(this, flow);
+		};
 				
 		function activateNode(node, cb) {
 			function doOnActiveSubflowsRecursive(node, cb) {
