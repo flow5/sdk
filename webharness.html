@@ -40,7 +40,7 @@
 		
 		try {
 			// function is called back on each action that changes flow state
-			var flowHarness = new FlowHarness(function (flowController, flow) {
+			var flowHarness = new FlowHarness(function (flowController, flow, cb) {
 				// make these global for the console
 				theFlowController = flowController;
 				theFlow = flow;				
@@ -90,6 +90,8 @@
 							}
 						};
 					}
+					
+					cb();
 				});
 			});
 		} catch (e) {

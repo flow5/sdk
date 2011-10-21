@@ -43,11 +43,7 @@ define('flowcontroller', exports, function (exports) {
 				console.log('* ' + id);
 			});
 		}		
-		
-		this.refresh = function () {
-			observerCb(this, flow);
-		};
-				
+						
 		function activateNode(node, cb) {
 			function doOnActiveSubflowsRecursive(node, cb) {
 				if (node) {
@@ -71,19 +67,31 @@ define('flowcontroller', exports, function (exports) {
 			});
 		}
 	
-		// cb?
-		this.start = function () {						
+		this.start = function (cb) {						
+			if (!cb) {
+				cb = function () {
+					console.log('start complete');
+				};
+			}
+			
 			activateNode(flow.root, function () {
-				observerCb(this, flow);
+				// TODO: this is redundant if there's a final onactive step, right?
+				observerCb(this, flow, cb);
 			});
 		};
 		
 		// select the child of node with the given id
-		this.doSelection = function (node, id) {		
+		this.doSelection = function (node, id, cb) {		
 			Utils.assert(flow.isNodePathActive(node), 'Attempt to select on an inactive node');	
 			Utils.assert(!flow.isSubflowActive(node), 'Cannot select with a subflow active');				
 			Utils.assert(node.type === 'selector', 'Can only select on node of type selector');
 			Utils.assert(node.children[id], 'No child with id: ' + id);
+			
+			if (!cb) {
+				cb = function () {
+					console.log('transition complete');
+				};
+			}
 			
 			node.children.forEach(function (id, child) {
 				child.active = false;
@@ -95,16 +103,22 @@ define('flowcontroller', exports, function (exports) {
 				// I don't think so.
 			});
 			
-			observerCb(this, flow);
+			observerCb(this, flow, cb);
 		};
 				
 		// use the transition on the node with the given id 
 		// NOTE: parameters are specified in the flowgraph
-		this.doTransition = function (node, id) {
+		this.doTransition = function (node, id, cb) {
 			Utils.assert(flow.isNodePathActive(node), 'Attempt to transition from an inactive node');
 			Utils.assert(!flow.isSubflowActive(node), 'Cannot transition with a subflow active');	
 			Utils.assert(id === 'back' || node.transitions, 'No transitions defined for node: ' + node.path);
 			Utils.assert(id === 'back' || node.transitions[id], 'No transition with id: ' + id);
+			
+			if (!cb) {
+				cb = function () {
+					console.log('transition complete');
+				};
+			}
 
 			var container;
 			
@@ -141,7 +155,7 @@ define('flowcontroller', exports, function (exports) {
 				// I don't think so
 			});			
 
-			observerCb(this, flow);			
+			observerCb(this, flow, cb);			
 		};	
 		
 		this.doSubflowChoice = function (node, id) {	
@@ -149,6 +163,7 @@ define('flowcontroller', exports, function (exports) {
 			node.activeSubflow.cb(node, id);						
 		};	
 		
+		// calls back when the subflow is complete
 		this.doSubflow = function (node, id, cb) {
 			Utils.assert(flow.isNodePathActive(node), 'Attempt to execute subflow from an inactive node');	
 			Utils.assert(node.subflows && node.subflows[id], 'No such subflow');
@@ -178,26 +193,28 @@ define('flowcontroller', exports, function (exports) {
 						that.doTransition(node, spec);					
 					}
 				}
-															
-				if (node.activeSubflow) {
-					node.activeSubflow.cb = doSubflowChoice;
-					doSubflowPrompt(node);
-				} else {
-					console.log('subflow complete');
-										
-					// TODO: I think this will be required
-					if (cb) {
-						cb();
+																			
+				observerCb(that, flow, function () {
+					if (node.activeSubflow) {
+						node.activeSubflow.cb = doSubflowChoice;
+						doSubflowPrompt(node);
+					} else {
+						console.log('subflow complete');
+
+						// TODO: I think this will be required
+						if (cb) {
+							cb();
+						}
 					}
-				}	
-				
-				observerCb(that, flow);									
+				});									
 			}
 			
 			node.activeSubflow.cb = doSubflowChoice;
 			doSubflowPrompt(node);								
 
-			observerCb(that, flow);	
+			observerCb(that, flow, function () {
+				console.log('subflow started');
+			});	
 		};
 		
 		// find an active leaf node
