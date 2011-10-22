@@ -476,7 +476,10 @@ define('flow_diags', exports, function (exports) {
 							// for the selection button. so grab the button
 							else if (toNode.parent.type === 'selector') {
 								toPath = toNode.parent.path + '.' + toNode.id;
-							} else if (toNode.subflows) {
+							} 
+							// if the toNode has subflows then it's a cluster, so grab
+							// one of the subflow elements
+							else if (toNode.subflows) {
 								toPath = toNode.path + '.' + getAnId(toNode.subflows);
 							}
 						}												
