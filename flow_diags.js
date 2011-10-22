@@ -76,7 +76,23 @@ define('flow_diags', exports, function (exports) {
 			var result = '';
 			
 			// TODO: I think this can go away
-			var visited = {};					
+			var visited = {};	
+			
+			// used for cluster/edge workaround below
+			function getAProperty(obj) {
+				for (var name in obj) {
+					if (obj.hasOwnProperty(name)) {
+						return obj[name];
+					}
+				}
+			}
+			function getAnId(obj) {
+				for (var name in obj) {
+					if (obj.hasOwnProperty(name)) {
+						return name;
+					}
+				}
+			}				
 
 			function quote(s) {
 				return '\"' + s + '\"';
@@ -235,7 +251,8 @@ define('flow_diags', exports, function (exports) {
 					'compound=true',
 					'rankdir=LR',
 					'fontname=courier',
-//					'splines="ortho"'				
+//					'splines="ortho"',
+//					'nodesep=.25'				
 				].join(';');
 				result += 'digraph {' + attributes + ';';
 			}
@@ -300,15 +317,8 @@ define('flow_diags', exports, function (exports) {
 						return false;
 					}
 					
-					// TODO: simplify?
-					var activeSubflowPath = node.activeSubflow.path.split('.');
-					var subflowPath = path.split('.');
-					var result = true;
-					while (result && subflowPath.length && activeSubflowPath.length) {
-						result = subflowPath.shift() === activeSubflowPath.shift();
-					}
-					return result && subflowPath.length === 1 && 
-						node.activeSubflow.spec.hasOwnProperty(subflowPath.pop());
+					// pulls /a/b/c.d.e out of /a/b/c.d.e.f leaving 'f'					
+					return node.activeSubflow.spec.hasOwnProperty(path.replace(node.activeSubflow.path + '.', ''));
 				}	
 				function isTransition() {
 					return (typeof spec === 'string') && 
@@ -439,30 +449,18 @@ define('flow_diags', exports, function (exports) {
 			visited.forEach(function (path, fromNode) {
 				if (fromNode.transitions) {
 					fromNode.transitions.forEach(function (id, toNode) {
+						var toPath = toNode.path;
+
 						// NOTE: graphviz doesn't support edges between clusters
 						// the workaround is to make the edge between leaf nodes
-						// then explicitly set the edge head and tail to the clusters
+						// then set the edge head or tail to the clusters
 						// in this case only the head needs the workaround since the tail
 						// is always attached to the transitionSource node
-						// see: https://mailman.research.att.com/pipermail/graphviz-interest/2010q3/007276.html
-						function getAProperty(obj) {
-							for (var name in obj) {
-								if (obj.hasOwnProperty(name)) {
-									return obj[name];
-								}
-							}
-						}
-						function getAnId(obj) {
-							for (var name in obj) {
-								if (obj.hasOwnProperty(name)) {
-									return name;
-								}
-							}
-						}						
+						// see: https://mailman.research.att.com/pipermail/graphviz-interest/2010q3/007276.html						
 						var head;
-						var toPath = toNode.path;
 						if (isCluster(toNode)) {
 							head = makeClusterLabel(toNode.path);
+							
 							while (toNode.children) {
 								toNode = getAProperty(toNode.children);
 							}
@@ -473,7 +471,7 @@ define('flow_diags', exports, function (exports) {
 								toPath = toNode.path + '.' + getAnId(toNode.transitions);
 							} 
 							// if the toNode is the child of a selector then it's a cluster
-							// for the selection button. so grab the button
+							// because of the selection button. so grab the button
 							else if (toNode.parent.type === 'selector') {
 								toPath = toNode.parent.path + '.' + toNode.id;
 							} 
