@@ -65,11 +65,17 @@
 
 						};
 					}
+					function setStyles(el, styles) {
+						styles.forEach(function (id, value) {
+							el.style[id] = value;
+						});
+					}
 					if (typeof document !== 'undefined') {
 						document.body.innerHTML = response;
 
 						document.body.style['background-color'] = 'darkslategray';
 						document.body.style['text-align'] = 'center';
+						document.body.style['margin-left'] = '100px';
 
 						// Make the main poly the same color as background
 						// OPTION: would be nice to do this on the DOT side
@@ -81,26 +87,48 @@
 						for (var i = 0; i < clickable.length; i += 1) {
 							makeClick(clickable[i]);
 						}
-						
-						document.getElementById('back-button').onclick = function () {
-							try {
-								flowController.doBack();								
-							} catch (e) {
-								console.log('Exception: ' + e.message);
-							}
-						};
-						
+												
+						// determine the offset of the current node
 						var activeLeafNode = flow.getActiveLeafNode();
 						var svgElementBBox = document.getElementById(activeLeafNode.path).getBBox();
 						var svgRootBBox = document.querySelector('svg').getBBox();
 						var offset = {x: svgElementBBox.x, y: svgRootBBox.height + svgElementBBox.y};
 						
+						// scroll it into view
 						var tmp = document.createElement('div');
 						tmp.style.position = 'absolute';
 						tmp.style.top = offset.y + 'px';
 						tmp.style.left = offset.x + 'px';
 						document.body.appendChild(tmp);
 						tmp.scrollIntoView();
+						document.body.removeChild(tmp);
+						
+						// make the back button
+						var backButton = document.createElement('div');
+						setStyles(backButton, {
+							'background-color': flowController.hasBack() ? 'lightblue' : 'grey',
+							'display': '-webkit-box',
+							'-webkit-box-pack': 'center',
+							'-webkit-box-align': 'center',
+							'position': 'fixed',
+							'top': '0px',
+							'left': '0px',
+							'border': '4px solid ' + (flowController.hasBack() ? 'blue' : 'black'),
+							'height': '40px',
+							'width': '80px',
+							'margin': '10px',
+							'-webkit-border-radius': '14px',
+							'font-size': '24px'												
+						});
+						backButton.innerText = '<==';	
+						backButton.addEventListener('click', function () {
+							try {
+								flowController.doBack();								
+							} catch (e) {
+								console.log('Exception: ' + e.message);
+							}
+						});				
+						document.body.appendChild(backButton);
 					}
 					
 					cb();

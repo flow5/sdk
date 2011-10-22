@@ -186,32 +186,7 @@ define('flow_diags', exports, function (exports) {
 				
 				result += quote(parent.path + '.' + id) + formatAttributes(attributes);
 			}
-						
-			function addBackButton() {
-				var fillColor, color;
-				if (that.controller.hasBack()) {
-					fillColor = activeColorAttribute('fillcolor');
-					color = activeColorAttribute('color');
-				} else {
-					fillColor = inactiveColorAttribute('fillcolor');
-					color = inactiveColorAttribute('color');
-				}				
-				var attributes = [
-					makeLabel('Back'),
-					'fontname=courier',
-					'style="filled,rounded"',
-					'shape=box',
-					'width=0',
-					'height=0',
-					'fontsize=10',
-					'id="back-button"',
-					fillColor,
-					color				
-				];				
-				
-				result += quote('back-button') + formatAttributes(attributes);
-			}			
-			
+											
 			function addTransitionSource(source, node) {
 				var fillColor, color;
 				if (that.isNodePathActive(node) && !that.isSubflowActive(node)) {
@@ -455,8 +430,6 @@ define('flow_diags', exports, function (exports) {
 			
 			digraphStart();
 			
-			addBackButton();
-									
 			// create the nodes
 			this.root.children.forEach(function (id, node) {
 				visitNodeRecursive(node, that.root);
