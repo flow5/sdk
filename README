@@ -38,22 +38,21 @@ https://github.com/mkitt/nodelint.tmbundle
 	
 TODO: list npm installs required
 
+	npm install json-command
+
+https://github.com/jamiew/jsonview-chrome
 	
 * Usage
 
 DOT visualization
 
-	node script_which_uses_dumpToDOT | nop | mate
+in browser:
 
-		OR
+	host/webharness.html?app=APP_NAME
+	
+command line:
 
-	node script_which_uses_dumpToDOT > file_graphviz_points_to
-	
-	
-To see the output
-	
-	node script_which_uses_dumpToDOT 2>&1 >/dev/null | nop | mate
-	
+	node nodharness.js 2>&1 >/dev/null | chrome
 	
 	
 Chrome flags:

@@ -38,8 +38,8 @@ define('flowcontroller', exports, function (exports) {
 		
 		// TODO: move this to debug layer
 		function doSubflowPrompt(node) {
-			console.log(node.activeSubflow.id);
-			node.activeSubflow.spec.forEach(function (id, subflowSpec) {
+			console.log(node.activeSubflow.diags.path);
+			node.activeSubflow.choices.forEach(function (id, choice) {
 				console.log('* ' + id);
 			});
 		}		
@@ -48,11 +48,9 @@ define('flowcontroller', exports, function (exports) {
 			function doOnActiveSubflowsRecursive(node, cb) {
 				if (node) {
 					if (node.subflows && node.subflows.onactivate) {
-						if (!flow.isSubflowActive(node)) {
-							that.doSubflow(node, 'onactivate', function () {
-								doOnActiveSubflowsRecursive(node.activeChild, cb);
-							});							
-						}
+						that.doSubflow(node, 'onactivate', function () {
+							doOnActiveSubflowsRecursive(node.activeChild, cb);
+						});							
 					} else {
 						doOnActiveSubflowsRecursive(node.activeChild, cb);
 					}				
@@ -82,8 +80,8 @@ define('flowcontroller', exports, function (exports) {
 		
 		// select the child of node with the given id
 		this.doSelection = function (node, id, cb) {		
-			Utils.assert(flow.isNodePathActive(node), 'Attempt to select on an inactive node');	
-			Utils.assert(!flow.isSubflowActive(node), 'Cannot select with a subflow active');				
+			Utils.assert(flow.diags.isNodePathActive(node), 'Attempt to select on an inactive node');	
+			Utils.assert(!flow.diags.isSubflowActive(node), 'Cannot select with a subflow active');				
 			Utils.assert(node.type === 'selector', 'Can only select on node of type selector');
 			Utils.assert(node.children[id], 'No child with id: ' + id);
 			
@@ -92,6 +90,25 @@ define('flowcontroller', exports, function (exports) {
 					console.log('selection complete');
 				};
 			}
+			
+			// cancel out of any current subflow
+			// NOTE: this might be annoying because when selecting away in the middle
+			// of a subflow the subflow gets cancelled out
+			// the problem is that the subflow might be related to onactivate logic
+			// which should run top to bottom
+			// e.g., if the active subflow is the onactivate subflow that checks for logged in
+			// then tab away, login from another tab and then come back, the onactivate subflow
+			// needs to run again
+			// TODO: this has an effect at the widget layer
+			function cancelSubflowRecursive(node) {
+				node.activeSubflow = null;
+				if (node.children) {
+					node.children.forEach(function (id, child) {
+						cancelSubflowRecursive(child);
+					});					
+				}
+			}
+			cancelSubflowRecursive(node.activeChild);
 			
 			node.children.forEach(function (id, child) {
 				child.active = false;
@@ -109,9 +126,9 @@ define('flowcontroller', exports, function (exports) {
 		// use the transition on the node with the given id 
 		// NOTE: parameters are specified in the flowgraph
 		this.doTransition = function (node, id, cb) {
-			Utils.assert(flow.isNodePathActive(node), 'Attempt to transition from an inactive node');
-			Utils.assert(!flow.isSubflowActive(node), 'Cannot transition with a subflow active');	
-			Utils.assert(id === 'back' || node.transitions, 'No transitions defined for node: ' + node.path);
+			Utils.assert(flow.diags.isNodePathActive(node), 'Attempt to transition from an inactive node');
+			Utils.assert(!flow.diags.isSubflowActive(node), 'Cannot transition with a subflow active');	
+			Utils.assert(id === 'back' || node.transitions, 'No transitions defined for node: ' + node.diags.path);
 			Utils.assert(id === 'back' || node.transitions[id], 'No transition with id: ' + id);
 			
 			if (!cb) {
@@ -166,22 +183,20 @@ define('flowcontroller', exports, function (exports) {
 		
 		// calls back when the subflow is complete
 		this.doSubflow = function (node, id, cb) {
-			Utils.assert(flow.isNodePathActive(node), 'Attempt to execute subflow from an inactive node');	
+			Utils.assert(flow.diags.isNodePathActive(node), 'Attempt to execute subflow from an inactive node');	
 			Utils.assert(node.subflows && node.subflows[id], 'No such subflow');
-			Utils.assert(!flow.isSubflowActive(node), 'Subflow already in progress');
+			Utils.assert(!flow.diags.isSubflowActive(node), 'Subflow already in progress');
 			
-			node.activeSubflow = {node: node, id: id, spec: node.subflows[id].spec, path: node.path + '.' + id};
+			node.activeSubflow = {node: node, id: id, choices: node.subflows[id], diags: {path: node.diags.path + '.' + id}};
 			
 			function doSubflowChoice(node, id) {												
-				Utils.assert(node.activeSubflow.spec.hasOwnProperty(id), 'No such choice');			
+				Utils.assert(node.activeSubflow.choices.hasOwnProperty(id), 'No such choice');			
 				
 				delete node.activeSubflow.cb;
 								
-				var spec = node.activeSubflow.spec[id];
-				if (spec && typeof spec === 'object') {
-					node.activeSubflow = {id: id, 
-										  spec: spec, 
-										  path: node.activeSubflow.path + '.' + id};
+				var choice = node.activeSubflow.choices[id];
+				if (choice && typeof choice === 'object') {
+					node.activeSubflow = {choices: choice, diags: {path: node.activeSubflow.diags.path + '.' + id}};
 												
 				} else {
 					node.activeSubflow = null;
@@ -190,8 +205,8 @@ define('flowcontroller', exports, function (exports) {
 					// TODO: could always delegate up to the controller
 					// rather than hard code the semantics, but then there's
 					// redundant code since often it's just a transition
-					if (spec) {
-						that.doTransition(node, spec);					
+					if (choice) {
+						that.doTransition(node, choice);					
 					}
 				}
 																			
@@ -244,7 +259,7 @@ define('flowcontroller', exports, function (exports) {
 		this.doBack = function () {			
 			var backNode = findBackNode();
 			
-			Utils.assert(!flow.isSubflowActive(backNode), 'Cannot go back with a subflow active');							
+			Utils.assert(!flow.diags.isSubflowActive(backNode), 'Cannot go back with a subflow active');							
 			
 			Utils.assert(backNode, 'Cannot go back');
 

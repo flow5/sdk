@@ -7,19 +7,20 @@ var cli = require('cli');
 cli.setUsage("node devserv.js [OPTIONS]");
 
 cli.parse({
-	flowfile: ['f', 'flowFile', 'path', './flows/basic_flow.js'],
+	app: ['a', 'app', 'string', 'basic'],
 	output: ['o', 'stdout|stderr', 'string', 'stderr'],
 });
 
 
 cli.main(function (args, options) {			
-	function observer(flowController, flow) {
-		var dot = flow.toDOT();			
-		process[options.output].write(flow.toDOT());		
-	}
-	
+
 	var FlowHarness = require('./flowharness').FlowHarness;
-	var flowHarness = new FlowHarness(options.flowfile, observer);	
+	
+	require.paths.push('./apps/' + options.app);
+	
+	var flowHarness = new FlowHarness(function (flowController, flow) {
+		process[options.output].write(flow.diags.toJSON());		
+	});	
 });
 
 

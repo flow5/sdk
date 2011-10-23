@@ -28,64 +28,16 @@
 
 define('flow', exports, function (exports) {
 	
+	require('./jsext.js');
 	var Utils = require('./utils.js');
 	
 	function Flow() {
 
 		var that = this;
-		
-		that.getNode = function (path) {
-			function getChildRecursive(node, components) {
-				if (components.length) {
-					var child = node.children[components[0]];
-					Utils.assert(child, 'Bad path');
-					return getChildRecursive(child, components.slice(1));
-				} else {
-					return node;
-				}
-			}
-			// slice(1) because paths start with '/'
-			return getChildRecursive(that.root, path.split('/').slice(1));
-		};
-		
-		this.isNodePathActive = function (node) {
-			var active = node.active;
-			while (active && node.parent) {
-				node = node.parent;
-				active = node.active;
-			}
-			return active;
-		};	
-		
-		this.isSubflowActive = function (node) {
-			while (!node.activeSubflow && node.parent) {
-				node = node.parent;
-			}
-			return node.activeSubflow;
-		};
-		
-		// TODO: use with caution. there may eventually be more than one
-		this.getActiveLeafNode = function () {
-			var node = this.root;
-			while (node.activeChild) {
-				node = node.activeChild;
-			}
-			return node;
-		};
 				
-		// NOTE: in debug builds, validateSpec is called first. 
-			// So this function does not need to do error checking
+		// TODO: better error checking. in diags??
 		that.injectGraph = function (graphSpec) {
-						
-			function getPath(node) {
-				var path = [];
-				while (node) {
-					path.push(node.id);
-					node = node.parent;
-				}
-				return path.reverse().join('/');
-			}	
-										
+																
 			// returns the spec if object or finds a matching template
 			function resolveSpec(node, spec) {
 				function resolveSpecUp(node, name) {
@@ -118,7 +70,7 @@ define('flow', exports, function (exports) {
 			function injectNodeRecursive(id, nodeSpec, parent) {										
 				var node = {id: id, 
 							type: nodeSpec.type, 
-							parent: parent, 
+							parent: parent,
 							spec: nodeSpec, 
 							active: false};
 								
@@ -137,7 +89,9 @@ define('flow', exports, function (exports) {
 				if (nodeSpec.subflows) {
 					node.subflows = {};
 					nodeSpec.subflows.forEach(function (id, subflowSpec) {
-						node.subflows[id] = {id: id, type: 'subflow', spec: resolveSpec(node, subflowSpec)};
+						node.subflows[id] = resolveSpec(node, resolveSpec(node, subflowSpec));
+						// NOTE: type = 'subflow' when a subflow template is referenced					
+						delete node.subflows[id].type;
 					});
 				}
 												
@@ -167,27 +121,27 @@ define('flow', exports, function (exports) {
 					});
 				}				
 			}
-			
-			function setPathRecursive(node) {
-				node.path = getPath(node);
-				if (node.children) {
-					node.children.forEach(function (id, child) {
-						setPathRecursive(child);
-					});
-				}				
-			}
-									
+												
 			// inject nodes
 			that.root = injectNodeRecursive('', graphSpec);
 			
 			// resolve transitions
 			resolveTransitionsRecursive(that.root);								
-			
-			setPathRecursive(that.root);
-
-			that.root.active = true;
 						
-			// OPTION: remove the nodeSpecs?
+			// remove the cached specs
+			function removeSpecsRecursive(obj) {
+				delete obj.spec;
+				obj._mark = true;
+				obj.forEach(function (id, child) {
+					if (child && typeof child === 'object' && !child._mark) {
+						removeSpecsRecursive(child);
+					}
+				});
+				delete obj._mark;
+			}
+			removeSpecsRecursive(that.root);
+
+			that.root.active = true;						
 		};				
 	}
 		

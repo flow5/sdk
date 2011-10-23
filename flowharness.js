@@ -36,7 +36,6 @@ define('flowharness', exports, function (exports) {
 		var Flow = require('./flow.js').Flow;
 
 		flow = new Flow();
-		require('./flow_diags.js').instrument(flow);	
 
 		var FlowController = require('./flowcontroller.js').FlowController;
 		var flowController;		
@@ -44,6 +43,8 @@ define('flowharness', exports, function (exports) {
 		flowController = new FlowController(flow, observer);
 
 		flow.injectGraph(require('flowspec.js').root);
+
+		require('./flow_diags.js').instrument(flow);	
 
 		flowController.start();		
 	}

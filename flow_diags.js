@@ -27,49 +27,78 @@
 /*global define*/
 
 define('flow_diags', exports, function (exports) {
-	
-	require('./jsext.js');
+		
+	var Utils = require('./utils.js');
 	
 	function instrument(flow) {
 		
 		// OPTION: consider https://github.com/akidee/schema.js or related as a general schema validation solution
-				
-		flow.toJSON = function (outputStream) {
+		
+		flow.diags = {};		
+		
+		flow.diags.getNodeFromPath = function (path) {
+			function getChildRecursive(node, components) {
+				if (components.length && components[0]) {
+					var child = node.children[components[0]];
+					Utils.assert(child, 'Bad path');
+					return getChildRecursive(child, components.slice(1));
+				} else {
+					return node;
+				}
+			}
+			// slice(1) because paths start with '/'
+			return getChildRecursive(flow.root, path.split('/').slice(1));
+		};	
+		
+		flow.diags.isNodePathActive = function (node) {
+			var active = node.active;
+			while (active && node.parent) {
+				node = node.parent;
+				active = node.active;
+			}
+			return active;
+		};	
+			
+		flow.diags.isSubflowActive = function (node) {
+			while (!node.activeSubflow && node.parent) {
+				node = node.parent;
+			}
+			return node.activeSubflow;
+		};
+		
+		// TODO: use with caution. there may eventually be more than one
+		flow.diags.getActiveLeafNode = function () {
+			var node = flow.root;
+			while (node.activeChild) {
+				node = node.activeChild;
+			}
+			return node;
+		};
+					
+		flow.diags.toJSON = function () {
 			
 			var filteredCopy = {};
 			
-			function filterNodesRecursive(obj, filteredCopy) {
-				for (var name in obj) {
-					if (obj.hasOwnProperty(name)) {
-						if (name === 'parent' && obj.parent) {
-							filteredCopy.parent = obj.parent.path;
-						} else if (name === 'to' && obj.to) {
-							filteredCopy.to = obj.to.path;
+			function breakCyclesRecursive(obj) {
+				obj._mark = true;
+				obj.forEach(function (id, child) {
+					if (child && typeof child === 'object') {
+						if (child._mark) {
+							obj[id] = '->(' + child.diags.path + ')';
 						} else {
-							if (typeof obj[name] === 'object') {
-								if (name !== 'spec') {
-									filteredCopy[name] = {};
-									filterNodesRecursive(obj[name], filteredCopy[name]);									
-								}
-							} else {
-								filteredCopy[name] = obj[name];
-							}												
-						}						
+							breakCyclesRecursive(child);
+						}
 					}
-				}
-			}
-			
-			filterNodesRecursive(this.root.children, filteredCopy);
-			
-			if (outputStream === 'stderr') {
-				console.error(JSON.stringify(filteredCopy));
-			} else {
-				console.log(JSON.stringify(filteredCopy));
-			}
+				});
+				delete obj._mark;
+			}	
+			breakCyclesRecursive(flow.root);		
+						
+			return JSON.stringify(flow.root);
 		};
 
 		// creates DOT output representing the current Flow graph
-		flow.toDOT = function () {
+		flow.diags.toDOT = function () {
 			
 			var that = this;
 
@@ -148,9 +177,9 @@ define('flow_diags', exports, function (exports) {
 						
 			function getActiveNodeStyle(node) {
 				var nodeActive = node.active;
-				var pathActive = that.isNodePathActive(node);
+				var pathActive = flow.diags.isNodePathActive(node);
 				
-				if (that.isSubflowActive(node)) {
+				if (flow.diags.isSubflowActive(node)) {
 					pathActive = false;
 					nodeActive = false;
 				}
@@ -171,22 +200,22 @@ define('flow_diags', exports, function (exports) {
 					'style="filled,rounded"',
 					'shape=box',
 					'fontsize=12',		
-					'id=' + quote(node.path)			
+					'id=' + quote(node.diags.path)			
 				].concat(getActiveNodeStyle(node));				
 				
-				result += quote(node.path) + formatAttributes(attributes);
+				result += quote(node.diags.path) + formatAttributes(attributes);
 			}
 
 			function addSelectionButton(node, parent, id) {
 				var fillColor, color;
-				if (that.isNodePathActive(parent) && !that.isSubflowActive(parent) && !node.active) {
+				if (flow.diags.isNodePathActive(parent) && !flow.diags.isSubflowActive(parent) && !node.active) {
 					fillColor = activeColorAttribute('fillcolor');
 					color = activeColorAttribute('color');					
 				} else {
 					fillColor = inactiveColorAttribute('fillcolor');
 					color = 'color="black"';					
 				}				
-				var idAttribute = 'id=' + quote(parent.path + '.' + id + '-doSelection');
+				var idAttribute = 'id=' + quote(parent.diags.path + '.' + id + '-doSelection');
 				var attributes = [
 					makeLabel('Select'),
 					'fontname=courier',
@@ -200,12 +229,12 @@ define('flow_diags', exports, function (exports) {
 					idAttribute
 				];				
 				
-				result += quote(parent.path + '.' + id) + formatAttributes(attributes);
+				result += quote(parent.diags.path + '.' + id) + formatAttributes(attributes);
 			}
 											
 			function addTransitionSource(source, node) {
 				var fillColor, color;
-				if (that.isNodePathActive(node) && !that.isSubflowActive(node)) {
+				if (flow.diags.isNodePathActive(node) && !flow.diags.isSubflowActive(node)) {
 					fillColor = activeColorAttribute('fillcolor');
 					color = activeColorAttribute('color');
 				} else {
@@ -226,9 +255,9 @@ define('flow_diags', exports, function (exports) {
 					'shape=box', 
 					'height=0', 
 					'width=1.25',
-					'id=' + quote(source.path + '-doTransition')
+					'id=' + quote(source.diags.path + '-doTransition')
 				];				
-				result += quote(source.path) + formatAttributes(attributes); 
+				result += quote(source.diags.path) + formatAttributes(attributes); 
 			}						
 									
 			function addEdge(from, to, head) {																																
@@ -267,10 +296,10 @@ define('flow_diags', exports, function (exports) {
 					'fontname="courier"',
 					'fontsize=12',	
 					'bgcolor="gray"',
-					'id=' + quote(node.path)												
+					'id=' + quote(node.diags.path)												
 				].concat(getActiveNodeStyle(node)).join(';');
 
-				result += 'subgraph ' + quote(makeClusterLabel(node.path)) + ' {' + attributes;
+				result += 'subgraph ' + quote(makeClusterLabel(node.diags.path)) + ' {' + attributes;
 				result += makeLabel(node.id);
 			}
 			
@@ -282,7 +311,7 @@ define('flow_diags', exports, function (exports) {
 				var fillColor;
 				// TODO: this can do the wrong thing if the name of one subflow
 				// is a substring of another one
-				if (that.isNodePathActive(node) && node.activeSubflow && node.activeSubflow.path.match(path)) {
+				if (flow.diags.isNodePathActive(node) && node.activeSubflow && node.activeSubflow.diags.path.match(path)) {
 					fillColor = 'fillcolor="lightskyblue"';
 				} else {
 					fillColor = inactiveColorAttribute('fillcolor');
@@ -296,7 +325,7 @@ define('flow_diags', exports, function (exports) {
 					'penwidth=.6',
 					'style="filled"',
 					fillColor,
-					'id=' + quote(node.path + id)
+					'id=' + quote(node.diags.path + id)
 				].join(';');
 				
 				var clusterLabel = quote(makeClusterLabel(path));
@@ -318,15 +347,15 @@ define('flow_diags', exports, function (exports) {
 					}
 					
 					// pulls /a/b/c.d.e out of /a/b/c.d.e.f leaving 'f'					
-					return node.activeSubflow.spec.hasOwnProperty(path.replace(node.activeSubflow.path + '.', ''));
+					return node.activeSubflow.choices.hasOwnProperty(path.replace(node.activeSubflow.diags.path + '.', ''));
 				}	
 				function isTransition() {
 					return (typeof spec === 'string') && 
 						(node.transitions && node.transitions[spec]) || spec === 'back';
 				}			
 				function isSubflowAvailable() {					
-					return that.isNodePathActive(node) && !that.isSubflowActive(node.parent) && 
-						(!that.isSubflowActive(node) && isSubflowStart() || isCurrentSubflowChoice());
+					return flow.diags.isNodePathActive(node) && !flow.diags.isSubflowActive(node.parent) && 
+						(!flow.diags.isSubflowActive(node) && isSubflowStart() || isCurrentSubflowChoice());
 				}				
 				
 				var fillColor, color;				
@@ -376,7 +405,7 @@ define('flow_diags', exports, function (exports) {
 				result += quote(path) + formatAttributes(attributes);
 			}
 									
-			function visitSubflow(subflow, subflowPath, node) {
+			function visitSubflow(id, subflow, subflowPath, node) {
 				function visitSubflowRecursive(id, path, spec) {					
 					if (spec && typeof spec === 'object') {
 						addSubflowNode(id, path, spec, node);						
@@ -390,11 +419,9 @@ define('flow_diags', exports, function (exports) {
 					}
 				}
 				
-				subflowStart(node, subflowPath, subflow.id);
+				subflowStart(node, subflowPath, id);
 								
-				var spec = subflow.spec;
-				delete spec.type;
-				visitSubflowRecursive(subflow.id, subflowPath, spec);
+				visitSubflowRecursive(id, subflowPath, subflow);
 				
 				subflowFinish();				
 			}
@@ -410,7 +437,7 @@ define('flow_diags', exports, function (exports) {
 										
 					if (node.transitions) {
 						node.transitions.forEach(function (id, transition) {
-							addTransitionSource({path: node.path + '.' + id, id: id}, node);							
+							addTransitionSource({diags: {path: node.diags.path + '.' + id}, id: id}, node);							
 						});						
 					}
 
@@ -422,7 +449,7 @@ define('flow_diags', exports, function (exports) {
 					
 					if (node.subflows) {
 						node.subflows.forEach(function (id, subflow) {
-							visitSubflow(subflow, node.path + '.' + id, node);
+							visitSubflow(id, subflow, node.diags.path + '.' + id, node);
 						});
 					}					
 
@@ -431,7 +458,7 @@ define('flow_diags', exports, function (exports) {
 					addNode(node);					
 				}	
 												
-				visited[node.path] = node;									
+				visited[node.diags.path] = node;									
 			}
 			
 			
@@ -441,15 +468,15 @@ define('flow_diags', exports, function (exports) {
 			digraphStart();
 			
 			// create the nodes
-			this.root.children.forEach(function (id, node) {
-				visitNodeRecursive(node, that.root);
+			flow.root.children.forEach(function (id, node) {
+				visitNodeRecursive(node, flow.root);
 			});	
 			
 			// create the transition edges
 			visited.forEach(function (path, fromNode) {
 				if (fromNode.transitions) {
 					fromNode.transitions.forEach(function (id, toNode) {
-						var toPath = toNode.path;
+						var toPath = toNode.diags.path;
 
 						// NOTE: graphviz doesn't support edges between clusters
 						// the workaround is to make the edge between leaf nodes
@@ -459,29 +486,29 @@ define('flow_diags', exports, function (exports) {
 						// see: https://mailman.research.att.com/pipermail/graphviz-interest/2010q3/007276.html						
 						var head;
 						if (isCluster(toNode)) {
-							head = makeClusterLabel(toNode.path);
+							head = makeClusterLabel(toNode.diags.path);
 							
 							while (toNode.children) {
 								toNode = getAProperty(toNode.children);
 							}
-							toPath = toNode.path;
+							toPath = toNode.diags.path;
 
 							// if the toNode has transitions, then use one of them
 							if (toNode.transitions) {
-								toPath = toNode.path + '.' + getAnId(toNode.transitions);
+								toPath = toNode.diags.path + '.' + getAnId(toNode.transitions);
 							} 
 							// if the toNode is the child of a selector then it's a cluster
 							// because of the selection button. so grab the button
 							else if (toNode.parent.type === 'selector') {
-								toPath = toNode.parent.path + '.' + toNode.id;
+								toPath = toNode.parent.diags.path + '.' + toNode.id;
 							} 
 							// if the toNode has subflows then it's a cluster, so grab
 							// one of the subflow elements
 							else if (toNode.subflows) {
-								toPath = toNode.path + '.' + getAnId(toNode.subflows);
+								toPath = toNode.diags.path + '.' + getAnId(toNode.subflows);
 							}
 						}												
-						addEdge(fromNode.path + '.' + id, toPath, head);																						
+						addEdge(fromNode.diags.path + '.' + id, toPath, head);																						
 					});
 				}
 			});						
@@ -489,7 +516,28 @@ define('flow_diags', exports, function (exports) {
 			digraphFinish();
 			
 			return result;			
-		};		
+		};	
+		
+		function getPath(node) {
+			var path = [];
+			if (node.children) {
+				path.push('');
+			}
+			while (node) {
+				path.push(node.id);
+				node = node.parent;
+			}
+			return path.reverse().join('/');
+		}			
+		function addDiagsRecursive(node) {
+			node.diags = {path: getPath(node)};
+			if (node.children) {
+				node.children.forEach(function (id, child) {
+					addDiagsRecursive(child);
+				});
+			}				
+		}			
+		addDiagsRecursive(flow.root);	
 	}
 	
 	exports.instrument = instrument;

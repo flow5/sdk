@@ -16,6 +16,9 @@
 
 	<script src='require.js'></script>	
 	<script src='jsext.js'></script>
+
+	<link rel="stylesheet" type="text/css" href="json.css">
+	<script src='json.js'></script>
 	
 	<script src='utils.js'></script>
 
@@ -37,102 +40,111 @@
 		
 		var Utils = require('./utils.js');	
 		var FlowHarness = require('./flowharness.js').FlowHarness;		
+		var JSONFormatter = require('./json.js').JSONFormatter;
 		
 		try {
 			// function is called back on each action that changes flow state
 			var flowHarness = new FlowHarness(function (flowController, flow, cb) {
 				// make these global for the console
 				theFlowController = flowController;
-				theFlow = flow;				
+				theFlow = flow;	
 				
-				Utils.post('dot2svg', flow.toDOT(), function (response) {
-					
-					function makeClick(el) {
-						el.onclick = function () {	
-							try {
-								var parts = el.id.split('-');
-								var fullPath = parts[0];
-								var method = parts[1];
+				if (getURLParams().hasOwnProperty('json')) {
+					var jsonFormatter = new JSONFormatter();
+					document.body.innerHTML = jsonFormatter.valueToHTML(JSON.parse(flow.diags.toJSON()));
+					jsonFormatter.attachListeners();
+				} else {
+					Utils.post('dot2svg', flow.diags.toDOT(), function (response) {
 
-								var components = fullPath.split('.');
-								var nodePath = components[0];
-								var id = components.reverse()[0];	
-								
-								flowController[method](flow.getNode(nodePath), id);																
-							} catch (e) {
-								console.log('Exception: ' + e.message);
-							}													
+						function makeClick(el) {
+							el.onclick = function () {	
+								try {
+									var parts = el.id.split('-');
+									var fullPath = parts[0];
+									var method = parts[1];
 
-						};
-					}
-					function setStyles(el, styles) {
-						styles.forEach(function (id, value) {
-							el.style[id] = value;
-						});
-					}
-					if (typeof document !== 'undefined') {
-						document.body.innerHTML = response;
+									if (method) {
+										var components = fullPath.split('.');
+										var nodePath = components[0];
+										var id = components.reverse()[0];	
 
-						document.body.style['background-color'] = 'darkslategray';
-						document.body.style['text-align'] = 'center';
-						document.body.style['margin-left'] = '100px';
+										flowController[method](flow.diags.getNodeFromPath(nodePath), id);										
+									}
+								} catch (e) {
+									console.log('Exception: ' + e.message);
+								}													
 
-						// Make the main poly the same color as background
-						// OPTION: would be nice to do this on the DOT side
-						document.getElementById('graph1').querySelector('polygon').setAttribute('fill', 'darkslategray');
-						document.getElementById('graph1').querySelector('polygon').setAttribute('stroke', '');
-
-						// the clickable elements have id with / prefix
-						var clickable = document.querySelectorAll('[id^="/"]');
-						for (var i = 0; i < clickable.length; i += 1) {
-							makeClick(clickable[i]);
+							};
 						}
-												
-						// determine the offset of the current node
-						var activeLeafNode = flow.getActiveLeafNode();
-						var svgElementBBox = document.getElementById(activeLeafNode.path).getBBox();
-						var svgRootBBox = document.querySelector('svg').getBBox();
-						var offset = {x: svgElementBBox.x, y: svgRootBBox.height + svgElementBBox.y};
-						
-						// scroll it into view
-						var tmp = document.createElement('div');
-						tmp.style.position = 'absolute';
-						tmp.style.top = offset.y + 'px';
-						tmp.style.left = offset.x + 'px';
-						document.body.appendChild(tmp);
-						tmp.scrollIntoView();
-						document.body.removeChild(tmp);
-						
-						// make the back button
-						var backButton = document.createElement('div');
-						setStyles(backButton, {
-							'background-color': flowController.hasBack() ? 'lightblue' : 'grey',
-							'display': '-webkit-box',
-							'-webkit-box-pack': 'center',
-							'-webkit-box-align': 'center',
-							'position': 'fixed',
-							'top': '0px',
-							'left': '0px',
-							'border': '4px solid ' + (flowController.hasBack() ? 'blue' : 'black'),
-							'height': '40px',
-							'width': '80px',
-							'margin': '10px',
-							'-webkit-border-radius': '14px',
-							'font-size': '24px'												
-						});
-						backButton.innerText = '<==';	
-						backButton.addEventListener('click', function () {
-							try {
-								flowController.doBack();								
-							} catch (e) {
-								console.log('Exception: ' + e.message);
+						function setStyles(el, styles) {
+							styles.forEach(function (id, value) {
+								el.style[id] = value;
+							});
+						}
+						if (typeof document !== 'undefined') {
+							document.body.innerHTML = response;
+
+							document.body.style['background-color'] = 'darkslategray';
+							document.body.style['text-align'] = 'center';
+							document.body.style['margin-left'] = '100px';
+
+							// Make the main poly the same color as background
+							// OPTION: would be nice to do this on the DOT side
+							document.getElementById('graph1').querySelector('polygon').setAttribute('fill', 'darkslategray');
+							document.getElementById('graph1').querySelector('polygon').setAttribute('stroke', '');
+
+							// the clickable elements have id with / prefix
+							var clickable = document.querySelectorAll('[id^="/"]');
+							for (var i = 0; i < clickable.length; i += 1) {
+								makeClick(clickable[i]);
 							}
-						});				
-						document.body.appendChild(backButton);
-					}
-					
-					cb();
-				});
+
+							// determine the offset of the current node
+							var activeLeafNode = flow.diags.getActiveLeafNode();
+							var svgElementBBox = document.getElementById(activeLeafNode.diags.path).getBBox();
+							var svgRootBBox = document.querySelector('svg').getBBox();
+							var offset = {x: svgElementBBox.x, y: svgRootBBox.height + svgElementBBox.y};
+
+							// scroll it into view
+							var tmp = document.createElement('div');
+							tmp.style.position = 'absolute';
+							tmp.style.top = offset.y + 'px';
+							tmp.style.left = offset.x + 'px';
+							document.body.appendChild(tmp);
+							tmp.scrollIntoView();
+							document.body.removeChild(tmp);
+
+							// make the back button
+							var backButton = document.createElement('div');
+							setStyles(backButton, {
+								'background-color': flowController.hasBack() ? 'lightblue' : 'grey',
+								'display': '-webkit-box',
+								'-webkit-box-pack': 'center',
+								'-webkit-box-align': 'center',
+								'position': 'fixed',
+								'top': '0px',
+								'left': '0px',
+								'border': '4px solid ' + (flowController.hasBack() ? 'blue' : 'black'),
+								'height': '40px',
+								'width': '80px',
+								'margin': '10px',
+								'-webkit-border-radius': '14px',
+								'font-size': '24px'												
+							});
+							backButton.innerText = '<==';	
+							backButton.addEventListener('click', function () {
+								try {
+									flowController.doBack();								
+								} catch (e) {
+									console.log('Exception: ' + e.message);
+								}
+							});				
+							document.body.appendChild(backButton);
+						}
+
+						cb();
+					});					
+				}			
 			});
 		} catch (e) {
 			document.body.innerHTML = e.message;
