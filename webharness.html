@@ -49,102 +49,150 @@
 				theFlowController = flowController;
 				theFlow = flow;	
 				
-				if (getURLParams().hasOwnProperty('json')) {
-					var jsonFormatter = new JSONFormatter();
-					document.body.innerHTML = jsonFormatter.valueToHTML(JSON.parse(flow.diags.toJSON()));
-					jsonFormatter.attachListeners();
-				} else {
-					Utils.post('dot2svg', flow.diags.toDOT(), function (response) {
+				Utils.post('dot2svg', flow.diags.toDOT(), function (response) {
 
-						function makeClick(el) {
-							el.onclick = function () {	
-								try {
-									var parts = el.id.split('-');
-									var fullPath = parts[0];
-									var method = parts[1];
+					function makeClick(el) {
+						el.onclick = function () {	
+							try {
+								var parts = el.id.split('-');
+								var fullPath = parts[0];
+								var method = parts[1];
 
-									if (method) {
-										var components = fullPath.split('.');
-										var nodePath = components[0];
-										var id = components.reverse()[0];	
+								if (method) {
+									var components = fullPath.split('.');
+									var nodePath = components[0];
+									var id = components.reverse()[0];	
 
-										flowController[method](flow.diags.getNodeFromPath(nodePath), id);										
-									}
-								} catch (e) {
-									console.log('Exception: ' + e.message);
-								}													
-
-							};
-						}
-						function setStyles(el, styles) {
-							styles.forEach(function (id, value) {
-								el.style[id] = value;
-							});
-						}
-						if (typeof document !== 'undefined') {
-							document.body.innerHTML = response;
-
-							document.body.style['background-color'] = 'darkslategray';
-							document.body.style['text-align'] = 'center';
-							document.body.style['margin-left'] = '100px';
-
-							// Make the main poly the same color as background
-							// OPTION: would be nice to do this on the DOT side
-							document.getElementById('graph1').querySelector('polygon').setAttribute('fill', 'darkslategray');
-							document.getElementById('graph1').querySelector('polygon').setAttribute('stroke', '');
-
-							// the clickable elements have id with / prefix
-							var clickable = document.querySelectorAll('[id^="/"]');
-							for (var i = 0; i < clickable.length; i += 1) {
-								makeClick(clickable[i]);
-							}
-
-							// determine the offset of the current node
-							var activeLeafNode = flow.diags.getActiveLeafNode();
-							var svgElementBBox = document.getElementById(activeLeafNode.diags.path).getBBox();
-							var svgRootBBox = document.querySelector('svg').getBBox();
-							var offset = {x: svgElementBBox.x, y: svgRootBBox.height + svgElementBBox.y};
-
-							// scroll it into view
-							var tmp = document.createElement('div');
-							tmp.style.position = 'absolute';
-							tmp.style.top = offset.y + 'px';
-							tmp.style.left = offset.x + 'px';
-							document.body.appendChild(tmp);
-							tmp.scrollIntoView();
-							document.body.removeChild(tmp);
-
-							// make the back button
-							var backButton = document.createElement('div');
-							setStyles(backButton, {
-								'background-color': flowController.hasBack() ? 'lightblue' : 'grey',
-								'display': '-webkit-box',
-								'-webkit-box-pack': 'center',
-								'-webkit-box-align': 'center',
-								'position': 'fixed',
-								'top': '0px',
-								'left': '0px',
-								'border': '4px solid ' + (flowController.hasBack() ? 'blue' : 'black'),
-								'height': '40px',
-								'width': '80px',
-								'margin': '10px',
-								'-webkit-border-radius': '14px',
-								'font-size': '24px'												
-							});
-							backButton.innerText = '<==';	
-							backButton.addEventListener('click', function () {
-								try {
-									flowController.doBack();								
-								} catch (e) {
-									console.log('Exception: ' + e.message);
+									flowController[method](flow.diags.getNodeFromPath(nodePath), id);										
 								}
-							});				
-							document.body.appendChild(backButton);
+							} catch (e) {
+								console.log('Exception: ' + e.message);
+							}													
+
+						};
+					}
+					function setStyles(el, styles) {
+						styles.forEach(function (id, value) {
+							el.style[id] = value;
+						});
+					}
+					if (typeof document !== 'undefined') {
+						document.body.innerHTML = response;
+
+						document.body.style['background-color'] = 'darkslategray';
+						document.body.style['text-align'] = 'center';
+						document.body.style['margin-left'] = '100px';
+
+						// Make the main poly the same color as background
+						// OPTION: would be nice to do this on the DOT side
+						document.getElementById('graph1').querySelector('polygon').setAttribute('fill', 'darkslategray');
+						document.getElementById('graph1').querySelector('polygon').setAttribute('stroke', '');
+
+						// the clickable elements have id with / prefix
+						var clickable = document.querySelectorAll('[id^="/"]');
+						for (var i = 0; i < clickable.length; i += 1) {
+							makeClick(clickable[i]);
 						}
 
-						cb();
-					});					
-				}			
+						// determine the offset of the current node
+						var activeLeafNode = flow.diags.getActiveLeafNode();
+						var svgElementBBox = document.getElementById(activeLeafNode.diags.path).getBBox();
+						var svgRootBBox = document.querySelector('svg').getBBox();
+						var offset = {x: svgElementBBox.x, y: svgRootBBox.height + svgElementBBox.y};
+
+						// scroll it into view
+						var tmp = document.createElement('div');
+						tmp.style.position = 'absolute';
+						tmp.style.top = offset.y + 'px';
+						tmp.style.left = offset.x + 'px';
+						document.body.appendChild(tmp);
+						tmp.scrollIntoView();
+						document.body.removeChild(tmp);
+
+						// make the back button
+						var backButton = document.createElement('div');
+						setStyles(backButton, {
+							'background-color': flowController.hasBack() ? 'lightblue' : 'grey',
+							'display': '-webkit-box',
+							'-webkit-box-pack': 'center',
+							'-webkit-box-align': 'center',
+							'position': 'fixed',
+							'top': '0px',
+							'left': '0px',
+							'border': '4px solid ' + (flowController.hasBack() ? 'blue' : 'black'),
+							'height': '40px',
+							'width': '80px',
+							'margin': '10px',
+							'-webkit-border-radius': '14px',
+							'font-size': '24px'												
+						});
+						backButton.innerText = '<==';	
+						backButton.addEventListener('click', function () {
+							try {
+								flowController.doBack();								
+							} catch (e) {
+								console.log('Exception: ' + e.message);
+							}
+						});				
+						document.body.appendChild(backButton);
+						
+						var jsonDiv;
+						
+						var jsonButton = document.createElement('div');
+						setStyles(jsonButton, {
+							'background-color': 'grey',
+							'display': '-webkit-box',
+							'-webkit-box-pack': 'center',
+							'-webkit-box-align': 'center',
+							'position': 'fixed',
+							'top': '50px',
+							'left': '0px',
+							'border': '4px solid black',
+							'height': '40px',
+							'width': '80px',
+							'margin': '10px',
+							'-webkit-border-radius': '14px',
+							'font-size': '24px'												
+						});
+						jsonButton.innerText = 'JSON';	
+						
+						jsonButton.addEventListener('click', function () {
+							if (jsonDiv) {
+								document.body.removeChild(jsonDiv);
+								jsonDiv = null;
+							} else {
+								try {
+									var jsonFormatter = new JSONFormatter();
+									jsonDiv = document.createElement('div');
+									setStyles(jsonDiv, {
+										position: 'absolute',
+										top: '10px',
+										left: '200px',
+										'text-align': 'left',
+										'white-space': 'nowrap',
+										'background-color': 'white',
+										opacity: 0.65,
+										border: '1px solid black'
+									});
+									jsonDiv.innerHTML = jsonFormatter.valueToHTML(JSON.parse(flow.diags.toJSON()));
+
+									document.body.appendChild(jsonDiv);
+									jsonFormatter.attachListeners();																
+								} catch (e) {
+									console.log('Exception: ' + e.message);
+								}	
+							}
+							setStyles(jsonButton, {
+								'background-color': jsonDiv ? 'lightblue' : 'grey',
+								'border': '4px solid ' + (jsonDiv ? 'blue' : 'black')								
+							});							
+						});				
+						document.body.appendChild(jsonButton);
+						
+					}
+
+					cb();
+				});					
 			});
 		} catch (e) {
 			document.body.innerHTML = e.message;

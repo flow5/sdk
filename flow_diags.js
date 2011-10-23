@@ -79,22 +79,24 @@ define('flow_diags', exports, function (exports) {
 			
 			var filteredCopy = {};
 			
-			function breakCyclesRecursive(obj) {
-				obj._mark = true;
+			function copyForPrettyPrintRecursive(obj, objId) {
+				var copy = {};
 				obj.forEach(function (id, child) {
 					if (child && typeof child === 'object') {
-						if (child._mark) {
-							obj[id] = '->(' + child.diags.path + ')';
+						// break cycles and use paths to indicate references
+						if (id === 'parent' || id === 'activeChild' || id === 'node' || objId === 'transitions') {
+							copy[id] = '->(' + child.diags.path + ')';
 						} else {
-							breakCyclesRecursive(child);
+							copy[id] = copyForPrettyPrintRecursive(child, id);
 						}
+					} else {
+						copy[id] = child;
 					}
 				});
-				delete obj._mark;
+				return copy;
 			}	
-			breakCyclesRecursive(flow.root);		
 						
-			return JSON.stringify(flow.root);
+			return JSON.stringify(copyForPrettyPrintRecursive(flow.root, ''));
 		};
 
 		// creates DOT output representing the current Flow graph

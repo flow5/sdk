@@ -101,7 +101,7 @@ define('flowcontroller', exports, function (exports) {
 			// needs to run again
 			// TODO: this has an effect at the widget layer
 			function cancelSubflowRecursive(node) {
-				node.activeSubflow = null;
+				delete node.activeSubflow;
 				if (node.children) {
 					node.children.forEach(function (id, child) {
 						cancelSubflowRecursive(child);
@@ -199,7 +199,7 @@ define('flowcontroller', exports, function (exports) {
 					node.activeSubflow = {choices: choice, diags: {path: node.activeSubflow.diags.path + '.' + id}};
 												
 				} else {
-					node.activeSubflow = null;
+					delete node.activeSubflow;
 					// TODO: should use node controller method
 					// null spec means just end the subflow
 					// TODO: could always delegate up to the controller
@@ -258,10 +258,10 @@ define('flowcontroller', exports, function (exports) {
 		
 		this.doBack = function () {			
 			var backNode = findBackNode();
+			Utils.assert(backNode, 'Cannot go back');
 			
 			Utils.assert(!flow.diags.isSubflowActive(backNode), 'Cannot go back with a subflow active');							
 			
-			Utils.assert(backNode, 'Cannot go back');
 
 			this.doTransition(backNode, 'back');
 		};
