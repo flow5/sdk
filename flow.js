@@ -185,20 +185,18 @@ subflows
 	logically a subflow operates within a state
 
 	a subflow may terminate in null in which case control returns to the node
-	or if the node is a flow it may terminate in a string which causes a transition to execute
+	or it may terminate in a string in which case:
 	
-	a special subflow called onactivate will be called when a node is activated as the result of selection
-		or transition. this allows conditional logic to be implemented immediately on entering a node
-		onactivate subflows are executed recursively
-	
-	there are some screwy cases here. e.g., if a recursive onactivate subflow terminates in a transition before the
-		recursion completes things blow up because the onactivate chain will try to complete in a no longer active node
-	
-	another question is whether it should be possible to end the subflow with a selection rather than transition
-	this has screwy consequences as well since the selection may activate a node while the nexted onactivate
-	logic is exeucting
-	
+	- if the node is a flow the string is used as the argument to doTransition
+	- if the node is a selector the string is used as the argument to doSelection
 
+	a special subflow called onactivate is executed recursively when a node is selected or transitioned to
+	this allows logic to execute before user interaction can occur
+	
+	one complex case is when an onactivate subflow ends in a transition or selection. when this occurs,
+	the onactivate recursion is terminated becuase the transition or selection will trigger onactivate
+	for the newly active node
+	
 Flow Documentation
 
 - each step in the flow can have:

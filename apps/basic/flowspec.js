@@ -39,8 +39,8 @@ define('flowspec', exports, function (exports) {
 			home: {
 				subflows: {
 					onactivate: {
-						yes: null,
-						no: null,
+						selectA: 'a',
+						selectB: 'b',
 					}
 				},
 				templates: {
@@ -71,8 +71,7 @@ define('flowspec', exports, function (exports) {
 											goToMiddle: 'middle',
 											beDone: 'done'
 										}											
-									},
-									cancel: null
+									}
 								}
 							},
 							middle: 'middle',

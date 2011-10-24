@@ -46,7 +46,7 @@ define('flowcontroller', exports, function (exports) {
 						
 		function activateNode(node, cb) {
 			function doOnActiveSubflowsRecursive(node, cb) {
-				if (node) {
+				if (node && node.active && !node.activeSubflow) {
 					if (node.subflows && node.subflows.onactivate) {
 						that.doSubflow(node, 'onactivate', function () {
 							doOnActiveSubflowsRecursive(node.activeChild, cb);
@@ -181,43 +181,39 @@ define('flowcontroller', exports, function (exports) {
 			node.activeSubflow.cb(node, id);						
 		};	
 		
-		// calls back when the subflow is complete
 		this.doSubflow = function (node, id, cb) {
 			Utils.assert(flow.diags.isNodePathActive(node), 'Attempt to execute subflow from an inactive node');	
 			Utils.assert(node.subflows && node.subflows[id], 'No such subflow');
 			Utils.assert(!flow.diags.isSubflowActive(node), 'Subflow already in progress');
-			
-			node.activeSubflow = {node: node, id: id, choices: node.subflows[id], diags: {path: node.diags.path + '.' + id}};
-			
+						
 			function doSubflowChoice(node, id) {												
 				Utils.assert(node.activeSubflow.choices.hasOwnProperty(id), 'No such choice');			
-				
-				delete node.activeSubflow.cb;
-								
+												
 				var choice = node.activeSubflow.choices[id];
 				if (choice && typeof choice === 'object') {
-					node.activeSubflow = {choices: choice, diags: {path: node.activeSubflow.diags.path + '.' + id}};
-												
+					node.activeSubflow = {node: node,
+											cb: doSubflowChoice,
+											choices: choice, 
+											id: id,
+											diags: {path: node.activeSubflow.diags.path + '.' + id}};												
 				} else {
 					delete node.activeSubflow;
-					// TODO: should use node controller method
-					// null spec means just end the subflow
-					// TODO: could always delegate up to the controller
-					// rather than hard code the semantics, but then there's
-					// redundant code since often it's just a transition
+
 					if (choice) {
-						that.doTransition(node, choice);												
+						if (node.type === 'flow') {
+							that.doTransition(node, choice);																			
+						} else {
+							that.doSelection(node, choice);
+						}
 					}
 				}
 																			
 				observerCb(that, flow, function () {
 					if (node.activeSubflow) {
-						node.activeSubflow.cb = doSubflowChoice;
+						// TODO: call up to controller layer
 						doSubflowPrompt(node);
 					} else {
 						console.log('subflow complete');
-
-						// TODO: I think this will be required
 						if (cb) {
 							cb();
 						}
@@ -225,7 +221,13 @@ define('flowcontroller', exports, function (exports) {
 				});									
 			}
 			
-			node.activeSubflow.cb = doSubflowChoice;
+			node.activeSubflow = {node: node, 
+									choices: node.subflows[id], 
+									cb: doSubflowChoice,
+									id: id, 
+									diags: {path: node.diags.path + '.' + id}};			
+
+			// TODO: call up to controller layer
 			doSubflowPrompt(node);								
 
 			observerCb(that, flow, function () {
