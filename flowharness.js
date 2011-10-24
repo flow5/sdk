@@ -35,16 +35,16 @@ define('flowharness', exports, function (exports) {
 		var Utils = require('./utils.js');
 		var Flow = require('./flow.js').Flow;
 
-		flow = new Flow();
+		this.flow = new Flow();
 
 		var FlowController = require('./flowcontroller.js').FlowController;
 		var flowController;		
 		
-		flowController = new FlowController(flow, observer);
+		flowController = new FlowController(this.flow, observer);
 
-		flow.injectGraph(require('flowspec.js').root);
+		this.flow.injectGraph(require('flowspec.js').root);
 
-		require('./flow_diags.js').instrument(flow);	
+		require('./flow_diags.js').instrument(this.flow);	
 
 		flowController.start();		
 	}

@@ -1,5 +1,32 @@
 <html>
 
+<!--
+
+	Copyright (c) 2011 Paul Greyson
+
+	Permission is hereby granted, free of charge, to any person 
+	obtaining a copy of this software and associated documentation 
+	files (the "Software"), to deal in the Software without 
+	restriction, including without limitation the rights to use, 
+	copy, modify, merge, publish, distribute, sublicense, and/or 
+	sell copies of the Software, and to permit persons to whom the 
+	Software is furnished to do so, subject to the following 
+	conditions:
+
+	The above copyright notice and this permission notice shall be 
+	included in all copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, 
+	EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES 
+	OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
+	NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT 
+	HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+	WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
+	FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR 
+	OTHER DEALINGS IN THE SOFTWARE.
+
+-->
+
 <head>
 	
 	<script>
@@ -28,13 +55,20 @@
 	
 	<script src='flowharness.js'></script>
 				
+	<link rel="stylesheet" type="text/css" href="webharness.css">
+				
 	<script>
 		/*jslint evil: true*/
 		document.write('<script src="apps/' + getURLParams().app + '/flowspec.js"><\/script>');
 	</script>
+	
+
 </head>
 
 <body>
+	<div id='application'></div>
+	<div id='viewer'></div>
+		
 	<script>
 		/*global theFlowController:true theFlow:true*/
 		
@@ -42,6 +76,7 @@
 		var FlowHarness = require('./flowharness.js').FlowHarness;		
 		var JSONFormatter = require('./json.js').JSONFormatter;
 		
+		var viewer = document.getElementById('viewer');
 		try {
 			// function is called back on each action that changes flow state
 			var flowHarness = new FlowHarness(function (flowController, flow, cb) {
@@ -49,6 +84,8 @@
 				theFlowController = flowController;
 				theFlow = flow;	
 				
+				document.getElementById('application').innerHTML = flow.diags.toHTML();				
+								
 				Utils.post('dot2svg', flow.diags.toDOT(), function (response) {
 
 					function makeClick(el) {
@@ -76,132 +113,93 @@
 							el.style[id] = value;
 						});
 					}
-					if (typeof document !== 'undefined') {
-						document.body.innerHTML = response;
+										
+					viewer.innerHTML = response;
 
-						document.body.style['background-color'] = 'darkslategray';
-						document.body.style['text-align'] = 'center';
-						document.body.style['margin-left'] = '100px';
+					// Make the main poly the same color as background
+					// OPTION: would be nice to do this on the DOT side
+					document.getElementById('graph1').querySelector('polygon').setAttribute('fill', 'darkslategray');
+					document.getElementById('graph1').querySelector('polygon').setAttribute('stroke', '');
 
-						// Make the main poly the same color as background
-						// OPTION: would be nice to do this on the DOT side
-						document.getElementById('graph1').querySelector('polygon').setAttribute('fill', 'darkslategray');
-						document.getElementById('graph1').querySelector('polygon').setAttribute('stroke', '');
-
-						// the clickable elements have id with / prefix
-						var clickable = document.querySelectorAll('[id^="/"]');
-						for (var i = 0; i < clickable.length; i += 1) {
-							makeClick(clickable[i]);
-						}
-
-						// determine the offset of the current node
-						var activeLeafNode = flow.diags.getActiveLeafNode();
-						var svgElementBBox = document.getElementById(activeLeafNode.diags.path).getBBox();
-						var svgRootBBox = document.querySelector('svg').getBBox();
-						var offset = {x: svgElementBBox.x, y: svgRootBBox.height + svgElementBBox.y};
-
-						// scroll it into view
-						var tmp = document.createElement('div');
-						tmp.style.position = 'absolute';
-						tmp.style.top = offset.y + 'px';
-						tmp.style.left = offset.x + 'px';
-						document.body.appendChild(tmp);
-						tmp.scrollIntoView();
-						document.body.removeChild(tmp);
-
-						// make the back button
-						var backButton = document.createElement('div');
-						setStyles(backButton, {
-							'background-color': flowController.hasBack() ? 'lightblue' : 'grey',
-							'display': '-webkit-box',
-							'-webkit-box-pack': 'center',
-							'-webkit-box-align': 'center',
-							'position': 'fixed',
-							'top': '0px',
-							'left': '0px',
-							'border': '4px solid ' + (flowController.hasBack() ? 'blue' : 'black'),
-							'height': '40px',
-							'width': '80px',
-							'margin': '10px',
-							'-webkit-border-radius': '14px',
-							'font-size': '24px',
-							'font-family': 'sans-serif'																													
-						});
-						backButton.innerText = '<==';	
-						backButton.addEventListener('click', function () {
-							try {
-								flowController.doBack();								
-							} catch (e) {
-								console.log('Exception: ' + e.message);
-							}
-						});				
-						document.body.appendChild(backButton);
-						
-						var jsonDiv;
-						
-						var jsonButton = document.createElement('div');
-						setStyles(jsonButton, {
-							'background-color': 'grey',
-							'display': '-webkit-box',
-							'-webkit-box-pack': 'center',
-							'-webkit-box-align': 'center',
-							'position': 'fixed',
-							'top': '50px',
-							'left': '0px',
-							'border': '4px solid black',
-							'height': '40px',
-							'width': '80px',
-							'margin': '10px',
-							'-webkit-border-radius': '14px',
-							'font-size': '24px',
-							'font-family': 'sans-serif'											
-						});
-						jsonButton.innerText = 'JSON';	
-						
-						jsonButton.addEventListener('click', function () {
-							if (jsonDiv) {
-								document.body.removeChild(jsonDiv);
-								jsonDiv = null;
-							} else {
-								try {
-									var jsonFormatter = new JSONFormatter();
-									jsonDiv = document.createElement('div');
-									setStyles(jsonDiv, {
-										position: 'absolute',
-										top: '10px',
-										left: '200px',
-										'text-align': 'left',
-										'white-space': 'nowrap',
-										'background-color': 'white',
-										opacity: 0.65,
-										border: '1px solid black'
-									});
-									jsonDiv.innerHTML = jsonFormatter.valueToHTML(JSON.parse(flow.diags.toJSON()));
-									jsonDiv.className = 'json';
-
-									document.body.appendChild(jsonDiv);
-									jsonFormatter.attachListeners();																
-								} catch (e) {
-									console.log('Exception: ' + e.message);
-								}	
-							}
-							setStyles(jsonButton, {
-								'background-color': jsonDiv ? 'lightblue' : 'grey',
-								'border': '4px solid ' + (jsonDiv ? 'blue' : 'black')								
-							});							
-						});				
-						document.body.appendChild(jsonButton);
-						
+					// the clickable elements have id with / prefix
+					var clickable = document.querySelectorAll('[id^="svg:/"]');
+					for (var i = 0; i < clickable.length; i += 1) {
+						makeClick(clickable[i]);
 					}
 
+					// determine the offset of the current node
+					var activeLeafNode = flow.diags.getActiveLeafNode();
+					var svgElementBBox = document.getElementById('svg:' + activeLeafNode.diags.path).getBBox();
+					var svgRootBBox = document.querySelector('svg').getBBox();
+					var offset = {x: svgElementBBox.x, y: svgRootBBox.height + svgElementBBox.y};
+
+					// scroll it into view
+					var tmp = document.createElement('div');
+					setStyles(tmp, {
+						position: 'absolute',
+						top: offset.y + 'px',
+						left: offset.x + 'px'
+					});
+					viewer.appendChild(tmp);
+					tmp.scrollIntoView();
+					viewer.removeChild(tmp);
+
+					// make the back button
+					var backButton = document.createElement('div');
+					backButton.className = 'back-button';
+					setStyles(backButton, {
+						'background-color': flowController.hasBack() ? 'lightblue' : 'grey',
+						'border': '4px solid ' + (flowController.hasBack() ? 'blue' : 'black'),
+					});
+					backButton.innerText = '<==';	
+					backButton.addEventListener('click', function () {
+						try {
+							flowController.doBack();								
+						} catch (e) {
+							console.log('Exception: ' + e.message);
+						}
+					});				
+					viewer.appendChild(backButton);
+					
+					var jsonDiv;
+					
+					var jsonButton = document.createElement('div');
+					jsonButton.className = 'json-button';
+					jsonButton.innerText = 'JSON';	
+					
+					jsonButton.addEventListener('click', function () {
+						if (jsonDiv) {
+							viewer.removeChild(jsonDiv);
+							jsonDiv = null;
+						} else {
+							try {
+								var jsonFormatter = new JSONFormatter();
+								jsonDiv = document.createElement('div');
+								jsonDiv.className = 'json';
+								jsonDiv.innerHTML = jsonFormatter.valueToHTML(JSON.parse(flow.diags.toJSON()));
+								jsonDiv.className = 'json';
+
+								viewer.appendChild(jsonDiv);
+								jsonFormatter.attachListeners();																
+							} catch (e) {
+								console.log('Exception: ' + e.message);
+							}	
+						}
+						setStyles(jsonButton, {
+							'background-color': jsonDiv ? 'lightblue' : 'grey',
+							'border': '4px solid ' + (jsonDiv ? 'blue' : 'black')								
+						});							
+					});				
+					viewer.appendChild(jsonButton);
+						
 					cb();
 				});					
 			});
+					
 		} catch (e) {
-			document.body.innerHTML = e.message;
-		}
-			
-	</script>
+			viewer.innerHTML = e.message;
+		}			
+	</script>	
 </body>
 
 </html>

@@ -74,6 +74,68 @@ define('flow_diags', exports, function (exports) {
 			}
 			return node;
 		};
+		
+		flow.diags.toHTML = function () {
+			var result = '';
+			function beginNode(node) {
+				result += '<div class="node" ';
+				result += ' id="' + node.diags.path + '"';
+				if (!node.active) {
+					result += 'style="visibility:hidden"';
+				}
+				result += '>';
+			}
+			function endNode() {
+				result += '</div>';
+			}
+			function insertNodeWidget(node) {
+				result += '<div class="node-widget">' +  node.id + '</div>';
+			}
+			function insertSubflowWidget(subflow) {
+				result += '<div class="subflow-widget">' +  subflow.method + '</div>';
+				
+			}
+			function doSubflowRecursive(node, id, subflow) {
+				if (subflow && typeof subflow === 'object') {
+					result += '<div class="subflow" ';
+					result += ' id="' + subflow.diags.path + '"';
+					if (!node.activeSubflow || node.activeSubflow.diags.path !== subflow.diags.path) {
+						result += 'style="visibility:hidden"';
+					}
+					result += '>';
+					insertSubflowWidget(subflow);
+					result += '</div>';					
+					subflow.choices.forEach(function (id, child) {
+						doSubflowRecursive(node, id, child);
+					});			
+				}
+			}
+			
+			function generateDivsRecursive(node) {
+				beginNode(node);
+								
+				if (node.children) {
+					node.children.forEach(function (id, child) {
+						generateDivsRecursive(child);							
+					});
+				} else {
+					insertNodeWidget(node);									
+				}
+				
+				if (node.subflows) {
+					node.subflows.forEach(function (id, subflow) {
+						doSubflowRecursive(node, id, subflow);
+					});
+					
+				}
+				
+				endNode();
+			}
+			
+			generateDivsRecursive(flow.root);
+			
+			return result;
+		};
 					
 		flow.diags.toJSON = function () {
 			
@@ -202,7 +264,7 @@ define('flow_diags', exports, function (exports) {
 					'style="filled,rounded"',
 					'shape=box',
 					'fontsize=12',		
-					'id=' + quote(node.diags.path)			
+					'id=' + quote('svg:' + node.diags.path)			
 				].concat(getActiveNodeStyle(node));				
 				
 				result += quote(node.diags.path) + formatAttributes(attributes);
@@ -217,7 +279,7 @@ define('flow_diags', exports, function (exports) {
 					fillColor = inactiveColorAttribute('fillcolor');
 					color = 'color="black"';					
 				}				
-				var idAttribute = 'id=' + quote(parent.diags.path + '.' + id + '-doSelection');
+				var idAttribute = 'id=' + quote('svg:' + parent.diags.path + '.' + id + '-doSelection');
 				var attributes = [
 					makeLabel('Select'),
 					'fontname=courier',
@@ -257,7 +319,7 @@ define('flow_diags', exports, function (exports) {
 					'shape=box', 
 					'height=0', 
 					'width=1.25',
-					'id=' + quote(source.diags.path + '-doTransition')
+					'id=' + quote('svg:' + source.diags.path + '-doTransition')
 				];				
 				result += quote(source.diags.path) + formatAttributes(attributes); 
 			}
@@ -285,7 +347,7 @@ define('flow_diags', exports, function (exports) {
 					'shape=box', 
 					'height=0', 
 					'width=1.25',
-					'id=' + quote(path + '-doSubflow')
+					'id=' + quote('svg:' + path + '-doSubflow')
 				];				
 				result += quote(path) + formatAttributes(attributes); 
 			}									
@@ -326,7 +388,7 @@ define('flow_diags', exports, function (exports) {
 					'fontname="courier"',
 					'fontsize=12',	
 					'bgcolor="gray"',
-					'id=' + quote(node.diags.path)												
+					'id=' + quote('svg:' + node.diags.path)												
 				].concat(getActiveNodeStyle(node)).join(';');
 
 				result += 'subgraph ' + quote(makeClusterLabel(node.diags.path)) + ' {' + attributes;
@@ -355,7 +417,7 @@ define('flow_diags', exports, function (exports) {
 					'penwidth=.6',
 					'style="filled"',
 					fillColor,
-					'id=' + quote(node.diags.path + id)
+					'id=' + quote('svg:' + node.diags.path + id)
 				].join(';');
 				
 				var clusterLabel = quote(makeClusterLabel(subflow.diags.path));
@@ -396,9 +458,9 @@ define('flow_diags', exports, function (exports) {
 				}
 				var idAttribute;
 				if (subflow.diags.path.split('.').length > 1) {
-					idAttribute = 'id=' + quote(subflow.diags.path + '.' + choice + '-doSubflowChoice');	
+					idAttribute = 'id=' + quote('svg:' + subflow.diags.path + '.' + choice + '-doSubflowChoice');	
 				} else {
-					idAttribute = 'id=' + quote(subflow.diags.path + '.' + choice + '-doSubflow');	
+					idAttribute = 'id=' + quote('svg:' + subflow.diags.path + '.' + choice + '-doSubflow');	
 				}
 				
 				var shapeAttribute;
