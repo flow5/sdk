@@ -36,24 +36,23 @@ define('flowcontroller', exports, function (exports) {
 				
 		flow.controller = this;
 		
-		// TODO: move this to debug layer
-		function doSubflowPrompt(node) {
-			console.log(node.activeSubflow.diags.path);
-			node.activeSubflow.choices.forEach(function (id, choice) {
-				console.log('* ' + id);
-			});
-		}		
-						
 		function activateNode(node, cb) {
 			function doOnActiveSubflowsRecursive(node, cb) {
-				if (node && node.active && !node.activeSubflow) {
-					if (node.subflows && node.subflows.onactivate) {
-						that.doSubflow(node, 'onactivate', function () {
+				if (node) {
+					// an onactivate subflow may terminate with a transition or selection
+					// in which case a new onactivate chain will start for the new active node
+					// and this one is abandoned
+					// TODO: might be nice to make this more explicit because this looks like
+					// it shouldn't ever happen
+					if (node.active && !node.activeSubflow) {
+						if (node.subflows && node.subflows.onactivate) {
+							that.doSubflow(node, 'onactivate', function () {
+								doOnActiveSubflowsRecursive(node.activeChild, cb);
+							});							
+						} else {
 							doOnActiveSubflowsRecursive(node.activeChild, cb);
-						});							
-					} else {
-						doOnActiveSubflowsRecursive(node.activeChild, cb);
-					}				
+						}	
+					}
 				} else {
 					cb();
 				}		
@@ -63,8 +62,16 @@ define('flowcontroller', exports, function (exports) {
 			doOnActiveSubflowsRecursive(node, function () {
 				cb();
 			});
-		}
-	
+		}									
+		
+		// TODO: move this to debug layer
+		function doSubflowPrompt(node) {
+			console.log(node.activeSubflow.diags.path);
+			node.activeSubflow.choices.forEach(function (id, choice) {
+				console.log('* ' + id);
+			});
+		}	
+			
 		this.start = function (cb) {						
 			if (!cb) {
 				cb = function () {
@@ -174,64 +181,64 @@ define('flowcontroller', exports, function (exports) {
 
 			observerCb(this, flow, cb);			
 		};	
-		
+				
 		this.doSubflowChoice = function (node, id) {	
 			Utils.assert(node.activeSubflow, 'No active subflow');
+
 			console.log('choose: ' + id);
-			node.activeSubflow.cb(node, id);						
-		};	
+			Utils.assert(node.activeSubflow.choices.hasOwnProperty(id), 'No such choice');			
+
+			var choice = node.activeSubflow.choices[id];
+			var completionCb = node.activeSubflow.completionCb;
+
+			var diagsId = node.activeSubflow.diags.id;
+
+			if (choice && typeof choice === 'object') {
+				node.activeSubflow = {node: node,
+										choices: choice, 
+										completionCb: node.activeSubflow.completionCb,
+										diags: {id: node.activeSubflow.diags.id, path: node.activeSubflow.diags.path + '.' + id}};
+				// TODO: call up to controller layer										
+				doSubflowPrompt(node);												
+			} else {
+				delete node.activeSubflow;					
+				if (choice) {
+					if (node.type === 'flow') {
+						that.doTransition(node, choice);																			
+					} else {
+						that.doSelection(node, choice);
+					}
+				}
+			}
+
+			observerCb(that, flow, function () {
+				if (node.activeSubflow) {
+					// TODO: call up to controller layer
+					doSubflowPrompt(node);
+				} else {
+					console.log(node.diags.path + '.' + diagsId + ' complete');
+					if (completionCb) {
+						completionCb();
+					}
+				}
+			});						
+		};				
 		
 		this.doSubflow = function (node, id, cb) {
 			Utils.assert(flow.diags.isNodePathActive(node), 'Attempt to execute subflow from an inactive node');	
 			Utils.assert(node.subflows && node.subflows[id], 'No such subflow');
-			Utils.assert(!flow.diags.isSubflowActive(node), 'Subflow already in progress');
-						
-			function doSubflowChoice(node, id) {												
-				Utils.assert(node.activeSubflow.choices.hasOwnProperty(id), 'No such choice');			
-												
-				var choice = node.activeSubflow.choices[id];
-				if (choice && typeof choice === 'object') {
-					node.activeSubflow = {node: node,
-											cb: doSubflowChoice,
-											choices: choice, 
-											id: id,
-											diags: {path: node.activeSubflow.diags.path + '.' + id}};												
-				} else {
-					delete node.activeSubflow;
-
-					if (choice) {
-						if (node.type === 'flow') {
-							that.doTransition(node, choice);																			
-						} else {
-							that.doSelection(node, choice);
-						}
-					}
-				}
-																			
-				observerCb(that, flow, function () {
-					if (node.activeSubflow) {
-						// TODO: call up to controller layer
-						doSubflowPrompt(node);
-					} else {
-						console.log('subflow complete');
-						if (cb) {
-							cb();
-						}
-					}
-				});									
-			}
+			Utils.assert(!flow.diags.isSubflowActive(node), 'Subflow already in progress');						
 			
 			node.activeSubflow = {node: node, 
 									choices: node.subflows[id], 
-									cb: doSubflowChoice,
-									id: id, 
-									diags: {path: node.diags.path + '.' + id}};			
+									completionCb: cb,
+									diags: {id: id, path: node.diags.path + '.' + id}};			
 
 			// TODO: call up to controller layer
 			doSubflowPrompt(node);								
 
 			observerCb(that, flow, function () {
-				console.log('subflow started');
+				console.log(node.diags.path + '.' + id + ' started');
 			});	
 		};
 		

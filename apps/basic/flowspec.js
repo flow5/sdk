@@ -60,6 +60,21 @@ define('flowspec', exports, function (exports) {
 						activeChild: 'start',
 						children: {
 							start: {
+								activeChild: 'begin',
+								children: {
+									begin: {
+										subflows: {
+											onactivate: {
+												yes: 'end',
+												no: null
+											}
+										},
+										transitions: ['end'],
+									},
+									end: {
+										
+									}
+								},
 								transitions: ['middle', 'done'],
 								subflows: {
 									onactivate: {
