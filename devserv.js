@@ -54,10 +54,10 @@ function dot2svg(req, res) {
 	
 	req.on('data', function (chunk) {
 		req.buffer += chunk;
-//		child.stdin.write(chunk);
+		child.stdin.write(chunk);
 	});	
 	req.on('end', function () {
-		child.stdin.write(Iuppiter.decompress(Iuppiter.Base64.decode(Iuppiter.toByteArray(req.buffer))));
+//		child.stdin.write(Iuppiter.decompress(Iuppiter.Base64.decode(Iuppiter.toByteArray(req.buffer))));
 		child.stdin.end();
 	});
 	

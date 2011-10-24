@@ -61,7 +61,7 @@ define('flowcontroller', exports, function (exports) {
 						
 			node.active = true;
 			doOnActiveSubflowsRecursive(node, function () {
-//				console.log('activated');
+				cb();
 			});
 		}
 	
@@ -74,7 +74,7 @@ define('flowcontroller', exports, function (exports) {
 			
 			activateNode(flow.root, function () {
 				// TODO: this is redundant if there's a final onactive step, right?
-				observerCb(this, flow, cb);
+				observerCb(that, flow, cb);
 			});
 		};
 		

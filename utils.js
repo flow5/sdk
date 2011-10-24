@@ -67,8 +67,9 @@ define('utils', exports, function (exports) {
 		// some queued events
 		setTimeout(function () {
 			/*global Iuppiter*/
-			var compressed = Iuppiter.Base64.encode(Iuppiter.compress(body));
-			xhr.send(compressed);
+//			var compressed = Iuppiter.Base64.encode(Iuppiter.compress(body));
+//			xhr.send(compressed);
+			xhr.send(body);
 		}, 0);		
 	}	
 	
