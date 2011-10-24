@@ -96,6 +96,7 @@ define('flow_diags', exports, function (exports) {
 				return copy;
 			}	
 						
+			// NOTE: stringify strips out any fields with function objects
 			return JSON.stringify(copyForPrettyPrintRecursive(flow.root, ''));
 		};
 
