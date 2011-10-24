@@ -51,13 +51,9 @@ define('flowspec', exports, function (exports) {
 						children: {
 							middleStart: {
 								type: 'flow',
-								transitions: {
-									beDone: {
-										to: 'done'
-									}
-								}
+								transitions: ['done']
 							}
-						}		
+						}
 					},
 					goSomewhere: {
 						type: 'subflow',
@@ -77,14 +73,7 @@ define('flowspec', exports, function (exports) {
 						children: {
 							start: {
 								type: 'flow',
-								transitions: {
-									goToMiddle: {
-										to: 'middle'
-									},
-									beDone: {
-										to: 'done'
-									}
-								},
+								transitions: ['middle', 'done'],
 								subflows: {
 									onactivate: {
 										yes: null,
@@ -104,11 +93,7 @@ define('flowspec', exports, function (exports) {
 						children: {
 							start: {
 								type: 'flow',
-								transitions: {
-									goToMiddle: {
-										to: 'middle'
-									}
-								}													
+								transitions: ['middle']													
 							},
 							middle: 'middle'
 						

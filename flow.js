@@ -107,10 +107,11 @@ define('flow', exports, function (exports) {
 				if (node.spec.transitions) {
 					Utils.assert(node.type === 'flow', 'A node with transitions must be of type flow');
 					node.transitions = {};
-					node.spec.transitions.forEach(function (id, transition) {
-						node.transitions[id] = findNodeUp(node, transition.to);
-						resolveTransitionsRecursive(node.transitions[id]);
-
+					node.spec.transitions.forEach(function (id) {
+						node.transitions[id] = findNodeUp(node, id);
+						if (!node.transitions[id].transitions) {
+							resolveTransitionsRecursive(node.transitions[id]);							
+						}
 					});
 				}
 								
