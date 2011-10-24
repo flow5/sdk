@@ -8,6 +8,7 @@ cli.setUsage("node devserv.js [OPTIONS]");
 
 cli.parse({
 	app: ['a', 'app', 'string', 'basic'],
+	format: ['f', 'toJSON|toDOT', 'string', 'toJSON'],
 	output: ['o', 'stdout|stderr', 'string', 'stderr'],
 });
 
@@ -19,7 +20,7 @@ cli.main(function (args, options) {
 	require.paths.push('./apps/' + options.app);
 	
 	var flowHarness = new FlowHarness(function (flowController, flow) {
-		process[options.output].write(flow.diags.toJSON());		
+		process[options.output].write(flow.diags[options.format]());		
 	});	
 });
 

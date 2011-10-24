@@ -39,8 +39,17 @@ define('flowspec', exports, function (exports) {
 			home: {
 				subflows: {
 					onactivate: {
-						selectA: 'a',
-						selectB: 'b',
+						method: 'select',
+						choices: {
+							a: 'a',
+							more: {
+								method: 'more',
+								choices: {
+									a: 'a',
+									b: 'b'
+								}
+							}							
+						}
 					}
 				},
 				templates: {
@@ -65,8 +74,11 @@ define('flowspec', exports, function (exports) {
 									begin: {
 										subflows: {
 											onactivate: {
-												yes: 'end',
-												no: null
+												method: 'select',
+												choices: {
+													end: 'end',
+													begin: null													
+												}
 											}
 										},
 										transitions: ['end'],
@@ -78,14 +90,24 @@ define('flowspec', exports, function (exports) {
 								transitions: ['middle', 'done'],
 								subflows: {
 									onactivate: {
-										yes: null,
-										no: null,
+										method: 'select',
+										choices: {
+											yes: null,
+											no: null,											
+										}
 									},
-									goSomewhere: {
-										pickWhere: {
+									pick: {
+										method: 'getWhere',
+										choices: {
 											goToMiddle: 'middle',
-											beDone: 'done'
-										}											
+											moreChoices: {
+												method: 'getMoreWhere',
+												choices: {
+													'middle': 'middle',
+													'done': 'done'													
+												}
+											}											
+										}
 									}
 								}
 							},

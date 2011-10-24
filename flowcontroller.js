@@ -66,7 +66,7 @@ define('flowcontroller', exports, function (exports) {
 		
 		// TODO: move this to debug layer
 		function doSubflowPrompt(node) {
-			console.log(node.activeSubflow.diags.path);
+//			console.log(node.activeSubflow.diags.path);
 			node.activeSubflow.choices.forEach(function (id, choice) {
 				console.log('* ' + id);
 			});
@@ -188,25 +188,26 @@ define('flowcontroller', exports, function (exports) {
 			console.log('choose: ' + id);
 			Utils.assert(node.activeSubflow.choices.hasOwnProperty(id), 'No such choice');			
 
-			var choice = node.activeSubflow.choices[id];
+			var subflow = node.activeSubflow.choices[id];
 			var completionCb = node.activeSubflow.completionCb;
 
 			var diagsId = node.activeSubflow.diags.id;
 
-			if (choice && typeof choice === 'object') {
+			if (subflow && typeof subflow === 'object') {
 				node.activeSubflow = {node: node,
-										choices: choice, 
-										completionCb: node.activeSubflow.completionCb,
-										diags: {id: node.activeSubflow.diags.id, path: node.activeSubflow.diags.path + '.' + id}};
+										method: subflow.method,
+										choices: subflow.choices, 
+										diags: subflow.diags,
+										completionCb: node.activeSubflow.completionCb};
 				// TODO: call up to controller layer										
 				doSubflowPrompt(node);												
 			} else {
 				delete node.activeSubflow;					
-				if (choice) {
+				if (subflow) {
 					if (node.type === 'flow') {
-						that.doTransition(node, choice);																			
+						that.doTransition(node, subflow);																			
 					} else {
-						that.doSelection(node, choice);
+						that.doSelection(node, subflow);
 					}
 				}
 			}
@@ -230,10 +231,10 @@ define('flowcontroller', exports, function (exports) {
 			Utils.assert(!flow.diags.isSubflowActive(node), 'Subflow already in progress');						
 			
 			node.activeSubflow = {node: node, 
-									choices: node.subflows[id], 
-									completionCb: cb,
-									diags: {id: id, path: node.diags.path + '.' + id}};			
-
+									method: node.subflows[id].method,
+									choices: node.subflows[id].choices, 
+									diags: node.subflows[id].diags,
+									completionCb: cb};
 			// TODO: call up to controller layer
 			doSubflowPrompt(node);								
 

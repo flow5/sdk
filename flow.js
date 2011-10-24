@@ -90,7 +90,7 @@ define('flow', exports, function (exports) {
 					node.subflows = {};					
 					nodeSpec.subflows.forEach(function (id, subflow) {
 						node.subflows[id] = subflow;
-					});
+					});					
 				}
 												
 				if (node.parent) {
