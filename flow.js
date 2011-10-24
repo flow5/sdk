@@ -69,7 +69,7 @@ define('flow', exports, function (exports) {
 									
 			function injectNodeRecursive(id, nodeSpec, parent) {										
 				var node = {id: id, 
-							type: nodeSpec.type, 
+							type: nodeSpec.type ? nodeSpec.type : 'flow', 
 							parent: parent,
 							spec: nodeSpec, 
 							active: false};
@@ -87,11 +87,9 @@ define('flow', exports, function (exports) {
 				}			
 				
 				if (nodeSpec.subflows) {
-					node.subflows = {};
-					nodeSpec.subflows.forEach(function (id, subflowSpec) {
-						node.subflows[id] = resolveSpec(node, resolveSpec(node, subflowSpec));
-						// NOTE: type = 'subflow' when a subflow template is referenced					
-						delete node.subflows[id].type;
+					node.subflows = {};					
+					nodeSpec.subflows.forEach(function (id, subflow) {
+						node.subflows[id] = subflow;
 					});
 				}
 												
@@ -102,13 +100,14 @@ define('flow', exports, function (exports) {
 				return node;
 			}	
 						
-			function resolveTransitionsRecursive(node) {				
+			function resolveTransitionsRecursive(node) {								
 				
 				if (node.spec.transitions) {
 					Utils.assert(node.type === 'flow', 'A node with transitions must be of type flow');
 					node.transitions = {};
 					node.spec.transitions.forEach(function (id) {
 						node.transitions[id] = findNodeUp(node, id);
+						// break cycles
 						if (!node.transitions[id].transitions) {
 							resolveTransitionsRecursive(node.transitions[id]);							
 						}
@@ -132,6 +131,7 @@ define('flow', exports, function (exports) {
 			// remove the cached specs
 			function removeSpecsRecursive(obj) {
 				delete obj.spec;
+				// break cycles
 				obj._mark = true;
 				obj.forEach(function (id, child) {
 					if (child && typeof child === 'object' && !child._mark) {
@@ -184,9 +184,20 @@ subflows
 
 	logically a subflow operates within a state
 
-	a controller action may trigger a transition (I think this is needed for things like login flow)
-
-
+	a subflow may terminate in null in which case control returns to the node
+	or if the node is a flow it may terminate in a string which causes a transition to execute
+	
+	a special subflow called onactivate will be called when a node is activated as the result of selection
+		or transition. this allows conditional logic to be implemented immediately on entering a node
+		onactivate subflows are executed recursively
+	
+	there are some screwy cases here. e.g., if a recursive onactivate subflow terminates in a transition before the
+		recursion completes things blow up because the onactivate chain will try to complete in a no longer active node
+	
+	another question is whether it should be possible to end the subflow with a selection rather than transition
+	this has screwy consequences as well since the selection may activate a node while the nexted onactivate
+	logic is exeucting
+	
 
 Flow Documentation
 

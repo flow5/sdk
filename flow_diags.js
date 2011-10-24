@@ -85,7 +85,7 @@ define('flow_diags', exports, function (exports) {
 					if (child && typeof child === 'object') {
 						// break cycles and use paths to indicate references
 						if (id === 'parent' || id === 'activeChild' || id === 'node' || objId === 'transitions') {
-							copy[id] = '->(' + child.diags.path + ')';
+							copy[id] = '[-> ' + child.diags.path + ']';
 						} else {
 							copy[id] = copyForPrettyPrintRecursive(child, id);
 						}
@@ -158,8 +158,7 @@ define('flow_diags', exports, function (exports) {
 			}
 			
 			function isCluster(node) {
-				// all but leaf nodes which don't specify type
-				return node.type || node.parent.type === 'selector' || node.subflows;
+				return node.transitions || node.children || node.subflows;
 			}
 			
 			function activeColorAttribute(attr) {

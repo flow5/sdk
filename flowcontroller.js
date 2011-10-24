@@ -206,7 +206,7 @@ define('flowcontroller', exports, function (exports) {
 					// rather than hard code the semantics, but then there's
 					// redundant code since often it's just a transition
 					if (choice) {
-						that.doTransition(node, choice);					
+						that.doTransition(node, choice);												
 					}
 				}
 																			

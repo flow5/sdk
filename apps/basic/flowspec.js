@@ -29,7 +29,6 @@
 define('flowspec', exports, function (exports) {
 	
 	exports.root = {
-		type: 'flow',
 		activeChild: 'home',
 		templates: {
 			done: {
@@ -46,40 +45,34 @@ define('flowspec', exports, function (exports) {
 				},
 				templates: {
 					middle: {
-						type: 'flow',
 						activeChild: 'middleStart',
 						children: {
 							middleStart: {
-								type: 'flow',
 								transitions: ['done']
 							}
 						}
-					},
-					goSomewhere: {
-						type: 'subflow',
-						pickWhere: {
-							goToMiddle: 'goToMiddle',
-							beDone: 'beDone'											
-						},
-						cancel: null										
 					}
 				},
 				type: 'selector',
 				activeChild: 'a',
 				children: {			
 					a: {
-						type: 'flow',
 						activeChild: 'start',
 						children: {
 							start: {
-								type: 'flow',
 								transitions: ['middle', 'done'],
 								subflows: {
 									onactivate: {
 										yes: null,
 										no: null,
 									},
-									goSomewhere: 'goSomewhere'
+									goSomewhere: {
+										pickWhere: {
+											goToMiddle: 'middle',
+											beDone: 'done'
+										}											
+									},
+									cancel: null
 								}
 							},
 							middle: 'middle',
@@ -88,11 +81,9 @@ define('flowspec', exports, function (exports) {
 					
 					},
 					b: {
-						type: 'flow',
 						activeChild: 'start',
 						children: {
 							start: {
-								type: 'flow',
 								transitions: ['middle']													
 							},
 							middle: 'middle'

@@ -1,6 +1,11 @@
-body {
-  font-family: sans-serif;
-}
+/**
+ * Derived from jsonview by Benjamin Hollis
+ * 
+ * https://github.com/bhollis/jsonview
+ *
+ * MIT License
+ *
+ */
 
 .prop {
   font-weight: bold;
@@ -40,19 +45,7 @@ li {
   position: relative;
 }
 
-#error {
-  -moz-border-radius: 8px;
-  border: 1px solid #970000;
-  background-color: #F7E8E8;
-  margin: .5em;
-  padding: .5em;
-}
-
-.errormessage {
-  font-family: monospace;  
-}
-
-#json {
+.json {
   font-family: monospace;
   font-size: 1.1em;
   white-space: pre-wrap;
@@ -66,14 +59,4 @@ ul {
 
 h1 {
   font-size: 1.2em;
-}
-
-/* Indent JSON when there's a callback. */
-.callback + #json {
-  padding-left: 1em;
-}
-
-.callback {
-  font-family: monospace;
-  color: #A52A2A;
 }

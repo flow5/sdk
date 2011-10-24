@@ -124,7 +124,8 @@
 							'width': '80px',
 							'margin': '10px',
 							'-webkit-border-radius': '14px',
-							'font-size': '24px'												
+							'font-size': '24px',
+							'font-family': 'sans-serif'																													
 						});
 						backButton.innerText = '<==';	
 						backButton.addEventListener('click', function () {
@@ -152,7 +153,8 @@
 							'width': '80px',
 							'margin': '10px',
 							'-webkit-border-radius': '14px',
-							'font-size': '24px'												
+							'font-size': '24px',
+							'font-family': 'sans-serif'											
 						});
 						jsonButton.innerText = 'JSON';	
 						
@@ -175,6 +177,7 @@
 										border: '1px solid black'
 									});
 									jsonDiv.innerHTML = jsonFormatter.valueToHTML(JSON.parse(flow.diags.toJSON()));
+									jsonDiv.className = 'json';
 
 									document.body.appendChild(jsonDiv);
 									jsonFormatter.attachListeners();																
