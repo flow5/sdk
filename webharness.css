@@ -45,11 +45,6 @@ body {
 	border: 1px solid black;	
 }
 
-#root-home-a-start-end {
-	border:10px solid black;
-	-webkit-box-sizing: border-box;
-}
-
 .json {
 	position: absolute;
 	top: 10px;
@@ -57,7 +52,7 @@ body {
 	text-align: left;
 	white-space: nowrap;
 	background-color: white;
-	opacity: 0.65;
+	opacity: 0.75;
 	border: 1px solid black;
 }
 

@@ -56,6 +56,7 @@
 	<script src='flow_diags.js'></script>		
 	<script src='flowcontroller.js'></script>
 	<script src='viewcontroller.js'></script>
+	<script src='animation.js'></script>
 	
 	<link rel="stylesheet" type="text/css" href="webharness.css">
 				
@@ -90,13 +91,15 @@
 							try {
 								var parts = el.id.replace('svg-', '').split(':');
 								var nodePath = parts[0].split('_')[0];
-								var method = parts[1].split('_')[0];
+								if (parts[1]) {
+									var method = parts[1].split('_')[0];
 
-								if (method) {
-									var components = nodePath.split('-').splice(1);
-									var id = parts[1].split('_')[1];	
+									if (method) {
+										var components = nodePath.split('-').splice(1);
+										var id = parts[1].split('_')[1];	
 
-									flowController[method](flow.diags.getNodeFromPath(nodePath), id);										
+										flowController[method](flow.diags.getNodeFromPath(nodePath), id);										
+									}									
 								}
 							} catch (e) {
 								console.log('Exception: ' + e.message);

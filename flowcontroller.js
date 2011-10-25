@@ -105,50 +105,58 @@ define('flowcontroller', exports, function (exports) {
 			F5.assert(node.type === 'selector', 'Can only select on node of type selector');
 			F5.assert(node.children[id], 'No child with id: ' + id);
 			
-			if (!cb) {
-				cb = function () {
-					console.log('selection complete');
-				};
-			}			
-			
-			function complete() {
-				// cancel out of any current subflow
-				// NOTE: this might be annoying because when selecting away in the middle
-				// of a subflow the subflow gets cancelled out
-				// the problem is that the subflow might be related to onactivate logic
-				// which should run top to bottom
-				// e.g., if the active subflow is the onactivate subflow that checks for logged in
-				// then tab away, login from another tab and then come back, the onactivate subflow
-				// needs to run again
-				// TODO: this has an effect at the widget layer
-				function cancelSubflowRecursive(node) {
-					delete node.activeSubflow;
-					if (node.children) {
-						node.children.forEach(function (id, child) {
-							cancelSubflowRecursive(child);
-						});					
-					}
+			// cancel out of any current subflow
+			// NOTE: this might be annoying because when selecting away in the middle
+			// of a subflow the subflow gets cancelled out
+			// the problem is that the subflow might be related to onactivate logic
+			// which should run top to bottom
+			// e.g., if the active subflow is the onactivate subflow that checks for logged in
+			// then tab away, login from another tab and then come back, the onactivate subflow
+			// needs to run again
+			// TODO: this has an effect at the widget layer
+			function cancelSubflowRecursive(node) {
+				if (that.viewController && node.activeSubflow) {
+					that.viewController.completeSubflow(node.activeSubflow);					
 				}
-				cancelSubflowRecursive(node.activeChild);
-
+				delete node.activeSubflow;
+				if (node.children) {
+					node.children.forEach(function (id, child) {
+						cancelSubflowRecursive(child);
+					});					
+				}
+			}	
+			
+			function completeSelection() {				
 				node.activeChild.active = false;
 				node.activeChild = node.children[id];
-								
+							
 				activateNode(node.activeChild, function () {
 					// TODO: does this delay the selection?
 					// I don't think so.
 				});
 
 				observerCb();	
-				
-				cb();			
-			}
 			
-			if (this.viewController) {
-				this.viewController.doSelection(node, id, complete);
+				cb();			
+			}					
+
+			if (node.activeChild !== node.children[id]) {
+						
+				if (!cb) {
+					cb = function () {
+						console.log('selection complete');
+					};
+				}						
+				cancelSubflowRecursive(node.activeChild);
+									
+				if (this.viewController) {
+					this.viewController.doSelection(node, id, completeSelection);
+				} else {
+					completeSelection();
+				}							
 			} else {
-				complete();
-			}			
+				cb();
+			}
 		};
 				
 		// use the transition on the node with the given id 
@@ -228,38 +236,46 @@ define('flowcontroller', exports, function (exports) {
 			var completionCb = node.activeSubflow.completionCb;
 
 			var oldActiveSubflow = node.activeSubflow;
+			
+			function completeChoice() {
+				observerCb();
 
-			if (subflow && typeof subflow === 'object') {
-				node.activeSubflow = subflow;
-				node.activeSubflow.completionCb = oldActiveSubflow.completionCb;
-			} else {
-				delete node.activeSubflow.completionCb;
-				delete node.activeSubflow;					
-				if (subflow) {
-					if (node.type === 'flow') {
-						that.doTransition(node, subflow);																			
+				if (node.activeSubflow) {
+					if (that.viewController) {
+						that.viewController.doSubflowChoice(oldActiveSubflow, id);
 					} else {
-						that.doSelection(node, subflow);
+						doSubflowPrompt(node);												
+					}
+				} else {
+					if (that.viewController) {
+						that.viewController.completeSubflow(oldActiveSubflow);
+					}
+					if (completionCb) {
+						completionCb();
 					}
 				}
 			}
 
-			observerCb();
-			
-			if (node.activeSubflow) {
-				if (that.viewController) {
-					that.viewController.doSubflowChoice(oldActiveSubflow, id);
-				} else {
-					doSubflowPrompt(node);												
-				}
+			if (subflow && typeof subflow === 'object') {
+				node.activeSubflow = subflow;
+				node.activeSubflow.completionCb = oldActiveSubflow.completionCb;
+				completeChoice();
 			} else {
-				if (that.viewController) {
-					that.viewController.completeSubflow(oldActiveSubflow);
+				delete node.activeSubflow.completionCb;
+				delete node.activeSubflow;					
+				completeChoice();
+				if (subflow) {
+					if (node.type === 'flow') {
+						that.doTransition(node, subflow, function () {
+							
+						});																			
+					} else {
+						that.doSelection(node, subflow, function () {
+							
+						});
+					}
 				}
-				if (completionCb) {
-					completionCb();
-				}
-			}
+			}		
 		};				
 		
 		this.doSubflow = function (node, id, cb) {

@@ -46,6 +46,7 @@ define('f5', exports, function (exports) {
 	if (typeof document !== 'undefined') {
 		require('./domext.js');		
 		F5.ViewController = require('./viewcontroller.js').ViewController;
+		F5.Animation = require('./animation.js').Animation;
 	}
 
 	exports.F5 = F5;

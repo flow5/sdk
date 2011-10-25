@@ -31,6 +31,8 @@ define('viewcontroller', exports, function (exports) {
 	
 	function ViewController(flow, applicationFrame) {
 		
+		var F5 = require('/f5.js').F5;
+		
 		this.activateNode = function (node) {
 			console.log('ViewController.activateNode');
 		};
@@ -108,10 +110,10 @@ define('viewcontroller', exports, function (exports) {
 		this.doSelection = function (node, id, cb) {
 			console.log('ViewController.doSelection');									
 			
-			document.getElementById(node.activeChild.path).style.visibility = 'hidden';
-			document.getElementById(node.children[id].path).style.visibility = '';
-						
-			cb();
+			var oldEl = document.getElementById(node.activeChild.path);
+			var newEl = document.getElementById(node.children[id].path);
+			
+			F5.Animation.fadeOut(oldEl, newEl, cb);			
 		};
 		
 		this.doTransition = function (container, to, cb) {

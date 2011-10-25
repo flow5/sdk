@@ -39,11 +39,11 @@ define('flowspec', exports, function (exports) {
 			home: {
 				subflows: {
 					onactivate: {
-						method: 'select',
+						method: 'aOrMore',
 						choices: {
 							a: 'a',
 							more: {
-								method: 'more',
+								method: 'aORb',
 								choices: {
 									a: 'a',
 									b: 'b'
@@ -74,7 +74,7 @@ define('flowspec', exports, function (exports) {
 									begin: {
 										subflows: {
 											onactivate: {
-												method: 'select',
+												method: 'goOrStay',
 												choices: {
 													end: 'end',
 													begin: null													
@@ -90,7 +90,7 @@ define('flowspec', exports, function (exports) {
 								transitions: ['middle', 'done'],
 								subflows: {
 									onactivate: {
-										method: 'select',
+										method: 'yesOrNo',
 										choices: {
 											yes: null,
 											no: null,											
