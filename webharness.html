@@ -82,9 +82,7 @@
 			flow.injectGraph(require('flowspec.js').root);
 			require('./flow_diags.js').instrument(this.flow);	
 			
-			flowController = new FlowController(this.flow, function (cb) {			
-				document.getElementById('application').innerHTML = flow.diags.toHTML();				
-							
+			flowController = new FlowController(this.flow, function (cb) {										
 				Utils.post('dot2svg', flow.diags.toDOT(), function (response) {
 
 					function makeClick(el) {
@@ -194,7 +192,14 @@
 					cb();
 				});		
 			});
-			flowController.start();										
+			
+			var WidgetManager = require('./widgetmanager.js').WidgetManager;
+
+			document.getElementById('application').innerHTML = flow.diags.toHTML();
+						
+			flowController.start(function () {
+				console.log('application started');
+			}, new WidgetManager());										
 		} catch (e) {
 			viewer.innerHTML = e.message;
 		}			

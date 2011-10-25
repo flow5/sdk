@@ -72,12 +72,16 @@ define('flowcontroller', exports, function (exports) {
 			});
 		}	
 			
-		this.start = function (cb) {						
+		// TODO: cb doesn't execute until onactivate subflows complete
+		// that doesn't seem right
+		this.start = function (cb, widgetManager) {						
 			if (!cb) {
 				cb = function () {
 					console.log('start complete');
 				};
 			}
+			
+			this.widgetManager = widgetManager;
 			
 			activateNode(flow.root, function () {
 				// TODO: this is redundant if there's a final onactive step, right?
@@ -122,12 +126,20 @@ define('flowcontroller', exports, function (exports) {
 			});
 			node.activeChild = node.children[id];
 			
-			activateNode(node.activeChild, function () {
-				// TODO: does this delay the selection?
-				// I don't think so.
-			});
+			function complete() {
+				activateNode(node.activeChild, function () {
+					// TODO: does this delay the selection?
+					// I don't think so.
+				});
+
+				observerCb(cb);				
+			}
 			
-			observerCb(cb);
+			if (this.widgetManager) {
+				this.widgetManager.doSelection(node, id, complete);
+			} else {
+				complete();
+			}			
 		};
 				
 		// use the transition on the node with the given id 
@@ -174,12 +186,21 @@ define('flowcontroller', exports, function (exports) {
 				}
 				container.activeChild.back = back;
 			}			
-			activateNode(container.activeChild, function () {
-				// TODO: does this delay the selection?
-				// I don't think so
-			});			
-
-			observerCb(cb);			
+			
+			function complete() {
+				activateNode(container.activeChild, function () {
+					// TODO: does this delay the selection?
+					// I don't think so
+				});			
+				observerCb(cb);					
+			}
+			
+			if (this.widgetManager) {
+				this.widgetManager.doTransition(node, container.activeChild, complete);
+			} else {
+				complete();
+			}			
+					
 		};	
 				
 		this.doSubflowChoice = function (node, id) {	
@@ -199,8 +220,6 @@ define('flowcontroller', exports, function (exports) {
 										choices: subflow.choices, 
 										diags: subflow.diags,
 										completionCb: node.activeSubflow.completionCb};
-				// TODO: call up to controller layer										
-				doSubflowPrompt(node);												
 			} else {
 				delete node.activeSubflow;					
 				if (subflow) {
@@ -214,10 +233,17 @@ define('flowcontroller', exports, function (exports) {
 
 			observerCb(function () {
 				if (node.activeSubflow) {
-					// TODO: call up to controller layer
-					doSubflowPrompt(node);
+					if (that.widgetManager) {
+						that.widgetManager.doSubflow(node);
+					} else {
+						doSubflowPrompt(node);												
+					}
 				} else {
-					console.log(node.diags.path + '.' + diagsId + ' complete');
+					if (that.widgetManager) {
+						that.widgetManager.doSubflow(node);
+					} else {
+						console.log(node.diags.path + '.' + diagsId + ' complete');						
+					}
 					if (completionCb) {
 						completionCb();
 					}
@@ -235,12 +261,15 @@ define('flowcontroller', exports, function (exports) {
 									choices: node.subflows[id].choices, 
 									diags: node.subflows[id].diags,
 									completionCb: cb};
-			// TODO: call up to controller layer
-			doSubflowPrompt(node);								
-
+				
+			if (this.widgetManager) {
+				this.widgetManager.doSubflow(node);
+			} else {
+				doSubflowPrompt(node);												
+			}
 			observerCb(function () {
 				console.log(node.diags.path + '.' + id + ' started');
-			});	
+			});					
 		};
 		
 		// find an active leaf node

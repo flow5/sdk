@@ -28,5 +28,49 @@
 
 define('widgetmanager', exports, function (exports) {
 	
-	
+	function WidgetManager() {
+		
+		this.activateNode = function (node) {
+			
+		};
+		
+		this.doSelection = function (node, id, cb) {
+			console.log('WidgetManager.doSelection');									
+			
+			var containerElement = document.getElementById(node.diags.path);
+			for (var i = 0; i < containerElement.children.length; i += 1) {
+				containerElement.children[i].style.visibility = 'hidden';
+			}
+			var activeElement = document.getElementById(node.activeChild.diags.path);
+			activeElement.style.visibility = '';
+						
+			cb();
+		};
+		
+		this.doTransition = function (fromNode, toNode, cb) {
+			console.log('WidgetManager.doTransition');	
+			
+			var toElement = document.getElementById(toNode.diags.path);			
+			var containerElement = document.getElementById(toNode.parent.diags.path);
+			
+			for (var i = 0; i < containerElement.children.length; i += 1) {
+				containerElement.children[i].style.visibility = 'hidden';
+			}
+			toElement.style.visibility = '';			
+											
+			cb();
+		};
+				
+		this.doSubflow = function (node) {
+			console.log('WidgetManager.doSubflow');		
+			node.subflows.forEach(function (id, subflow) {
+				document.getElementById(subflow.diags.path).style.visibility = 'hidden';
+			});				
+			if (node.activeSubflow) {
+				document.getElementById(node.activeSubflow.diags.path).style.visibility = '';				
+			}	
+		};
+	}
+		
+	exports.WidgetManager = WidgetManager;
 });
