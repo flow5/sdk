@@ -49,7 +49,7 @@ define('animation', exports, function (exports) {
 		oldEl.addEventListener('webkitTransitionEnd', completePushLeft);		
 		
 		setTimeout(function () {
-			var transition = '-webkit-transform ease-in .5s';
+			var transition = '-webkit-transform ease-in .25s';
 			oldEl.style['-webkit-transition'] = transition;
 			newEl.style['-webkit-transition'] = transition;
 			

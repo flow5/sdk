@@ -83,7 +83,8 @@
 			flow.injectGraph(require('flowspec.js').root);
 			require('./flow_diags.js').instrument(this.flow);	
 			
-			flowController = new F5.FlowController(this.flow, function () {										
+			flowController = new F5.FlowController(this.flow, function () {	
+				
 				F5.post('dot2svg', flow.diags.toDOT(), function (response) {
 
 					function makeClick(el) {
