@@ -98,33 +98,33 @@ define('flowcontroller', exports, function (exports) {
 
 		};
 		
+		// cancel out of any current subflow
+		// NOTE: this might be annoying because when selecting away in the middle
+		// of a subflow the subflow gets cancelled out
+		// the problem is that the subflow might be related to onactivate logic
+		// which should run top to bottom
+		// e.g., if the active subflow is the onactivate subflow that checks for logged in
+		// then tab away, login from another tab and then come back, the onactivate subflow
+		// needs to run again
+		// TODO: this has an effect at the widget layer
+		function cancelSubflowRecursive(node) {
+			if (that.viewController && node.activeSubflow) {
+				that.viewController.completeSubflow(node.activeSubflow);					
+			}
+			delete node.activeSubflow;
+			if (node.children) {
+				node.children.forEach(function (id, child) {
+					cancelSubflowRecursive(child);
+				});					
+			}
+		}		
+		
 		// select the child of node with the given id
 		this.doSelection = function (node, id, cb) {		
 			F5.assert(flow.diags.isNodePathActive(node), 'Attempt to select on an inactive node');	
 			F5.assert(!flow.diags.isSubflowActive(node), 'Cannot select with a subflow active');				
 			F5.assert(node.type === 'selector', 'Can only select on node of type selector');
-			F5.assert(node.children[id], 'No child with id: ' + id);
-			
-			// cancel out of any current subflow
-			// NOTE: this might be annoying because when selecting away in the middle
-			// of a subflow the subflow gets cancelled out
-			// the problem is that the subflow might be related to onactivate logic
-			// which should run top to bottom
-			// e.g., if the active subflow is the onactivate subflow that checks for logged in
-			// then tab away, login from another tab and then come back, the onactivate subflow
-			// needs to run again
-			// TODO: this has an effect at the widget layer
-			function cancelSubflowRecursive(node) {
-				if (that.viewController && node.activeSubflow) {
-					that.viewController.completeSubflow(node.activeSubflow);					
-				}
-				delete node.activeSubflow;
-				if (node.children) {
-					node.children.forEach(function (id, child) {
-						cancelSubflowRecursive(child);
-					});					
-				}
-			}	
+			F5.assert(node.children[id], 'No child with id: ' + id);				
 			
 			function completeSelection() {				
 				node.activeChild.active = false;
@@ -214,11 +214,13 @@ define('flowcontroller', exports, function (exports) {
 				cb();
 			}
 			
+			cancelSubflowRecursive(node);			
+			
 			if (this.viewController) {
 				if (id === 'back') {
-					this.viewController.doTransition(container, node.back, complete);					
+					this.viewController.doTransition(container, 'back', node.back, complete);					
 				} else {
-					this.viewController.doTransition(container, node.transitions[id], complete);										
+					this.viewController.doTransition(container, id, node.transitions[id], complete);										
 				}
 			} else {
 				complete();

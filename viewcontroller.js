@@ -29,89 +29,95 @@
 
 define('viewcontroller', exports, function (exports) {
 	
+	function nodeToDOM(node) {
+		function makeContainerElement(node) {
+			var div = document.createElement('div');
+			div.className = 'node';
+			div.id = node.path;
+			if (!node.active) {
+				div.style.visibility = 'hidden';
+			}
+			return div;
+		}
+		function makeLeafElement(node) {
+			var div = document.createElement('div');
+			div.className = 'node';
+			div.id = node.path;
+			div.innerHTML = node.id;
+			if (!node.active) {
+				div.style.visibility = 'hidden';
+			}
+			return div;
+		}
+		function makeSubflowMethod(subflow) {
+			var div = document.createElement('div');
+			div.className = 'subflow-widget';
+			div.innerHTML = subflow.method;
+			return div;
+
+		}
+		function makeSubflowElement(node, subflow) {
+			var div = document.createElement('div');
+			div.className = 'subflow';
+			div.id = subflow.path;				
+			if (!node.activeSubflow || node.activeSubflow.path !== subflow.path) {
+				div.style.visibility = 'hidden';
+			}
+			div.appendChild(makeSubflowMethod(subflow));
+			return div;
+		}
+
+		function doSubflowRecursive(container, node, id, subflow) {
+			if (subflow && typeof subflow === 'object') {
+				container.appendChild(makeSubflowElement(node, subflow));
+				subflow.choices.forEach(function (id, child) {
+					doSubflowRecursive(container, node, id, child);
+				});			
+			}
+		}
+
+		function generateDivsRecursive(node) {
+			var div;
+			if (node.children) {
+				div = makeContainerElement(node);
+				
+				// OPTION: to minimize transition time, could
+				// only construct the active child for selections as well
+				// then construct the new child when doing a selection
+				// might cause latency on tab switching though
+				if (node.type === 'selector') {
+					node.children.forEach(function (id, child) {
+						div.appendChild(generateDivsRecursive(child));
+					});					
+				} else {
+					div.appendChild(generateDivsRecursive(node.activeChild));
+				}
+			} else {
+				div = makeLeafElement(node);
+			}
+
+			if (node.subflows) {
+				node.subflows.forEach(function (id, subflow) {
+					doSubflowRecursive(div, node, id, subflow);
+				});
+			}
+
+			return div;
+		}
+					
+		return generateDivsRecursive(node);
+	}
+	
 	function ViewController(flow, applicationFrame) {
 		
 		var F5 = require('/f5.js').F5;
 		
 		this.activateNode = function (node) {
 			console.log('ViewController.activateNode');
-		};
+		};				
 		
-		function toDOM(node) {
-			function makeContainerElement(node) {
-				var div = document.createElement('div');
-				div.className = 'node';
-				div.id = node.path;
-				if (!node.active) {
-					div.style.visibility = 'hidden';
-				}
-				return div;
-			}
-			function makeLeafElement(node) {
-				var div = document.createElement('div');
-				div.className = 'node';
-				div.id = node.path;
-				div.innerHTML = node.id;
-				if (!node.active) {
-					div.style.visibility = 'hidden';
-				}
-				return div;
-			}
-			function makeSubflowMethod(subflow) {
-				var div = document.createElement('div');
-				div.className = 'subflow-widget';
-				div.innerHTML = subflow.method;
-				return div;
-
-			}
-			function makeSubflowElement(node, subflow) {
-				var div = document.createElement('div');
-				div.className = 'subflow';
-				div.id = subflow.path;				
-				if (!node.activeSubflow || node.activeSubflow.path !== subflow.path) {
-					div.style.visibility = 'hidden';
-				}
-				div.appendChild(makeSubflowMethod(subflow));
-				return div;
-			}
-
-			function doSubflowRecursive(container, node, id, subflow) {
-				if (subflow && typeof subflow === 'object') {
-					container.appendChild(makeSubflowElement(node, subflow));
-					subflow.choices.forEach(function (id, child) {
-						doSubflowRecursive(container, node, id, child);
-					});			
-				}
-			}
-
-			function generateDivsRecursive(node) {
-				var div;
-				if (node.children) {
-					div = makeContainerElement(node);
-					
-					node.children.forEach(function (id, child) {
-						div.appendChild(generateDivsRecursive(child));
-					});
-				} else {
-					div = makeLeafElement(node);
-				}
-
-				if (node.subflows) {
-					node.subflows.forEach(function (id, subflow) {
-						doSubflowRecursive(div, node, id, subflow);
-					});
-				}
-
-				return div;
-			}
-						
-			return generateDivsRecursive(node);
-		}
-		
-		// generate all of the active elements
-		// OPTION: generate all children of a selector to reduce inital tab switch latency
 		this.start = function () {						
-			applicationFrame.appendChild(toDOM(flow.root));			
+			applicationFrame.appendChild(nodeToDOM(flow.root));			
 		};
 		
 		this.doSelection = function (node, id, cb) {
@@ -123,13 +129,29 @@ define('viewcontroller', exports, function (exports) {
 			F5.Animation.fadeOut(oldEl, newEl, cb);			
 		};
 		
-		this.doTransition = function (container, to, cb) {
+		this.doTransition = function (container, id, to, cb) {
 			console.log('ViewController.doTransition');	
+						
+			var containerElement = document.getElementById(container.path);
 			
-			document.getElementById(container.activeChild.path).style.visibility = 'hidden';
-			document.getElementById(to.path).style.visibility = '';			
-											
-			cb();
+			var oldEl = document.getElementById(container.activeChild.path);
+			var newEl;
+			if (id === 'back') {
+				newEl = document.getElementById(to.path);				
+			} else {			
+				newEl = nodeToDOM(to);
+				containerElement.appendChild(newEl);
+			}
+			
+			var method = id === 'back' ? 'pushRight' : 'pushLeft';
+
+			F5.Animation[method](containerElement, oldEl, newEl, function () {
+				if (id === 'back') {
+					containerElement.removeChild(oldEl);
+				}
+				
+				cb();
+			});	
 		};
 		
 

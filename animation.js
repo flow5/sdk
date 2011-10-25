@@ -28,7 +28,36 @@
 
 
 define('animation', exports, function (exports) {
+	
+	function pushHorizontal(container, oldEl, newEl, distance, cb) {			
+		oldEl.style['-webkit-transform'] = 'translate3d(0px, 0px, 0px)';			
+		newEl.style['-webkit-transform'] = 'translate3d(' + distance + 'px, 0px, 0px)';
+		newEl.style.visibility = '';
+					
+		function completePushLeft() {
+			oldEl.style.visibility = 'hidden';
+			oldEl.style['-webkit-transform'] = '';
+			oldEl.style['-webkit-transition'] = '';
 
+			newEl.style['-webkit-transform'] = '';
+			newEl.style['-webkit-transition'] = '';
+			
+			oldEl.removeEventListener('webkitTransitionEnd', completePushLeft);
+
+			cb();
+		}			
+		oldEl.addEventListener('webkitTransitionEnd', completePushLeft);		
+		
+		setTimeout(function () {
+			var transition = '-webkit-transform ease-in .5s';
+			oldEl.style['-webkit-transition'] = transition;
+			newEl.style['-webkit-transition'] = transition;
+			
+			oldEl.style['-webkit-transform'] = 'translate3d(' + -distance + 'px, 0px, 0px)';
+			newEl.style['-webkit-transform'] = 'translate3d(0px, 0px, 0px)';							
+		}, 0);			
+	}
+	
 	exports.Animation = {
 		
 		// oldElement sits on top, fades out to reveal newEl
@@ -39,7 +68,7 @@ define('animation', exports, function (exports) {
 									
 			oldEl.style['-webkit-transition'] = 'opacity .5s';
 			
-			oldEl.addEventListener('webkitTransitionEnd', function () {
+			function completeFadeOut() {
 				
 				oldEl.style['z-index'] = '';
 				newEl.style['z-index'] = '';
@@ -48,13 +77,25 @@ define('animation', exports, function (exports) {
 				oldEl.style.opacity = 1;
 				oldEl.style.visibility = 'hidden';
 				
+				oldEl.removeEventListener('webkitTransitionEnd', completeFadeOut);
+				
 				cb();
-			});
+			}
+						
+			oldEl.addEventListener('webkitTransitionEnd', completeFadeOut);
 			
 			setTimeout(function () {
 				oldEl.style.opacity = 0;
 				newEl.style.visibility = '';				
 			}, 0);		
-		}		
+		},
+		
+		pushLeft: function (container, oldEl, newEl, cb) {
+			pushHorizontal(container, oldEl, newEl, container.offsetWidth, cb);			
+		},
+		
+		pushRight: function (container, oldEl, newEl, cb) {
+			pushHorizontal(container, oldEl, newEl, -container.offsetWidth, cb);						
+		}
 	};
 });
