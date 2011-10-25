@@ -26,105 +26,99 @@
 ***********************************************************************************************************************/
 /*global define*/
 
+
 define('viewcontroller', exports, function (exports) {
 	
-	function ViewController(flow, rootEl) {
+	function ViewController(flow, applicationFrame) {
 		
 		this.activateNode = function (node) {
-			
+			console.log('ViewController.activateNode');
 		};
 		
-		this.start = function () {
-			
-			function toHtml() {
-				var result = '';
-				function beginNode(node) {
-					result += '<div class="node" ';
-					result += ' id="' + node.path + '"';
-					if (!node.active) {
+		function toDOM(node) {
+			var result = '';
+			function beginNode(node) {
+				result += '<div class="node" ';
+				result += ' id="' + node.path + '"';
+				if (!node.active) {
+					result += 'style="visibility:hidden"';
+				}
+				result += '>';
+			}
+			function endNode() {
+				result += '</div>';
+			}
+			function insertNodeWidget(node) {
+				result += '<div class="node-widget">' +  node.id + '</div>';
+			}
+			function insertSubflowWidget(subflow) {
+				result += '<div class="subflow-widget">' +  subflow.method + '</div>';
+
+			}
+			function doSubflowRecursive(node, id, subflow) {
+				if (subflow && typeof subflow === 'object') {
+					result += '<div class="subflow" ';
+					result += ' id="' + subflow.path + '"';
+					if (!node.activeSubflow || node.activeSubflow.path !== subflow.path) {
 						result += 'style="visibility:hidden"';
 					}
 					result += '>';
+					insertSubflowWidget(subflow);
+					result += '</div>';					
+					subflow.choices.forEach(function (id, child) {
+						doSubflowRecursive(node, id, child);
+					});			
 				}
-				function endNode() {
-					result += '</div>';
-				}
-				function insertNodeWidget(node) {
-					result += '<div class="node-widget">' +  node.id + '</div>';
-				}
-				function insertSubflowWidget(subflow) {
-					result += '<div class="subflow-widget">' +  subflow.method + '</div>';
-
-				}
-				function doSubflowRecursive(node, id, subflow) {
-					if (subflow && typeof subflow === 'object') {
-						result += '<div class="subflow" ';
-						result += ' id="' + subflow.path + '"';
-						if (!node.activeSubflow || node.activeSubflow.path !== subflow.path) {
-							result += 'style="visibility:hidden"';
-						}
-						result += '>';
-						insertSubflowWidget(subflow);
-						result += '</div>';					
-						subflow.choices.forEach(function (id, child) {
-							doSubflowRecursive(node, id, child);
-						});			
-					}
-				}
-
-				function generateDivsRecursive(node) {
-					beginNode(node);
-
-					if (node.children) {
-						node.children.forEach(function (id, child) {
-							generateDivsRecursive(child);							
-						});
-					} else {
-						insertNodeWidget(node);									
-					}
-
-					if (node.subflows) {
-						node.subflows.forEach(function (id, subflow) {
-							doSubflowRecursive(node, id, subflow);
-						});
-
-					}
-
-					endNode();
-				}
-
-				generateDivsRecursive(flow.root);
-
-				return result;
 			}
+
+			function generateDivsRecursive(node) {
+				beginNode(node);
+
+				if (node.children) {
+					node.children.forEach(function (id, child) {
+						generateDivsRecursive(child);							
+					});
+				} else {
+					insertNodeWidget(node);									
+				}
+
+				if (node.subflows) {
+					node.subflows.forEach(function (id, subflow) {
+						doSubflowRecursive(node, id, subflow);
+					});
+
+				}
+
+				endNode();
+			}
+
+			generateDivsRecursive(node);
 			
-			rootEl.innerHTML = toHtml();
-			
+			var div = document.createElement('div');
+			div.innerHTML = result;
+			return div;
+		}
+		
+		// generate all of the active elements
+		// OPTION: generate all children of a selector to reduce inital tab switch latency
+		this.start = function () {						
+			applicationFrame.appendChild(toDOM(flow.root));			
 		};
 		
 		this.doSelection = function (node, id, cb) {
 			console.log('ViewController.doSelection');									
 			
-			var containerElement = document.getElementById(node.path);
-			containerElement.childNodes.forEach(function (el) {
-				el.style.visibility = 'hidden';
-			});
-			var activeElement = document.getElementById(node.activeChild.path);
-			activeElement.style.visibility = '';
+			document.getElementById(node.activeChild.path).style.visibility = 'hidden';
+			document.getElementById(node.children[id].path).style.visibility = '';
 						
 			cb();
 		};
 		
-		this.doTransition = function (fromNode, toNode, cb) {
+		this.doTransition = function (container, to, cb) {
 			console.log('ViewController.doTransition');	
 			
-			var toElement = document.getElementById(toNode.path);			
-			var containerElement = document.getElementById(toNode.parent.path);
-			
-			containerElement.childNodes.forEach(function (el) {
-				el.style.visibility = 'hidden';
-			});			
-			toElement.style.visibility = '';			
+			document.getElementById(container.activeChild.path).style.visibility = 'hidden';
+			document.getElementById(to.path).style.visibility = '';			
 											
 			cb();
 		};

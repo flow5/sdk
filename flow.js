@@ -123,7 +123,7 @@ define('flow', exports, function (exports) {
 			}
 												
 			// inject nodes
-			that.root = injectNodeRecursive('', graphSpec);
+			that.root = injectNodeRecursive('root', graphSpec);
 			
 			// resolve transitions
 			resolveTransitionsRecursive(that.root);								
@@ -145,14 +145,11 @@ define('flow', exports, function (exports) {
 			function addPathsRecursive(node) {
 				function getPath(node) {
 					var path = [];
-					if (node.children) {
-						path.push('');
-					}
 					while (node) {
 						path.push(node.id);
 						node = node.parent;
 					}
-					return path.reverse().join('/');
+					return path.reverse().join('-');
 				}			
 				
 				node.path = getPath(node);
@@ -164,7 +161,7 @@ define('flow', exports, function (exports) {
 				
 				function addSubflowPathsRecursive(subflow, path) {
 					if (subflow && subflow.choices) {
-						subflow.path = path + '.' + subflow.method;
+						subflow.path = path + '_' + subflow.method;
 						subflow.choices.forEach(function (id, child) {
 							addSubflowPathsRecursive(child, subflow.path);
 						});					

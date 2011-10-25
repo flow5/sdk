@@ -68,7 +68,7 @@
 </head>
 
 <body>
-	<div id='root'></div>
+	<div id='application-frame'></div>
 	<div id='viewer'></div>
 		
 	<script>
@@ -88,14 +88,13 @@
 					function makeClick(el) {
 						el.onclick = function () {	
 							try {
-								var parts = el.id.split('-');
-								var fullPath = parts[0];
-								var method = parts[1];
+								var parts = el.id.replace('svg-', '').split(':');
+								var nodePath = parts[0].split('_')[0];
+								var method = parts[1].split('_')[0];
 
 								if (method) {
-									var components = fullPath.split('.');
-									var nodePath = components[0].replace('svg:', '');
-									var id = components.reverse()[0];	
+									var components = nodePath.split('-').splice(1);
+									var id = parts[1].split('_')[1];	
 
 									flowController[method](flow.diags.getNodeFromPath(nodePath), id);										
 								}
@@ -119,14 +118,14 @@
 					document.getElementById('graph1').querySelector('polygon').setAttribute('stroke', '');
 
 					// the clickable elements have id with / prefix
-					var clickable = document.querySelectorAll('[id^="svg:/"]');
+					var clickable = document.querySelectorAll('[id^="svg-"]');
 					for (var i = 0; i < clickable.length; i += 1) {
 						makeClick(clickable[i]);
 					}
 
 					// determine the offset of the current node
 					var activeLeafNode = flow.diags.getActiveLeafNode();
-					var svgElementBBox = document.getElementById('svg:' + activeLeafNode.path).getBBox();
+					var svgElementBBox = document.getElementById('svg-' + activeLeafNode.path).getBBox();
 					var svgRootBBox = document.querySelector('svg').getBBox();
 					var offset = {x: svgElementBBox.x, y: svgRootBBox.height + svgElementBBox.y};
 
@@ -193,7 +192,7 @@
 			
 			flowController.start(function () {
 				console.log('application started');
-			}, new F5.ViewController(flow, document.getElementById('root')));										
+			}, new F5.ViewController(flow, document.getElementById('application-frame')));										
 		} catch (e) {
 			viewer.innerHTML = e.message;
 		}			

@@ -59,6 +59,9 @@ define('flowcontroller', exports, function (exports) {
 			}
 						
 			node.active = true;
+			if (that.viewController) {
+				that.viewController.activateNode(node);
+			}
 			doOnActiveSubflowsRecursive(node, function () {
 				cb();
 			});
@@ -106,33 +109,31 @@ define('flowcontroller', exports, function (exports) {
 				cb = function () {
 					console.log('selection complete');
 				};
-			}
-			
-			// cancel out of any current subflow
-			// NOTE: this might be annoying because when selecting away in the middle
-			// of a subflow the subflow gets cancelled out
-			// the problem is that the subflow might be related to onactivate logic
-			// which should run top to bottom
-			// e.g., if the active subflow is the onactivate subflow that checks for logged in
-			// then tab away, login from another tab and then come back, the onactivate subflow
-			// needs to run again
-			// TODO: this has an effect at the widget layer
-			function cancelSubflowRecursive(node) {
-				delete node.activeSubflow;
-				if (node.children) {
-					node.children.forEach(function (id, child) {
-						cancelSubflowRecursive(child);
-					});					
-				}
-			}
-			cancelSubflowRecursive(node.activeChild);
-			
-			node.children.forEach(function (id, child) {
-				child.active = false;
-			});
-			node.activeChild = node.children[id];
+			}			
 			
 			function complete() {
+				// cancel out of any current subflow
+				// NOTE: this might be annoying because when selecting away in the middle
+				// of a subflow the subflow gets cancelled out
+				// the problem is that the subflow might be related to onactivate logic
+				// which should run top to bottom
+				// e.g., if the active subflow is the onactivate subflow that checks for logged in
+				// then tab away, login from another tab and then come back, the onactivate subflow
+				// needs to run again
+				// TODO: this has an effect at the widget layer
+				function cancelSubflowRecursive(node) {
+					delete node.activeSubflow;
+					if (node.children) {
+						node.children.forEach(function (id, child) {
+							cancelSubflowRecursive(child);
+						});					
+					}
+				}
+				cancelSubflowRecursive(node.activeChild);
+
+				node.activeChild.active = false;
+				node.activeChild = node.children[id];
+								
 				activateNode(node.activeChild, function () {
 					// TODO: does this delay the selection?
 					// I don't think so.
@@ -177,28 +178,27 @@ define('flowcontroller', exports, function (exports) {
 				container = flow.root;
 			}
 			
-			F5.assert(container.type === 'flow', 'Transition container is not a flow. Why?');
-									
-			container.children.forEach(function (id, child) {
-				child.active = false;
-			});									
-			if (id === 'back') {
-				container.activeChild = node.back;
-				delete node.back;
-			} else {
-				container.activeChild = node.transitions[id];
-				// find the correct back target
-				var back = node;
-				while (back.parent !== container) {
-					back = back.parent;
-				}
-				container.activeChild.back = back;
-			}			
-			
+			F5.assert(container.type === 'flow', 'Transition container is not a flow');
+												
 			function complete() {
+				container.activeChild.active = false;								
+				if (id === 'back') {
+					container.activeChild = node.back;
+					delete node.back;
+				} else {
+					container.activeChild = node.transitions[id];
+					// find the correct back target
+					var back = node;
+					while (back.parent !== container) {
+						back = back.parent;
+					}
+					container.activeChild.back = back;
+				}			
+				
 				activateNode(container.activeChild, function () {
 					// TODO: does this delay the selection?
 					// I don't think so
+					// TODO: maybe allow passing null here. otherwise pretty confusing
 				});		
 					
 				observerCb();					
@@ -207,7 +207,11 @@ define('flowcontroller', exports, function (exports) {
 			}
 			
 			if (this.viewController) {
-				this.viewController.doTransition(node, container.activeChild, complete);
+				if (id === 'back') {
+					this.viewController.doTransition(container, node.back, complete);					
+				} else {
+					this.viewController.doTransition(container, node.transitions[id], complete);										
+				}
 			} else {
 				complete();
 			}			

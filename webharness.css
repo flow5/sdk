@@ -37,12 +37,17 @@ body {
 	text-align: center;
 }
 
-#root {
+#application-frame {
 	position: fixed;
 	top: 0px;
 	width:320px;
 	height:460px;
 	border: 1px solid black;	
+}
+
+#root-home-a-start-end {
+	border:10px solid black;
+	-webkit-box-sizing: border-box;
 }
 
 .json {

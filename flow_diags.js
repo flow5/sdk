@@ -46,8 +46,7 @@ define('flow_diags', exports, function (exports) {
 					return node;
 				}
 			}
-			// slice(1) because paths start with '/'
-			return getChildRecursive(flow.root, path.split('/').slice(1));
+			return getChildRecursive(flow.root, path.split('-').slice(1));
 		};	
 		
 		flow.diags.isNodePathActive = function (node) {
@@ -202,7 +201,7 @@ define('flow_diags', exports, function (exports) {
 					'style="filled,rounded"',
 					'shape=box',
 					'fontsize=12',		
-					'id=' + quote('svg:' + node.path)			
+					'id=' + quote('svg-' + node.path)			
 				].concat(getActiveNodeStyle(node));				
 				
 				result += quote(node.path) + formatAttributes(attributes);
@@ -217,7 +216,7 @@ define('flow_diags', exports, function (exports) {
 					fillColor = inactiveColorAttribute('fillcolor');
 					color = 'color="black"';					
 				}				
-				var idAttribute = 'id=' + quote('svg:' + parent.path + '.' + id + '-doSelection');
+				var idAttribute = 'id=' + quote('svg-' + parent.path + ':doSelection' + '_' + id);
 				var attributes = [
 					makeLabel('Select'),
 					'fontname=courier',
@@ -231,38 +230,10 @@ define('flow_diags', exports, function (exports) {
 					idAttribute
 				];				
 				
-				result += quote(parent.path + '.' + id) + formatAttributes(attributes);
+				result += quote(parent.path + '_' + id) + formatAttributes(attributes);
 			}
 											
-			function addTransitionSource(source, node) {
-				var fillColor, color;
-				if (flow.diags.isNodePathActive(node) && !flow.diags.isSubflowActive(node)) {
-					fillColor = activeColorAttribute('fillcolor');
-					color = activeColorAttribute('color');
-				} else {
-					fillColor = inactiveColorAttribute('fillcolor');
-					color = 'color="black"';
-				}
-				
-				// height=0 and width=0 makes the box just accomodate the text				
-				var attributes = [
-					makeLabel(source.id),
-					'fontname="courier new"',
-					'fontsize=10',
-					'style="filled"',					
-					'margin="0.1,0.0"',
-					'penwidth=0.6',
-					fillColor,
-					color,					
-					'shape=box', 
-					'height=0', 
-					'width=1.25',
-					'id=' + quote('svg:' + source.path + '-doTransition')
-				];				
-				result += quote(source.path) + formatAttributes(attributes); 
-			}
-			
-			function addSubflowSource(path, id, node) {
+			function addTransitionSource(node, id) {
 				var fillColor, color;
 				if (flow.diags.isNodePathActive(node) && !flow.diags.isSubflowActive(node)) {
 					fillColor = activeColorAttribute('fillcolor');
@@ -285,9 +256,37 @@ define('flow_diags', exports, function (exports) {
 					'shape=box', 
 					'height=0', 
 					'width=1.25',
-					'id=' + quote('svg:' + path + '-doSubflow')
+					'id=' + quote('svg-' + node.path + ':doTransition' + '_' + id)
 				];				
-				result += quote(path) + formatAttributes(attributes); 
+				result += quote(node.path + '_' + id) + formatAttributes(attributes); 
+			}
+			
+			function addSubflowSource(node, id) {
+				var fillColor, color;
+				if (flow.diags.isNodePathActive(node) && !flow.diags.isSubflowActive(node)) {
+					fillColor = activeColorAttribute('fillcolor');
+					color = activeColorAttribute('color');
+				} else {
+					fillColor = inactiveColorAttribute('fillcolor');
+					color = 'color="black"';
+				}
+				
+				// height=0 and width=0 makes the box just accomodate the text				
+				var attributes = [
+					makeLabel(id),
+					'fontname="courier new"',
+					'fontsize=10',
+					'style="filled"',					
+					'margin="0.1,0.0"',
+					'penwidth=0.6',
+					fillColor,
+					color,					
+					'shape=box', 
+					'height=0', 
+					'width=1.25',
+					'id=' + quote('svg-' + node.path + ':doSubflow' + '_' + id)
+				];				
+				result += quote(node.path + '_' + id) + formatAttributes(attributes); 
 			}									
 									
 			function addEdge(from, to, head) {																																
@@ -326,7 +325,7 @@ define('flow_diags', exports, function (exports) {
 					'fontname="courier"',
 					'fontsize=12',	
 					'bgcolor="gray"',
-					'id=' + quote('svg:' + node.path)												
+					'id=' + quote('svg-' + node.path)												
 				].concat(getActiveNodeStyle(node)).join(';');
 
 				result += 'subgraph ' + quote(makeClusterLabel(node.path)) + ' {' + attributes;
@@ -355,7 +354,7 @@ define('flow_diags', exports, function (exports) {
 					'penwidth=.6',
 					'style="filled"',
 					fillColor,
-					'id=' + quote('svg:' + node.path + id)
+					'id=' + quote('svg-' + node.path + id)
 				].join(';');
 				
 				var clusterLabel = quote(makeClusterLabel(subflow.path));
@@ -369,7 +368,7 @@ define('flow_diags', exports, function (exports) {
 			
 			function addChoiceNode(subflow, choice, node) {
 				function isSubflowStart() {	
-					return  subflow.path.split('.')[1] === choice;					
+					return  subflow.path.split('_')[1] === choice;					
 				}
 				function isCurrentSubflowChoice() {
 					if (!node.activeSubflow) {
@@ -395,10 +394,10 @@ define('flow_diags', exports, function (exports) {
 					color = inactiveColorAttribute('fillcolor');
 				}
 				var idAttribute;
-				if (subflow.path.split('.').length > 1) {
-					idAttribute = 'id=' + quote('svg:' + subflow.path + '.' + choice + '-doSubflowChoice');	
+				if (subflow.path.split('_').length > 1) {
+					idAttribute = 'id=' + quote('svg-' + subflow.path + ':doSubflowChoice' + '_' + choice);	
 				} else {
-					idAttribute = 'id=' + quote('svg:' + subflow.path + '.' + choice + '-doSubflow');	
+					idAttribute = 'id=' + quote('svg-' + subflow.path + ':doSubflow' + '_' + choice);	
 				}
 				
 				var shapeAttribute;
@@ -423,12 +422,12 @@ define('flow_diags', exports, function (exports) {
 					idAttribute
 				];				
 				
-				result += quote(subflow.path + '.' + choice) + formatAttributes(attributes);
+				result += quote(subflow.path + '_' + choice) + formatAttributes(attributes);
 			}
 									
 			function addEdgeToSubflow(node, fromPath, target) {
 				var head = makeClusterLabel(target.path);
-				var toPath = target.path + '.' + getAnId(target.choices);
+				var toPath = target.path + '_' + getAnId(target.choices);
 				addEdge(fromPath, toPath, head);
 				
 			}
@@ -445,7 +444,7 @@ define('flow_diags', exports, function (exports) {
 							visitSubflowRecursive(id, child);
 														
 							if (child && typeof child === 'object') {
-								addEdgeToSubflow(node, subflow.path + '.' + id, subflow.choices[id]);
+								addEdgeToSubflow(node, subflow.path + '_' + id, subflow.choices[id]);
 							}
 						});
 					}
@@ -466,7 +465,7 @@ define('flow_diags', exports, function (exports) {
 										
 					if (node.transitions) {
 						node.transitions.forEach(function (id, transition) {
-							addTransitionSource({path: node.path + '.' + id, id: id}, node);							
+							addTransitionSource(node, id);							
 						});						
 					}
 
@@ -478,9 +477,9 @@ define('flow_diags', exports, function (exports) {
 					
 					if (node.subflows) {
 						node.subflows.forEach(function (id, subflow) {
-							addSubflowSource(node.path + '.' + id, id, node);	
+							addSubflowSource(node, id);	
 							visitSubflow(id, subflow, node);
-							addEdgeToSubflow(node, node.path + '.' + id, subflow);
+							addEdgeToSubflow(node, node.path + '_' + id, subflow);
 						});
 					}					
 
@@ -526,20 +525,20 @@ define('flow_diags', exports, function (exports) {
 
 							// if the toNode has transitions, then use one of them
 							if (toNode.transitions) {
-								toPath = toNode.path + '.' + getAnId(toNode.transitions);
+								toPath = toNode.path + '_' + getAnId(toNode.transitions);
 							} 
 							// if the toNode is the child of a selector then it's a cluster
 							// because of the selection button. so grab the button
 							else if (toNode.parent.type === 'selector') {
-								toPath = toNode.parent.path + '.' + toNode.id;
+								toPath = toNode.parent.path + '_' + toNode.id;
 							} 
 							// if the toNode has subflows then it's a cluster, so grab
 							// one of the subflow elements
 							else if (toNode.subflows) {
-								toPath = toNode.path + '.' + getAnId(toNode.subflows);
+								toPath = toNode.path + '_' + getAnId(toNode.subflows);
 							}
 						}												
-						addEdge(fromNode.path + '.' + id, toPath, head);																						
+						addEdge(fromNode.path + '_' + id, toPath, head);																						
 					});
 				}
 			});						
