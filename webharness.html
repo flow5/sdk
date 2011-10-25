@@ -38,10 +38,12 @@
 			return params;
 		}
 	</script>
+	
+	<script src='require.js'></script>	
+	<script src='f5.js'></script>	
 
 	<script src='Iuppiter.js'></script>
 
-	<script src='require.js'></script>	
 	<script src='jsext.js'></script>
 
 	<link rel="stylesheet" type="text/css" href="json.css">
@@ -52,7 +54,7 @@
 	<script src='flow.js'></script>
 	<script src='flow_diags.js'></script>		
 	<script src='flowcontroller.js'></script>
-	<script src='widgetmanager.js'></script>
+	<script src='viewcontroller.js'></script>
 	
 	<link rel="stylesheet" type="text/css" href="webharness.css">
 				
@@ -71,19 +73,16 @@
 	<script>
 		/*global flowController:true flow:true*/
 		
-		var Utils = require('./utils.js');	
-		var JSONFormatter = require('./json.js').JSONFormatter;
-		var FlowController = require('./flowcontroller.js').FlowController;	
-		var Flow = require('./flow.js').Flow;			
-		
+		var F5 = require('./f5.js').F5;
+							
 		var viewer = document.getElementById('viewer');
 		try {			
-			flow = new Flow();				
+			flow = new F5.Flow();				
 			flow.injectGraph(require('flowspec.js').root);
 			require('./flow_diags.js').instrument(this.flow);	
 			
-			flowController = new FlowController(this.flow, function (cb) {										
-				Utils.post('dot2svg', flow.diags.toDOT(), function (response) {
+			flowController = new F5.FlowController(this.flow, function (cb) {										
+				F5.Utils.post('dot2svg', flow.diags.toDOT(), function (response) {
 
 					function makeClick(el) {
 						el.onclick = function () {	
@@ -94,7 +93,7 @@
 
 								if (method) {
 									var components = fullPath.split('.');
-									var nodePath = components[0];
+									var nodePath = components[0].replace('svg:', '');
 									var id = components.reverse()[0];	
 
 									flowController[method](flow.diags.getNodeFromPath(nodePath), id);										
@@ -126,7 +125,7 @@
 
 					// determine the offset of the current node
 					var activeLeafNode = flow.diags.getActiveLeafNode();
-					var svgElementBBox = document.getElementById('svg:' + activeLeafNode.diags.path).getBBox();
+					var svgElementBBox = document.getElementById('svg:' + activeLeafNode.path).getBBox();
 					var svgRootBBox = document.querySelector('svg').getBBox();
 					var offset = {x: svgElementBBox.x, y: svgRootBBox.height + svgElementBBox.y};
 
@@ -170,7 +169,7 @@
 							jsonDiv = null;
 						} else {
 							try {
-								var jsonFormatter = new JSONFormatter();
+								var jsonFormatter = new F5.Diags.JSON.Formatter();
 								jsonDiv = document.createElement('div');
 								jsonDiv.className = 'json';
 								jsonDiv.innerHTML = jsonFormatter.valueToHTML(JSON.parse(flow.diags.toJSON()));
@@ -193,13 +192,11 @@
 				});		
 			});
 			
-			var WidgetManager = require('./widgetmanager.js').WidgetManager;
-
 			document.getElementById('application').innerHTML = flow.diags.toHTML();
 						
 			flowController.start(function () {
 				console.log('application started');
-			}, new WidgetManager());										
+			}, new F5.ViewController());										
 		} catch (e) {
 			viewer.innerHTML = e.message;
 		}			

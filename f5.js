@@ -24,37 +24,24 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
+/*global define*/
 
-// make the define method available in the nodejs environment
-// TODO: upgrade to v5 where define is built in
-require('./require.js');
+define('f5', exports, function (exports) {
 
-var cli = require('cli');
+	var F5 = {};
 
-cli.setUsage("node devserv.js [OPTIONS]");
+	require('./jsext.js');
 
-cli.parse({
-	app: ['a', 'app', 'string', 'basic'],
-	format: ['f', 'toJSON|toDOT|toHTML', 'string', 'toJSON'],
-	output: ['o', 'stdout|stderr', 'string', 'stderr'],
-});
-
-
-cli.main(function (args, options) {				
-	require.paths.push('./apps/' + options.app);
+	F5.Utils = require('./utils.js');
+	F5.Flow = require('./flow.js').Flow;
+	F5.FlowController = require('./flowcontroller.js').FlowController;
 	
-	var F5 = require('./f5.js').F5;
+	F5.Diags = {};
+	F5.Diags.JSON = require('./json.js');
+	
+	if (typeof document !== 'undefined') {
+		F5.ViewController = require('./viewcontroller.js').ViewController;
+	}
 
-	var flow = new F5.Flow();
-	flow.injectGraph(require('flowspec.js').root);
-	require('./flow_diags.js').instrument(flow);	
-
-	var flowController = new F5.FlowController(flow, function () {
-		process[options.output].write(flow.diags[options.format]());		
-	});
-
-	flowController.start();									
+	exports.F5 = F5;
 });
-
-
-

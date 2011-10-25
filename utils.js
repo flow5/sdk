@@ -79,7 +79,7 @@ define('utils', exports, function (exports) {
 			throw new Error(message);
 		}
 	}
-	
+		
 	exports.post = post;
 	exports.assert = assert;	
 });

@@ -27,10 +27,10 @@
 /*global define*/
 
 define('flow_diags', exports, function (exports) {
-		
-	var Utils = require('./utils.js');
-	
+			
 	function instrument(flow) {
+
+		var F5 = require('./f5.js').F5;
 		
 		// OPTION: consider https://github.com/akidee/schema.js or related as a general schema validation solution
 		
@@ -40,7 +40,7 @@ define('flow_diags', exports, function (exports) {
 			function getChildRecursive(node, components) {
 				if (components.length && components[0]) {
 					var child = node.children[components[0]];
-					Utils.assert(child, 'Bad path');
+					F5.Utils.assert(child, 'Bad path');
 					return getChildRecursive(child, components.slice(1));
 				} else {
 					return node;
@@ -79,7 +79,7 @@ define('flow_diags', exports, function (exports) {
 			var result = '';
 			function beginNode(node) {
 				result += '<div class="node" ';
-				result += ' id="' + node.diags.path + '"';
+				result += ' id="' + node.path + '"';
 				if (!node.active) {
 					result += 'style="visibility:hidden"';
 				}
@@ -98,8 +98,8 @@ define('flow_diags', exports, function (exports) {
 			function doSubflowRecursive(node, id, subflow) {
 				if (subflow && typeof subflow === 'object') {
 					result += '<div class="subflow" ';
-					result += ' id="' + subflow.diags.path + '"';
-					if (!node.activeSubflow || node.activeSubflow.diags.path !== subflow.diags.path) {
+					result += ' id="' + subflow.path + '"';
+					if (!node.activeSubflow || node.activeSubflow.path !== subflow.path) {
 						result += 'style="visibility:hidden"';
 					}
 					result += '>';
@@ -147,7 +147,7 @@ define('flow_diags', exports, function (exports) {
 					if (child && typeof child === 'object') {
 						// break cycles and use paths to indicate references
 						if (id === 'parent' || id === 'activeChild' || id === 'node' || objId === 'transitions') {
-							copy[id] = '[-> ' + child.diags.path + ']';
+							copy[id] = '[-> ' + child.path + ']';
 						} else {
 							copy[id] = copyForPrettyPrintRecursive(child, id);
 						}
@@ -264,10 +264,10 @@ define('flow_diags', exports, function (exports) {
 					'style="filled,rounded"',
 					'shape=box',
 					'fontsize=12',		
-					'id=' + quote('svg:' + node.diags.path)			
+					'id=' + quote('svg:' + node.path)			
 				].concat(getActiveNodeStyle(node));				
 				
-				result += quote(node.diags.path) + formatAttributes(attributes);
+				result += quote(node.path) + formatAttributes(attributes);
 			}
 
 			function addSelectionButton(node, parent, id) {
@@ -279,7 +279,7 @@ define('flow_diags', exports, function (exports) {
 					fillColor = inactiveColorAttribute('fillcolor');
 					color = 'color="black"';					
 				}				
-				var idAttribute = 'id=' + quote('svg:' + parent.diags.path + '.' + id + '-doSelection');
+				var idAttribute = 'id=' + quote('svg:' + parent.path + '.' + id + '-doSelection');
 				var attributes = [
 					makeLabel('Select'),
 					'fontname=courier',
@@ -293,7 +293,7 @@ define('flow_diags', exports, function (exports) {
 					idAttribute
 				];				
 				
-				result += quote(parent.diags.path + '.' + id) + formatAttributes(attributes);
+				result += quote(parent.path + '.' + id) + formatAttributes(attributes);
 			}
 											
 			function addTransitionSource(source, node) {
@@ -319,9 +319,9 @@ define('flow_diags', exports, function (exports) {
 					'shape=box', 
 					'height=0', 
 					'width=1.25',
-					'id=' + quote('svg:' + source.diags.path + '-doTransition')
+					'id=' + quote('svg:' + source.path + '-doTransition')
 				];				
-				result += quote(source.diags.path) + formatAttributes(attributes); 
+				result += quote(source.path) + formatAttributes(attributes); 
 			}
 			
 			function addSubflowSource(path, id, node) {
@@ -388,10 +388,10 @@ define('flow_diags', exports, function (exports) {
 					'fontname="courier"',
 					'fontsize=12',	
 					'bgcolor="gray"',
-					'id=' + quote('svg:' + node.diags.path)												
+					'id=' + quote('svg:' + node.path)												
 				].concat(getActiveNodeStyle(node)).join(';');
 
-				result += 'subgraph ' + quote(makeClusterLabel(node.diags.path)) + ' {' + attributes;
+				result += 'subgraph ' + quote(makeClusterLabel(node.path)) + ' {' + attributes;
 				result += makeLabel(node.id);
 			}
 			
@@ -403,7 +403,7 @@ define('flow_diags', exports, function (exports) {
 				var fillColor;
 				// TODO: this can do the wrong thing if the name of one subflow
 				// is a substring of another one
-				if (flow.diags.isNodePathActive(node) && node.activeSubflow && node.activeSubflow.diags.path === subflow.diags.path) {
+				if (flow.diags.isNodePathActive(node) && node.activeSubflow && node.activeSubflow.path === subflow.path) {
 					fillColor = 'fillcolor="lightskyblue"';
 				} else {
 					fillColor = inactiveColorAttribute('fillcolor');
@@ -417,10 +417,10 @@ define('flow_diags', exports, function (exports) {
 					'penwidth=.6',
 					'style="filled"',
 					fillColor,
-					'id=' + quote('svg:' + node.diags.path + id)
+					'id=' + quote('svg:' + node.path + id)
 				].join(';');
 				
-				var clusterLabel = quote(makeClusterLabel(subflow.diags.path));
+				var clusterLabel = quote(makeClusterLabel(subflow.path));
 				result += 'subgraph ' + clusterLabel + ' {' + attributes;
 				result += makeLabel(subflow.method);
 			}				
@@ -431,14 +431,14 @@ define('flow_diags', exports, function (exports) {
 			
 			function addChoiceNode(subflow, choice, node) {
 				function isSubflowStart() {	
-					return  subflow.diags.path.split('.')[1] === choice;					
+					return  subflow.path.split('.')[1] === choice;					
 				}
 				function isCurrentSubflowChoice() {
 					if (!node.activeSubflow) {
 						return false;
 					}
 					
-					return node.activeSubflow.diags.path === subflow.diags.path;
+					return node.activeSubflow.path === subflow.path;
 				}	
 				function isTerminal() {
 					return !subflow.choices[choice] || (typeof subflow.choices[choice] === 'string');
@@ -457,10 +457,10 @@ define('flow_diags', exports, function (exports) {
 					color = inactiveColorAttribute('fillcolor');
 				}
 				var idAttribute;
-				if (subflow.diags.path.split('.').length > 1) {
-					idAttribute = 'id=' + quote('svg:' + subflow.diags.path + '.' + choice + '-doSubflowChoice');	
+				if (subflow.path.split('.').length > 1) {
+					idAttribute = 'id=' + quote('svg:' + subflow.path + '.' + choice + '-doSubflowChoice');	
 				} else {
-					idAttribute = 'id=' + quote('svg:' + subflow.diags.path + '.' + choice + '-doSubflow');	
+					idAttribute = 'id=' + quote('svg:' + subflow.path + '.' + choice + '-doSubflow');	
 				}
 				
 				var shapeAttribute;
@@ -485,12 +485,12 @@ define('flow_diags', exports, function (exports) {
 					idAttribute
 				];				
 				
-				result += quote(subflow.diags.path + '.' + choice) + formatAttributes(attributes);
+				result += quote(subflow.path + '.' + choice) + formatAttributes(attributes);
 			}
 									
 			function addEdgeToSubflow(node, fromPath, target) {
-				var head = makeClusterLabel(target.diags.path);
-				var toPath = target.diags.path + '.' + getAnId(target.choices);
+				var head = makeClusterLabel(target.path);
+				var toPath = target.path + '.' + getAnId(target.choices);
 				addEdge(fromPath, toPath, head);
 				
 			}
@@ -507,7 +507,7 @@ define('flow_diags', exports, function (exports) {
 							visitSubflowRecursive(id, child);
 														
 							if (child && typeof child === 'object') {
-								addEdgeToSubflow(node, subflow.diags.path + '.' + id, subflow.choices[id]);
+								addEdgeToSubflow(node, subflow.path + '.' + id, subflow.choices[id]);
 							}
 						});
 					}
@@ -528,7 +528,7 @@ define('flow_diags', exports, function (exports) {
 										
 					if (node.transitions) {
 						node.transitions.forEach(function (id, transition) {
-							addTransitionSource({diags: {path: node.diags.path + '.' + id}, id: id}, node);							
+							addTransitionSource({path: node.path + '.' + id, id: id}, node);							
 						});						
 					}
 
@@ -540,9 +540,9 @@ define('flow_diags', exports, function (exports) {
 					
 					if (node.subflows) {
 						node.subflows.forEach(function (id, subflow) {
-							addSubflowSource(node.diags.path + '.' + id, id, node);	
+							addSubflowSource(node.path + '.' + id, id, node);	
 							visitSubflow(id, subflow, node);
-							addEdgeToSubflow(node, node.diags.path + '.' + id, subflow);
+							addEdgeToSubflow(node, node.path + '.' + id, subflow);
 						});
 					}					
 
@@ -551,7 +551,7 @@ define('flow_diags', exports, function (exports) {
 					addNode(node);					
 				}	
 												
-				visited[node.diags.path] = node;									
+				visited[node.path] = node;									
 			}
 			
 			
@@ -569,7 +569,7 @@ define('flow_diags', exports, function (exports) {
 			visited.forEach(function (path, fromNode) {
 				if (fromNode.transitions) {
 					fromNode.transitions.forEach(function (id, toNode) {
-						var toPath = toNode.diags.path;
+						var toPath = toNode.path;
 
 						// NOTE: graphviz doesn't support edges between clusters
 						// the workaround is to make the edge between leaf nodes
@@ -579,29 +579,29 @@ define('flow_diags', exports, function (exports) {
 						// see: https://mailman.research.att.com/pipermail/graphviz-interest/2010q3/007276.html						
 						var head;
 						if (isCluster(toNode)) {
-							head = makeClusterLabel(toNode.diags.path);
+							head = makeClusterLabel(toNode.path);
 							
 							while (toNode.children) {
 								toNode = getAProperty(toNode.children);
 							}
-							toPath = toNode.diags.path;
+							toPath = toNode.path;
 
 							// if the toNode has transitions, then use one of them
 							if (toNode.transitions) {
-								toPath = toNode.diags.path + '.' + getAnId(toNode.transitions);
+								toPath = toNode.path + '.' + getAnId(toNode.transitions);
 							} 
 							// if the toNode is the child of a selector then it's a cluster
 							// because of the selection button. so grab the button
 							else if (toNode.parent.type === 'selector') {
-								toPath = toNode.parent.diags.path + '.' + toNode.id;
+								toPath = toNode.parent.path + '.' + toNode.id;
 							} 
 							// if the toNode has subflows then it's a cluster, so grab
 							// one of the subflow elements
 							else if (toNode.subflows) {
-								toPath = toNode.diags.path + '.' + getAnId(toNode.subflows);
+								toPath = toNode.path + '.' + getAnId(toNode.subflows);
 							}
 						}												
-						addEdge(fromNode.diags.path + '.' + id, toPath, head);																						
+						addEdge(fromNode.path + '.' + id, toPath, head);																						
 					});
 				}
 			});						
@@ -609,41 +609,7 @@ define('flow_diags', exports, function (exports) {
 			digraphFinish();
 			
 			return result;			
-		};	
-		
-		function getPath(node) {
-			var path = [];
-			if (node.children) {
-				path.push('');
-			}
-			while (node) {
-				path.push(node.id);
-				node = node.parent;
-			}
-			return path.reverse().join('/');
-		}			
-		function addDiagsRecursive(node) {
-			node.diags = {path: getPath(node)};
-			if (node.children) {
-				node.children.forEach(function (id, child) {
-					addDiagsRecursive(child);
-				});
-			}	
-			function addSubflowDiagsRecursive(subflow, path) {
-				if (subflow && subflow.choices) {
-					subflow.diags = {path: path + '.' + subflow.method};
-					subflow.choices.forEach(function (id, child) {
-						addSubflowDiagsRecursive(child, subflow.diags.path);
-					});					
-				}
-			}
-			if (node.subflows) {
-				node.subflows.forEach(function (id, subflow) {
-					addSubflowDiagsRecursive(subflow, node.diags.path);
-				});
-			}			
-		}			
-		addDiagsRecursive(flow.root);	
+		};			
 	}
 	
 	exports.instrument = instrument;

@@ -27,11 +27,10 @@
 /*global define*/
 
 define('flow', exports, function (exports) {
-	
-	require('./jsext.js');
-	var Utils = require('./utils.js');
-	
+		
 	function Flow() {
+
+		var F5 = require('./f5.js').F5;
 
 		var that = this;
 				
@@ -46,7 +45,7 @@ define('flow', exports, function (exports) {
 					} else if (node.parent) {
 						return resolveSpecUp(node.parent, name);
 					} else {
-						Utils.assert(false, 'Could not find template: ' + name);
+						F5.Utils.assert(false, 'Could not find template: ' + name);
 					}
 				}
 				
@@ -63,7 +62,7 @@ define('flow', exports, function (exports) {
 				} else if (node.parent) {
 					return findNodeUp(node.parent, name);
 				} else {
-					Utils.assert(false, 'Could not find name: ' + name);
+					F5.Utils.assert(false, 'Could not find name: ' + name);
 				}
 			}
 									
@@ -76,7 +75,7 @@ define('flow', exports, function (exports) {
 								
 				if (nodeSpec.children) {
 					node.children = {};
-					Utils.assert(nodeSpec.activeChild, 'Parent node must declare active child: ' + id);
+					F5.Utils.assert(nodeSpec.activeChild, 'Parent node must declare active child: ' + id);
 					nodeSpec.children.forEach(function (id, childSpec) {
 						var child = injectNodeRecursive(id, resolveSpec(node, childSpec), node);
 						if (id === nodeSpec.activeChild) {
@@ -89,6 +88,7 @@ define('flow', exports, function (exports) {
 				if (nodeSpec.subflows) {
 					node.subflows = {};					
 					nodeSpec.subflows.forEach(function (id, subflow) {
+						subflow.node = node;
 						node.subflows[id] = subflow;
 					});					
 				}
@@ -103,7 +103,7 @@ define('flow', exports, function (exports) {
 			function resolveTransitionsRecursive(node) {								
 				
 				if (node.spec.transitions) {
-					Utils.assert(node.type === 'flow', 'A node with transitions must be of type flow');
+					F5.Utils.assert(node.type === 'flow', 'A node with transitions must be of type flow');
 					node.transitions = {};
 					node.spec.transitions.forEach(function (id) {
 						node.transitions[id] = findNodeUp(node, id);
@@ -141,6 +141,44 @@ define('flow', exports, function (exports) {
 				delete obj._mark;
 			}
 			removeSpecsRecursive(that.root);
+			
+			function addPathsRecursive(node) {
+				function getPath(node) {
+					var path = [];
+					if (node.children) {
+						path.push('');
+					}
+					while (node) {
+						path.push(node.id);
+						node = node.parent;
+					}
+					return path.reverse().join('/');
+				}			
+				
+//				node.diags = {path: getPath(node)};
+				node.path = getPath(node);
+				if (node.children) {
+					node.children.forEach(function (id, child) {
+						addPathsRecursive(child);
+					});
+				}	
+				
+				function addSubflowPathsRecursive(subflow, path) {
+					if (subflow && subflow.choices) {
+//						subflow.diags = {path: path + '.' + subflow.method};
+						subflow.path = path + '.' + subflow.method;
+						subflow.choices.forEach(function (id, child) {
+							addSubflowPathsRecursive(child, subflow.path);
+						});					
+					}
+				}
+				if (node.subflows) {
+					node.subflows.forEach(function (id, subflow) {
+						addSubflowPathsRecursive(subflow, node.path);
+					});
+				}			
+			}			
+			addPathsRecursive(this.root);			
 
 			that.root.active = true;						
 		};				

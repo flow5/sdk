@@ -198,6 +198,6 @@ define('json', exports, function (exports) {
 	}	
 	JSONFormatter.prototype = new JSONFormatterPrototype();
 
-    exports.JSONFormatter = JSONFormatter;
+    exports.Formatter = JSONFormatter;
 
 });
