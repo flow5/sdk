@@ -52,9 +52,8 @@
 	<script src='flow.js'></script>
 	<script src='flow_diags.js'></script>		
 	<script src='flowcontroller.js'></script>
+	<script src='widgetmanager.js'></script>
 	
-	<script src='flowharness.js'></script>
-				
 	<link rel="stylesheet" type="text/css" href="webharness.css">
 				
 	<script>
@@ -70,22 +69,22 @@
 	<div id='viewer'></div>
 		
 	<script>
-		/*global theFlowController:true theFlow:true*/
+		/*global flowController:true flow:true*/
 		
 		var Utils = require('./utils.js');	
-		var FlowHarness = require('./flowharness.js').FlowHarness;		
 		var JSONFormatter = require('./json.js').JSONFormatter;
+		var FlowController = require('./flowcontroller.js').FlowController;	
+		var Flow = require('./flow.js').Flow;			
 		
 		var viewer = document.getElementById('viewer');
-		try {
-			// function is called back on each action that changes flow state
-			var flowHarness = new FlowHarness(function (flowController, flow, cb) {
-				// make these global for the console
-				theFlowController = flowController;
-				theFlow = flow;	
-				
+		try {			
+			flow = new Flow();				
+			flow.injectGraph(require('flowspec.js').root);
+			require('./flow_diags.js').instrument(this.flow);	
+			
+			flowController = new FlowController(this.flow, function (cb) {			
 				document.getElementById('application').innerHTML = flow.diags.toHTML();				
-								
+							
 				Utils.post('dot2svg', flow.diags.toDOT(), function (response) {
 
 					function makeClick(el) {
@@ -113,7 +112,7 @@
 							el.style[id] = value;
 						});
 					}
-										
+									
 					viewer.innerHTML = response;
 
 					// Make the main poly the same color as background
@@ -160,13 +159,13 @@
 						}
 					});				
 					viewer.appendChild(backButton);
-					
+				
 					var jsonDiv;
-					
+				
 					var jsonButton = document.createElement('div');
 					jsonButton.className = 'json-button';
 					jsonButton.innerText = 'JSON';	
-					
+				
 					jsonButton.addEventListener('click', function () {
 						if (jsonDiv) {
 							viewer.removeChild(jsonDiv);
@@ -191,11 +190,11 @@
 						});							
 					});				
 					viewer.appendChild(jsonButton);
-						
-					cb();
-				});					
-			});
 					
+					cb();
+				});		
+			});
+			flowController.start();										
 		} catch (e) {
 			viewer.innerHTML = e.message;
 		}			

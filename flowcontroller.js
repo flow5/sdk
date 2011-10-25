@@ -81,7 +81,7 @@ define('flowcontroller', exports, function (exports) {
 			
 			activateNode(flow.root, function () {
 				// TODO: this is redundant if there's a final onactive step, right?
-				observerCb(that, flow, cb);
+				observerCb(cb);
 			});
 		};
 		
@@ -127,7 +127,7 @@ define('flowcontroller', exports, function (exports) {
 				// I don't think so.
 			});
 			
-			observerCb(this, flow, cb);
+			observerCb(cb);
 		};
 				
 		// use the transition on the node with the given id 
@@ -179,7 +179,7 @@ define('flowcontroller', exports, function (exports) {
 				// I don't think so
 			});			
 
-			observerCb(this, flow, cb);			
+			observerCb(cb);			
 		};	
 				
 		this.doSubflowChoice = function (node, id) {	
@@ -212,7 +212,7 @@ define('flowcontroller', exports, function (exports) {
 				}
 			}
 
-			observerCb(that, flow, function () {
+			observerCb(function () {
 				if (node.activeSubflow) {
 					// TODO: call up to controller layer
 					doSubflowPrompt(node);
@@ -238,7 +238,7 @@ define('flowcontroller', exports, function (exports) {
 			// TODO: call up to controller layer
 			doSubflowPrompt(node);								
 
-			observerCb(that, flow, function () {
+			observerCb(function () {
 				console.log(node.diags.path + '.' + id + ' started');
 			});	
 		};

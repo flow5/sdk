@@ -35,20 +35,27 @@ cli.setUsage("node devserv.js [OPTIONS]");
 
 cli.parse({
 	app: ['a', 'app', 'string', 'basic'],
-	format: ['f', 'toJSON|toDOT', 'string', 'toJSON'],
+	format: ['f', 'toJSON|toDOT|toHTML', 'string', 'toJSON'],
 	output: ['o', 'stdout|stderr', 'string', 'stderr'],
 });
 
 
-cli.main(function (args, options) {			
-
-	var FlowHarness = require('./flowharness').FlowHarness;
-	
+cli.main(function (args, options) {				
 	require.paths.push('./apps/' + options.app);
 	
-	var flowHarness = new FlowHarness(function (flowController, flow) {
+	var Utils = require('./utils.js');
+	var Flow = require('./flow.js').Flow;
+
+	var flow = new Flow();
+	flow.injectGraph(require('flowspec.js').root);
+	require('./flow_diags.js').instrument(flow);	
+
+	var FlowController = require('./flowcontroller.js').FlowController;
+	var flowController = new FlowController(flow, function () {
 		process[options.output].write(flow.diags[options.format]());		
-	});	
+	});
+
+	flowController.start();									
 });
 
 

@@ -24,30 +24,9 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-
-/*global flow:true flowController:true*/
-
-
 /*global define*/
 
-define('flowharness', exports, function (exports) {							
-	function FlowHarness(observer) {
-		var Utils = require('./utils.js');
-		var Flow = require('./flow.js').Flow;
-
-		this.flow = new Flow();
-
-		var FlowController = require('./flowcontroller.js').FlowController;
-		var flowController;		
-		
-		flowController = new FlowController(this.flow, observer);
-
-		this.flow.injectGraph(require('flowspec.js').root);
-
-		require('./flow_diags.js').instrument(this.flow);	
-
-		flowController.start();		
-	}
+define('widgetmanager', exports, function (exports) {
 	
-	exports.FlowHarness = FlowHarness;
+	
 });
