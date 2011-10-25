@@ -66,7 +66,6 @@ define('flowcontroller', exports, function (exports) {
 		
 		// TODO: move this to debug layer
 		function doSubflowPrompt(node) {
-//			console.log(node.activeSubflow.path);
 			node.activeSubflow.choices.forEach(function (id, choice) {
 				console.log('* ' + id);
 			});
@@ -89,8 +88,11 @@ define('flowcontroller', exports, function (exports) {
 			
 			activateNode(flow.root, function () {
 				// TODO: this is redundant if there's a final onactive step, right?
-				observerCb(cb);
+				observerCb();
+
+				cb();
 			});
+
 		};
 		
 		// select the child of node with the given id
@@ -136,11 +138,13 @@ define('flowcontroller', exports, function (exports) {
 					// I don't think so.
 				});
 
-				observerCb(cb);				
+				observerCb();	
+				
+				cb();			
 			}
 			
-			if (this.viewcontroller) {
-				this.viewcontroller.doSelection(node, id, complete);
+			if (this.viewController) {
+				this.viewController.doSelection(node, id, complete);
 			} else {
 				complete();
 			}			
@@ -195,12 +199,15 @@ define('flowcontroller', exports, function (exports) {
 				activateNode(container.activeChild, function () {
 					// TODO: does this delay the selection?
 					// I don't think so
-				});			
-				observerCb(cb);					
+				});		
+					
+				observerCb();					
+				
+				cb();
 			}
 			
-			if (this.viewcontroller) {
-				this.viewcontroller.doTransition(node, container.activeChild, complete);
+			if (this.viewController) {
+				this.viewController.doTransition(node, container.activeChild, complete);
 			} else {
 				complete();
 			}			
@@ -216,11 +223,13 @@ define('flowcontroller', exports, function (exports) {
 			var subflow = node.activeSubflow.choices[id];
 			var completionCb = node.activeSubflow.completionCb;
 
-			var subflowPath = node.activeSubflow.path;
+			var oldActiveSubflow = node.activeSubflow;
 
 			if (subflow && typeof subflow === 'object') {
 				node.activeSubflow = subflow;
+				node.activeSubflow.completionCb = oldActiveSubflow.completionCb;
 			} else {
+				delete node.activeSubflow.completionCb;
 				delete node.activeSubflow;					
 				if (subflow) {
 					if (node.type === 'flow') {
@@ -231,22 +240,22 @@ define('flowcontroller', exports, function (exports) {
 				}
 			}
 
-			observerCb(function () {
-				if (node.activeSubflow) {
-					if (that.viewcontroller) {
-						that.viewcontroller.doSubflow(node);
-					} else {
-						doSubflowPrompt(node);												
-					}
+			observerCb();
+			
+			if (node.activeSubflow) {
+				if (that.viewController) {
+					that.viewController.doSubflowChoice(oldActiveSubflow, id);
 				} else {
-					if (that.viewcontroller) {
-						that.viewcontroller.doSubflow(node);
-					}
-					if (completionCb) {
-						completionCb();
-					}
+					doSubflowPrompt(node);												
 				}
-			});						
+			} else {
+				if (that.viewController) {
+					that.viewController.completeSubflow(oldActiveSubflow);
+				}
+				if (completionCb) {
+					completionCb();
+				}
+			}
 		};				
 		
 		this.doSubflow = function (node, id, cb) {
@@ -255,15 +264,17 @@ define('flowcontroller', exports, function (exports) {
 			F5.assert(!flow.diags.isSubflowActive(node), 'Subflow already in progress');						
 			
 			node.activeSubflow = node.subflows[id];
+			node.activeSubflow.completionCb = cb;
 				
-			if (this.viewcontroller) {
-				this.viewcontroller.doSubflow(node);
+			if (this.viewController) {
+				this.viewController.startSubflow(node.activeSubflow);
 			} else {
 				doSubflowPrompt(node);												
 			}
-			observerCb(function () {
-				console.log(node.path + '.' + id + ' started');
-			});					
+
+			console.log(node.path + '.' + id + ' started');
+
+			observerCb();					
 		};
 		
 		// find an active leaf node
@@ -302,25 +313,3 @@ define('flowcontroller', exports, function (exports) {
 	
 	exports.FlowController = FlowController;	
 });
-
-
-/*
-
-Node controllers will probably just be initialized with approprate ID etc. and get their own 
-parameter set. then they'll delegate through the singleton FlowController
-
-FlowController manages the flow graph
-It executions selections, transitions, subflows and arbitrary invocations on each node
-On transitions the flow controller will construct a hierarchy of NodeControllers corresponding to the
-nodes at that state. 
-For subflows and invocations the controller will delegate to client provided delegate code (NodeControllerDelegate?)
-Flow controller also manages transition state. e.g. during an async operation, the flow controller will 
-indicate that there is a transition underway to lock out further operations
-
-subflow rules:
-	can select away from a node that contains an active subflow
-	can't select or transition away from a node that has an ancestor with an active subflow
-	
-
-
-*/

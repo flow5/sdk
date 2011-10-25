@@ -128,15 +128,20 @@ define('viewcontroller', exports, function (exports) {
 											
 			cb();
 		};
+		
+
+		this.startSubflow = function (subflow) {
+			document.getElementById(subflow.path).style.visibility = '';
+		};
+
+		this.completeSubflow = function (subflow) {
+			document.getElementById(subflow.path).style.visibility = 'hidden';
+		};
 				
-		this.doSubflow = function (node) {
+		this.doSubflowChoice = function (subflow, choice) {
 			console.log('ViewController.doSubflow');		
-			node.subflows.forEach(function (id, subflow) {
-				document.getElementById(subflow.path).style.visibility = 'hidden';
-			});				
-			if (node.activeSubflow) {
-				document.getElementById(node.activeSubflow.path).style.visibility = '';				
-			}	
+			document.getElementById(subflow.path).style.visibility = 'hidden';			
+			document.getElementById(subflow.choices[choice].path).style.visibility = '';			
 		};
 	}
 		
