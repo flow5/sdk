@@ -38,67 +38,74 @@ define('viewcontroller', exports, function (exports) {
 		};
 		
 		function toDOM(node) {
-			var result = '';
-			function beginNode(node) {
-				result += '<div class="node" ';
-				result += ' id="' + node.path + '"';
+			function makeContainerElement(node) {
+				var div = document.createElement('div');
+				div.className = 'node';
+				div.id = node.path;
 				if (!node.active) {
-					result += 'style="visibility:hidden"';
+					div.style.visibility = 'hidden';
 				}
-				result += '>';
+				return div;
 			}
-			function endNode() {
-				result += '</div>';
+			function makeLeafElement(node) {
+				var div = document.createElement('div');
+				div.className = 'node';
+				div.id = node.path;
+				div.innerHTML = node.id;
+				if (!node.active) {
+					div.style.visibility = 'hidden';
+				}
+				return div;
 			}
-			function insertNodeWidget(node) {
-				result += '<div class="node-widget">' +  node.id + '</div>';
-			}
-			function insertSubflowWidget(subflow) {
-				result += '<div class="subflow-widget">' +  subflow.method + '</div>';
+			function makeSubflowMethod(subflow) {
+				var div = document.createElement('div');
+				div.className = 'subflow-widget';
+				div.innerHTML = subflow.method;
+				return div;
 
 			}
-			function doSubflowRecursive(node, id, subflow) {
+			function makeSubflowElement(node, subflow) {
+				var div = document.createElement('div');
+				div.className = 'subflow';
+				div.id = subflow.path;				
+				if (!node.activeSubflow || node.activeSubflow.path !== subflow.path) {
+					div.style.visibility = 'hidden';
+				}
+				div.appendChild(makeSubflowMethod(subflow));
+				return div;
+			}
+
+			function doSubflowRecursive(container, node, id, subflow) {
 				if (subflow && typeof subflow === 'object') {
-					result += '<div class="subflow" ';
-					result += ' id="' + subflow.path + '"';
-					if (!node.activeSubflow || node.activeSubflow.path !== subflow.path) {
-						result += 'style="visibility:hidden"';
-					}
-					result += '>';
-					insertSubflowWidget(subflow);
-					result += '</div>';					
+					container.appendChild(makeSubflowElement(node, subflow));
 					subflow.choices.forEach(function (id, child) {
-						doSubflowRecursive(node, id, child);
+						doSubflowRecursive(container, node, id, child);
 					});			
 				}
 			}
 
 			function generateDivsRecursive(node) {
-				beginNode(node);
-
+				var div;
 				if (node.children) {
+					div = makeContainerElement(node);
+					
 					node.children.forEach(function (id, child) {
-						generateDivsRecursive(child);							
+						div.appendChild(generateDivsRecursive(child));
 					});
 				} else {
-					insertNodeWidget(node);									
+					div = makeLeafElement(node);
 				}
 
 				if (node.subflows) {
 					node.subflows.forEach(function (id, subflow) {
-						doSubflowRecursive(node, id, subflow);
+						doSubflowRecursive(div, node, id, subflow);
 					});
-
 				}
 
-				endNode();
+				return div;
 			}
-
-			generateDivsRecursive(node);
-			
-			var div = document.createElement('div');
-			div.innerHTML = result;
-			return div;
+						
+			return generateDivsRecursive(node);
 		}
 		
 		// generate all of the active elements

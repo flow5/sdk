@@ -83,7 +83,8 @@ body {
 
 .node {
 	position: absolute;
-	top: 0xp;
+	top: 0px;
+	left: 0px;
 	display: -webkit-box;
 	-webkit-box-pack: center;
 	-webkit-box-align: center;
