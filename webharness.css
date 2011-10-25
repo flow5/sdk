@@ -37,7 +37,7 @@ body {
 	text-align: center;
 }
 
-#application {
+#root {
 	position: fixed;
 	top: 0px;
 	width:320px;

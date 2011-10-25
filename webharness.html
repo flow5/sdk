@@ -45,6 +45,7 @@
 	<script src='Iuppiter.js'></script>
 
 	<script src='jsext.js'></script>
+	<script src='domext.js'></script>
 
 	<link rel="stylesheet" type="text/css" href="json.css">
 	<script src='json.js'></script>
@@ -67,7 +68,7 @@
 </head>
 
 <body>
-	<div id='application'></div>
+	<div id='root'></div>
 	<div id='viewer'></div>
 		
 	<script>
@@ -82,7 +83,7 @@
 			require('./flow_diags.js').instrument(this.flow);	
 			
 			flowController = new F5.FlowController(this.flow, function (cb) {										
-				F5.Utils.post('dot2svg', flow.diags.toDOT(), function (response) {
+				F5.post('dot2svg', flow.diags.toDOT(), function (response) {
 
 					function makeClick(el) {
 						el.onclick = function () {	
@@ -192,11 +193,9 @@
 				});		
 			});
 			
-			document.getElementById('application').innerHTML = flow.diags.toHTML();
-						
 			flowController.start(function () {
 				console.log('application started');
-			}, new F5.ViewController());										
+			}, new F5.ViewController(flow, document.getElementById('root')));										
 		} catch (e) {
 			viewer.innerHTML = e.message;
 		}			

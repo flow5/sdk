@@ -45,7 +45,7 @@ define('flow', exports, function (exports) {
 					} else if (node.parent) {
 						return resolveSpecUp(node.parent, name);
 					} else {
-						F5.Utils.assert(false, 'Could not find template: ' + name);
+						F5.assert(false, 'Could not find template: ' + name);
 					}
 				}
 				
@@ -62,7 +62,7 @@ define('flow', exports, function (exports) {
 				} else if (node.parent) {
 					return findNodeUp(node.parent, name);
 				} else {
-					F5.Utils.assert(false, 'Could not find name: ' + name);
+					F5.assert(false, 'Could not find name: ' + name);
 				}
 			}
 									
@@ -75,7 +75,7 @@ define('flow', exports, function (exports) {
 								
 				if (nodeSpec.children) {
 					node.children = {};
-					F5.Utils.assert(nodeSpec.activeChild, 'Parent node must declare active child: ' + id);
+					F5.assert(nodeSpec.activeChild, 'Parent node must declare active child: ' + id);
 					nodeSpec.children.forEach(function (id, childSpec) {
 						var child = injectNodeRecursive(id, resolveSpec(node, childSpec), node);
 						if (id === nodeSpec.activeChild) {
@@ -103,7 +103,7 @@ define('flow', exports, function (exports) {
 			function resolveTransitionsRecursive(node) {								
 				
 				if (node.spec.transitions) {
-					F5.Utils.assert(node.type === 'flow', 'A node with transitions must be of type flow');
+					F5.assert(node.type === 'flow', 'A node with transitions must be of type flow');
 					node.transitions = {};
 					node.spec.transitions.forEach(function (id) {
 						node.transitions[id] = findNodeUp(node, id);

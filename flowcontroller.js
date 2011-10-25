@@ -74,14 +74,18 @@ define('flowcontroller', exports, function (exports) {
 			
 		// TODO: cb doesn't execute until onactivate subflows complete
 		// that doesn't seem right
-		this.start = function (cb, viewcontroller) {						
+		this.start = function (cb, viewController) {						
 			if (!cb) {
 				cb = function () {
 					console.log('start complete');
 				};
 			}
 			
-			this.viewcontroller = viewcontroller;
+			this.viewController = viewController;
+			
+			if (this.viewController) {
+				this.viewController.start();
+			}
 			
 			activateNode(flow.root, function () {
 				// TODO: this is redundant if there's a final onactive step, right?
@@ -91,10 +95,10 @@ define('flowcontroller', exports, function (exports) {
 		
 		// select the child of node with the given id
 		this.doSelection = function (node, id, cb) {		
-			F5.Utils.assert(flow.diags.isNodePathActive(node), 'Attempt to select on an inactive node');	
-			F5.Utils.assert(!flow.diags.isSubflowActive(node), 'Cannot select with a subflow active');				
-			F5.Utils.assert(node.type === 'selector', 'Can only select on node of type selector');
-			F5.Utils.assert(node.children[id], 'No child with id: ' + id);
+			F5.assert(flow.diags.isNodePathActive(node), 'Attempt to select on an inactive node');	
+			F5.assert(!flow.diags.isSubflowActive(node), 'Cannot select with a subflow active');				
+			F5.assert(node.type === 'selector', 'Can only select on node of type selector');
+			F5.assert(node.children[id], 'No child with id: ' + id);
 			
 			if (!cb) {
 				cb = function () {
@@ -145,10 +149,10 @@ define('flowcontroller', exports, function (exports) {
 		// use the transition on the node with the given id 
 		// NOTE: parameters are specified in the flowgraph
 		this.doTransition = function (node, id, cb) {
-			F5.Utils.assert(flow.diags.isNodePathActive(node), 'Attempt to transition from an inactive node');
-			F5.Utils.assert(!flow.diags.isSubflowActive(node), 'Cannot transition with a subflow active');	
-			F5.Utils.assert(id === 'back' || node.transitions, 'No transitions defined for node: ' + node.path);
-			F5.Utils.assert(id === 'back' || node.transitions[id], 'No transition with id: ' + id);
+			F5.assert(flow.diags.isNodePathActive(node), 'Attempt to transition from an inactive node');
+			F5.assert(!flow.diags.isSubflowActive(node), 'Cannot transition with a subflow active');	
+			F5.assert(id === 'back' || node.transitions, 'No transitions defined for node: ' + node.path);
+			F5.assert(id === 'back' || node.transitions[id], 'No transition with id: ' + id);
 			
 			if (!cb) {
 				cb = function () {
@@ -169,7 +173,7 @@ define('flowcontroller', exports, function (exports) {
 				container = flow.root;
 			}
 			
-			F5.Utils.assert(container.type === 'flow', 'Transition container is not a flow. Why?');
+			F5.assert(container.type === 'flow', 'Transition container is not a flow. Why?');
 									
 			container.children.forEach(function (id, child) {
 				child.active = false;
@@ -204,10 +208,10 @@ define('flowcontroller', exports, function (exports) {
 		};	
 				
 		this.doSubflowChoice = function (node, id) {	
-			F5.Utils.assert(node.activeSubflow, 'No active subflow');
+			F5.assert(node.activeSubflow, 'No active subflow');
 
 			console.log('choose: ' + id);
-			F5.Utils.assert(node.activeSubflow.choices.hasOwnProperty(id), 'No such choice');			
+			F5.assert(node.activeSubflow.choices.hasOwnProperty(id), 'No such choice');			
 
 			var subflow = node.activeSubflow.choices[id];
 			var completionCb = node.activeSubflow.completionCb;
@@ -246,9 +250,9 @@ define('flowcontroller', exports, function (exports) {
 		};				
 		
 		this.doSubflow = function (node, id, cb) {
-			F5.Utils.assert(flow.diags.isNodePathActive(node), 'Attempt to execute subflow from an inactive node');	
-			F5.Utils.assert(node.subflows && node.subflows[id], 'No such subflow');
-			F5.Utils.assert(!flow.diags.isSubflowActive(node), 'Subflow already in progress');						
+			F5.assert(flow.diags.isNodePathActive(node), 'Attempt to execute subflow from an inactive node');	
+			F5.assert(node.subflows && node.subflows[id], 'No such subflow');
+			F5.assert(!flow.diags.isSubflowActive(node), 'Subflow already in progress');						
 			
 			node.activeSubflow = node.subflows[id];
 				
@@ -287,9 +291,9 @@ define('flowcontroller', exports, function (exports) {
 		
 		this.doBack = function () {			
 			var backNode = findBackNode();
-			F5.Utils.assert(backNode, 'Cannot go back');
+			F5.assert(backNode, 'Cannot go back');
 			
-			F5.Utils.assert(!flow.diags.isSubflowActive(backNode), 'Cannot go back with a subflow active');							
+			F5.assert(!flow.diags.isSubflowActive(backNode), 'Cannot go back with a subflow active');							
 			
 
 			this.doTransition(backNode, 'back');

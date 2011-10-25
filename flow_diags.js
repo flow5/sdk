@@ -40,7 +40,7 @@ define('flow_diags', exports, function (exports) {
 			function getChildRecursive(node, components) {
 				if (components.length && components[0]) {
 					var child = node.children[components[0]];
-					F5.Utils.assert(child, 'Bad path');
+					F5.assert(child, 'Bad path');
 					return getChildRecursive(child, components.slice(1));
 				} else {
 					return node;
@@ -73,69 +73,7 @@ define('flow_diags', exports, function (exports) {
 				node = node.activeChild;
 			}
 			return node;
-		};
-		
-		flow.diags.toHTML = function () {
-			var result = '';
-			function beginNode(node) {
-				result += '<div class="node" ';
-				result += ' id="' + node.path + '"';
-				if (!node.active) {
-					result += 'style="visibility:hidden"';
-				}
-				result += '>';
-			}
-			function endNode() {
-				result += '</div>';
-			}
-			function insertNodeWidget(node) {
-				result += '<div class="node-widget">' +  node.id + '</div>';
-			}
-			function insertSubflowWidget(subflow) {
-				result += '<div class="subflow-widget">' +  subflow.method + '</div>';
-				
-			}
-			function doSubflowRecursive(node, id, subflow) {
-				if (subflow && typeof subflow === 'object') {
-					result += '<div class="subflow" ';
-					result += ' id="' + subflow.path + '"';
-					if (!node.activeSubflow || node.activeSubflow.path !== subflow.path) {
-						result += 'style="visibility:hidden"';
-					}
-					result += '>';
-					insertSubflowWidget(subflow);
-					result += '</div>';					
-					subflow.choices.forEach(function (id, child) {
-						doSubflowRecursive(node, id, child);
-					});			
-				}
-			}
-			
-			function generateDivsRecursive(node) {
-				beginNode(node);
-								
-				if (node.children) {
-					node.children.forEach(function (id, child) {
-						generateDivsRecursive(child);							
-					});
-				} else {
-					insertNodeWidget(node);									
-				}
-				
-				if (node.subflows) {
-					node.subflows.forEach(function (id, subflow) {
-						doSubflowRecursive(node, id, subflow);
-					});
-					
-				}
-				
-				endNode();
-			}
-			
-			generateDivsRecursive(flow.root);
-			
-			return result;
-		};
+		};		
 					
 		flow.diags.toJSON = function () {
 			

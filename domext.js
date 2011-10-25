@@ -24,29 +24,13 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global define*/
+/*global define NodeList */
 
-define('f5', exports, function (exports) {
-
-	var F5 = {};
-
-	require('./jsext.js');
-
-	// utils go to top level for convenince
-	require('./utils.js').forEach(function (id, fn) {
-		F5[id] = fn;
-	});
+define('domext', exports, function (exports) {
 	
-	F5.Flow = require('./flow.js').Flow;
-	F5.FlowController = require('./flowcontroller.js').FlowController;
-	
-	F5.Diags = {};
-	F5.Diags.JSON = require('./json.js');
-	
-	if (typeof document !== 'undefined') {
-		require('./domext.js');		
-		F5.ViewController = require('./viewcontroller.js').ViewController;
-	}
-
-	exports.F5 = F5;
+	NodeList.prototype.forEach = function (fn) {
+		for (var i = 0; i < this.length; i += 1) {
+			fn(this[i]);
+		}
+	};		
 });

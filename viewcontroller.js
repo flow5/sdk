@@ -28,9 +28,77 @@
 
 define('viewcontroller', exports, function (exports) {
 	
-	function ViewController() {
+	function ViewController(flow, rootEl) {
 		
 		this.activateNode = function (node) {
+			
+		};
+		
+		this.start = function () {
+			
+			function toHtml() {
+				var result = '';
+				function beginNode(node) {
+					result += '<div class="node" ';
+					result += ' id="' + node.path + '"';
+					if (!node.active) {
+						result += 'style="visibility:hidden"';
+					}
+					result += '>';
+				}
+				function endNode() {
+					result += '</div>';
+				}
+				function insertNodeWidget(node) {
+					result += '<div class="node-widget">' +  node.id + '</div>';
+				}
+				function insertSubflowWidget(subflow) {
+					result += '<div class="subflow-widget">' +  subflow.method + '</div>';
+
+				}
+				function doSubflowRecursive(node, id, subflow) {
+					if (subflow && typeof subflow === 'object') {
+						result += '<div class="subflow" ';
+						result += ' id="' + subflow.path + '"';
+						if (!node.activeSubflow || node.activeSubflow.path !== subflow.path) {
+							result += 'style="visibility:hidden"';
+						}
+						result += '>';
+						insertSubflowWidget(subflow);
+						result += '</div>';					
+						subflow.choices.forEach(function (id, child) {
+							doSubflowRecursive(node, id, child);
+						});			
+					}
+				}
+
+				function generateDivsRecursive(node) {
+					beginNode(node);
+
+					if (node.children) {
+						node.children.forEach(function (id, child) {
+							generateDivsRecursive(child);							
+						});
+					} else {
+						insertNodeWidget(node);									
+					}
+
+					if (node.subflows) {
+						node.subflows.forEach(function (id, subflow) {
+							doSubflowRecursive(node, id, subflow);
+						});
+
+					}
+
+					endNode();
+				}
+
+				generateDivsRecursive(flow.root);
+
+				return result;
+			}
+			
+			rootEl.innerHTML = toHtml();
 			
 		};
 		
@@ -38,9 +106,9 @@ define('viewcontroller', exports, function (exports) {
 			console.log('ViewController.doSelection');									
 			
 			var containerElement = document.getElementById(node.path);
-			for (var i = 0; i < containerElement.children.length; i += 1) {
-				containerElement.children[i].style.visibility = 'hidden';
-			}
+			containerElement.childNodes.forEach(function (el) {
+				el.style.visibility = 'hidden';
+			});
 			var activeElement = document.getElementById(node.activeChild.path);
 			activeElement.style.visibility = '';
 						
@@ -53,9 +121,9 @@ define('viewcontroller', exports, function (exports) {
 			var toElement = document.getElementById(toNode.path);			
 			var containerElement = document.getElementById(toNode.parent.path);
 			
-			for (var i = 0; i < containerElement.children.length; i += 1) {
-				containerElement.children[i].style.visibility = 'hidden';
-			}
+			containerElement.childNodes.forEach(function (el) {
+				el.style.visibility = 'hidden';
+			});			
 			toElement.style.visibility = '';			
 											
 			cb();
