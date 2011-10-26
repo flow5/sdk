@@ -37,14 +37,14 @@ define('flowcontroller', exports, function (exports) {
 		function activateNode(node, cb) {
 			function doOnActiveSubflowsRecursive(node, cb) {
 				if (node) {
-					// an onactivate subflow may terminate with a transition or selection
-					// in which case a new onactivate chain will start for the new active node
+					// an didBecomeActive subflow may terminate with a transition or selection
+					// in which case a new didBecomeActive chain will start for the new active node
 					// and this one is abandoned
 					// TODO: might be nice to make this more explicit because this looks like
 					// it shouldn't ever happen
 					if (node.active && !node.activeSubflow) {
-						if (node.subflows && node.subflows.onactivate) {
-							that.doSubflow(node, 'onactivate', function () {
+						if (node.subflows && node.subflows.didBecomeActive) {
+							that.doSubflow(node, 'didBecomeActive', function () {
 								doOnActiveSubflowsRecursive(node.activeChild, cb);
 							});							
 						} else {
@@ -72,7 +72,7 @@ define('flowcontroller', exports, function (exports) {
 			});
 		}	
 			
-		// TODO: cb doesn't execute until onactivate subflows complete
+		// TODO: cb doesn't execute until didBecomeActive subflows complete
 		// that doesn't seem right
 		this.start = function (cb, viewController) {						
 			if (!cb) {
@@ -99,10 +99,10 @@ define('flowcontroller', exports, function (exports) {
 		// cancel out of any current subflow
 		// NOTE: this might be annoying because when selecting away in the middle
 		// of a subflow the subflow gets cancelled out
-		// the problem is that the subflow might be related to onactivate logic
+		// the problem is that the subflow might be related to didBecomeActive logic
 		// which should run top to bottom
-		// e.g., if the active subflow is the onactivate subflow that checks for logged in
-		// then tab away, login from another tab and then come back, the onactivate subflow
+		// e.g., if the active subflow is the didBecomeActive subflow that checks for logged in
+		// then tab away, login from another tab and then come back, the didBecomeActive subflow
 		// needs to run again
 		// TODO: this has an effect at the widget layer
 		function cancelSubflowRecursive(node) {
@@ -258,7 +258,7 @@ define('flowcontroller', exports, function (exports) {
 				}
 			}
 
-			if (newSubflow && typeof newSubflow === 'object') {
+			if (newSubflow && newSubflow.type === 'subflow') {
 				newSubflow.completionCb = completionCb;
 				newSubflow.active = true;
 				node.activeSubflow = newSubflow;

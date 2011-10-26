@@ -100,11 +100,11 @@ Chrome flags:
 		- if the node is a flow the string is used as the argument to doTransition
 		- if the node is a selector the string is used as the argument to doSelection
 
-		a special subflow called onactivate is executed recursively when a node is selected or transitioned to
+		a special subflow called didBecomeActive is executed recursively when a node is selected or transitioned to
 		this allows logic to execute before user interaction can occur
 
-		one complex case is when an onactivate subflow ends in a transition or selection. when this occurs,
-		the onactivate recursion is terminated becuase the transition or selection will trigger onactivate
+		one complex case is when an didBecomeActive subflow ends in a transition or selection. when this occurs,
+		the didBecomeActive recursion is terminated becuase the transition or selection will trigger didBecomeActive
 		for the newly active node
 
 	Flow Documentation

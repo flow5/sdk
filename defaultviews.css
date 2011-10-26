@@ -107,10 +107,6 @@ body {
 	-webkit-box-sizing: border-box;
 }
 
-.do-subflow.disabled {
-	color: grey;
-}
-
 .do-choice:last-child, .do-transition:last-child, .do-subflow:last-child  {
 	border-bottom: none;
 }
@@ -142,4 +138,21 @@ body {
 
 .tab:last-child {
 	border-right: none;
+}
+
+.navbar {
+	display: -webkit-box;
+	width: 100%;
+	padding-left: 2px;
+	height: 30px;
+	-webkit-box-align: center;	
+	background-color:grey;
+}
+
+.backbutton {
+	font-size: 16px;
+	padding:2px;
+	border: 1px solid black;
+	background-color: white;	
+	-webkit-box-sizing: border-box;
 }

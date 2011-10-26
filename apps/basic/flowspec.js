@@ -38,7 +38,7 @@ define('flowspec', exports, function (exports) {
 			done: 'done',
 			home: {
 				subflows: {
-					onactivate: {
+					didBecomeActive: {
 						method: 'aOrMore',
 						choices: {
 							a: 'a',
@@ -73,7 +73,7 @@ define('flowspec', exports, function (exports) {
 								children: {
 									begin: {
 										subflows: {
-											onactivate: {
+											didBecomeActive: {
 												method: 'goOrStay',
 												choices: {
 													go: 'end',
@@ -89,7 +89,7 @@ define('flowspec', exports, function (exports) {
 								},
 								transitions: ['middle', 'done'],
 								subflows: {
-									onactivate: {
+									didBecomeActive: {
 										method: 'yesOrNo',
 										choices: {
 											yes: null,

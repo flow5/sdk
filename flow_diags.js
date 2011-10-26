@@ -432,7 +432,7 @@ define('flow_diags', exports, function (exports) {
 									
 			function visitSubflow(id, subflow, node) {
 				function visitSubflowRecursive(id, subflow) {															
-					if (subflow && typeof subflow === 'object') {
+					if (subflow && subflow.type === 'subflow') {
 						subflowStart(node, subflow, subflow.method);
 						subflow.choices.forEach(function (id, child) {
 							addChoiceNode(subflow, id, node);													
@@ -441,7 +441,7 @@ define('flow_diags', exports, function (exports) {
 						subflow.choices.forEach(function (id, child) {
 							visitSubflowRecursive(id, child);
 														
-							if (child && typeof child === 'object') {
+							if (child && child.type === 'subflow') {
 								addEdgeToSubflow(node, subflow.path + '_' + id, subflow.choices[id]);
 							}
 						});

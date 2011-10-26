@@ -35,23 +35,26 @@ define('defaultviews', exports, function (exports) {
 			if (node.subflows) {
 				var subflowsEl = document.createElement('div');
 				subflowsEl.className = 'subflows';
-				this.el.insertBefore(subflowsEl, this.el.firstChild);
 				
+				var showSubflows = false;
 				node.subflows.forEach(function (id, subflow) {
-					var subflowEl = document.createElement('div');
-					subflowEl.innerHTML = id;
-					subflowEl.className = 'do-subflow';
-					subflowsEl.appendChild(subflowEl);	
-					
-					if (id === 'onactivate') {
-						subflowEl.className += ' disabled';
-					}									
+					if (id !== 'didBecomeActive') {
+						showSubflows = true;
+						
+						var subflowEl = document.createElement('div');
+						subflowEl.innerHTML = id;
+						subflowEl.className = 'do-subflow';
+						subflowsEl.appendChild(subflowEl);	
 
-					F5.Widgets.Utils.addTouchListener(subflowEl, function () {
-						F5.Global.flowController.doSubflow(node, id);
-					});
-
-				});				
+						F5.Widgets.Utils.addTouchListener(subflowEl, function () {
+							F5.Global.flowController.doSubflow(node, id);
+						});						
+					}
+				});	
+				
+				if (showSubflows) {
+					this.el.insertBefore(subflowsEl, this.el.firstChild);												
+				}
 			}
 			
 			if (node.transitions) {
@@ -75,7 +78,20 @@ define('defaultviews', exports, function (exports) {
 			var div = document.createElement('div');
 			div.innerHTML = this.node.id;
 			this.el.insertBefore(div, this.el.firstChild);	
-															
+			
+			if (node === F5.Global.flow.root) {
+				var navbarEl = document.createElement('div');
+				navbarEl.className = 'navbar';
+				this.el.insertBefore(navbarEl, this.el.firstChild);	
+				var backButtonEl = document.createElement('div');
+				backButtonEl.className = 'backbutton';
+				backButtonEl.innerText = 'Back';
+				navbarEl.appendChild(backButtonEl);
+				F5.Widgets.Utils.addTouchListener(backButtonEl, function () {
+					F5.Global.flowController.doBack();
+				});
+								
+			}															
 		};
 	}
 	DefaultFlowViewPrototype.prototype = F5.Prototypes.View;

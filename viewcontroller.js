@@ -67,7 +67,7 @@ define('viewcontroller', exports, function (exports) {
 			}
 
 			function doSubflowRecursive(container, node, id, subflow) {
-				if (subflow && typeof subflow === 'object') {
+				if (subflow && subflow.type === 'subflow') {
 					subflow.view = new F5.DefaultViews[subflow.type](subflow);
 					container.appendChild(subflow.view.el);
 					subflow.choices.forEach(function (id, child) {

@@ -29,6 +29,18 @@
 
 <head>
 	
+	<meta name="viewport" content="width=device-width initial-scale=1.0 maximum-scale=1.0 user-scalable=0" />
+	<meta http-equiv='Content-type' content='text/html; charset=utf-8'>
+	<meta name="apple-mobile-web-app-capable" content="yes" />	
+	<link rel="stylesheet" type="text/css" href="slide.css">
+	
+	<script>
+		function blockMove(event) {
+			// Tell Safari not to move the window.
+			event.preventDefault();
+		}
+	</script>
+		
 	<script>
 		function getURLParams() {
 			var params = {};
@@ -65,13 +77,13 @@
 				
 	<script>
 		/*jslint evil: true*/
-		document.write('<script src="apps/' + getURLParams().app + '/flowspec.js"><\/script>');
+		document.write('<script src="apps/' + getURLParams().app + '/flowspec.js"><\/script>');		
 	</script>
 	
 
 </head>
 
-<body>
+<body ontouchmove="blockMove(event);">
 	<div id='appframe'>
 		<div id='screen'></div>
 	</div>
@@ -87,6 +99,11 @@
 	</div>
 		
 	<script>
+
+		if (!navigator.userAgent.match(/Safari/) && !navigator.userAgent.match(/Chrome/)) {
+			document.body.className = 'device';
+		}
+	
 		/*global flowController:true flow:true Tracker F5*/
 		
 		require('./f5.js');
