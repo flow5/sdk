@@ -66,19 +66,19 @@ define('viewcontroller', exports, function (exports) {
 				}
 			}
 
-			function doSubflowRecursive(container, node, id, subflow) {
+			function doSubflowRecursive(node, id, subflow) {
 				if (subflow && subflow.type === 'subflow') {
 					subflow.view = new F5.DefaultViews[subflow.type](subflow);
-					container.appendChild(subflow.view.el);
+					F5.Global.flow.root.view.el.appendChild(subflow.view.el);
 					subflow.choices.forEach(function (id, child) {
-						doSubflowRecursive(container, node, id, child);
+						doSubflowRecursive(node, id, child);
 					});			
 				}
 			}
 
 			if (node.subflows) {
 				node.subflows.forEach(function (id, subflow) {
-					doSubflowRecursive(node.view.el, node, id, subflow);
+					doSubflowRecursive(node, id, subflow);
 				});
 			}											
 		};
@@ -116,8 +116,13 @@ define('viewcontroller', exports, function (exports) {
 			
 	function ViewController(flow, applicationFrame) {		
 		
-		this.activateNode = function (node) {
-			console.log('ViewController.activateNode');
+		this.nodeDidBecomeActive = function (node) {
+			console.log('ViewController.nodeDidBecomeActive');
+			// TODO: call viewDidBecomeActive recursively
+		};				
+
+		this.nodeWillBecomeActive = function (node) {
+			console.log('ViewController.nodeDidBecomeActive');
 			// TODO: call viewDidBecomeActive recursively
 		};				
 		

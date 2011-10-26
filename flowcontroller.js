@@ -34,33 +34,38 @@ define('flowcontroller', exports, function (exports) {
 				
 		flow.controller = this;
 		
-		function activateNode(node, cb) {
-			function doOnActiveSubflowsRecursive(node, cb) {
-				if (node) {
-					// an didBecomeActive subflow may terminate with a transition or selection
-					// in which case a new didBecomeActive chain will start for the new active node
-					// and this one is abandoned
-					// TODO: might be nice to make this more explicit because this looks like
-					// it shouldn't ever happen
-					if (node.active && !node.activeSubflow) {
-						if (node.subflows && node.subflows.didBecomeActive) {
-							that.doSubflow(node, 'didBecomeActive', function () {
-								doOnActiveSubflowsRecursive(node.activeChild, cb);
-							});							
-						} else {
-							doOnActiveSubflowsRecursive(node.activeChild, cb);
-						}	
-					}
+		// TODO: fix the case where the recursive flow terminates in a selection or transition
+		// before a leaf node is reached
+		function doLifecycleSubflowRecursive(name, node, cb) {
+			if (node) {
+				console.log('doLifecycleSubflowRecursive: ' + node.path);
+				if (node.subflows && node.subflows[name]) {
+					that.doSubflow(node, name, function () {
+						doLifecycleSubflowRecursive(name, node.activeChild, cb);
+					});							
 				} else {
-					cb();
-				}		
-			}
-						
+					doLifecycleSubflowRecursive(name, node.activeChild, cb);
+				}	
+			} else {
+				cb();
+			}		
+		}		
+		
+		function nodeDidBecomeActive(node, cb) {								
 			node.active = true;
 			if (that.viewController) {
-				that.viewController.activateNode(node);
+				that.viewController.nodeDidBecomeActive(node);
 			}
-			doOnActiveSubflowsRecursive(node, function () {
+			doLifecycleSubflowRecursive('didBecomeActive', node, function () {
+				cb();
+			});
+		}									
+
+		function nodeWillBecomeActive(node, cb) {								
+			if (that.viewController) {
+				that.viewController.nodeWillBecomeActive(node);
+			}
+			doLifecycleSubflowRecursive('willBecomeActive', node, function () {
 				cb();
 			});
 		}									
@@ -87,7 +92,7 @@ define('flowcontroller', exports, function (exports) {
 				this.viewController.start();
 			}
 			
-			activateNode(flow.root, function () {
+			nodeDidBecomeActive(flow.root, function () {
 				// TODO: this is redundant if there's a final onactive step, right?
 				observerCb();
 
@@ -128,7 +133,7 @@ define('flowcontroller', exports, function (exports) {
 				node.activeChild.active = false;
 				node.activeChild = node.children[id];
 							
-				activateNode(node.activeChild, function () {
+				nodeDidBecomeActive(node.activeChild, function () {
 					// TODO: does this delay the selection?
 					// I don't think so.
 				});
@@ -146,12 +151,14 @@ define('flowcontroller', exports, function (exports) {
 					};
 				}						
 				cancelSubflowRecursive(node.activeChild);
-									
-				if (this.viewController) {
-					this.viewController.doSelection(node, id, completeSelection);
-				} else {
-					completeSelection();
-				}							
+				
+				nodeWillBecomeActive(node.children[id], function () {
+					if (that.viewController) {
+						that.viewController.doSelection(node, id, completeSelection);
+					} else {
+						completeSelection();
+					}												
+				});				
 			} else {
 				cb();
 			}
@@ -201,7 +208,7 @@ define('flowcontroller', exports, function (exports) {
 					container.activeChild.back = back;
 				}			
 				
-				activateNode(container.activeChild, function () {
+				nodeDidBecomeActive(container.activeChild, function () {
 					// TODO: does this delay the selection?
 					// I don't think so
 					// TODO: maybe allow passing null here. otherwise pretty confusing
