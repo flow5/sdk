@@ -24,6 +24,7 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
+/*global F5*/
 
 // make the define method available in the nodejs environment
 // TODO: upgrade to v5 where define is built in
@@ -43,7 +44,7 @@ cli.parse({
 cli.main(function (args, options) {				
 	require.paths.push('./apps/' + options.app);
 	
-	var F5 = require('./f5.js').F5;
+	require('./f5.js');
 
 	var flow = new F5.Flow();
 	flow.injectGraph(require('flowspec.js').root);

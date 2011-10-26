@@ -24,14 +24,12 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global define*/
+/*global define F5*/
 
 define('flowcontroller', exports, function (exports) {
 					
 	function FlowController(flow, observerCb) {
 
-		var F5 = require('./f5.js').F5;	
-				
 		var that = this;
 				
 		flow.controller = this;
@@ -234,23 +232,25 @@ define('flowcontroller', exports, function (exports) {
 			console.log('choose: ' + id);
 			F5.assert(node.activeSubflow.choices.hasOwnProperty(id), 'No such choice');			
 
-			var subflow = node.activeSubflow.choices[id];
-			var completionCb = node.activeSubflow.completionCb;
-
-			var oldActiveSubflow = node.activeSubflow;
+			var newSubflow = node.activeSubflow.choices[id];
+			var oldSubflow = node.activeSubflow;
+			var completionCb = oldSubflow.completionCb;
+			
+			delete oldSubflow.completionCb;
+			oldSubflow.active = false;
 			
 			function completeChoice() {
 				observerCb();
 
 				if (node.activeSubflow) {
 					if (that.viewController) {
-						that.viewController.doSubflowChoice(oldActiveSubflow, id);
+						that.viewController.doSubflowChoice(oldSubflow, id);
 					} else {
 						doSubflowPrompt(node);												
 					}
 				} else {
 					if (that.viewController) {
-						that.viewController.completeSubflow(oldActiveSubflow);
+						that.viewController.completeSubflow(oldSubflow);
 					}
 					if (completionCb) {
 						completionCb();
@@ -258,21 +258,22 @@ define('flowcontroller', exports, function (exports) {
 				}
 			}
 
-			if (subflow && typeof subflow === 'object') {
-				node.activeSubflow = subflow;
-				node.activeSubflow.completionCb = oldActiveSubflow.completionCb;
+			if (newSubflow && typeof newSubflow === 'object') {
+				newSubflow.completionCb = completionCb;
+				newSubflow.active = true;
+				node.activeSubflow = newSubflow;
 				completeChoice();
 			} else {
-				delete node.activeSubflow.completionCb;
 				delete node.activeSubflow;					
 				completeChoice();
-				if (subflow) {
+				
+				if (newSubflow) {
 					if (node.type === 'flow') {
-						that.doTransition(node, subflow, function () {
+						that.doTransition(node, newSubflow, function () {
 							
 						});																			
 					} else {
-						that.doSelection(node, subflow, function () {
+						that.doSelection(node, newSubflow, function () {
 							
 						});
 					}
@@ -285,8 +286,10 @@ define('flowcontroller', exports, function (exports) {
 			F5.assert(node.subflows && node.subflows[id], 'No such subflow');
 			F5.assert(!flow.diags.isSubflowActive(node), 'Subflow already in progress');						
 			
-			node.activeSubflow = node.subflows[id];
-			node.activeSubflow.completionCb = cb;
+			var subflow = node.subflows[id];
+			subflow.completionCb = cb;
+			subflow.active = true;
+			node.activeSubflow = subflow;
 				
 			if (this.viewController) {
 				this.viewController.startSubflow(node.activeSubflow);

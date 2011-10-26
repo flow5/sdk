@@ -58,7 +58,7 @@ body {
 }
 
 #appframe {
-	width: 700px;
+	padding:30px;
 }
 
 #svgframe {
@@ -71,10 +71,10 @@ body {
 
 #screen {
 	margin:30px;
-	width:640px;
-	height:920px;
+	width:320px;
+	height:460px;
 	overflow: hidden;
-	position: fixed;
+	position: relative;
 }
 
 #jsonframe {
@@ -114,6 +114,19 @@ body {
 
 /* CSS for the divs generated from flow graph */
 
+.container {
+	display: -webkit-box;
+	-webkit-box-flex: 1;
+	width: 100%;
+	height: 100%;
+	position: relative;
+}
+
+.selector {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+}
+
 .node {
 	-webkit-transform: translate3d(0px, 0px, 0px);
 	position: absolute;
@@ -126,30 +139,44 @@ body {
 	width: 100%;
 	height: 100%;
 	overflow: hidden;
-}																										
+}		
 
 .subflow {
 	position: absolute;
-	top: 0px;
-	left: 0px;
+	top: 25%;
+	left: 25%;
 	display: -webkit-box;
 	-webkit-box-pack: center;
 	-webkit-box-align: center;
-	width: 100%;
-	height: 100%;
-	padding: 100px 50px 100px 50px;
+	width: 50%;
+	height: 50%;
 	-webkit-box-sizing: border-box;
 	z-index: 1;
-}		
-
-.subflow-widget {
-	display: -webkit-box;
-	width: 100%;
-	height: 100%;
-	-webkit-box-flex: 1.0;	
+	-webkit-transition: opacity .25s;
 	background-color: grey;
+}
+
+.tabset {
+	height: 44px;
+	width: 100%;
 	display: -webkit-box;
-	-webkit-box-pack: center;
+	border-top: 1px solid black;	
+	-webkit-box-sizing: border-box;
+}
+
+.tab {
+	display: -webkit-box;
+	-webkit-box-flex: 1.0;
 	-webkit-box-align: center;
-	
-}																								
+	-webkit-box-pack: center;
+	border-right: 1px solid black;
+	-webkit-box-sizing: border-box;
+	font-family: arial;
+	font-size: 10px;
+	text-transform: uppercase;
+}
+
+.tab:last-child {
+	border-right: none;
+}
+		

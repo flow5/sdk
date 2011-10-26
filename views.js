@@ -24,30 +24,42 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global define F5: true*/
+/*global define F5 WebKitCSSMatrix*/
 
-F5 = {Global: {}};
+define('views', exports, function (exports) {
 
-define('f5', exports, function (exports) {
-
-	require('./jsext.js');
-
-	// utils go to top level for convenince
-	require('./utils.js').forEach(function (id, fn) {
-		F5[id] = fn;
-	});
-	
-	F5.Flow = require('./flow.js').Flow;
-	F5.FlowController = require('./flowcontroller.js').FlowController;
-	
-	F5.Diags = {};
-	F5.Diags.JSON = require('./json.js');
-	
-	if (typeof document !== 'undefined') {
-		require('./domext.js');		
-		F5.ViewController = require('./viewcontroller.js').ViewController;
-		F5.Animation = require('./animation.js').Animation;
-		F5.Widgets = require('./widgets.js').Widgets;
-		F5.Views = require('./views.js').Views;
+	function DefaultFlowView(el, node) {
+		var div = document.createElement('div');
+		div.innerHTML = node.id;
+		el.appendChild(div);
 	}
+	
+	function DefaultSelectorView(el, node) {
+		var tabset = document.createElement('div');
+		tabset.className = 'tabset';
+		el.appendChild(tabset);
+		
+		node.children.forEach(function (id, child) {
+			var tab = document.createElement('div');
+			tab.className = 'tab';
+			tab.innerHTML = id;
+			tabset.appendChild(tab);
+		
+			F5.Widgets.Utils.addTouchListener(tab, function () {
+				F5.Global.flowController.doSelection(node, id);
+			});
+		});
+	}
+	
+	function DefaultSubflowView() {
+		
+	}
+	
+	exports.Views = {
+		Defaults: {
+			flow: DefaultFlowView,
+			selector: DefaultSelectorView,
+			subflow: DefaultSubflowView
+		}
+	};
 });

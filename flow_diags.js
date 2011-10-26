@@ -24,14 +24,12 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global define*/
+/*global define F5*/
 
 define('flow_diags', exports, function (exports) {
 			
 	function instrument(flow) {
 
-		var F5 = require('./f5.js').F5;
-		
 		// OPTION: consider https://github.com/akidee/schema.js or related as a general schema validation solution
 		
 		flow.diags = {};		
@@ -340,7 +338,7 @@ define('flow_diags', exports, function (exports) {
 				var fillColor;
 				// TODO: this can do the wrong thing if the name of one subflow
 				// is a substring of another one
-				if (flow.diags.isNodePathActive(node) && node.activeSubflow && node.activeSubflow.path === subflow.path) {
+				if (flow.diags.isNodePathActive(node) && subflow.active) {
 					fillColor = 'fillcolor="lightskyblue"';
 				} else {
 					fillColor = inactiveColorAttribute('fillcolor');

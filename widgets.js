@@ -1,4 +1,33 @@
-(function () {
+/***********************************************************************************************************************
+
+	Copyright (c) 2011 Paul Greyson
+
+	Permission is hereby granted, free of charge, to any person 
+	obtaining a copy of this software and associated documentation 
+	files (the "Software"), to deal in the Software without 
+	restriction, including without limitation the rights to use, 
+	copy, modify, merge, publish, distribute, sublicense, and/or 
+	sell copies of the Software, and to permit persons to whom the 
+	Software is furnished to do so, subject to the following 
+	conditions:
+
+	The above copyright notice and this permission notice shall be 
+	included in all copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, 
+	EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES 
+	OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
+	NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT 
+	HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+	WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
+	FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR 
+	OTHER DEALINGS IN THE SOFTWARE.
+
+***********************************************************************************************************************/
+/*global define WebKitCSSMatrix*/
+
+define('widgets', exports, function (exports) {
+
 	function eventLocation(event) {
 		var x, y;
 		if (navigator.userAgent.match(/(iPhone)|(Android)/i)) {
@@ -44,15 +73,25 @@
 			return 'mousemove';		
 		}
 	}
-
-	/*global Tracker: true WebKitCSSMatrix*/
 	
-	Tracker = function (el) {
+	function addTouchListener(el, cb) {
+		el.addEventListener(startEventName(), cb);
+	}
+
+	function addMoveListener(el, cb) {
+		el.addEventListener(moveEventName(), cb);
+	}
+	
+	function addStopListener(el, cb) {
+		el.addEventListener(stopEventName(), cb);
+	}	
+	
+	function addTracker(el) {
 		var tracking;
 		var startLocation;
 		var startTransform;
 
-		el.addEventListener(startEventName(), function (e) {
+		addTouchListener(el, function (e) {
 			tracking = true;
 			startLocation = eventLocation(e);
 			var transformMatrix = new WebKitCSSMatrix(el.style.webkitTransform);
@@ -72,7 +111,7 @@
 		});
 */
 
-		document.body.addEventListener(moveEventName(), function (e) {
+		addMoveListener(document.body, function (e) {
 			var currentLocation = eventLocation(e);
 			if (tracking) {
 				var deltaH = currentLocation.x - startLocation.x;
@@ -82,10 +121,22 @@
 			}			
 		});
 
-		document.body.addEventListener(stopEventName(), function (e) {
+		addStopListener(document.body, function (e) {
 			tracking = false;
 			el.style['-webkit-transition'] = '';
 		});
+	}
+		
+	exports.Widgets = {
+		Utils: {
+			addTracker: addTracker,
+			startEventName: startEventName,
+			stopEventName: stopEventName,
+			moveEventName: moveEventName,
+			addTouchListener: addTouchListener,
+			addMoveListener: addMoveListener,
+			addStopListener: addStopListener					
+		}
 	};
 	
-}());
+});

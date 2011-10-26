@@ -24,13 +24,11 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global define*/
+/*global define F5*/
 
 define('flow', exports, function (exports) {
 		
 	function Flow() {
-
-		var F5 = require('./f5.js').F5;
 
 		var that = this;
 				
@@ -162,6 +160,7 @@ define('flow', exports, function (exports) {
 				function addSubflowPathsRecursive(subflow, path) {
 					if (subflow && subflow.choices) {
 						subflow.path = path + '_' + subflow.method;
+						subflow.active = false;
 						subflow.choices.forEach(function (id, child) {
 							addSubflowPathsRecursive(child, subflow.path);
 						});					
