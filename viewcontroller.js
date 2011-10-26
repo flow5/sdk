@@ -26,88 +26,104 @@
 ***********************************************************************************************************************/
 /*global define F5*/
 
-
+	
+	// OPTION: to minimize transition time, could
+	// only construct the active child for selections as well
+	// then construct the new child when doing a selection
+	// might cause latency on tab switching though
+	
+	
 define('viewcontroller', exports, function (exports) {
-		
-	function ViewController(flow, applicationFrame) {
-		
-		function nodeToDOM(node) {
-
-			function makeFlowElement(node) {
-				var div = document.createElement('div');
-				div.className = 'node';
-				div.id = node.path;
-				if (!node.active) {
-					div.style.visibility = 'hidden';
-				}												
-				return div;
-			}
-			function makeSubflowElement(node, subflow) {
-				var div = document.createElement('div');
-				div.className = 'subflow';
-				div.id = subflow.path;				
-				if (!subflow.active) {
-					div.style.visibility = 'hidden';
-				}
-				div.innerHTML = subflow.method;
-				return div;
+	
+	function ViewPrototype() {
+		this.ConstructView = function (node) {
+			
+			var div = document.createElement('div');
+			div.className = node.type;
+			div.id = node.path;
+			
+			if (!node.active) {
+				div.style.visibility = 'hidden';
 			}			
+			
+			this.el = div;			
+			this.node = node;
+			node.view = this;
+			
+			if (node.children) {
+				if (node.type === 'selector') {
+					var container = document.createElement('div');
+					container.className = 'container';
+					node.view.el.appendChild(container);	
+
+					node.children.forEach(function (id, child) {
+						var view = new F5.DefaultViews[child.type](child);
+						container.appendChild(view.el);
+					});					
+				} else {
+					var view = new F5.DefaultViews[node.activeChild.type](node.activeChild);
+					node.view.el.appendChild(view.el);
+				}
+			}
 
 			function doSubflowRecursive(container, node, id, subflow) {
 				if (subflow && typeof subflow === 'object') {
-					container.appendChild(makeSubflowElement(node, subflow));
+					subflow.view = new F5.DefaultViews[subflow.type](subflow);
+					container.appendChild(subflow.view.el);
 					subflow.choices.forEach(function (id, child) {
 						doSubflowRecursive(container, node, id, child);
 					});			
 				}
 			}
 
-			function generateDivsRecursive(node) {
-				var div  = makeFlowElement(node);
-
-				if (node.children) {
-					// OPTION: to minimize transition time, could
-					// only construct the active child for selections as well
-					// then construct the new child when doing a selection
-					// might cause latency on tab switching though
-					if (node.type === 'selector') {
-						// TODO: addClass
-						div.className += ' selector';
-						var container = document.createElement('div');
-						container.className = 'container';
-						div.appendChild(container);	
+			if (node.subflows) {
+				node.subflows.forEach(function (id, subflow) {
+					doSubflowRecursive(node.view.el, node, id, subflow);
+				});
+			}											
+		};
+		
+		this.attachViewsRecursive = function (node) {
+			return new F5.DefaultViews[node.type](node);	
+		};
+		
+		this.viewWillBecomeActive = function () {
+			
+		};
+		
+		this.viewWillBecomeInactive = function () {
 						
-						node.children.forEach(function (id, child) {
-							container.appendChild(generateDivsRecursive(child));
-						});					
-					} else {
-						div.appendChild(generateDivsRecursive(node.activeChild));
-					}
-				} 
-								
-				// TODO: look for delegates
-				node.view = new F5.Views.Defaults[node.type](div, node);				
-
-				if (node.subflows) {
-					node.subflows.forEach(function (id, subflow) {
-						doSubflowRecursive(div, node, id, subflow);
-					});
-				}
-				
-
-				return div;
-			}
-
-			return generateDivsRecursive(node);
-		}		
+		};
+		
+		this.viewDidBecomeActive = function () {
+			
+		};
+		
+		this.viewDidBecomeInactive = function () {
+			
+		};
+		
+		// OPTION: can use display:none for lower memory construction or z-index: -1 for speed
+		this.show = function () {
+			this.el.visibility = '';
+		};
+		
+		this.hide = function () {
+			this.el.visibility = 'hidden';
+		};
+	}
+	F5.Prototypes.View = new ViewPrototype();
+			
+	function ViewController(flow, applicationFrame) {		
 		
 		this.activateNode = function (node) {
 			console.log('ViewController.activateNode');
 			// TODO: call viewDidBecomeActive recursively
 		};				
 		
-		this.start = function () {						
-			applicationFrame.appendChild(nodeToDOM(flow.root));			
+		this.start = function () {	
+			var rootView = new F5.DefaultViews[flow.root.type](flow.root);
+			applicationFrame.appendChild(rootView.el);			
 		};
 		
 		this.doSelection = function (node, id, cb) {
@@ -137,7 +153,8 @@ define('viewcontroller', exports, function (exports) {
 			if (id === 'back') {
 				newEl = document.getElementById(to.path);				
 			} else {			
-				newEl = nodeToDOM(to);
+				F5.Prototypes.View.attachViewsRecursive(to);
+				newEl = to.view.el;
 				containerElement.appendChild(newEl);
 			}
 			

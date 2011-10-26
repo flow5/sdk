@@ -47,7 +47,6 @@
 	<script src='jsext.js'></script>
 	<script src='domext.js'></script>
 
-	<link rel="stylesheet" type="text/css" href="json.css">
 	<script src='json.js'></script>
 	
 	<script src='utils.js'></script>
@@ -58,8 +57,10 @@
 	<script src='viewcontroller.js'></script>
 	<script src='animation.js'></script>
 	<script src='widgets.js'></script>
-	<script src='views.js'></script>
+	<script src='defaultviews.js'></script>
 	
+	<link rel="stylesheet" type="text/css" href="json.css">
+	<link rel="stylesheet" type="text/css" href="default.css">
 	<link rel="stylesheet" type="text/css" href="webharness.css">
 				
 	<script>
@@ -75,7 +76,10 @@
 		<div id='screen'></div>
 	</div>
 	<div id='viewerframe'>
-		<div id="toolbar"></div>
+		<div id='toolbar'>
+			<div id='backbutton'><==</div>
+			<div id='jsonbutton'>JSON</div>			
+		</div>
 		<div id='viewer'>
 			<div id='svgframe'></div>
 			<div id='jsonframe'></div>
@@ -87,11 +91,12 @@
 		
 		require('./f5.js');
 									
-		var viewer = document.getElementById('viewer');
-		var toolbar = document.getElementById('toolbar');
-		var svgframe = document.getElementById('svgframe');
-		var jsonframe = document.getElementById('jsonframe');
-		var jsonButton, backButton;
+		var viewer = document.getElementById('viewer'),
+			toolbar = document.getElementById('toolbar'),
+			svgframe = document.getElementById('svgframe'),
+			jsonframe = document.getElementById('jsonframe'),
+			jsonbutton = document.getElementById('jsonbutton'),
+			backbutton = document.getElementById('backbutton');
 
 		F5.Widgets.Utils.addTracker(svgframe);
 		
@@ -108,7 +113,7 @@
 			
 			F5.Global.flowController = new F5.FlowController(F5.Global.flow, function () {	
 				
-				setStyles(backButton, {
+				setStyles(backbutton, {
 					'background-color': F5.Global.flowController.hasBack() ? 'lightblue' : 'grey',
 					'border': '2px solid ' + (F5.Global.flowController.hasBack() ? 'white' : 'black'),
 				});				
@@ -167,25 +172,17 @@
 			});
 			
 			// make the back button
-			backButton = document.createElement('div');
-			backButton.className = 'back-button';
-			backButton.innerText = '<==';	
-			backButton.addEventListener('click', function () {
+			backbutton.addEventListener('click', function () {
 				try {
 					F5.Global.flowController.doBack();								
 				} catch (e) {
 					console.log('Exception: ' + e.message);
 				}
 			});				
-			toolbar.appendChild(backButton);
 
 			var jsonDiv;
 
-			jsonButton = document.createElement('div');
-			jsonButton.className = 'json-button';
-			jsonButton.innerText = 'JSON';	
-
-			jsonButton.addEventListener('click', function () {
+			jsonbutton.addEventListener('click', function () {
 				if (jsonDiv) {
 					jsonframe.removeChild(jsonDiv);
 					jsonDiv = null;
@@ -205,12 +202,11 @@
 						console.log('Exception: ' + e.message);
 					}	
 				}
-				setStyles(jsonButton, {
+				setStyles(jsonbutton, {
 					'background-color': jsonDiv ? 'lightblue' : 'grey',
 					'border': '2px solid ' + (jsonDiv ? 'white' : 'black')								
 				});							
 			});				
-			toolbar.appendChild(jsonButton);			
 			
 			F5.Global.flowController.start(function () {
 				console.log('application started');

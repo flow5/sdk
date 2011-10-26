@@ -26,7 +26,7 @@
 ***********************************************************************************************************************/
 /*global define F5: true*/
 
-F5 = {Global: {}};
+F5 = {Global: {}, Prototypes: {}};
 
 define('f5', exports, function (exports) {
 
@@ -48,6 +48,6 @@ define('f5', exports, function (exports) {
 		F5.ViewController = require('./viewcontroller.js').ViewController;
 		F5.Animation = require('./animation.js').Animation;
 		F5.Widgets = require('./widgets.js').Widgets;
-		F5.Views = require('./views.js').Views;
+		F5.DefaultViews = require('./defaultviews.js').DefaultViews;
 	}
 });

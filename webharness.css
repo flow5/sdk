@@ -25,12 +25,6 @@
 
 ***********************************************************************************************************************/
 
-body {
-	margin: 0px;
-	background-color: darkslategray;
-	display: -webkit-box;	
-}
-
 #toolbar {
 	width: 100%;
 	height: 46px;
@@ -58,7 +52,11 @@ body {
 }
 
 #appframe {
-	padding:30px;
+	padding-left:30px;
+	padding-right:30px;
+	display: -webkit-box;
+	-webkit-box-align: center;
+	-webkit-box-pack: center;
 }
 
 #svgframe {
@@ -70,11 +68,11 @@ body {
 }
 
 #screen {
-	margin:30px;
 	width:320px;
 	height:460px;
 	overflow: hidden;
 	position: relative;
+	zoom: 2;
 }
 
 #jsonframe {
@@ -89,7 +87,7 @@ body {
 	-webkit-box-sizing: border-box;
 }
 
-.json-button, .back-button {
+#jsonbutton, #backbutton {
 	background-color: grey;
 	display: -webkit-box;
 	-webkit-box-pack: center;
@@ -102,81 +100,3 @@ body {
 	font-size: 24px;
 	font-family: sans-serif;
 }
-
-.json-button {
-	top: 50px;
-	
-}
-
-.back-button {
-	top: 0px
-}	
-
-/* CSS for the divs generated from flow graph */
-
-.container {
-	display: -webkit-box;
-	-webkit-box-flex: 1;
-	width: 100%;
-	height: 100%;
-	position: relative;
-}
-
-.selector {
-	display: -webkit-box;
-	-webkit-box-orient: vertical;
-}
-
-.node {
-	-webkit-transform: translate3d(0px, 0px, 0px);
-	position: absolute;
-	top: 0px;
-	left: 0px;
-	display: -webkit-box;
-	-webkit-box-pack: center;
-	-webkit-box-align: center;
-	background-color: white;
-	width: 100%;
-	height: 100%;
-	overflow: hidden;
-}		
-
-.subflow {
-	position: absolute;
-	top: 25%;
-	left: 25%;
-	display: -webkit-box;
-	-webkit-box-pack: center;
-	-webkit-box-align: center;
-	width: 50%;
-	height: 50%;
-	-webkit-box-sizing: border-box;
-	z-index: 1;
-	-webkit-transition: opacity .25s;
-	background-color: grey;
-}
-
-.tabset {
-	height: 44px;
-	width: 100%;
-	display: -webkit-box;
-	border-top: 1px solid black;	
-	-webkit-box-sizing: border-box;
-}
-
-.tab {
-	display: -webkit-box;
-	-webkit-box-flex: 1.0;
-	-webkit-box-align: center;
-	-webkit-box-pack: center;
-	border-right: 1px solid black;
-	-webkit-box-sizing: border-box;
-	font-family: arial;
-	font-size: 10px;
-	text-transform: uppercase;
-}
-
-.tab:last-child {
-	border-right: none;
-}
-		

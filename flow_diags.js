@@ -83,7 +83,7 @@ define('flow_diags', exports, function (exports) {
 						// break cycles and use paths to indicate references
 						if (id === 'parent' || id === 'activeChild' || id === 'node' || objId === 'transitions') {
 							copy[id] = '[-> ' + child.path + ']';
-						} else {
+						} else if (id !== 'view') {
 							copy[id] = copyForPrettyPrintRecursive(child, id);
 						}
 					} else {

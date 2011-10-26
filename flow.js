@@ -161,6 +161,7 @@ define('flow', exports, function (exports) {
 					if (subflow && subflow.choices) {
 						subflow.path = path + '_' + subflow.method;
 						subflow.active = false;
+						subflow.type = 'subflow';
 						subflow.choices.forEach(function (id, child) {
 							addSubflowPathsRecursive(child, subflow.path);
 						});					
