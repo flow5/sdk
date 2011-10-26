@@ -81,13 +81,25 @@ define('flow', exports, function (exports) {
 							child.active = true;
 						}
 					});					
-				}			
+				}		
+				
+				function decorateSubflowRecursive(subflow, node) {
+					if (subflow && subflow.choices) {
+						subflow.active = false;
+						subflow.type = 'subflow';
+						subflow.node = node;
+						subflow.choices.forEach(function (id, child) {
+							decorateSubflowRecursive(child, node);
+						});					
+					}
+				}
 				
 				if (nodeSpec.subflows) {
 					node.subflows = {};					
 					nodeSpec.subflows.forEach(function (id, subflow) {
 						subflow.node = node;
 						node.subflows[id] = subflow;
+						decorateSubflowRecursive(subflow, node);
 					});					
 				}
 												
@@ -161,7 +173,6 @@ define('flow', exports, function (exports) {
 					if (subflow && subflow.choices) {
 						subflow.path = path + '_' + subflow.method;
 						subflow.active = false;
-						subflow.type = 'subflow';
 						subflow.choices.forEach(function (id, child) {
 							addSubflowPathsRecursive(child, subflow.path);
 						});					

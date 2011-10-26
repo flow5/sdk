@@ -176,34 +176,35 @@ define('viewcontroller', exports, function (exports) {
 		};		
 
 		this.startSubflow = function (subflow) {
-			var subflowElement = document.getElementById(subflow.path);
-			subflowElement.style.visibility = '';
-			subflowElement.style.opacity = 1;
+			subflow.view.el.style.visibility = '';
+			subflow.view.el.style.opacity = 1;
+			subflow.view.el.style['pointer-events'] = 'auto';
 		};
 
 		this.completeSubflow = function (subflow) {
-			var subflowElement = document.getElementById(subflow.path);
-			subflowElement.style.opacity = 0;
+			subflow.view.el.style.opacity = 0;
+			subflow.view.el.style['pointer-events'] = '';
 			
 			function fadeComplete() {
-				subflowElement.style.visibility = 'hidden';
-				subflowElement.removeEventListener('webkitAnimationEnd', fadeComplete);
+				subflow.view.el.style.visibility = 'hidden';
+				subflow.view.el.removeEventListener('webkitAnimationEnd', fadeComplete);
 			}
-			subflowElement.addEventListener('webkitAnimationEnd', fadeComplete);
+			subflow.view.el.addEventListener('webkitAnimationEnd', fadeComplete);
 		};
 				
 		this.doSubflowChoice = function (subflow, choice) {
-			var oldSubflowELement = document.getElementById(subflow.path);
-			oldSubflowELement.style.opacity = 0;
 			function fadeComplete() {
-				oldSubflowELement.style.visibility = 'hidden';
-				oldSubflowELement.removeEventListener('webkitAnimationEnd', fadeComplete);
+				subflow.view.el.style.visibility = 'hidden';
+				subflow.view.el.removeEventListener('webkitAnimationEnd', fadeComplete);
 			}
-			oldSubflowELement.addEventListener('webkitAnimationEnd', fadeComplete);
+			subflow.view.el.addEventListener('webkitAnimationEnd', fadeComplete);
+			subflow.view.el.style['pointer-events'] = '';
+			subflow.view.el.style.opacity = 0;
 						
-			var newSubflowSlement = document.getElementById(subflow.choices[choice].path);
-			newSubflowSlement.style.visibility = '';			
-			newSubflowSlement.style.opacity = 1;
+			var nextSubflow = subflow.choices[choice];
+			nextSubflow.view.el.style.visibility = '';			
+			nextSubflow.view.el.style.opacity = 1;
+			nextSubflow.view.el.style['pointer-events'] = 'auto';
 		};
 	}
 		

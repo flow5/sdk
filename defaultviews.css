@@ -41,11 +41,11 @@ body {
 }
 
 .selector {
-	display: -webkit-box;
-	-webkit-box-orient: vertical;
 }
 
 .flow, .selector {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
 	-webkit-transform: translate3d(0px, 0px, 0px);
 	position: absolute;
 	top: 0px;
@@ -70,9 +70,42 @@ body {
 	height: 50%;
 	-webkit-box-sizing: border-box;
 	z-index: 1;
-	-webkit-transition: opacity .25s;
+	-webkit-transition: opacity .5s;
+	opacity: 0;
 	background-color: grey;
+	-webkit-box-orient: vertical;
+	padding:10px;
+	pointer-events: none;
 }
+
+.choices, .transitions, .subflows {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	border: 1px solid black;
+	width: 75%;
+	-webkit-box-align: center;
+	margin-top: 10px;
+}
+
+.do-choice, .do-transition, .do-subflow {
+	border-bottom: 1px solid black;	
+	padding:4px;
+	width: 100%;
+	-webkit-box-sizing: border-box;
+}
+
+.do-subflow.disabled {
+	color: grey;
+}
+
+.do-choice:last-child, .do-transition:last-child, .do-subflow:last-child  {
+	border-bottom: none;
+}
+
+.transitions {
+	background-color: lightgrey;
+}
+
 
 .tabset {
 	height: 44px;

@@ -34,7 +34,47 @@ define('defaultviews', exports, function (exports) {
 			
 			var div = document.createElement('div');
 			div.innerHTML = this.node.id;
-			this.el.appendChild(div);			
+			this.el.appendChild(div);	
+			
+			if (node.transitions) {
+				var transitionsEl = document.createElement('div');
+				transitionsEl.className = 'transitions';
+				this.el.appendChild(transitionsEl);
+
+				node.transitions.forEach(function (id, transition) {
+					var transitionEl = document.createElement('div');
+					transitionEl.innerHTML = id;
+					transitionEl.className = 'do-transition';
+					transitionsEl.appendChild(transitionEl);	
+
+					F5.Widgets.Utils.addTouchListener(transitionEl, function () {
+						F5.Global.flowController.doTransition(node, id);
+					});
+
+				});				
+			}
+			
+			if (node.subflows) {
+				var subflowsEl = document.createElement('div');
+				subflowsEl.className = 'subflows';
+				this.el.appendChild(subflowsEl);
+				
+				node.subflows.forEach(function (id, subflow) {
+					var subflowEl = document.createElement('div');
+					subflowEl.innerHTML = id;
+					subflowEl.className = 'do-subflow';
+					subflowsEl.appendChild(subflowEl);	
+					
+					if (id === 'onactivate') {
+						subflowEl.className += ' disabled';
+					}									
+
+					F5.Widgets.Utils.addTouchListener(subflowEl, function () {
+						F5.Global.flowController.doSubflow(node, id);
+					});
+
+				});				
+			}												
 		};
 	}
 	DefaultFlowViewPrototype.prototype = F5.Prototypes.View;
@@ -75,12 +115,28 @@ define('defaultviews', exports, function (exports) {
 	
 		
 	function DefaultSubflowViewPrototype() {
-		this.ConstructDefaultSubflowViewPrototype = function (subflow) {
+		this.ConstructDefaultSubflowViewPrototype = function (subflow) {			
 			this.ConstructView(subflow);
 			
 			var div = document.createElement('div');
 			div.innerHTML = subflow.method;
-			this.el.appendChild(div);						
+			this.el.appendChild(div);
+			
+			var choicesEl = document.createElement('div');
+			choicesEl.className = 'choices';
+			this.el.appendChild(choicesEl);
+			
+			subflow.choices.forEach(function (id, choice) {
+				var choiceEl = document.createElement('div');
+				choiceEl.innerHTML = id;
+				choiceEl.className = 'do-choice';
+				choicesEl.appendChild(choiceEl);	
+								
+				F5.Widgets.Utils.addTouchListener(choiceEl, function () {
+					F5.Global.flowController.doSubflowChoice(subflow.node, id);
+				});
+							
+			});					
 		};
 	}	
 	DefaultSubflowViewPrototype.prototype = F5.Prototypes.View;
