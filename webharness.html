@@ -57,6 +57,7 @@
 	<script src='flowcontroller.js'></script>
 	<script src='viewcontroller.js'></script>
 	<script src='animation.js'></script>
+	<script src='widgets.js'></script>
 	
 	<link rel="stylesheet" type="text/css" href="webharness.css">
 				
@@ -69,21 +70,49 @@
 </head>
 
 <body>
-	<div id='application-frame'></div>
-	<div id='viewer'></div>
+	<div id='appframe'>
+		<div id='screen'></div>
+	</div>
+	<div id='divider'></div>
+	<div id='viewerframe'>
+		<div id="toolbar"></div>
+		<div id='viewer'>
+			<div id='svgframe'></div>
+			<div id='jsonframe'>
+				<div class='toolbarslug'></div>
+			</div>
+		</div>
+	</div>
 		
 	<script>
-		/*global flowController:true flow:true*/
+		/*global flowController:true flow:true Tracker*/
 		
 		var F5 = require('./f5.js').F5;
 							
 		var viewer = document.getElementById('viewer');
+		var toolbar = document.getElementById('toolbar');
+		var svgframe = document.getElementById('svgframe');
+		var jsonframe = document.getElementById('jsonframe');
+		new Tracker(svgframe);
+		var jsonButton, backButton;
+		
+		function setStyles(el, styles) {
+			styles.forEach(function (id, value) {
+				el.style[id] = value;
+			});
+		}		
+				
 		try {			
 			flow = new F5.Flow();				
 			flow.injectGraph(require('flowspec.js').root);
 			require('./flow_diags.js').instrument(this.flow);	
 			
 			flowController = new F5.FlowController(this.flow, function () {	
+				
+				setStyles(backButton, {
+					'background-color': flowController.hasBack() ? 'lightblue' : 'grey',
+					'border': '2px solid ' + (flowController.hasBack() ? 'white' : 'black'),
+				});				
 				
 				F5.post('dot2svg', flow.diags.toDOT(), function (response) {
 
@@ -108,13 +137,10 @@
 
 						};
 					}
-					function setStyles(el, styles) {
-						styles.forEach(function (id, value) {
-							el.style[id] = value;
-						});
-					}
-									
-					viewer.innerHTML = response;
+														
+					svgframe.innerHTML = response;
+					
+					var svg = document.querySelector('svg');
 
 					// Make the main poly the same color as background
 					// OPTION: would be nice to do this on the DOT side
@@ -129,77 +155,70 @@
 
 					// determine the offset of the current node
 					var activeLeafNode = flow.diags.getActiveLeafNode();
+					
 					var svgElementBBox = document.getElementById('svg-' + activeLeafNode.path).getBBox();
-					var svgRootBBox = document.querySelector('svg').getBBox();
+					var svgRootBBox = svg.getBBox();
+					
 					var offset = {x: svgElementBBox.x, y: svgRootBBox.height + svgElementBBox.y};
+					
+					console.log(JSON.stringify(offset));
 
-					// scroll it into view
-					var tmp = document.createElement('div');
-					setStyles(tmp, {
-						position: 'absolute',
-						top: offset.y + 'px',
-						left: offset.x + 'px'
-					});
-					viewer.appendChild(tmp);
-					tmp.scrollIntoView();
-					viewer.removeChild(tmp);
-
-					// make the back button
-					var backButton = document.createElement('div');
-					backButton.className = 'back-button';
-					setStyles(backButton, {
-						'background-color': flowController.hasBack() ? 'lightblue' : 'grey',
-						'border': '4px solid ' + (flowController.hasBack() ? 'blue' : 'black'),
-					});
-					backButton.innerText = '<==';	
-					backButton.addEventListener('click', function () {
-						try {
-							flowController.doBack();								
-						} catch (e) {
-							console.log('Exception: ' + e.message);
-						}
-					});				
-					viewer.appendChild(backButton);
-				
-					var jsonDiv;
-				
-					var jsonButton = document.createElement('div');
-					jsonButton.className = 'json-button';
-					jsonButton.innerText = 'JSON';	
-				
-					jsonButton.addEventListener('click', function () {
-						if (jsonDiv) {
-							viewer.removeChild(jsonDiv);
-							jsonDiv = null;
-						} else {
-							try {
-								var jsonFormatter = new F5.Diags.JSON.Formatter();
-								jsonDiv = document.createElement('div');
-								jsonDiv.className = 'json';
-								jsonDiv.innerHTML = jsonFormatter.valueToHTML(JSON.parse(flow.diags.toJSON()));
-								jsonDiv.className = 'json';
-
-								viewer.appendChild(jsonDiv);
-								jsonFormatter.attachListeners();																
-							} catch (e) {
-								console.log('Exception: ' + e.message);
-							}	
-						}
-						setStyles(jsonButton, {
-							'background-color': jsonDiv ? 'lightblue' : 'grey',
-							'border': '4px solid ' + (jsonDiv ? 'blue' : 'black')								
-						});							
-					});				
-					viewer.appendChild(jsonButton);
+//					svgframe.style['-webkit-transform'] = 'translate3d(' + -offset.x + 'px,' + -offset.y + 'px, 0px)';
 				});		
 			});
 			
+			// make the back button
+			backButton = document.createElement('div');
+			backButton.className = 'back-button';
+			backButton.innerText = '<==';	
+			backButton.addEventListener('click', function () {
+				try {
+					flowController.doBack();								
+				} catch (e) {
+					console.log('Exception: ' + e.message);
+				}
+			});				
+			toolbar.appendChild(backButton);
+
+			var jsonDiv;
+
+			jsonButton = document.createElement('div');
+			jsonButton.className = 'json-button';
+			jsonButton.innerText = 'JSON';	
+
+			jsonButton.addEventListener('click', function () {
+				if (jsonDiv) {
+					jsonframe.removeChild(jsonDiv);
+					jsonDiv = null;
+					jsonframe.style.display = '';
+				} else {
+					try {					
+						var jsonFormatter = new F5.Diags.JSON.Formatter();
+						jsonDiv = document.createElement('div');
+						jsonDiv.className = 'json';
+						jsonDiv.innerHTML = jsonFormatter.valueToHTML(JSON.parse(flow.diags.toJSON()));
+						jsonDiv.className = 'json';
+
+						jsonframe.appendChild(jsonDiv);
+						jsonframe.style.display = 'block';
+						jsonFormatter.attachListeners();																
+					} catch (e) {
+						console.log('Exception: ' + e.message);
+					}	
+				}
+				setStyles(jsonButton, {
+					'background-color': jsonDiv ? 'lightblue' : 'grey',
+					'border': '2px solid ' + (jsonDiv ? 'white' : 'black')								
+				});							
+			});				
+			toolbar.appendChild(jsonButton);			
+			
 			flowController.start(function () {
 				console.log('application started');
-			}, new F5.ViewController(flow, document.getElementById('application-frame')));										
+			}, new F5.ViewController(flow, document.getElementById('screen')));										
 		} catch (e) {
 			viewer.innerHTML = e.message;
-		}			
+		}								
 	</script>	
 </body>
 

@@ -76,8 +76,8 @@ define('flowspec', exports, function (exports) {
 											onactivate: {
 												method: 'goOrStay',
 												choices: {
-													end: 'end',
-													begin: null													
+													go: 'end',
+													stay: null													
 												}
 											}
 										},

@@ -163,7 +163,7 @@ define('flow_diags', exports, function (exports) {
 			
 			function activeColorAttribute(attr) {
 				var colors = {
-					color: '="blue"',
+					color: '="white"',
 					fillcolor: '="lightblue"'
 				};
 				return attr + colors[attr];
@@ -186,7 +186,7 @@ define('flow_diags', exports, function (exports) {
 				}
 				
 				if (pathActive) {
-					return ['color="blue"', 'penwidth=2.5', 'fillcolor="lightskyblue"'];
+					return ['color="white"', 'penwidth=1.5', 'fillcolor="lightskyblue"'];
 				} else if (nodeActive) { 
 					return ['color="blue"', 'penwidth=.5', 'fillcolor="grey"'];
 				} else {
@@ -348,8 +348,8 @@ define('flow_diags', exports, function (exports) {
 				
 				var attributes = [
 					'fontname="courier"',
-					'fontsize=12',
-					'fontcolor="green"',
+					'fontsize=10',
+					'fontcolor="black"',
 					'color="black"',
 					'penwidth=.6',
 					'style="filled"',
