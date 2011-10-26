@@ -25,12 +25,13 @@
 
 ***********************************************************************************************************************/
 
+/* core styles. these are probably needed in every application */
+
 body {
 	margin: 0px;
 	background-color: darkslategray;
 	display: -webkit-box;	
 }
-
 
 .container {
 	display: -webkit-box;
@@ -40,51 +41,63 @@ body {
 	position: relative;
 }
 
-.selector {
-}
-
 .flow, .selector {
 	display: -webkit-box;
-	-webkit-box-orient: vertical;
 	-webkit-transform: translate3d(0px, 0px, 0px);
 	position: absolute;
 	top: 0px;
 	left: 0px;
-	display: -webkit-box;
-	-webkit-box-pack: center;
-	-webkit-box-align: center;
-	background-color: white;
 	width: 100%;
 	height: 100%;
 	overflow: hidden;
-}		
+	-webkit-box-sizing: border-box;	
+}
 
 .subflow {
 	position: absolute;
-	top: 25%;
-	left: 25%;
+	z-index: 1;
+	opacity: 0;
+	pointer-events: none;
+	-webkit-box-sizing: border-box;		
+}
+
+
+
+/* wireframe styles */
+
+.flow, .selector {
+	-webkit-box-orient: vertical;
+	-webkit-box-pack: center;
+	-webkit-box-align: center;		
+	background-color: white;	
+	border: 1px solid grey;
+	padding: 4px;
+}
+
+.flow {
+	padding: 4px;
+}		
+
+.subflow {
 	display: -webkit-box;
 	-webkit-box-pack: center;
 	-webkit-box-align: center;
+	top: 25%;
+	left: 25%;
 	width: 50%;
 	height: 50%;
-	-webkit-box-sizing: border-box;
-	z-index: 1;
 	-webkit-transition: opacity .5s;
-	opacity: 0;
 	background-color: grey;
 	-webkit-box-orient: vertical;
 	padding:10px;
-	pointer-events: none;
 }
 
 .choices, .transitions, .subflows {
-	display: -webkit-box;
-	-webkit-box-orient: vertical;
 	border: 1px solid black;
 	width: 75%;
 	-webkit-box-align: center;
 	margin-top: 10px;
+	margin-bottom: 10px;
 }
 
 .do-choice, .do-transition, .do-subflow {
@@ -111,7 +124,7 @@ body {
 	height: 44px;
 	width: 100%;
 	display: -webkit-box;
-	border-top: 1px solid black;	
+	margin-top: 4px;
 	-webkit-box-sizing: border-box;
 }
 

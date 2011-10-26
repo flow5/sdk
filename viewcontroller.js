@@ -51,18 +51,18 @@ define('viewcontroller', exports, function (exports) {
 			node.view = this;
 			
 			if (node.children) {
-				if (node.type === 'selector') {
-					var container = document.createElement('div');
-					container.className = 'container';
-					node.view.el.appendChild(container);	
+				var container = document.createElement('div');
+				container.className = 'container';
+				node.view.el.appendChild(container);	
 
+				if (node.type === 'selector') {
 					node.children.forEach(function (id, child) {
 						var view = new F5.DefaultViews[child.type](child);
 						container.appendChild(view.el);
 					});					
 				} else {
 					var view = new F5.DefaultViews[node.activeChild.type](node.activeChild);
-					node.view.el.appendChild(view.el);
+					container.appendChild(view.el);
 				}
 			}
 
@@ -146,7 +146,7 @@ define('viewcontroller', exports, function (exports) {
 		this.doTransition = function (container, id, to, cb) {
 			console.log('ViewController.doTransition');	
 						
-			var containerElement = document.getElementById(container.path);
+			var containerElement = document.getElementById(container.path).querySelector('[class=container]');
 			
 			var oldEl = document.getElementById(container.activeChild.path);
 			var newEl;

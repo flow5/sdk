@@ -31,33 +31,11 @@ define('defaultviews', exports, function (exports) {
 	function DefaultFlowViewPrototype() {		
 		this.ConstructDefaultFlowView = function (node) {
 			this.ConstructView(node);
-			
-			var div = document.createElement('div');
-			div.innerHTML = this.node.id;
-			this.el.appendChild(div);	
-			
-			if (node.transitions) {
-				var transitionsEl = document.createElement('div');
-				transitionsEl.className = 'transitions';
-				this.el.appendChild(transitionsEl);
-
-				node.transitions.forEach(function (id, transition) {
-					var transitionEl = document.createElement('div');
-					transitionEl.innerHTML = id;
-					transitionEl.className = 'do-transition';
-					transitionsEl.appendChild(transitionEl);	
-
-					F5.Widgets.Utils.addTouchListener(transitionEl, function () {
-						F5.Global.flowController.doTransition(node, id);
-					});
-
-				});				
-			}
-			
+									
 			if (node.subflows) {
 				var subflowsEl = document.createElement('div');
 				subflowsEl.className = 'subflows';
-				this.el.appendChild(subflowsEl);
+				this.el.insertBefore(subflowsEl, this.el.firstChild);
 				
 				node.subflows.forEach(function (id, subflow) {
 					var subflowEl = document.createElement('div');
@@ -74,7 +52,30 @@ define('defaultviews', exports, function (exports) {
 					});
 
 				});				
-			}												
+			}
+			
+			if (node.transitions) {
+				var transitionsEl = document.createElement('div');
+				transitionsEl.className = 'transitions';
+				this.el.insertBefore(transitionsEl, this.el.firstChild);
+
+				node.transitions.forEach(function (id, transition) {
+					var transitionEl = document.createElement('div');
+					transitionEl.innerHTML = id;
+					transitionEl.className = 'do-transition';
+					transitionsEl.appendChild(transitionEl);	
+
+					F5.Widgets.Utils.addTouchListener(transitionEl, function () {
+						F5.Global.flowController.doTransition(node, id);
+					});
+
+				});				
+			}			
+			
+			var div = document.createElement('div');
+			div.innerHTML = this.node.id;
+			this.el.insertBefore(div, this.el.firstChild);	
+															
 		};
 	}
 	DefaultFlowViewPrototype.prototype = F5.Prototypes.View;
