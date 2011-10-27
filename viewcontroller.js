@@ -28,7 +28,7 @@
 
 	
 	// OPTION: to minimize transition time, could
-	// only construct the active child for selections as well
+	// only construct the selected child for selections as well
 	// then construct the new child when doing a selection
 	// might cause latency on tab switching though
 	
@@ -55,13 +55,13 @@ define('viewcontroller', exports, function (exports) {
 				container.className = 'container';
 				node.view.el.appendChild(container);	
 
-				if (node.type === 'selector') {
+				if (node.type === 'switcher' || node.type === 'set') {
 					node.children.forEach(function (id, child) {
 						var view = new F5.DefaultViews[child.type](child);
 						container.appendChild(view.el);
 					});					
 				} else {
-					var view = new F5.DefaultViews[node.activeChild.type](node.activeChild);
+					var view = new F5.DefaultViews[node.selection.type](node.selection);
 					container.appendChild(view.el);
 				}
 			}
@@ -114,7 +114,7 @@ define('viewcontroller', exports, function (exports) {
 	}
 	F5.Prototypes.View = new ViewPrototype();
 			
-	function ViewController(flow, applicationFrame) {		
+	function ViewController(flow, applicationFrame) {	
 		
 		this.nodeDidBecomeActive = function (node) {
 			console.log('ViewController.nodeDidBecomeActive');
@@ -134,7 +134,7 @@ define('viewcontroller', exports, function (exports) {
 		this.doSelection = function (node, id, cb) {
 			console.log('ViewController.doSelection');									
 			
-			var oldEl = document.getElementById(node.activeChild.path);
+			var oldEl = document.getElementById(node.selection.path);
 			var newEl = document.getElementById(node.children[id].path);
 			
 			// TODO: call viewWillBecomeInactive, viewWillBecomeActive
@@ -147,16 +147,16 @@ define('viewcontroller', exports, function (exports) {
 				cb();
 			});			
 		};
-		
+				
 		this.doTransition = function (container, id, to, cb) {
 			console.log('ViewController.doTransition');	
 						
 			var containerElement = document.getElementById(container.path).querySelector('[class=container]');
 			
-			var oldEl = document.getElementById(container.activeChild.path);
+			var oldEl = document.getElementById(container.selection.path);
 			var newEl;
 			if (id === 'back') {
-				newEl = document.getElementById(to.path);				
+				newEl = document.getElementById(to.path);
 			} else {			
 				F5.Prototypes.View.attachViewsRecursive(to);
 				newEl = to.view.el;
@@ -179,6 +179,15 @@ define('viewcontroller', exports, function (exports) {
 				cb();
 			});	
 		};		
+		
+		// called in a willBecomeActive context to conditionally pick a starting screen
+		this.syncSet = function (node) {
+			node.children.forEach(function (id, child) {
+				child.view.el.style.visibility = 'hidden';
+			});
+			node.selection.view.el.style.visibility = '';
+		};			
+		
 
 		this.startSubflow = function (subflow) {
 			subflow.view.el.style.visibility = '';

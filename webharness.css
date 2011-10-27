@@ -69,8 +69,7 @@
 	-webkit-transition: -webkit-transform ease-in .25s;
 	-webkit-transform: translate3d(0px, 0px, 0px);
 }
-
-/* Portrait */
+/*
 @media screen and (max-width: 320px)
 {
 	.device #screen {
@@ -79,7 +78,6 @@
 	}
 }
  
-/* Landscape */
 @media screen and (min-width: 321px)
 {
 	.device #screen {
@@ -88,7 +86,7 @@
 	}
 
 }
-
+*/
 #screen {
 	margin-left:30px;
 	margin-right:30px;

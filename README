@@ -68,7 +68,7 @@ Chrome flags:
 	SCHEMA
 
 	(root): node
-		type: selector|flow|subflow
+		type: switcher|flow|subflow
 		active: id 
 		templates
 			nodes
@@ -98,7 +98,7 @@ Chrome flags:
 		or it may terminate in a string in which case:
 
 		- if the node is a flow the string is used as the argument to doTransition
-		- if the node is a selector the string is used as the argument to doSelection
+		- if the node is a switcher the string is used as the argument to doSelection
 
 		a special subflow called didBecomeActive is executed recursively when a node is selected or transitioned to
 		this allows logic to execute before user interaction can occur
@@ -112,7 +112,7 @@ Chrome flags:
 	- each step in the flow can have:
 
 		- selection
-			legal only for selector type step
+			legal only for switcher type step
 			activates a child
 			no interaction with controller
 

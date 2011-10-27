@@ -41,10 +41,10 @@ define('flowcontroller', exports, function (exports) {
 				console.log('doLifecycleSubflowRecursive: ' + node.path);
 				if (node.subflows && node.subflows[name]) {
 					that.doSubflow(node, name, function () {
-						doLifecycleSubflowRecursive(name, node.activeChild, cb);
+						doLifecycleSubflowRecursive(name, node.selection, cb);
 					});							
 				} else {
-					doLifecycleSubflowRecursive(name, node.activeChild, cb);
+					doLifecycleSubflowRecursive(name, node.selection, cb);
 				}	
 			} else {
 				cb();
@@ -126,14 +126,14 @@ define('flowcontroller', exports, function (exports) {
 		this.doSelection = function (node, id, cb) {		
 			F5.assert(flow.diags.isNodePathActive(node), 'Attempt to select on an inactive node');	
 			F5.assert(!flow.diags.isSubflowActive(node), 'Cannot select with a subflow active');				
-			F5.assert(node.type === 'selector', 'Can only select on node of type selector');
+			F5.assert(node.type === 'switcher', 'Can only select on node of type switcher');
 			F5.assert(node.children[id], 'No child with id: ' + id);				
 			
 			function completeSelection() {				
-				node.activeChild.active = false;
-				node.activeChild = node.children[id];
+				node.selection.active = false;
+				node.selection = node.children[id];
 							
-				nodeDidBecomeActive(node.activeChild, function () {
+				nodeDidBecomeActive(node.selection, function () {
 					// TODO: does this delay the selection?
 					// I don't think so.
 				});
@@ -143,14 +143,14 @@ define('flowcontroller', exports, function (exports) {
 				cb();			
 			}					
 
-			if (node.activeChild !== node.children[id]) {
+			if (node.selection !== node.children[id]) {
 						
 				if (!cb) {
 					cb = function () {
 						console.log('selection complete');
 					};
 				}						
-				cancelSubflowRecursive(node.activeChild);
+				cancelSubflowRecursive(node);
 				
 				nodeWillBecomeActive(node.children[id], function () {
 					if (that.viewController) {
@@ -194,21 +194,21 @@ define('flowcontroller', exports, function (exports) {
 			F5.assert(container.type === 'flow', 'Transition container is not a flow');
 												
 			function complete() {
-				container.activeChild.active = false;								
+				container.selection.active = false;								
 				if (id === 'back') {
-					container.activeChild = node.back;
+					container.selection = node.back;
 					delete node.back;
 				} else {
-					container.activeChild = node.transitions[id];
+					container.selection = node.transitions[id];
 					// find the correct back target
 					var back = node;
 					while (back.parent !== container) {
 						back = back.parent;
 					}
-					container.activeChild.back = back;
+					container.selection.back = back;
 				}			
 				
-				nodeDidBecomeActive(container.activeChild, function () {
+				nodeDidBecomeActive(container.selection, function () {
 					// TODO: does this delay the selection?
 					// I don't think so
 					// TODO: maybe allow passing null here. otherwise pretty confusing
@@ -221,16 +221,14 @@ define('flowcontroller', exports, function (exports) {
 			
 			cancelSubflowRecursive(node);			
 			
-			if (this.viewController) {
-				if (id === 'back') {
-					this.viewController.doTransition(container, 'back', node.back, complete);					
+			var target = id === 'back' ? node.back : node.transitions[id];
+			nodeWillBecomeActive(target, function () {			
+				if (that.viewController) {
+					that.viewController.doTransition(container, id, target, complete);										
 				} else {
-					this.viewController.doTransition(container, id, node.transitions[id], complete);										
-				}
-			} else {
-				complete();
-			}			
-					
+					complete();
+				}			
+			});		
 		};	
 				
 		this.doSubflowChoice = function (node, id) {	
@@ -272,24 +270,37 @@ define('flowcontroller', exports, function (exports) {
 				completeChoice();
 			} else {
 				delete node.activeSubflow;					
-				completeChoice();
 				
 				if (newSubflow) {
 					if (node.type === 'flow') {
+						completeChoice();							
 						that.doTransition(node, newSubflow, function () {
-							
+
 						});																			
-					} else {
+					} else if (node.type === 'switcher') {
+						completeChoice();							
 						that.doSelection(node, newSubflow, function () {
-							
 						});
-					}
+					} else if (node.type === 'set') {
+						node.selection = node.children[newSubflow];
+						node.children.forEach(function (id, child) {
+							child.active = false;
+						});
+						node.selection.active = true;
+						if (that.viewController) {
+							that.viewController.syncSet(node);
+						}
+						completeChoice();						
+					}					
+				} else {
+					completeChoice();					
 				}
 			}		
 		};				
 		
 		this.doSubflow = function (node, id, cb) {
-			F5.assert(flow.diags.isNodePathActive(node), 'Attempt to execute subflow from an inactive node');	
+			F5.assert(id === 'willBecomeActive' || flow.diags.isNodePathActive(node), 
+				'Attempt to execute subflow from an inactive node');	
 			F5.assert(node.subflows && node.subflows[id], 'No such subflow');
 			F5.assert(!flow.diags.isSubflowActive(node), 'Subflow already in progress');						
 			
@@ -313,8 +324,8 @@ define('flowcontroller', exports, function (exports) {
 		// then climb up the stack for the first node with 'back'
 		function findBackNode() {
 			var leaf = flow.root;
-			while (leaf.activeChild) {
-				leaf = leaf.activeChild;
+			while (leaf.selection) {
+				leaf = leaf.selection;
 			}
 
 			while (!leaf.back && leaf.parent) {

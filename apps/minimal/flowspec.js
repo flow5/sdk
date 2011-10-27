@@ -29,7 +29,7 @@
 define('flowspec', exports, function (exports) {	
 	exports.root = {
 		type: 'flow',
-		activeChild: 'home',
+		selection: 'home',
 		children: {
 			home: {
 			}

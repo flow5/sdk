@@ -66,8 +66,8 @@ define('flow_diags', exports, function (exports) {
 		// TODO: use with caution. there may eventually be more than one
 		flow.diags.getActiveLeafNode = function () {
 			var node = flow.root;
-			while (node.activeChild) {
-				node = node.activeChild;
+			while (node.selection) {
+				node = node.selection;
 			}
 			return node;
 		};		
@@ -81,7 +81,7 @@ define('flow_diags', exports, function (exports) {
 				obj.forEach(function (id, child) {
 					if (child && typeof child === 'object') {
 						// break cycles and use paths to indicate references
-						if (id === 'parent' || id === 'activeChild' || id === 'node' || objId === 'transitions') {
+						if (id === 'parent' || id === 'selection' || id === 'node' || objId === 'transitions') {
 							copy[id] = '[-> ' + child.path + ']';
 						} else if (id !== 'view') {
 							copy[id] = copyForPrettyPrintRecursive(child, id);
@@ -457,7 +457,7 @@ define('flow_diags', exports, function (exports) {
 				if (isCluster(node)) {
 					clusterStart(node);		
 					
-					if (parent.type === 'selector') {
+					if (parent.type === 'switcher') {
 						addSelectionButton(node, parent, node.id);
 					}
 										
@@ -525,9 +525,9 @@ define('flow_diags', exports, function (exports) {
 							if (toNode.transitions) {
 								toPath = toNode.path + '_' + getAnId(toNode.transitions);
 							} 
-							// if the toNode is the child of a selector then it's a cluster
+							// if the toNode is the child of a switcher then it's a cluster
 							// because of the selection button. so grab the button
-							else if (toNode.parent.type === 'selector') {
+							else if (toNode.parent.type === 'switcher') {
 								toPath = toNode.parent.path + '_' + toNode.id;
 							} 
 							// if the toNode has subflows then it's a cluster, so grab

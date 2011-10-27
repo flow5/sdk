@@ -100,7 +100,7 @@
 		
 	<script>
 
-		if (!navigator.userAgent.match(/Safari/) && !navigator.userAgent.match(/Chrome/)) {
+		if (navigator.userAgent.match(/iPhone/) || navigator.userAgent.match(/Android/)) {
 			document.body.className += ' device';
 		}
 			
@@ -160,7 +160,9 @@
 										var components = nodePath.split('-').splice(1);
 										var id = parts[1].split('_')[1];	
 
-										F5.Global.flowController[method](F5.Global.flow.diags.getNodeFromPath(nodePath), id);										
+										F5.Global.flowController[method](F5.Global.flow.diags.getNodeFromPath(nodePath), id, function () {
+											
+										});										
 									}									
 								}
 							} catch (e) {

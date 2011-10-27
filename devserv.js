@@ -80,6 +80,7 @@ cli.main(function (args, options) {
 	options.port = options.port ? options.port : 8008;
 
 	http.createServer(function (req, res) {
+//		sys.puts(JSON.stringify(req.headers['user-agent']));
 		switch (req.method) {
 		case 'POST':
 			switch (req.url) {

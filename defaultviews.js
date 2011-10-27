@@ -104,8 +104,8 @@ define('defaultviews', exports, function (exports) {
 	DefaultFlowView.prototype = new DefaultFlowViewPrototype();
 	
 	
-	function DefaultSelectorViewPrototype() {
-		this.ConstructDefaultSelectorViewPrototype = function (node) {
+	function DefaultSwitcherViewPrototype() {
+		this.ConstructDefaultSwitcherViewPrototype = function (node) {
 			this.ConstructView(node);
 			
 			var tabset = document.createElement('div');
@@ -129,12 +129,29 @@ define('defaultviews', exports, function (exports) {
 			this.el.insertBefore(div, this.el.firstChild);				
 		};
 	}
-	DefaultSelectorViewPrototype.prototype = F5.Prototypes.View; 
+	DefaultSwitcherViewPrototype.prototype = F5.Prototypes.View; 
 	
-	function DefaultSelectorView(node) {
-		this.ConstructDefaultSelectorViewPrototype(node);
+	function DefaultSwitcherView(node) {
+		this.ConstructDefaultSwitcherViewPrototype(node);
 	}
-	DefaultSelectorView.prototype = new DefaultSelectorViewPrototype();
+	DefaultSwitcherView.prototype = new DefaultSwitcherViewPrototype();
+	
+	function DefaultSetViewPrototype() {
+		this.ConstructDefaultSetViewPrototype = function (node) {
+			this.ConstructView(node);
+						
+			var div = document.createElement('div');
+			div.className = 'nodelabel';
+			div.innerHTML = this.node.id;
+			this.el.insertBefore(div, this.el.firstChild);				
+		};
+	}
+	DefaultSetViewPrototype.prototype = F5.Prototypes.View; 
+	
+	function DefaultSetView(node) {
+		this.ConstructDefaultSetViewPrototype(node);
+	}
+	DefaultSetView.prototype = new DefaultSetViewPrototype();	
 	
 		
 	function DefaultSubflowViewPrototype() {
@@ -172,7 +189,8 @@ define('defaultviews', exports, function (exports) {
 	
 	exports.DefaultViews = {
 		flow: DefaultFlowView,
-		selector: DefaultSelectorView,
+		switcher: DefaultSwitcherView,
+		set: DefaultSetView,
 		subflow: DefaultSubflowView
 	};
 });

@@ -29,7 +29,7 @@
 define('flowspec', exports, function (exports) {
 	
 	exports.root = {
-		activeChild: 'home',
+		selection: 'home',
 		templates: {
 			done: {
 			}
@@ -54,7 +54,7 @@ define('flowspec', exports, function (exports) {
 				},
 				templates: {
 					middle: {
-						activeChild: 'middleStart',
+						selection: 'middleStart',
 						children: {
 							middleStart: {
 								transitions: ['done']
@@ -62,14 +62,14 @@ define('flowspec', exports, function (exports) {
 						}
 					}
 				},
-				type: 'selector',
-				activeChild: 'a',
+				type: 'switcher',
+				selection: 'a',
 				children: {			
 					a: {
-						activeChild: 'start',
+						selection: 'start',
 						children: {
 							start: {
-								activeChild: 'begin',
+								selection: 'begin',
 								children: {
 									begin: {
 										subflows: {
@@ -117,7 +117,7 @@ define('flowspec', exports, function (exports) {
 					
 					},
 					b: {
-						activeChild: 'start',
+						selection: 'start',
 						children: {
 							start: {
 								transitions: ['middle']													
