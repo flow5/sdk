@@ -180,9 +180,20 @@ define('flowcontroller', exports, function (exports) {
 
 			var container;
 			
-			// the back transition is always from the original target
+			// find the transition target
+			// for a back transition, climb the hierarchy to find the node which 
+			// was the transition target. this means that back can be executed from any level
+			// of nesting
+			// TODO: this is asymmetrical with forward transitions where currently the transition
+			// has to be defined on the node itself. should forward transitions also be allowed to
+			// climb scope as well? Haven't found a case where it's needed yet. . .
+			var backNode;
 			if (id === 'back') {
-				container = node.parent;
+				backNode = node;		
+				while (!backNode.back) {
+					backNode = backNode.parent;
+				}		
+				container = backNode.parent;
 			} else {
 				container = node.transitions[id].parent;				
 			}
@@ -196,7 +207,7 @@ define('flowcontroller', exports, function (exports) {
 			function complete() {
 				container.selection.active = false;								
 				if (id === 'back') {
-					container.selection = node.back;
+					container.selection = backNode.back;
 					delete node.back;
 				} else {
 					container.selection = node.transitions[id];
@@ -221,7 +232,7 @@ define('flowcontroller', exports, function (exports) {
 			
 			cancelSubflowRecursive(node);			
 			
-			var target = id === 'back' ? node.back : node.transitions[id];
+			var target = id === 'back' ? backNode.back : node.transitions[id];
 			nodeWillBecomeActive(target, function () {			
 				if (that.viewController) {
 					that.viewController.doTransition(container, id, target, complete);										

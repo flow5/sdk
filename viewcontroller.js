@@ -123,7 +123,11 @@ define('viewcontroller', exports, function (exports) {
 
 		this.nodeWillBecomeActive = function (node) {
 			console.log('ViewController.nodeDidBecomeActive');
-			// TODO: call viewDidBecomeActive recursively
+			if (!node.view) {
+				F5.Prototypes.View.attachViewsRecursive(node);
+				node.parent.view.el.querySelector('[class=container]').appendChild(node.view.el);							
+			}
+			// TODO: call viewWillBecomeActive recursively
 		};				
 		
 		this.start = function () {	
@@ -137,45 +141,31 @@ define('viewcontroller', exports, function (exports) {
 			var oldEl = document.getElementById(node.selection.path);
 			var newEl = document.getElementById(node.children[id].path);
 			
-			// TODO: call viewWillBecomeInactive, viewWillBecomeActive
-			
-			// TODO: get animation name from mapping
-			
+			// TODO: get animation name from mapping			
 			F5.Animation.fadeOut(oldEl, newEl, function () {
 				
 				// TODO: call viewDidBecomeInactive
 				cb();
 			});			
 		};
-				
+						
 		this.doTransition = function (container, id, to, cb) {
 			console.log('ViewController.doTransition');	
 						
-			var containerElement = document.getElementById(container.path).querySelector('[class=container]');
+			var containerElement = container.view.el.querySelector('[class=container]');
+			var oldNode = container.selection;
 			
-			var oldEl = document.getElementById(container.selection.path);
-			var newEl;
-			if (id === 'back') {
-				newEl = document.getElementById(to.path);
-			} else {			
-				F5.Prototypes.View.attachViewsRecursive(to);
-				newEl = to.view.el;
-				containerElement.appendChild(newEl);
-			}
+			var oldEl = oldNode.view.el;
+			var newEl = to.view.el;
 			
 			// TODO: get animation name from mapping
-			var method = id === 'back' ? 'pushRight' : 'pushLeft';
-			
-			// TODO: call viewWillBecomeInactive, viewWillBecomeActive			
-
+			var method = id === 'back' ? 'pushRight' : 'pushLeft';			
 			F5.Animation[method](containerElement, oldEl, newEl, function () {
-				// TODO: call viewDidBecomeInactive
-				
 				if (id === 'back') {
 					// TODO: call viewRelease?
+					delete oldNode.view;
 					containerElement.removeChild(oldEl);
-				}
-				
+				}				
 				cb();
 			});	
 		};		
@@ -188,7 +178,6 @@ define('viewcontroller', exports, function (exports) {
 			node.selection.view.el.style.visibility = '';
 		};			
 		
-
 		this.startSubflow = function (subflow) {
 			subflow.view.el.style.visibility = '';
 			subflow.view.el.style.opacity = 1;
