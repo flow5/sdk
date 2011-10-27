@@ -70,8 +70,13 @@ body {
 	-webkit-box-pack: center;
 	-webkit-box-align: center;		
 	background-color: white;	
-	border: 1px solid grey;
 	padding: 4px;
+	border: 1px solid grey;
+}
+
+.nodelabel {
+	font-size:8px;
+	opacity: .5;
 }
 
 .flow {
@@ -147,6 +152,7 @@ body {
 	height: 30px;
 	-webkit-box-align: center;	
 	background-color:grey;
+	-webkit-box-sizing: border-box;
 }
 
 .backbutton {

@@ -85,7 +85,7 @@
 
 <body ontouchmove="blockMove(event);">
 	<div id='appframe'>
-		<div id='screen'></div>
+		<div id='screen' class='portrait'></div>
 	</div>
 	<div id='viewerframe'>
 		<div id='toolbar'>
@@ -101,9 +101,9 @@
 	<script>
 
 		if (!navigator.userAgent.match(/Safari/) && !navigator.userAgent.match(/Chrome/)) {
-			document.body.className = 'device';
+			document.body.className += ' device';
 		}
-	
+			
 		/*global flowController:true flow:true Tracker F5*/
 		
 		require('./f5.js');
@@ -113,7 +113,18 @@
 			svgframe = document.getElementById('svgframe'),
 			jsonframe = document.getElementById('jsonframe'),
 			jsonbutton = document.getElementById('jsonbutton'),
+			screen = document.getElementById('screen'),
 			backbutton = document.getElementById('backbutton');
+			
+			
+			document.addEventListener('orientationchange', function () {
+				if (window.orientation) {
+					screen.className = 'landscape';
+				} else {
+					screen.className = 'portrait';				
+				}
+			});
+			
 
 		F5.Widgets.Utils.addTracker(svgframe);
 		

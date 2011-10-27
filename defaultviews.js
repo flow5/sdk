@@ -77,6 +77,7 @@ define('defaultviews', exports, function (exports) {
 			
 			var div = document.createElement('div');
 			div.innerHTML = this.node.id;
+			div.className = 'nodelabel';			
 			this.el.insertBefore(div, this.el.firstChild);	
 			
 			if (node === F5.Global.flow.root) {
@@ -121,6 +122,11 @@ define('defaultviews', exports, function (exports) {
 					F5.Global.flowController.doSelection(node, id);
 				});
 			});			
+			
+			var div = document.createElement('div');
+			div.className = 'nodelabel';
+			div.innerHTML = this.node.id;
+			this.el.insertBefore(div, this.el.firstChild);				
 		};
 	}
 	DefaultSelectorViewPrototype.prototype = F5.Prototypes.View; 
