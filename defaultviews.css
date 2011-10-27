@@ -51,6 +51,10 @@ body {
 	height: 100%;
 	overflow: hidden;
 	-webkit-box-sizing: border-box;	
+	-webkit-box-orient: vertical;
+	-webkit-box-pack: center;
+	-webkit-box-align: center;		
+	background-color: white;		
 }
 
 .subflow {
@@ -66,10 +70,6 @@ body {
 /* wireframe styles */
 
 .flow, .selector {
-	-webkit-box-orient: vertical;
-	-webkit-box-pack: center;
-	-webkit-box-align: center;		
-	background-color: white;	
 	padding: 4px;
 	border: 1px solid grey;
 }
