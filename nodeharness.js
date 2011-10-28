@@ -46,8 +46,7 @@ cli.main(function (args, options) {
 	
 	require('./f5.js');
 
-	var flow = new F5.Flow();
-	flow.injectGraph(require('flowspec.js').root);
+	var flow = new F5.Flow(require('flowspec.js').root);
 	require('./flow_diags.js').instrument(flow);	
 
 	process[options.output].write(flow.diags[options.format]());		

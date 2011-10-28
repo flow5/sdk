@@ -60,13 +60,14 @@ Chrome flags:
 	/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --allow-file-access-from-files	
 	
 	
-	3 types of nodes: set, switcher, flow. default (and most common) is flow
+	4 types of nodes: set, switcher, flow, subflow. default (and most common) is flow
 	
 	set is the base type and allows transition or selection semantics
 	flow is a restricted type of set that assumes every forward transition has a back transition
 		for flows, the framework will record the from location of every transition and install it on the target node
 	switcher is a restricted type of set that does not allow transitions between nodes
 		for switchers, the framework will create a UI element for the node. this is customizable TBD
+	subflow is a restricted type of node that is used only within the subflow decision tree
 	
 	
 	

@@ -98,17 +98,16 @@ define('webharness', exports, function (exports) {
 					makeClick(clickable[i]);
 				}
 
+
 				// determine the offset of the current node
 				var activeLeafNode = F5.Global.flow.diags.getActiveLeafNode();
 
 				var svgElementBBox = document.getElementById('svg-' + activeLeafNode.path).getBBox();
 				var svgRootBBox = svg.getBBox();
 
-				var offset = {x: svgElementBBox.x, y: svgRootBBox.height + svgElementBBox.y};
+				var offset = {x: svgElementBBox.x - svgRootBBox.width * 0.5, y: svgRootBBox.height + svgElementBBox.y + svgRootBBox.height * 0.5};
 
-//					console.log(JSON.stringify(offset));
-
-//					svgframeEl.style['-webkit-transform'] = 'translate3d(' + -offset.x + 'px,' + -offset.y + 'px, 0px)';
+				svgframeEl.style['-webkit-transform'] = 'translate3d(' + -offset.x * 0.5 + 'px,' + -offset.y * 0.5 + 'px, 0px)';
 			});	
 		}	
 						

@@ -69,6 +69,9 @@ define('flow_diags', exports, function (exports) {
 			while (node.selection) {
 				node = node.selection;
 			}
+			if (node.activeSubflow) {
+				node = node.activeSubflow;
+			}
 			return node;
 		};		
 					
@@ -357,7 +360,7 @@ define('flow_diags', exports, function (exports) {
 					'penwidth=.6',
 					'style="filled"',
 					fillColor,
-					'id=' + quote('svg-' + node.path + id)
+					'id=' + quote('svg-' + node.path + '_' + id)
 				].join(';');
 				
 				var clusterLabel = quote(makeClusterLabel(subflow.path));
