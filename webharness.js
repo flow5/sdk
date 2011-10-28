@@ -45,13 +45,19 @@ define('webharness', exports, function (exports) {
 			});
 		}		
 		
+		var sequenceNumber = 0;
 		function observer() {	
 			setStyles(backbuttonEl, {
 				'background-color': F5.Global.flowController.hasBack() ? 'lightblue' : 'grey',
 				'border': '2px solid ' + (F5.Global.flowController.hasBack() ? 'white' : 'black'),
 			});				
 
-			F5.post('dot2svg', F5.Global.flow.diags.toDOT(), function (response) {
+			sequenceNumber += 1;						
+			F5.post('dot2svg', F5.Global.flow.diags.toDOT(), function (response, headers) {
+				
+				if (headers['sequence-number'] !== sequenceNumber + '') {
+					return;
+				}
 
 				function makeClick(el) {
 					el.onclick = function () {	
@@ -106,7 +112,9 @@ define('webharness', exports, function (exports) {
 				var offset = {x: svgElementBBox.x - svgRootBBox.width * 0.5, y: svgRootBBox.height + svgElementBBox.y + svgRootBBox.height * 0.5};
 
 				svgframeEl.style['-webkit-transform'] = 'translate3d(' + -offset.x * 0.5 + 'px,' + -offset.y * 0.5 + 'px, 0px)';
-			});	
+			}, function (error) {
+				console.log('error');
+			}, {'sequence-number': sequenceNumber});
 		}	
 						
 		F5.Global.flowController.setObserver(observer);

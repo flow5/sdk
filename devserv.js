@@ -50,10 +50,10 @@ function dot2svg(req, res) {
 		
 	var child = spawn('dot', ['-Tsvg']);		
 
-	req.buffer = '';
+//	req.buffer = '';
 	
 	req.on('data', function (chunk) {
-		req.buffer += chunk;
+//		req.buffer += chunk;
 		child.stdin.write(chunk);
 	});	
 	req.on('end', function () {
@@ -71,7 +71,7 @@ function dot2svg(req, res) {
 		sys.puts(data);
 	});	
 	
-	res.writeHead(200, {'Content-Type': 'image/svg+xml'});		
+	res.writeHead(200, {'Content-Type': 'image/svg+xml', 'sequence-number': req.headers['sequence-number']});		
 }
 
 // http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
@@ -80,7 +80,12 @@ cli.main(function (args, options) {
 	options.port = options.port ? options.port : 8008;
 
 	http.createServer(function (req, res) {
-//		sys.puts(JSON.stringify(req.headers['user-agent']));
+//		sys.puts('------------------------------------');
+//		for (var name in req.headers) {
+//			if (req.headers.hasOwnProperty(name)) {
+//				sys.puts(name + ' : ' + req.headers[name]);				
+//			}
+//		}
 		switch (req.method) {
 		case 'POST':
 			switch (req.url) {

@@ -29,9 +29,15 @@
 
 define('utils', exports, function (exports) {
 	
-	function post(url, body, success, error) {
+	function post(url, body, success, error, headers) {
 		var xhr = new XMLHttpRequest();
 		xhr.open('POST', url, true);
+		
+		if (headers) {
+			headers.forEach(function (id, value) {
+				xhr.setRequestHeader(id, value);
+			});
+		}
 		
 		xhr.onreadystatechange = function (e) {
 			switch (xhr.readyState) {
@@ -50,7 +56,14 @@ define('utils', exports, function (exports) {
 			case xhr.DONE:	
 				if (xhr.status === 200) {
 					if (success) {
-						success(xhr.responseText);
+						var responseHeaders = {};
+						if (headers) {
+							headers.forEach(function (id, value) {
+								responseHeaders[id] =  xhr.getResponseHeader(id);
+							});													
+						}
+						
+						success(xhr.responseText, responseHeaders);
 					}
 				} else {
 					if (error) {

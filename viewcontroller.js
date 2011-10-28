@@ -141,7 +141,11 @@ define('viewcontroller', exports, function (exports) {
 //			console.log('ViewController.nodeWillBecomeActive');
 			if (!node.view) {
 				F5.Prototypes.View.attachViewsRecursive(node);
-				node.parent.view.el.querySelector('[class=container]').appendChild(node.view.el);							
+				if (node === F5.Global.flow.root) {
+					applicationFrame.appendChild(node.view.el);
+				} else {
+					node.parent.view.el.querySelector('[class=container]').appendChild(node.view.el);												
+				}
 			}
 			// TODO: call viewWillBecomeActive recursively
 		};				

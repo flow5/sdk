@@ -360,7 +360,7 @@ define('flow_diags', exports, function (exports) {
 					'penwidth=.6',
 					'style="filled"',
 					fillColor,
-					'id=' + quote('svg-' + node.path + '_' + id)
+					'id=' + quote('svg-' + subflow.path)
 				].join(';');
 				
 				var clusterLabel = quote(makeClusterLabel(subflow.path));
