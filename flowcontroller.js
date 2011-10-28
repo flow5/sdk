@@ -53,8 +53,8 @@ define('flowcontroller', exports, function (exports) {
 		
 		function nodeDidBecomeActive(node, cb) {								
 			node.active = true;
-			if (that.viewController) {
-				that.viewController.nodeDidBecomeActive(node);
+			if (F5.Global.viewController) {
+				F5.Global.viewController.nodeDidBecomeActive(node);
 			}
 			doLifecycleSubflowRecursive('didBecomeActive', node, function () {
 				cb();
@@ -62,8 +62,8 @@ define('flowcontroller', exports, function (exports) {
 		}									
 
 		function nodeWillBecomeActive(node, cb) {								
-			if (that.viewController) {
-				that.viewController.nodeWillBecomeActive(node);
+			if (F5.Global.viewController) {
+				F5.Global.viewController.nodeWillBecomeActive(node);
 			}
 			doLifecycleSubflowRecursive('willBecomeActive', node, function () {
 				cb();
@@ -79,26 +79,27 @@ define('flowcontroller', exports, function (exports) {
 			
 		// TODO: cb doesn't execute until didBecomeActive subflows complete
 		// that doesn't seem right
-		this.start = function (cb, viewController) {						
+		this.start = function (cb) {						
 			if (!cb) {
 				cb = function () {
 					console.log('start complete');
 				};
 			}
 			
-			this.viewController = viewController;
-			
-			if (this.viewController) {
-				this.viewController.start();
+			if (F5.Global.viewController) {
+				F5.Global.viewController.start();
 			}
-			
-			nodeDidBecomeActive(flow.root, function () {
+			nodeWillBecomeActive(flow.root, function () {
 				// TODO: this is redundant if there's a final onactive step, right?
 				observerCb();
 
-				cb();
-			});
+				nodeDidBecomeActive(flow.root, function () {
+					// TODO: this is redundant if there's a final onactive step, right?
+					observerCb();
 
+					cb();
+				});
+			});									
 		};
 		
 		// cancel out of any current subflow
@@ -111,8 +112,8 @@ define('flowcontroller', exports, function (exports) {
 		// needs to run again
 		// TODO: this has an effect at the widget layer
 		function cancelSubflowRecursive(node) {
-			if (that.viewController && node.activeSubflow) {
-				that.viewController.completeSubflow(node.activeSubflow);					
+			if (F5.Global.viewController && node.activeSubflow) {
+				F5.Global.viewController.completeSubflow(node.activeSubflow);					
 			}
 			delete node.activeSubflow;
 			if (node.children) {
@@ -153,8 +154,8 @@ define('flowcontroller', exports, function (exports) {
 				cancelSubflowRecursive(node);
 				
 				nodeWillBecomeActive(node.children[id], function () {
-					if (that.viewController) {
-						that.viewController.doSelection(node, id, completeSelection);
+					if (F5.Global.viewController) {
+						F5.Global.viewController.doSelection(node, id, completeSelection);
 					} else {
 						completeSelection();
 					}												
@@ -195,14 +196,23 @@ define('flowcontroller', exports, function (exports) {
 				}		
 				container = backNode.parent;
 			} else {
-				container = node.transitions[id].parent;				
+				container = node.transitions[id].parent;											
 			}
-			
-			if (!container) {
-				container = flow.root;
+						
+			F5.assert(container.type === 'flow' || container.type === 'set', 
+				'Transition container is not a flow or set');
+				
+			// a set doesn't have any notion of a nav stack
+			// transitions can be from any node to any node
+			// the widget layer can still attach the back button to a transition
+			if (container.type === 'flow' && id === 'back') {
+				// find the correct back target
+				var back = node;
+				while (back.parent !== container) {
+					back = back.parent;
+				}
+				node.transitions[id].back = back;				
 			}
-			
-			F5.assert(container.type === 'flow', 'Transition container is not a flow');
 												
 			function complete() {
 				container.selection.active = false;								
@@ -211,12 +221,6 @@ define('flowcontroller', exports, function (exports) {
 					delete node.back;
 				} else {
 					container.selection = node.transitions[id];
-					// find the correct back target
-					var back = node;
-					while (back.parent !== container) {
-						back = back.parent;
-					}
-					container.selection.back = back;
 				}			
 				
 				nodeDidBecomeActive(container.selection, function () {
@@ -234,8 +238,8 @@ define('flowcontroller', exports, function (exports) {
 			
 			var target = id === 'back' ? backNode.back : node.transitions[id];
 			nodeWillBecomeActive(target, function () {			
-				if (that.viewController) {
-					that.viewController.doTransition(container, id, target, complete);										
+				if (F5.Global.viewController) {
+					F5.Global.viewController.doTransition(container, id, target, complete);										
 				} else {
 					complete();
 				}			
@@ -259,14 +263,14 @@ define('flowcontroller', exports, function (exports) {
 				observerCb();
 
 				if (node.activeSubflow) {
-					if (that.viewController) {
-						that.viewController.doSubflowChoice(oldSubflow, id);
+					if (F5.Global.viewController) {
+						F5.Global.viewController.doSubflowChoice(oldSubflow, id);
 					} else {
 						doSubflowPrompt(node);												
 					}
 				} else {
-					if (that.viewController) {
-						that.viewController.completeSubflow(oldSubflow);
+					if (F5.Global.viewController) {
+						F5.Global.viewController.completeSubflow(oldSubflow);
 					}
 					if (completionCb) {
 						completionCb();
@@ -298,8 +302,8 @@ define('flowcontroller', exports, function (exports) {
 							child.active = false;
 						});
 						node.selection.active = true;
-						if (that.viewController) {
-							that.viewController.syncSet(node);
+						if (F5.Global.viewController) {
+							F5.Global.viewController.syncSet(node);
 						}
 						completeChoice();						
 					}					
@@ -307,33 +311,11 @@ define('flowcontroller', exports, function (exports) {
 					completeChoice();					
 				}
 			}		
-		};				
-		
-		this.doSubflow = function (node, id, cb) {
-			F5.assert(id === 'willBecomeActive' || flow.diags.isNodePathActive(node), 
-				'Attempt to execute subflow from an inactive node');	
-			F5.assert(node.subflows && node.subflows[id], 'No such subflow');
-			F5.assert(!flow.diags.isSubflowActive(node), 'Subflow already in progress');						
-			
-			var subflow = node.subflows[id];
-			subflow.completionCb = cb;
-			subflow.active = true;
-			node.activeSubflow = subflow;
-				
-			if (this.viewController) {
-				this.viewController.startSubflow(node.activeSubflow);
-			} else {
-				doSubflowPrompt(node);												
-			}
-
-			console.log(node.path + '.' + id + ' started');
-
-			observerCb();					
-		};
+		};	
 		
 		// find an active leaf node
-		// then climb up the stack for the first node with 'back'
-		function findBackNode() {
+		// then climb up the stack for the first node with 'back'		
+		this.getBackNode = function () {
 			var leaf = flow.root;
 			while (leaf.selection) {
 				leaf = leaf.selection;
@@ -348,14 +330,36 @@ define('flowcontroller', exports, function (exports) {
 			} else {
 				return null;
 			}
-		}
+		};			
 		
+		this.doSubflow = function (node, id, cb) {
+			F5.assert(id === 'willBecomeActive' || flow.diags.isNodePathActive(node), 
+				'Attempt to execute subflow from an inactive node');	
+			F5.assert(node.subflows && node.subflows[id], 'No such subflow');
+			F5.assert(!flow.diags.isSubflowActive(node), 'Subflow already in progress');						
+			
+			var subflow = node.subflows[id];
+			subflow.completionCb = cb;
+			subflow.active = true;
+			node.activeSubflow = subflow;
+				
+			if (F5.Global.viewController) {
+				F5.Global.viewController.startSubflow(node.activeSubflow);
+			} else {
+				doSubflowPrompt(node);												
+			}
+
+			console.log(node.path + '.' + id + ' started');
+
+			observerCb();					
+		};
+				
 		this.hasBack = function () {
-			return findBackNode();
+			return this.getBackNode() !== null;
 		};
 		
 		this.doBack = function () {			
-			var backNode = findBackNode();
+			var backNode = this.getBackNode();
 			F5.assert(backNode, 'Cannot go back');
 			
 			F5.assert(!flow.diags.isSubflowActive(backNode), 'Cannot go back with a subflow active');							

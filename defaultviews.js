@@ -78,21 +78,7 @@ define('defaultviews', exports, function (exports) {
 			var div = document.createElement('div');
 			div.innerHTML = this.node.id;
 			div.className = 'nodelabel';			
-			this.el.insertBefore(div, this.el.firstChild);	
-			
-			if (node === F5.Global.flow.root) {
-				var navbarEl = document.createElement('div');
-				navbarEl.className = 'navbar';
-				this.el.insertBefore(navbarEl, this.el.firstChild);	
-				var backButtonEl = document.createElement('div');
-				backButtonEl.className = 'backbutton';
-				backButtonEl.innerText = 'Back';
-				navbarEl.appendChild(backButtonEl);
-				F5.Widgets.Utils.addTouchListener(backButtonEl, function () {
-					F5.Global.flowController.doBack();
-				});
-								
-			}															
+			this.el.insertBefore(div, this.el.firstChild);				
 		};
 	}
 	DefaultFlowViewPrototype.prototype = F5.Prototypes.View;

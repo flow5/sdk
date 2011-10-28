@@ -80,7 +80,61 @@ define('viewcontroller', exports, function (exports) {
 				node.subflows.forEach(function (id, subflow) {
 					doSubflowRecursive(node, id, subflow);
 				});
-			}											
+			}	
+			
+			// TODO: not sure where to put this yet
+			// TODO: the notion of a global navbar only works when there's a single active flow
+			function configureBackButton(node, backButtonEl) {
+				while (node.selection) {
+					node = node.selection;
+				}
+				
+				F5.Global.navigationControllerConfiguration = null;
+				while (!F5.Global.navigationControllerConfiguration && node) {
+					F5.Global.navigationControllerConfiguration = node.view.getNavigationControllerConfiguration();
+					if (!F5.Global.navigationControllerConfiguration) {
+						node = node.parent;
+					}
+				}
+				
+				if (F5.Global.navigationControllerConfiguration) {
+					backButtonEl.style.visibility = '';
+					backButtonEl.innerText = F5.Global.navigationControllerConfiguration.label;
+				} else {
+					backButtonEl.style.visibility = 'hidden';
+				}
+			}			
+			if (node === F5.Global.flow.root) {				
+				var navbarEl = document.createElement('div');
+				navbarEl.className = 'navbar';
+				this.el.insertBefore(navbarEl, this.el.firstChild);	
+				var backButtonEl = document.createElement('div');
+				backButtonEl.className = 'backbutton';
+				backButtonEl.style.visibility = 'hidden';
+				navbarEl.appendChild(backButtonEl);
+				
+				F5.Widgets.Utils.addTouchListener(backButtonEl, function () {
+					F5.Global.navigationControllerConfiguration.action();
+				});																					
+												
+				F5.Global.navigationController = {
+					start: function () {
+						configureBackButton(F5.Global.flow.root, backButtonEl);
+					},
+					doSelection: function (node, id) {
+						configureBackButton(node.children[id], backButtonEl);
+					},
+					doTransition: function (container, id, to) {
+						configureBackButton(to, backButtonEl);
+					},
+					startSubflow: function () {
+						backButtonEl.style.visibility = 'hidden';						
+					},
+					completeSubflow: function () {
+						configureBackButton(F5.Global.flow.root, backButtonEl);
+					}
+				};				
+			}																									
 		};
 		
 		this.attachViewsRecursive = function (node) {
@@ -103,6 +157,16 @@ define('viewcontroller', exports, function (exports) {
 			
 		};
 		
+		this.getNavigationControllerConfiguration = function () {
+			if (this.node.back) {
+				return {label: this.node.back.id, action: function () {
+					F5.Global.flowController.doBack();
+				}};				
+			} else {
+				return null;
+			}
+		};
+		
 		// OPTION: can use display:none for lower memory construction or z-index: -1 for speed
 		this.show = function () {
 			this.el.visibility = '';
@@ -114,8 +178,8 @@ define('viewcontroller', exports, function (exports) {
 	}
 	F5.Prototypes.View = new ViewPrototype();
 			
-	function ViewController(flow, applicationFrame) {	
-		
+	function ViewController(flow, applicationFrame) {
+				
 		this.nodeDidBecomeActive = function (node) {
 			console.log('ViewController.nodeDidBecomeActive');
 			// TODO: call viewDidBecomeActive recursively
@@ -132,11 +196,19 @@ define('viewcontroller', exports, function (exports) {
 		
 		this.start = function () {	
 			var rootView = new F5.DefaultViews[flow.root.type](flow.root);
-			applicationFrame.appendChild(rootView.el);			
+			applicationFrame.appendChild(rootView.el);
+			
+			if (F5.Global.navigationController) {
+				F5.Global.navigationController.start();
+			}					
 		};
 		
 		this.doSelection = function (node, id, cb) {
-			console.log('ViewController.doSelection');									
+			console.log('ViewController.doSelection');	
+			
+			if (F5.Global.navigationController) {
+				F5.Global.navigationController.doSelection(node, id);
+			}																
 			
 			var oldEl = document.getElementById(node.selection.path);
 			var newEl = document.getElementById(node.children[id].path);
@@ -151,6 +223,10 @@ define('viewcontroller', exports, function (exports) {
 						
 		this.doTransition = function (container, id, to, cb) {
 			console.log('ViewController.doTransition');	
+			
+			if (F5.Global.navigationController) {
+				F5.Global.navigationController.doTransition(container, id, to);
+			}																			
 						
 			var containerElement = container.view.el.querySelector('[class=container]');
 			var oldNode = container.selection;
@@ -161,9 +237,17 @@ define('viewcontroller', exports, function (exports) {
 			// TODO: get animation name from mapping
 			var method = id === 'back' ? 'pushRight' : 'pushLeft';			
 			F5.Animation[method](containerElement, oldEl, newEl, function () {
+				function deleteViewsRecursive(node) {
+					delete node.view;
+					if (node.children) {
+						node.children.forEach(function (id, child) {
+							deleteViewsRecursive(child);
+						});
+					}
+				}
 				if (id === 'back') {
 					// TODO: call viewRelease?
-					delete oldNode.view;
+					deleteViewsRecursive(oldNode);
 					containerElement.removeChild(oldEl);
 				}				
 				cb();
@@ -179,12 +263,20 @@ define('viewcontroller', exports, function (exports) {
 		};			
 		
 		this.startSubflow = function (subflow) {
+			if (F5.Global.navigationController) {
+				F5.Global.navigationController.startSubflow(subflow);
+			}																			
+			
 			subflow.view.el.style.visibility = '';
 			subflow.view.el.style.opacity = 1;
 			subflow.view.el.style['pointer-events'] = 'auto';
 		};
 
 		this.completeSubflow = function (subflow) {
+			if (F5.Global.navigationController) {
+				F5.Global.navigationController.completeSubflow(subflow);
+			}																			
+			
 			subflow.view.el.style.opacity = 0;
 			subflow.view.el.style['pointer-events'] = '';
 			

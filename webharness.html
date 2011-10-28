@@ -175,6 +175,10 @@
 					svgframe.innerHTML = response;
 					
 					var svg = document.querySelector('svg');
+					
+					var transform = svg.querySelector('g').getAttribute('transform');
+					transform = transform.replace('scale(1 1)', 'scale(.5 .5)');
+					svg.querySelector('g').setAttribute('transform', transform);
 
 					// Make the main poly the same color as background
 					// OPTION: would be nice to do this on the DOT side
@@ -236,11 +240,13 @@
 					'background-color': jsonDiv ? 'lightblue' : 'grey',
 					'border': '2px solid ' + (jsonDiv ? 'white' : 'black')								
 				});							
-			});				
+			});			
+			
+			F5.Global.viewController = new F5.ViewController(F5.Global.flow, document.getElementById('screen'));
 			
 			F5.Global.flowController.start(function () {
 				console.log('application started');
-			}, new F5.ViewController(F5.Global.flow, document.getElementById('screen')));										
+			});										
 		} catch (e) {
 			viewer.innerHTML = e.message;
 		}								

@@ -198,7 +198,7 @@ define('flow_diags', exports, function (exports) {
 					'fontname=courier',
 					'style="filled,rounded"',
 					'shape=box',
-					'fontsize=12',		
+					'fontsize=18',		
 					'id=' + quote('svg-' + node.path)			
 				].concat(getActiveNodeStyle(node));				
 				
@@ -222,7 +222,7 @@ define('flow_diags', exports, function (exports) {
 					'shape=box',
 					'width=0',
 					'height=0',
-					'fontsize=10',
+					'fontsize=16',
 					fillColor,
 					color,
 					idAttribute
@@ -245,7 +245,7 @@ define('flow_diags', exports, function (exports) {
 				var attributes = [
 					makeLabel(id),
 					'fontname="courier new"',
-					'fontsize=10',
+					'fontsize=16',
 					'style="filled"',					
 					'margin="0.1,0.0"',
 					'penwidth=0.6',
@@ -269,17 +269,24 @@ define('flow_diags', exports, function (exports) {
 					color = 'color="black"';
 				}
 				
+				var shape;
+				if (id === 'willBecomeActive' || id === 'didBecomeActive') {
+					shape = 'shape=octagon';
+				} else {
+					shape = 'shape=box';
+				}
+				
 				// height=0 and width=0 makes the box just accomodate the text				
 				var attributes = [
 					makeLabel(id),
 					'fontname="courier new"',
-					'fontsize=10',
+					'fontsize=16',
 					'style="filled"',					
 					'margin="0.1,0.0"',
 					'penwidth=0.6',
 					fillColor,
 					color,					
-					'shape=box', 
+					shape, 
 					'height=0', 
 					'width=1.25',
 					'id=' + quote('svg-' + node.path + ':doSubflow' + '_' + id)
@@ -308,7 +315,7 @@ define('flow_diags', exports, function (exports) {
 					'rankdir=LR',
 					'fontname=courier',
 //					'splines="ortho"',
-//					'nodesep=.25'				
+					'nodesep=.25'				
 				].join(';');
 				result += 'digraph {' + attributes + ';';
 			}
@@ -321,7 +328,7 @@ define('flow_diags', exports, function (exports) {
 				var attributes = [
 					'style="filled,rounded"',
 					'fontname="courier"',
-					'fontsize=12',	
+					'fontsize=18',	
 					'bgcolor="gray"',
 					'id=' + quote('svg-' + node.path)												
 				].concat(getActiveNodeStyle(node)).join(';');
@@ -336,9 +343,7 @@ define('flow_diags', exports, function (exports) {
 			
 			function subflowStart(node, subflow, id) {
 				var fillColor;
-				// TODO: this can do the wrong thing if the name of one subflow
-				// is a substring of another one
-				if (flow.diags.isNodePathActive(node) && subflow.active) {
+				if (node.activeSubflow === subflow) {
 					fillColor = 'fillcolor="lightskyblue"';
 				} else {
 					fillColor = inactiveColorAttribute('fillcolor');
@@ -346,7 +351,7 @@ define('flow_diags', exports, function (exports) {
 				
 				var attributes = [
 					'fontname="courier"',
-					'fontsize=10',
+					'fontsize=16',
 					'fontcolor="black"',
 					'color="black"',
 					'penwidth=.6',
@@ -373,14 +378,13 @@ define('flow_diags', exports, function (exports) {
 						return false;
 					}
 					
-					return node.activeSubflow.path === subflow.path;
+					return node.activeSubflow === subflow;
 				}	
 				function isTerminal() {
 					return !subflow.choices[choice] || (typeof subflow.choices[choice] === 'string');
 				}			
-				function isSubflowAvailable() {					
-					return flow.diags.isNodePathActive(node) && !flow.diags.isSubflowActive(node.parent) && 
-						(!flow.diags.isSubflowActive(node) && isSubflowStart() || isCurrentSubflowChoice());
+				function isSubflowAvailable() {		
+					return node.activeSubflow === subflow;			
 				}				
 				
 				var fillColor, color;				
@@ -416,7 +420,7 @@ define('flow_diags', exports, function (exports) {
 					'width=0',
 					'height=0',
 					'margin="0.1,0.0"',
-					'fontsize=10',
+					'fontsize=16',
 					idAttribute
 				];				
 				
@@ -457,7 +461,15 @@ define('flow_diags', exports, function (exports) {
 				if (isCluster(node)) {
 					clusterStart(node);		
 					
-					if (parent.type === 'switcher') {
+					if (node.subflows) {
+						node.subflows.forEach(function (id, subflow) {
+							addSubflowSource(node, id);	
+							visitSubflow(id, subflow, node);
+							addEdgeToSubflow(node, node.path + '_' + id, subflow);
+						});
+					}										
+					
+					if (parent && parent.type === 'switcher') {
 						addSelectionButton(node, parent, node.id);
 					}
 										
@@ -473,14 +485,6 @@ define('flow_diags', exports, function (exports) {
 						});						
 					}
 					
-					if (node.subflows) {
-						node.subflows.forEach(function (id, subflow) {
-							addSubflowSource(node, id);	
-							visitSubflow(id, subflow, node);
-							addEdgeToSubflow(node, node.path + '_' + id, subflow);
-						});
-					}					
-
 					clusterFinish();
 				} else {			
 					addNode(node);					
@@ -496,9 +500,10 @@ define('flow_diags', exports, function (exports) {
 			digraphStart();
 			
 			// create the nodes
-			flow.root.children.forEach(function (id, node) {
-				visitNodeRecursive(node, flow.root);
-			});	
+//			flow.root.children.forEach(function (id, node) {
+//				visitNodeRecursive(node, flow.root);
+//			});	
+			visitNodeRecursive(flow.root);
 			
 			// create the transition edges
 			visited.forEach(function (path, fromNode) {
