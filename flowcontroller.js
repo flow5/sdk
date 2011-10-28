@@ -28,9 +28,15 @@
 
 define('flowcontroller', exports, function (exports) {
 					
-	function FlowController(flow, observerCb) {
+	function FlowController(flow) {
 
 		var that = this;
+		
+		that.observer = function () {};
+		
+		that.setObserver = function (observer) {
+			that.observer = observer;
+		};
 				
 		flow.controller = this;
 		
@@ -38,7 +44,7 @@ define('flowcontroller', exports, function (exports) {
 		// before a leaf node is reached
 		function doLifecycleSubflowRecursive(name, node, cb) {
 			if (node) {
-				console.log('doLifecycleSubflowRecursive: ' + node.path);
+//				console.log('doLifecycleSubflowRecursive: ' + node.path);
 				if (node.subflows && node.subflows[name]) {
 					that.doSubflow(node, name, function () {
 						doLifecycleSubflowRecursive(name, node.selection, cb);
@@ -79,7 +85,7 @@ define('flowcontroller', exports, function (exports) {
 			
 		// TODO: cb doesn't execute until didBecomeActive subflows complete
 		// that doesn't seem right
-		this.start = function (cb) {						
+		that.start = function (cb) {						
 			if (!cb) {
 				cb = function () {
 					console.log('start complete');
@@ -89,15 +95,13 @@ define('flowcontroller', exports, function (exports) {
 			if (F5.Global.viewController) {
 				F5.Global.viewController.start();
 			}
+			// TODO: this is redundant if there's a final onactive step, right?
+			that.observer();			
+			cb();
+
 			nodeWillBecomeActive(flow.root, function () {
-				// TODO: this is redundant if there's a final onactive step, right?
-				observerCb();
-
 				nodeDidBecomeActive(flow.root, function () {
-					// TODO: this is redundant if there's a final onactive step, right?
-					observerCb();
-
-					cb();
+					// ??
 				});
 			});									
 		};
@@ -124,10 +128,11 @@ define('flowcontroller', exports, function (exports) {
 		}		
 		
 		// select the child of node with the given id
-		this.doSelection = function (node, id, cb) {		
+		that.doSelection = function (node, id, cb) {		
+			F5.assert(node.type === 'switcher' || node.type === 'set', 
+				'Can only doSelection on node of types switcher or set');
 			F5.assert(flow.diags.isNodePathActive(node), 'Attempt to select on an inactive node');	
 			F5.assert(!flow.diags.isSubflowActive(node), 'Cannot select with a subflow active');				
-			F5.assert(node.type === 'switcher', 'Can only select on node of type switcher');
 			F5.assert(node.children[id], 'No child with id: ' + id);				
 			
 			function completeSelection() {				
@@ -139,7 +144,7 @@ define('flowcontroller', exports, function (exports) {
 					// I don't think so.
 				});
 
-				observerCb();	
+				that.observer();	
 			
 				cb();			
 			}					
@@ -167,7 +172,9 @@ define('flowcontroller', exports, function (exports) {
 				
 		// use the transition on the node with the given id 
 		// NOTE: parameters are specified in the flowgraph
-		this.doTransition = function (node, id, cb) {
+		that.doTransition = function (node, id, cb) {
+			F5.assert(node.type === 'flow' || node.type === 'set', 
+				'Can only doTransition on node of types flow or set');			
 			F5.assert(flow.diags.isNodePathActive(node), 'Attempt to transition from an inactive node');
 			F5.assert(!flow.diags.isSubflowActive(node), 'Cannot transition with a subflow active');	
 			F5.assert(id === 'back' || node.transitions, 'No transitions defined for node: ' + node.path);
@@ -229,7 +236,7 @@ define('flowcontroller', exports, function (exports) {
 					// TODO: maybe allow passing null here. otherwise pretty confusing
 				});		
 					
-				observerCb();					
+				that.observer();					
 				
 				cb();
 			}
@@ -246,7 +253,7 @@ define('flowcontroller', exports, function (exports) {
 			});		
 		};	
 				
-		this.doSubflowChoice = function (node, id) {	
+		that.doSubflowChoice = function (node, id) {	
 			F5.assert(node.activeSubflow, 'No active subflow');
 
 			console.log('choose: ' + id);
@@ -260,7 +267,7 @@ define('flowcontroller', exports, function (exports) {
 			oldSubflow.active = false;
 			
 			function completeChoice() {
-				observerCb();
+				that.observer();
 
 				if (node.activeSubflow) {
 					if (F5.Global.viewController) {
@@ -315,7 +322,7 @@ define('flowcontroller', exports, function (exports) {
 		
 		// find an active leaf node
 		// then climb up the stack for the first node with 'back'		
-		this.getBackNode = function () {
+		that.getBackNode = function () {
 			var leaf = flow.root;
 			while (leaf.selection) {
 				leaf = leaf.selection;
@@ -332,7 +339,7 @@ define('flowcontroller', exports, function (exports) {
 			}
 		};			
 		
-		this.doSubflow = function (node, id, cb) {
+		that.doSubflow = function (node, id, cb) {
 			F5.assert(id === 'willBecomeActive' || flow.diags.isNodePathActive(node), 
 				'Attempt to execute subflow from an inactive node');	
 			F5.assert(node.subflows && node.subflows[id], 'No such subflow');
@@ -349,23 +356,23 @@ define('flowcontroller', exports, function (exports) {
 				doSubflowPrompt(node);												
 			}
 
-			console.log(node.path + '.' + id + ' started');
+//			console.log(node.path + '.' + id + ' started');
 
-			observerCb();					
+			that.observer();					
 		};
 				
-		this.hasBack = function () {
-			return this.getBackNode() !== null;
+		that.hasBack = function () {
+			return that.getBackNode() !== null;
 		};
 		
-		this.doBack = function () {			
-			var backNode = this.getBackNode();
+		that.doBack = function () {			
+			var backNode = that.getBackNode();
 			F5.assert(backNode, 'Cannot go back');
 			
 			F5.assert(!flow.diags.isSubflowActive(backNode), 'Cannot go back with a subflow active');							
 			
 
-			this.doTransition(backNode, 'back');
+			that.doTransition(backNode, 'back');
 		};
 	}	
 	

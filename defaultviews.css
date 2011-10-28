@@ -65,23 +65,25 @@ body {
 	-webkit-box-sizing: border-box;		
 }
 
-
-
-/* wireframe styles */
-
-.flow, .switcher, .set {
+.frames .flow, .frames .switcher, .frames .set {
 	padding: 4px;
 	border: 1px solid grey;
 }
 
-.nodelabel {
+.frames .nodelabel {
 	font-size:8px;
 	opacity: .5;
+	display: block;
 }
 
-.flow {
+.frames .flow {
 	padding: 4px;
+}
+
+.nodelabel {
+	display: none;
 }		
+
 
 .subflow {
 	display: -webkit-box;
@@ -150,7 +152,8 @@ body {
 	width: 100%;
 	padding-left: 2px;
 	height: 30px;
-	-webkit-box-align: center;	
+	-webkit-box-align: center;
+	-webkit-box-pack: justify;	
 	background-color:grey;
 	-webkit-box-sizing: border-box;
 }
@@ -161,4 +164,9 @@ body {
 	border: 1px solid black;
 	background-color: white;	
 	-webkit-box-sizing: border-box;
+}
+
+.title {
+	font-size: 16px;
+	padding:2px;
 }

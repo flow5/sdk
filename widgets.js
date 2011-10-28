@@ -24,7 +24,7 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global define WebKitCSSMatrix*/
+/*global define WebKitCSSMatrix F5*/
 
 define('widgets', exports, function (exports) {
 
@@ -126,9 +126,81 @@ define('widgets', exports, function (exports) {
 			el.style['-webkit-transition'] = '';
 		});
 	}
+	
+	function attachNavbar(container) {
+		
+		var navbarEl = document.createElement('div');
+		navbarEl.className = 'navbar';
+		container.insertBefore(navbarEl, container.firstChild);	
+						
+		var backButtonEl = document.createElement('div');
+		backButtonEl.className = 'backbutton';
+		backButtonEl.style.visibility = 'hidden';
+		navbarEl.appendChild(backButtonEl);
+
+		var titleEl = document.createElement('div');
+		titleEl.className = 'title';
+		navbarEl.appendChild(titleEl);
+
+		var forwardButtonEl = document.createElement('div');
+		forwardButtonEl.className = 'backbutton';
+		forwardButtonEl.style.visibility = 'hidden';
+		navbarEl.appendChild(forwardButtonEl);
+		
+		function configureNavbar(node) {
+			// find the leaf node
+			while (node.selection) {
+				node = node.selection;
+			}		
+			
+			titleEl.innerHTML = node.id;													
+
+			F5.Global.navigationControllerConfiguration = null;
+			while (!F5.Global.navigationControllerConfiguration && node) {
+				F5.Global.navigationControllerConfiguration = node.view.getNavigationControllerConfiguration();
+				if (!F5.Global.navigationControllerConfiguration) {
+					node = node.parent;
+				}
+			}
+
+			if (F5.Global.navigationControllerConfiguration) {
+				backButtonEl.style.visibility = '';
+				backButtonEl.innerText = F5.Global.navigationControllerConfiguration.label;
+				forwardButtonEl.innerText = F5.Global.navigationControllerConfiguration.label;
+			} else {
+				backButtonEl.style.visibility = 'hidden';
+			}					
+		}				
+
+		F5.Widgets.Utils.addTouchListener(backButtonEl, function () {
+			F5.Global.navigationControllerConfiguration.action();
+		});																					
+
+		F5.Global.navigationController = {
+			start: function () {
+				configureNavbar(F5.Global.flow.root);
+			},
+			doSelection: function (node, id) {
+				configureNavbar(node.children[id]);
+			},
+			doTransition: function (container, id, to) {
+				configureNavbar(to);
+			},
+			startSubflow: function () {
+				backButtonEl.style.visibility = 'hidden';						
+			},
+			syncSet: function (node) {
+				configureNavbar(node);
+			},
+			completeSubflow: function () {
+				configureNavbar(F5.Global.flow.root);
+			}
+		};		
+	}	
 		
 	exports.Widgets = {
 		Utils: {
+			attachNavbar: attachNavbar,
 			addTracker: addTracker,
 			startEventName: startEventName,
 			stopEventName: stopEventName,

@@ -56,6 +56,12 @@
 	display: -webkit-box;	
 }
 
+.errorframe {
+	display: -webkit-box;
+	-webkit-box-align: center;
+	-webkit-box-pack: center;	
+}
+
 #appframe {
 	display: -webkit-box;
 	-webkit-box-align: center;
@@ -115,7 +121,7 @@
 	-webkit-box-sizing: border-box;
 }
 
-#jsonbutton, #backbutton {
+#jsonbutton, #backbutton, #framesbutton {
 	background-color: grey;
 	display: -webkit-box;
 	-webkit-box-pack: center;
@@ -125,6 +131,17 @@
 	width: 80px;
 	margin: 6px;
 	-webkit-border-radius: 4px;
-	font-size: 24px;
 	font-family: sans-serif;
+}
+
+#jsonbutton {
+	font-size: 24px;	
+}
+
+#backbutton {
+	font-size: 40px;
+}
+
+#arrow {
+	margin-top:-8px;
 }

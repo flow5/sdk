@@ -82,59 +82,11 @@ define('viewcontroller', exports, function (exports) {
 				});
 			}	
 			
-			// TODO: not sure where to put this yet
-			// TODO: the notion of a global navbar only works when there's a single active flow
-			function configureBackButton(node, backButtonEl) {
-				while (node.selection) {
-					node = node.selection;
-				}
-				
-				F5.Global.navigationControllerConfiguration = null;
-				while (!F5.Global.navigationControllerConfiguration && node) {
-					F5.Global.navigationControllerConfiguration = node.view.getNavigationControllerConfiguration();
-					if (!F5.Global.navigationControllerConfiguration) {
-						node = node.parent;
-					}
-				}
-				
-				if (F5.Global.navigationControllerConfiguration) {
-					backButtonEl.style.visibility = '';
-					backButtonEl.innerText = F5.Global.navigationControllerConfiguration.label;
-				} else {
-					backButtonEl.style.visibility = 'hidden';
-				}
-			}			
-			if (node === F5.Global.flow.root) {				
-				var navbarEl = document.createElement('div');
-				navbarEl.className = 'navbar';
-				this.el.insertBefore(navbarEl, this.el.firstChild);	
-				var backButtonEl = document.createElement('div');
-				backButtonEl.className = 'backbutton';
-				backButtonEl.style.visibility = 'hidden';
-				navbarEl.appendChild(backButtonEl);
-				
-				F5.Widgets.Utils.addTouchListener(backButtonEl, function () {
-					F5.Global.navigationControllerConfiguration.action();
-				});																					
-												
-				F5.Global.navigationController = {
-					start: function () {
-						configureBackButton(F5.Global.flow.root, backButtonEl);
-					},
-					doSelection: function (node, id) {
-						configureBackButton(node.children[id], backButtonEl);
-					},
-					doTransition: function (container, id, to) {
-						configureBackButton(to, backButtonEl);
-					},
-					startSubflow: function () {
-						backButtonEl.style.visibility = 'hidden';						
-					},
-					completeSubflow: function () {
-						configureBackButton(F5.Global.flow.root, backButtonEl);
-					}
-				};				
-			}																									
+			// TODO: move to customization layer? or customization says where to put the navbar?
+			// can there be multiple navbars? Sometimes that seems necessary. . .
+			if (this.node.path === 'root-main') {
+				F5.Widgets.Utils.attachNavbar(this.el);				
+			}
 		};
 		
 		this.attachViewsRecursive = function (node) {
@@ -181,12 +133,12 @@ define('viewcontroller', exports, function (exports) {
 	function ViewController(flow, applicationFrame) {
 				
 		this.nodeDidBecomeActive = function (node) {
-			console.log('ViewController.nodeDidBecomeActive');
+//			console.log('ViewController.nodeDidBecomeActive');
 			// TODO: call viewDidBecomeActive recursively
 		};				
 
 		this.nodeWillBecomeActive = function (node) {
-			console.log('ViewController.nodeDidBecomeActive');
+//			console.log('ViewController.nodeWillBecomeActive');
 			if (!node.view) {
 				F5.Prototypes.View.attachViewsRecursive(node);
 				node.parent.view.el.querySelector('[class=container]').appendChild(node.view.el);							
@@ -256,6 +208,10 @@ define('viewcontroller', exports, function (exports) {
 		
 		// called in a willBecomeActive context to conditionally pick a starting screen
 		this.syncSet = function (node) {
+			if (F5.Global.navigationController) {
+				F5.Global.navigationController.syncSet(node);
+			}
+						
 			node.children.forEach(function (id, child) {
 				child.view.el.style.visibility = 'hidden';
 			});
