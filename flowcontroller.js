@@ -205,7 +205,7 @@ define('flowcontroller', exports, function (exports) {
 			// a set doesn't have any notion of a nav stack
 			// transitions can be from any node to any node
 			// the widget layer can still attach the back button to a transition
-			if (container.type === 'flow' && id === 'back') {
+			if (container.type === 'flow' && id !== 'back') {
 				// find the correct back target
 				var back = node;
 				while (back.parent !== container) {
