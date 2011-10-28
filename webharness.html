@@ -100,7 +100,9 @@
 		});
 
 		// detect mobile devices
+		var isDevice = false;
 		if (navigator.userAgent.match(/iPhone/) || navigator.userAgent.match(/Android/)) {
+			isDevice = true;
 			document.body.className += ' device';
 		}
 			
@@ -117,13 +119,22 @@
 		try {
 			require('./f5.js');
 			
-			F5.Global.flow = new F5.Flow(require('flowspec.js').root);				
+			F5.Global.flow = new F5.Flow(require('flowspec.js').root);	
+			
+			// TODO: make this optional. currently asserts rely on the diags
+			require('./flow_diags.js').instrument(F5.Global.flow);							
 			
 			F5.Global.flowController = new F5.FlowController(F5.Global.flow);
 
 			F5.Global.viewController = new F5.ViewController(F5.Global.flow, screenEl);
 						
-			F5.Webharness.attach(screenEl);	
+			if (!isDevice) {
+				// TODO: factor out the state upload part so that the viewer can be
+				// used for an application running on device
+				F5.Webharness.attach(screenEl);					
+			} else {
+				document.getElementById('viewerframe').style.display = 'none';
+			}
 		
 			F5.Global.flowController.start(function () {
 				console.log('application started');																

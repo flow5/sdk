@@ -44,8 +44,6 @@ define('webharness', exports, function (exports) {
 				el.style[id] = value;
 			});
 		}		
-
-		require('./flow_diags.js').instrument(F5.Global.flow);	
 		
 		function observer() {	
 			setStyles(backbuttonEl, {

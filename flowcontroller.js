@@ -96,12 +96,12 @@ define('flowcontroller', exports, function (exports) {
 				F5.Global.viewController.start();
 			}
 			// TODO: this is redundant if there's a final onactive step, right?
-			that.observer();			
 			cb();
 
 			nodeWillBecomeActive(flow.root, function () {
+				that.observer();			
 				nodeDidBecomeActive(flow.root, function () {
-					// ??
+					that.observer();			
 				});
 			});									
 		};
