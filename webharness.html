@@ -147,23 +147,25 @@
 			}
 			
 			// import application html templates
-			var templates = document.createElement('div');
-			templates.style.display = 'none';
-			templates.id = 'templates';
-			// TODO: convert to async XHR. On completion call flowController.start			
-			F5.manifest.templates.forEach(function (file) {
-				var request = new XMLHttpRequest();  
-				var url = 'apps/' + app + '/' + file;
-				request.open('GET', url, false);   
-				request.send(null);  
-				F5.assert(request.status === 200, 'Could not find template: ' + file);
-				var tmp = document.createElement('div');
-				tmp.innerHTML = request.responseText;
-				for (var i = 0; i < tmp.childNodes.length; i += 1) {
-					templates.appendChild(tmp.childNodes.item(i));
-				}
-			});		
-			document.body.appendChild(templates);							
+			// TODO: convert to async XHR. On completion call flowController.start	
+			if (F5.manifest.templates) {
+				var templates = document.createElement('div');
+				templates.style.display = 'none';
+				templates.id = 'templates';
+				F5.manifest.templates.forEach(function (file) {
+					var request = new XMLHttpRequest();  
+					var url = 'apps/' + app + '/' + file;
+					request.open('GET', url, false);   
+					request.send(null);  
+					F5.assert(request.status === 200, 'Could not find template: ' + file);
+					var tmp = document.createElement('div');
+					tmp.innerHTML = request.responseText;
+					for (var i = 0; i < tmp.childNodes.length; i += 1) {
+						templates.appendChild(tmp.childNodes.item(i));
+					}
+				});		
+				document.body.appendChild(templates);											
+			}	
 		
 			F5.Global.flowController.start(function () {
 				console.log('application started');																
