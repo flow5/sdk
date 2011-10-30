@@ -84,7 +84,7 @@ define('flow_diags', exports, function (exports) {
 				obj.forEach(function (id, child) {
 					if (child && typeof child === 'object') {
 						// break cycles and use paths to indicate references
-						if (id === 'parent' || id === 'selection' || id === 'node' || objId === 'transitions') {
+						if (id === 'parent' || id === 'selection' || id === 'node' || id === 'to') {
 							copy[id] = '[-> ' + child.path + ']';
 						} else if (id !== 'view') {
 							copy[id] = copyForPrettyPrintRecursive(child, id);
@@ -477,7 +477,7 @@ define('flow_diags', exports, function (exports) {
 					}
 										
 					if (node.transitions) {
-						node.transitions.forEach(function (id, transition) {
+						node.transitions.forEach(function (id) {
 							addTransitionSource(node, id);							
 						});						
 					}
@@ -511,7 +511,8 @@ define('flow_diags', exports, function (exports) {
 			// create the transition edges
 			visited.forEach(function (path, fromNode) {
 				if (fromNode.transitions) {
-					fromNode.transitions.forEach(function (id, toNode) {
+					fromNode.transitions.forEach(function (id, transition) {
+						var toNode = transition.to;
 						var toPath = toNode.path;
 
 						// NOTE: graphviz doesn't support edges between clusters

@@ -44,7 +44,7 @@ define('defaultviewdelegates', exports, function (exports) {
 						subflowEl.className = 'do-subflow';
 						subflowsEl.appendChild(subflowEl);	
 
-						F5.Widgets.Utils.addTouchListener(subflowEl, function () {
+						F5.UI.Utils.addTouchListener(subflowEl, function () {
 							F5.Global.flowController.doSubflow(node, id);
 						});						
 					}
@@ -66,7 +66,7 @@ define('defaultviewdelegates', exports, function (exports) {
 					transitionEl.className = 'do-transition';
 					transitionsEl.appendChild(transitionEl);	
 
-					F5.Widgets.Utils.addTouchListener(transitionEl, function () {
+					F5.UI.Utils.addTouchListener(transitionEl, function () {
 						F5.Global.flowController.doTransition(node, id);
 					});
 
@@ -92,7 +92,7 @@ define('defaultviewdelegates', exports, function (exports) {
 				tab.innerHTML = id;
 				tabset.appendChild(tab);
 
-				F5.Widgets.Utils.addTouchListener(tab, function () {
+				F5.UI.Utils.addTouchListener(tab, function () {
 					F5.Global.flowController.doSelection(node, id);
 				});
 			});			
@@ -129,7 +129,7 @@ define('defaultviewdelegates', exports, function (exports) {
 				choiceEl.className = 'do-choice';
 				choicesEl.appendChild(choiceEl);	
 								
-				F5.Widgets.Utils.addTouchListener(choiceEl, function () {
+				F5.UI.Utils.addTouchListener(choiceEl, function () {
 					F5.Global.flowController.doSubflowChoice(subflow.node, id);
 				});
 							

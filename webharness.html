@@ -50,7 +50,8 @@
 	<script src='flowcontroller.js'></script>
 	<script src='viewcontroller.js'></script>
 	<script src='animation.js'></script>
-	<script src='widgets.js'></script>
+	<script src='templates.js'></script>
+	<script src='ui.js'></script>
 	<script src='defaultviewdelegates.js'></script>
 	
 	<script src='webharness.js'></script>
@@ -144,6 +145,7 @@
 				F5.Webharness.attach(screenEl);					
 			} else {
 				document.getElementById('viewerframe').style.display = 'none';
+				document.getElementById('viewerbutton').style.display = 'none';
 			}
 			
 			// import application html templates
@@ -160,6 +162,7 @@
 					F5.assert(request.status === 200, 'Could not find template: ' + file);
 					var tmp = document.createElement('div');
 					tmp.innerHTML = request.responseText;
+					// TODO: assert on duplicate IDs OR scope IDs
 					for (var i = 0; i < tmp.childNodes.length; i += 1) {
 						templates.appendChild(tmp.childNodes.item(i));
 					}

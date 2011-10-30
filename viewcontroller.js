@@ -101,7 +101,7 @@ define('viewcontroller', exports, function (exports) {
 			// TODO: move to customization layer? or customization says where to put the navbar?
 			// can there be multiple navbars? Sometimes that seems necessary. . .
 			if (that.node.path === 'root-main') {
-				F5.Widgets.Utils.attachNavbar(that.el);				
+				F5.UI.Utils.attachNavbar(that.el);				
 			}			
 		};
 				
@@ -126,9 +126,14 @@ define('viewcontroller', exports, function (exports) {
 				return this.delegate.getNavigationControllerConfiguration(this.node);
 			} else {
 				if (this.node.back) {
-					return {label: this.node.back.id, action: function () {
-						F5.Global.flowController.doBack();
-					}};				
+					return {
+						left: {
+							label: this.node.back.id, 
+							action: function () {
+									F5.Global.flowController.doBack();
+								}
+						}											
+					};
 				} else {
 					return null;
 				}				
@@ -189,14 +194,14 @@ define('viewcontroller', exports, function (exports) {
 			var newEl = document.getElementById(node.children[id].path);
 			
 			// TODO: get animation name from mapping			
-			F5.Animation.fadeOut(oldEl, newEl, function () {
+			F5.Animation.fadeOut(node.view.el, oldEl, newEl, function () {
 				
 				// TODO: call viewDidBecomeInactive
 				cb();
 			});			
 		};
 						
-		this.doTransition = function (container, id, to, cb) {
+		this.doTransition = function (container, id, to, animation, cb) {
 			console.log('ViewController.doTransition');	
 			
 			if (F5.Global.navigationController) {
@@ -209,8 +214,10 @@ define('viewcontroller', exports, function (exports) {
 			var oldEl = oldNode.view.el;
 			var newEl = to.view.el;
 			
-			// TODO: get animation name from mapping
-			var method = id === 'back' ? 'pushRight' : 'pushLeft';			
+			var method = animation;
+			if (!method)  {
+				method = id === 'back' ? 'pushRight' : 'pushLeft';
+			}			
 			F5.Animation[method](containerElement, oldEl, newEl, function () {
 				function deleteViewsRecursive(node) {
 					delete node.view;

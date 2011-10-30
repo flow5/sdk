@@ -203,7 +203,7 @@ define('flowcontroller', exports, function (exports) {
 				}		
 				container = backNode.parent;
 			} else {
-				container = node.transitions[id].parent;											
+				container = node.transitions[id].to.parent;											
 			}
 						
 			F5.assert(container.type === 'flow' || container.type === 'set', 
@@ -218,7 +218,7 @@ define('flowcontroller', exports, function (exports) {
 				while (back.parent !== container) {
 					back = back.parent;
 				}
-				node.transitions[id].back = back;				
+				node.transitions[id].to.back = back;				
 			}
 												
 			function complete() {
@@ -227,7 +227,7 @@ define('flowcontroller', exports, function (exports) {
 					container.selection = backNode.back;
 					delete node.back;
 				} else {
-					container.selection = node.transitions[id];
+					container.selection = node.transitions[id].to;
 				}			
 				
 				nodeDidBecomeActive(container.selection, function () {
@@ -243,10 +243,11 @@ define('flowcontroller', exports, function (exports) {
 			
 			cancelSubflowRecursive(node);			
 			
-			var target = id === 'back' ? backNode.back : node.transitions[id];
+			var target = id === 'back' ? backNode.back : node.transitions[id].to;
+			var animation = id === 'back' ? null : node.transitions[id].animation;
 			nodeWillBecomeActive(target, function () {			
 				if (F5.Global.viewController) {
-					F5.Global.viewController.doTransition(container, id, target, complete);										
+					F5.Global.viewController.doTransition(container, id, target, animation, complete);										
 				} else {
 					complete();
 				}			

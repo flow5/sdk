@@ -110,6 +110,15 @@ Chrome flags:
 		
 		
 		
+	TRANSITIONS
+	
+		each node can specify a list of transitions. each item in the list may be
+		1) a string with the name of the node which is the target of the transition
+		2) and object with to: the name of the transition target and animation: the name of the animation to use
+		
+		
+		
+		
 	
 	
 	TODO: CLEAN THIS UP

@@ -69,6 +69,14 @@
 	position: relative;
 }
 
+#appframe * {
+	/* for browser dev. keeps images from getting drag events and screwing up swipes */
+	-webkit-user-drag: none;
+
+	/* prevent text selection */
+	-webkit-user-select:none;
+}
+
 #viewerbutton {
 	position: absolute;
 	right: 0px;

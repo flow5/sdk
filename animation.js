@@ -61,7 +61,7 @@ define('animation', exports, function (exports) {
 	exports.Animation = {
 		
 		// oldElement sits on top, fades out to reveal newEl
-		fadeOut: function (oldEl, newEl, cb) {
+		fadeOut: function (container, oldEl, newEl, cb) {
 			
 			oldEl.style['z-index'] = 1;
 			newEl.style['z-index'] = 0;

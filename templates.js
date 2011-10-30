@@ -24,32 +24,40 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global define F5: true*/
+/*global define F5*/
 
-F5 = {Global: {}, Prototypes: {}};
 
-define('f5', exports, function (exports) {
+define('templates', exports, function (exports) {
+		
+	function loadTemplate(id) {
+		var instance = document.getElementById(id).cloneNode(true);
+		
+		var widgetEls = [];
+		
+		if (instance.hasAttribute('f5_widget')) {
+			widgetEls.push(instance);
+		}
 
-	require('./jsext.js');
-
-	// utils go to top level for convenince
-	require('./utils.js').forEach(function (id, fn) {
-		F5[id] = fn;
-	});
-	
-	F5.Flow = require('./flow.js').Flow;
-	F5.FlowController = require('./flowcontroller.js').FlowController;
-	
-	F5.Diags = {};
-	F5.Diags.JSON = require('./json.js');
-	
-	if (typeof document !== 'undefined') {
-		require('./domext.js');		
-		F5.ViewController = require('./viewcontroller.js').ViewController;
-		F5.Animation = require('./animation.js').Animation;
-		F5.UI = require('./ui.js').UI;
-		F5.DefaultViewDelegates = require('./defaultviewdelegates.js').DefaultViewDelegates;
-		F5.Webharness = require('./webharness.js').Webharness;
-		F5.Templates = require('./templates.js').Templates;
+		var nodes = instance.querySelectorAll('[f5_widget]');
+		for (var i = 0; i < nodes.length; i += 1) {
+			widgetEls.push(nodes.item(i));
+		}		
+		
+		function widgetInstance(prototype) {
+			function Instance() {}
+			Instance.prototype = prototype;
+			return new Instance();
+		}
+		
+		widgetEls.forEach(function (el) {
+			var widget = widgetInstance(F5.UI.Widgets[el.getAttribute('f5_widget')]);
+			widget.el = el;
+			el.widget = widget;
+			widget.construct();
+		});
+		
+		return instance;
 	}
+	
+	exports.Templates = {loadTemplate: loadTemplate};
 });

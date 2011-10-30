@@ -26,7 +26,7 @@
 ***********************************************************************************************************************/
 /*global define WebKitCSSMatrix F5*/
 
-define('widgets', exports, function (exports) {
+define('ui', exports, function (exports) {
 
 	function eventLocation(event) {
 		var x, y;
@@ -133,19 +133,19 @@ define('widgets', exports, function (exports) {
 		navbarEl.className = 'navbar';
 		container.insertBefore(navbarEl, container.firstChild);	
 						
-		var backButtonEl = document.createElement('div');
-		backButtonEl.className = 'backbutton';
-		backButtonEl.style.visibility = 'hidden';
-		navbarEl.appendChild(backButtonEl);
+		var leftButtonEl = document.createElement('div');
+		leftButtonEl.className = 'leftbutton';
+		leftButtonEl.style.visibility = 'hidden';
+		navbarEl.appendChild(leftButtonEl);
 
 		var titleEl = document.createElement('div');
 		titleEl.className = 'title';
 		navbarEl.appendChild(titleEl);
 
-		var forwardButtonEl = document.createElement('div');
-		forwardButtonEl.className = 'backbutton';
-		forwardButtonEl.style.visibility = 'hidden';
-		navbarEl.appendChild(forwardButtonEl);
+		var rightButtonEl = document.createElement('div');
+		rightButtonEl.className = 'rightbutton';
+		rightButtonEl.style.visibility = 'hidden';
+		navbarEl.appendChild(rightButtonEl);
 		
 		function configureNavbar(node) {
 			// find the leaf node
@@ -155,25 +155,43 @@ define('widgets', exports, function (exports) {
 			
 			titleEl.innerHTML = node.id;													
 
-			F5.Global.navigationControllerConfiguration = null;
-			while (!F5.Global.navigationControllerConfiguration && node) {
-				F5.Global.navigationControllerConfiguration = node.view.getNavigationControllerConfiguration();
-				if (!F5.Global.navigationControllerConfiguration) {
-					node = node.parent;
+			var configuration = {};
+			while (node && (!configuration.left || !configuration.right)) {
+				var nodeConfiguration = node.view.getNavigationControllerConfiguration();
+				if (nodeConfiguration) {
+					if (!configuration.left) {
+						configuration.left = nodeConfiguration.left;
+					}
+					if (!configuration.right) {
+						configuration.right = nodeConfiguration.right;
+					}					
 				}
+				
+				node = node.parent;
 			}
 
-			if (F5.Global.navigationControllerConfiguration) {
-				backButtonEl.style.visibility = '';
-				backButtonEl.innerText = F5.Global.navigationControllerConfiguration.label;
-				forwardButtonEl.innerText = F5.Global.navigationControllerConfiguration.label;
+			if (configuration.left) {
+				leftButtonEl.style.visibility = '';
+				leftButtonEl.innerText = configuration.left.label;					
 			} else {
-				backButtonEl.style.visibility = 'hidden';
-			}					
+				leftButtonEl.style.visibility = 'hidden';					
+			}
+			if (configuration.right) {
+				rightButtonEl.style.visibility = '';
+				rightButtonEl.innerText = configuration.right.label;					
+			} else {
+				rightButtonEl.style.visibility = 'hidden';					
+			}	
+			
+			F5.Global.navigationControllerConfiguration = configuration;
 		}				
 
-		F5.Widgets.Utils.addTouchListener(backButtonEl, function () {
-			F5.Global.navigationControllerConfiguration.action();
+		F5.UI.Utils.addTouchListener(leftButtonEl, function () {
+			F5.Global.navigationControllerConfiguration.left.action();
+		});																					
+
+		F5.UI.Utils.addTouchListener(rightButtonEl, function () {
+			F5.Global.navigationControllerConfiguration.right.action();
 		});																					
 
 		F5.Global.navigationController = {
@@ -187,7 +205,7 @@ define('widgets', exports, function (exports) {
 				configureNavbar(to);
 			},
 			startSubflow: function () {
-				backButtonEl.style.visibility = 'hidden';						
+				leftButtonEl.style.visibility = 'hidden';						
 			},
 			syncSet: function (node) {
 				configureNavbar(node);
@@ -197,8 +215,24 @@ define('widgets', exports, function (exports) {
 			}
 		};		
 	}	
+	
+	function Button() {		
+		this.construct = function () {
+			// nothing to do yet
+		};
 		
-	exports.Widgets = {
+		this.setAction = function (cb) {
+			this.el.addEventListener(startEventName(), function (e) {
+				e.preventDefault();
+				cb();
+			});
+		};
+	}	
+		
+	exports.UI = {
+		Widgets: {
+			button: new Button()
+		},
 		Utils: {
 			attachNavbar: attachNavbar,
 			addTracker: addTracker,

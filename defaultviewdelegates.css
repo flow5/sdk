@@ -153,17 +153,28 @@ body {
 	padding-left: 2px;
 	height: 30px;
 	-webkit-box-align: center;
-	-webkit-box-pack: justify;	
+	-webkit-box-pack: center;	
 	background-color:grey;
 	-webkit-box-sizing: border-box;
+	position: relative;
 }
 
-.backbutton {
+.leftbutton, .rightbutton {
+	position: absolute;
+	top: 2px;
 	font-size: 16px;
 	padding:2px;
 	border: 1px solid black;
 	background-color: white;	
 	-webkit-box-sizing: border-box;
+}
+
+.leftbutton {
+	left: 3px;
+}
+
+.rightbutton {
+	right: 3px;
 }
 
 .title {

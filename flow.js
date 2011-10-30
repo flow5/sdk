@@ -92,13 +92,21 @@ define('flow', exports, function (exports) {
 		function resolveTransitionsRecursive(node) {								
 			
 			if (node.spec.transitions) {
-				F5.assert(node.type === 'flow', 'A node with transitions must be of type flow');
+				F5.assert(node.type === 'flow' || node.type === 'set', 'A node with transitions must be of type flow or set');
 				node.transitions = {};
-				node.spec.transitions.forEach(function (id) {
-					node.transitions[id] = findNodeUp(node, id);
+				node.spec.transitions.forEach(function (transition) {
+					var id;
+					if (typeof transition === 'object') {
+						id = transition.to;
+						node.transitions[id] = {to: findNodeUp(node, id), animation: transition.animation};						
+					} else {
+						id = transition;
+						node.transitions[id] = {to: findNodeUp(node, id)};						
+					}
+					
 					// break cycles
-					if (!node.transitions[id].transitions) {
-						resolveTransitionsRecursive(node.transitions[id]);							
+					if (!node.transitions[id].to.transitions) {
+						resolveTransitionsRecursive(node.transitions[id].to);							
 					}
 				});
 			}
