@@ -58,11 +58,14 @@ define('viewcontroller', exports, function (exports) {
 				return new Instance();
 			}
 						
-			if (node.viewDelegate) {
-				that.delegate = delegateInstance(node.viewDelegate);
-			} else {
-				that.delegate = delegateInstance(F5.DefaultViewDelegates[that.node.type]);			
-			}
+			// TODO: path instead of ID?
+			// TODO: let the flowspec overrid the name?
+			var viewDelegatePrototype = F5.ViewDelegates[node.id];
+			if (!viewDelegatePrototype) {
+				console.log('Using default view delegate for: ' + node.path);
+				viewDelegatePrototype = F5.DefaultViewDelegates[that.node.type];
+			}			
+			that.delegate = delegateInstance(viewDelegatePrototype);			
 						
 			if (node.children) {
 				var container = document.createElement('div');

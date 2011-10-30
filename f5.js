@@ -43,6 +43,8 @@ define('f5', exports, function (exports) {
 	F5.Diags = {};
 	F5.Diags.JSON = require('./json.js');
 	
+	F5.ViewDelegates = {};
+	
 	if (typeof document !== 'undefined') {
 		require('./domext.js');		
 		F5.ViewController = require('./viewcontroller.js').ViewController;

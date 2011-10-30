@@ -86,11 +86,12 @@ Chrome flags:
 	2) specification of flow delegates
 	3) specification of view delegates
 	
-	each node can specify .flowDelegate or .viewDelegate
-	the value of this field can either be an object literal which implements the delegate interface or
-	a statement which evaluates to such an object (typically require('myDelegates.js').SomeDelegate)
-	The value of the field is used as the prototype for the object which is instantiated
+	the application can add delegates to F5.ViewDelegates and F5.FlowDelegates
+	then the framework will attach instances of the delegate prototype to the node
 	
+	TODO: may want to allow the flowspec to specify the viewdelegate name or resolve the delegate by path
+		since a flat namespace for node ids may be a problem or at least not be planning for the future
+		
 	delegates implement the following lifecycle calls:
 	
 		initialize
