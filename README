@@ -89,9 +89,10 @@ Chrome flags:
 	the application can add delegates to F5.ViewDelegates and F5.FlowDelegates
 	then the framework will attach instances of the delegate prototype to the node
 	
-	TODO: may want to allow the flowspec to specify the viewdelegate name or resolve the delegate by path
-		since a flat namespace for node ids may be a problem or at least not be planning for the future
-		
+	DELEGATES are a flat namespace. This seems okay given that they refer to behaviors rather than locations
+		in the flow. i.e., there may be multiple nodes with the same id, but it's unlikely that it would be 
+		necessary or even useful to have nodes with the same ids but with different behaviors.
+			
 	delegates implement the following lifecycle calls:
 	
 		initialize
@@ -118,6 +119,15 @@ Chrome flags:
 		2) and object with to: the name of the transition target and animation: the name of the animation to use
 		
 		
+	WIDGETS
+	
+		widgets are bits of javascript that control a div. they do not know about
+		
+		
+	SUBFLOW WIDGETS
+	
+		subflow views are simple widgets with a uniform interface: here is the node id and the choices (which can
+		be localized or mapped through a string table) and give back the response
 		
 		
 	

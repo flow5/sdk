@@ -137,7 +137,7 @@ define('defaultviewdelegates', exports, function (exports) {
 		};
 	}	
 	
-	exports.DefaultViewDelegates = {
+	F5.DefaultViewDelegates = {
 		flow: new FlowViewDelegate(),
 		switcher: new SwitcherViewDelegate(),
 		set: new SetViewDelegate(),

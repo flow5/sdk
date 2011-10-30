@@ -198,6 +198,6 @@ define('webharness', exports, function (exports) {
 		}
 	}
 
-	exports.Webharness = {attach: attach};
+	F5.Webharness = {attach: attach};
 
 });

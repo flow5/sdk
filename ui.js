@@ -229,7 +229,7 @@ define('ui', exports, function (exports) {
 		};
 	}	
 		
-	exports.UI = {
+	F5.UI = {
 		Widgets: {
 			button: new Button()
 		},
@@ -244,5 +244,4 @@ define('ui', exports, function (exports) {
 			addStopListener: addStopListener					
 		}
 	};
-	
 });

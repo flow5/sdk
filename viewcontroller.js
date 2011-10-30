@@ -292,5 +292,5 @@ define('viewcontroller', exports, function (exports) {
 		};
 	}
 		
-	exports.ViewController = ViewController;
+	F5.ViewController = ViewController;	
 });

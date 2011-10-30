@@ -24,7 +24,7 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global define*/
+/*global F5 define*/
 
 
 define('animation', exports, function (exports) {
@@ -58,7 +58,7 @@ define('animation', exports, function (exports) {
 		}, 0);			
 	}
 	
-	exports.Animation = {
+	F5.Animation = {
 		
 		// oldElement sits on top, fades out to reveal newEl
 		fadeOut: function (container, oldEl, newEl, cb) {

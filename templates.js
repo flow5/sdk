@@ -59,5 +59,5 @@ define('templates', exports, function (exports) {
 		return instance;
 	}
 	
-	exports.Templates = {loadTemplate: loadTemplate};
+	F5.Templates = {loadTemplate: loadTemplate};
 });

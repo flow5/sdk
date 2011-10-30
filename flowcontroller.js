@@ -377,5 +377,5 @@ define('flowcontroller', exports, function (exports) {
 		};
 	}	
 	
-	exports.FlowController = FlowController;	
+	F5.FlowController = FlowController;	
 });

@@ -176,5 +176,5 @@ define('flow', exports, function (exports) {
 		that.root.active = true;						
 	}				
 		
-	exports.Flow = Flow;
+	F5.Flow = Flow;
 });

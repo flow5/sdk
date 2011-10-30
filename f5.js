@@ -37,21 +37,20 @@ define('f5', exports, function (exports) {
 		F5[id] = fn;
 	});
 	
-	F5.Flow = require('./flow.js').Flow;
-	F5.FlowController = require('./flowcontroller.js').FlowController;
-	
-	F5.Diags = {};
-	F5.Diags.JSON = require('./json.js');
-	
-	F5.ViewDelegates = {};
-	
+	require('./flow.js');
+	require('./flowcontroller.js');
+		
+	F5.Diags = {JSON: require('./json.js')};
+		
 	if (typeof document !== 'undefined') {
 		require('./domext.js');		
-		F5.ViewController = require('./viewcontroller.js').ViewController;
-		F5.Animation = require('./animation.js').Animation;
-		F5.UI = require('./ui.js').UI;
-		F5.DefaultViewDelegates = require('./defaultviewdelegates.js').DefaultViewDelegates;
-		F5.Webharness = require('./webharness.js').Webharness;
-		F5.Templates = require('./templates.js').Templates;
-	}
+		require('./viewcontroller.js');
+		require('./animation.js');
+		require('./ui.js');
+		require('./defaultviewdelegates.js');
+		require('./webharness.js');
+		require('./templates.js');
+
+		F5.ViewDelegates = {};
+	}	
 });
