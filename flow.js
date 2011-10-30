@@ -31,27 +31,7 @@ define('flow', exports, function (exports) {
 	function Flow(flowspec) {
 
 		var that = this;
-				
-		// TODO: better error checking. in diags??
-		// returns the spec if object or finds a matching template
-		function resolveSpec(node, spec) {
-			function resolveSpecUp(node, name) {
-				if (node.spec.templates && node.spec.templates[name]) {
-					return node.spec.templates[name];
-				} else if (node.parent) {
-					return resolveSpecUp(node.parent, name);
-				} else {
-					F5.assert(false, 'Could not find template: ' + name);
-				}
-			}
-			
-			if (typeof spec === 'object') {
-				return spec;
-			} else {
-				return resolveSpecUp(node, spec);
-			}
-		}
-		
+						
 		function findNodeUp(node, name) {
 			if (node.children && node.children[name]) {
 				return node.children[name];
@@ -66,6 +46,7 @@ define('flow', exports, function (exports) {
 			var node = {id: id, 
 						type: nodeSpec.type ? nodeSpec.type : 'flow', 
 						parent: parent,
+						viewDelegate: nodeSpec.viewDelegate,
 						spec: nodeSpec, 
 						active: false};
 							
@@ -73,7 +54,7 @@ define('flow', exports, function (exports) {
 				node.children = {};
 				F5.assert(nodeSpec.selection, 'Parent node must declare child selection: ' + id);
 				nodeSpec.children.forEach(function (id, childSpec) {
-					var child = injectNodeRecursive(id, resolveSpec(node, childSpec), node);
+					var child = injectNodeRecursive(id, childSpec, node);
 					if (id === nodeSpec.selection) {
 						node.selection = child;
 						child.active = true;

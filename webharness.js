@@ -24,17 +24,19 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global define F5*/
+/*global define F5 localStorage*/
 
 define('webharness', exports, function (exports) {
 	
 	function attach(screenEl) {
 		var viewerEl = document.getElementById('viewer'),
+			viewerFrameEl = document.getElementById('viewerframe'),
 			appframeEl = document.getElementById('appframe'),
 			svgframeEl = document.getElementById('svgframe'),
 			jsonframeEl = document.getElementById('jsonframe'),
 			jsonbuttonEl = document.getElementById('jsonbutton'),
 			framesbuttonEl = document.getElementById('framesbutton'),
+			viewerbuttonEl = document.getElementById('viewerbutton'),			
 			backbuttonEl = document.getElementById('backbutton');
 
 		F5.Widgets.Utils.addTracker(svgframeEl);
@@ -168,7 +170,32 @@ define('webharness', exports, function (exports) {
 				'background-color': selected ? 'lightblue' : 'grey',
 				'border': '2px solid ' + (selected ? 'white' : 'black')								
 			});										
-		});				
+		});		
+		
+		function updateViewerButton() {
+			var showViewer = JSON.parse(localStorage.showViewer);
+			setStyles(viewerbuttonEl, {
+				'background-color': showViewer ? 'lightblue' : 'grey',
+				'border': '2px solid ' + (showViewer ? 'white' : 'black')								
+			});																
+		}
+		viewerbuttonEl.addEventListener('click', function () {
+			if (viewerFrameEl.style.display === 'none') {
+				viewerFrameEl.style.display = '';
+				localStorage.showViewer = true;
+			} else {
+				localStorage.showViewer = false;
+				viewerFrameEl.style.display = 'none';				
+			}
+			updateViewerButton();
+		});	
+		updateViewerButton();
+		
+		if (JSON.parse(localStorage.showViewer)) {
+			viewerFrameEl.style.display = '';
+		} else {
+			viewerFrameEl.style.display = 'none';
+		}
 	}
 
 	exports.Webharness = {attach: attach};

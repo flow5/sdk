@@ -32,7 +32,6 @@
 	<meta name="viewport" content="width=device-width initial-scale=1.0 maximum-scale=1.0 user-scalable=0" />
 	<meta http-equiv='Content-type' content='text/html; charset=utf-8'>
 	<meta name="apple-mobile-web-app-capable" content="yes" />	
-	<link rel="stylesheet" type="text/css" href="slide.css">
 	
 	<script src='require.js'></script>	
 	<script src='f5.js'></script>	
@@ -52,16 +51,20 @@
 	<script src='viewcontroller.js'></script>
 	<script src='animation.js'></script>
 	<script src='widgets.js'></script>
-	<script src='defaultviews.js'></script>
+	<script src='defaultviewdelegates.js'></script>
 	
 	<script src='webharness.js'></script>
 		
 	<link rel="stylesheet" type="text/css" href="json.css">
-	<link rel="stylesheet" type="text/css" href="defaultviews.css">
+	<link rel="stylesheet" type="text/css" href="defaultviewdelegates.css">
 	<link rel="stylesheet" type="text/css" href="webharness.css">
-				
+	
 	<script>
+		/*global F5*/	
 		/*jslint evil: true*/
+		
+		require('./f5.js');
+
 		function getURLParams() {
 			var params = {};
 			window.location.search.substring(1).split('&').forEach(function (pair) {
@@ -69,7 +72,15 @@
 			});			
 			return params;
 		}		
-		document.write('<script src="apps/' + getURLParams().app + '/flowspec.js"><\/script>');		
+		var app = getURLParams().app;
+		document.write('<script src="apps/' + app + '/manifest.js"><\/script>');		
+	</script>
+					
+	<script>		
+		F5.manifest = require('manifest.js');
+		F5.manifest.scripts.forEach(function (file) {
+			document.write('<script src="apps/' + app + '/' + file + '"><\/script>');					
+		});				
 	</script>
 	
 
@@ -90,6 +101,7 @@
 			<div id='jsonframe'></div>
 		</div>
 	</div>
+	<div id='viewerbutton'></div>
 		
 	<script>
 		/*global flowController:true flow:true Tracker F5*/
@@ -116,9 +128,7 @@
 			}
 		});
 		
-		try {
-			require('./f5.js');
-			
+		try {			
 			F5.Global.flow = new F5.Flow(require('flowspec.js').root);	
 			
 			// TODO: make this optional. currently asserts rely on the diags
@@ -135,6 +145,25 @@
 			} else {
 				document.getElementById('viewerframe').style.display = 'none';
 			}
+			
+			// import application html templates
+			var templates = document.createElement('div');
+			templates.style.display = 'none';
+			templates.id = 'templates';
+			// TODO: convert to async XHR. On completion call flowController.start			
+			F5.manifest.templates.forEach(function (file) {
+				var request = new XMLHttpRequest();  
+				var url = 'apps/' + app + '/' + file;
+				request.open('GET', url, false);   
+				request.send(null);  
+				F5.assert(request.status === 200, 'Could not find template: ' + file);
+				var tmp = document.createElement('div');
+				tmp.innerHTML = request.responseText;
+				for (var i = 0; i < tmp.childNodes.length; i += 1) {
+					templates.appendChild(tmp.childNodes.item(i));
+				}
+			});		
+			document.body.appendChild(templates);							
 		
 			F5.Global.flowController.start(function () {
 				console.log('application started');																

@@ -48,7 +48,7 @@ define('f5', exports, function (exports) {
 		F5.ViewController = require('./viewcontroller.js').ViewController;
 		F5.Animation = require('./animation.js').Animation;
 		F5.Widgets = require('./widgets.js').Widgets;
-		F5.DefaultViews = require('./defaultviews.js').DefaultViews;
+		F5.DefaultViewDelegates = require('./defaultviewdelegates.js').DefaultViewDelegates;
 		F5.Webharness = require('./webharness.js').Webharness;
 	}
 });

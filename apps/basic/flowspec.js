@@ -30,12 +30,8 @@ define('flowspec', exports, function (exports) {
 	
 	exports.root = {
 		selection: 'home',
-		templates: {
-			done: {
-			}
-		},
 		children: {	
-			done: 'done',
+			done: {},
 			home: {
 				subflows: {
 					didBecomeActive: {
@@ -49,16 +45,6 @@ define('flowspec', exports, function (exports) {
 									b: 'b'
 								}
 							}							
-						}
-					}
-				},
-				templates: {
-					middle: {
-						selection: 'middleStart',
-						children: {
-							middleStart: {
-								transitions: ['done']
-							}
 						}
 					}
 				},
@@ -111,8 +97,15 @@ define('flowspec', exports, function (exports) {
 									}
 								}
 							},
-							middle: 'middle',
-							done: 'done'													
+							middle: {
+								selection: 'middleStart',
+								children: {
+									middleStart: {
+										transitions: ['done']
+									}
+								}
+							},
+							done: {}													
 						},
 					
 					},
@@ -122,8 +115,14 @@ define('flowspec', exports, function (exports) {
 							start: {
 								transitions: ['middle']													
 							},
-							middle: 'middle'
-						
+							middle: {
+								selection: 'middleStart',
+								children: {
+									middleStart: {
+										transitions: ['done']
+									}
+								}
+							}						
 						}
 					}
 				}				

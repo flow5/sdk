@@ -65,11 +65,51 @@ Chrome flags:
 	set is the base type and allows transition or selection semantics
 	flow is a restricted type of set that assumes every forward transition has a back transition
 		for flows, the framework will record the from location of every transition and install it on the target node
+		also, in a flow, the framework can dispose of views when going back. in a set the framework cannot
+		so it doesn't release the views until the set is exited
 	switcher is a restricted type of set that does not allow transitions between nodes
 		for switchers, the framework will create a UI element for the node. this is customizable TBD
 	subflow is a restricted type of node that is used only within the subflow decision tree
+		
 	
 	
+	a nodespec may either be an object literal or a nodespec template name
+		if a template name the template is resolved by climbing the hierarchy and examining
+	probably: a node spec may also be a function which evaluates to a node literal (e.g. by using require)
+	
+	a model may either be an object literal or a model template name
+		if a model name then the name is resolved by climbing the hierachy and examining the template section. . .
+		
+
+	customization is done through
+	1) definition of the flow spec
+	2) specification of flow delegates
+	3) specification of view delegates
+	
+	each node can specify .flowDelegate or .viewDelegate
+	the value of this field can either be an object literal which implements the delegate interface or
+	a statement which evaluates to such an object (typically require('myDelegates.js').SomeDelegate)
+	The value of the field is used as the prototype for the object which is instantiated
+	
+	delegates implement the following lifecycle calls:
+	
+		initialize
+		willBecomeActive
+		willBecomeInactive
+		didBecomeActive
+		didBecomeInactive
+		(possibly) release
+	
+	there is no notion of an application controller. the root flow delegate manages application lifecycle
+	
+	SUBFLOWS
+	
+		subflows may be of either user input or non user input types
+		when user input, a corresponding controller method is called with the result of the user input
+		a subflow may reference either the associated flow controller delegate for the node or the root flow controller
+		
+		
+		
 	
 	
 	TODO: CLEAN THIS UP

@@ -66,6 +66,21 @@
 	display: -webkit-box;
 	-webkit-box-align: center;
 	-webkit-box-pack: center;
+	position: relative;
+}
+
+#viewerbutton {
+	position: absolute;
+	right: 0px;
+	margin: 11px;
+	height: 24px;
+	width: 24px;
+	-webkit-box-sizing: border-box;
+	border: 1px solid black;
+	background-color: grey;
+	display: -webkit-box;
+	-webkit-box-align: center;
+	-webkit-box-pack: center;
 }
 
 #svgframe {

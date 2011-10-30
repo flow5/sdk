@@ -26,12 +26,10 @@
 ***********************************************************************************************************************/
 /*global define F5*/
 
-define('defaultviews', exports, function (exports) {
+define('defaultviewdelegates', exports, function (exports) {
 	
-	function DefaultFlowViewPrototype() {		
-		this.ConstructDefaultFlowView = function (node) {
-			this.ConstructView(node);
-									
+	function FlowViewDelegate() {		
+		this.initialize = function (el, node) {
 			if (node.subflows) {
 				var subflowsEl = document.createElement('div');
 				subflowsEl.className = 'subflows';
@@ -53,14 +51,14 @@ define('defaultviews', exports, function (exports) {
 				});	
 				
 				if (showSubflows) {
-					this.el.insertBefore(subflowsEl, this.el.firstChild);												
+					el.insertBefore(subflowsEl, el.firstChild);												
 				}
 			}
 			
 			if (node.transitions) {
 				var transitionsEl = document.createElement('div');
 				transitionsEl.className = 'transitions';
-				this.el.insertBefore(transitionsEl, this.el.firstChild);
+				el.insertBefore(transitionsEl, el.firstChild);
 
 				node.transitions.forEach(function (id, transition) {
 					var transitionEl = document.createElement('div');
@@ -76,27 +74,17 @@ define('defaultviews', exports, function (exports) {
 			}			
 			
 			var div = document.createElement('div');
-			div.innerHTML = this.node.id;
+			div.innerHTML = node.id;
 			div.className = 'nodelabel';			
-			this.el.insertBefore(div, this.el.firstChild);				
+			el.insertBefore(div, el.firstChild);				
 		};
 	}
-	DefaultFlowViewPrototype.prototype = F5.Prototypes.View;
-	
-	function DefaultFlowView(node) {
-		this.ConstructDefaultFlowView(node);
 		
-	}
-	DefaultFlowView.prototype = new DefaultFlowViewPrototype();
-	
-	
-	function DefaultSwitcherViewPrototype() {
-		this.ConstructDefaultSwitcherViewPrototype = function (node) {
-			this.ConstructView(node);
-			
+	function SwitcherViewDelegate() {
+		this.initialize = function (el, node) {
 			var tabset = document.createElement('div');
 			tabset.className = 'tabset';
-			this.el.insertBefore(tabset);
+			el.insertBefore(tabset);
 
 			node.children.forEach(function (id, child) {
 				var tab = document.createElement('div');
@@ -111,46 +99,29 @@ define('defaultviews', exports, function (exports) {
 			
 			var div = document.createElement('div');
 			div.className = 'nodelabel';
-			div.innerHTML = this.node.id;
-			this.el.insertBefore(div, this.el.firstChild);				
+			div.innerHTML = node.id;
+			el.insertBefore(div, el.firstChild);				
 		};
 	}
-	DefaultSwitcherViewPrototype.prototype = F5.Prototypes.View; 
-	
-	function DefaultSwitcherView(node) {
-		this.ConstructDefaultSwitcherViewPrototype(node);
-	}
-	DefaultSwitcherView.prototype = new DefaultSwitcherViewPrototype();
-	
-	function DefaultSetViewPrototype() {
-		this.ConstructDefaultSetViewPrototype = function (node) {
-			this.ConstructView(node);
-						
+		
+	function SetViewDelegate() {
+		this.initialize = function (el, node) {
 			var div = document.createElement('div');
 			div.className = 'nodelabel';
-			div.innerHTML = this.node.id;
-			this.el.insertBefore(div, this.el.firstChild);				
+			div.innerHTML = node.id;
+			el.insertBefore(div, el.firstChild);				
 		};
 	}
-	DefaultSetViewPrototype.prototype = F5.Prototypes.View; 
-	
-	function DefaultSetView(node) {
-		this.ConstructDefaultSetViewPrototype(node);
-	}
-	DefaultSetView.prototype = new DefaultSetViewPrototype();	
-	
 		
-	function DefaultSubflowViewPrototype() {
-		this.ConstructDefaultSubflowViewPrototype = function (subflow) {			
-			this.ConstructView(subflow);
-			
+	function SubflowViewDelegate() {
+		this.initialize = function (el, subflow) {			
 			var div = document.createElement('div');
 			div.innerHTML = subflow.method;
-			this.el.appendChild(div);
+			el.appendChild(div);
 			
 			var choicesEl = document.createElement('div');
 			choicesEl.className = 'choices';
-			this.el.appendChild(choicesEl);
+			el.appendChild(choicesEl);
 			
 			subflow.choices.forEach(function (id, choice) {
 				var choiceEl = document.createElement('div');
@@ -165,18 +136,11 @@ define('defaultviews', exports, function (exports) {
 			});					
 		};
 	}	
-	DefaultSubflowViewPrototype.prototype = F5.Prototypes.View;
-
-	function DefaultSubflowView(node) {
-		this.ConstructDefaultSubflowViewPrototype(node);
-	}
-	DefaultSubflowView.prototype = new DefaultSubflowViewPrototype();
-
 	
-	exports.DefaultViews = {
-		flow: DefaultFlowView,
-		switcher: DefaultSwitcherView,
-		set: DefaultSetView,
-		subflow: DefaultSubflowView
+	exports.DefaultViewDelegates = {
+		flow: new FlowViewDelegate(),
+		switcher: new SwitcherViewDelegate(),
+		set: new SetViewDelegate(),
+		subflow: new SubflowViewDelegate()
 	};
 });

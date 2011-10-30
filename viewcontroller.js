@@ -36,39 +36,53 @@
 define('viewcontroller', exports, function (exports) {
 	
 	function ViewPrototype() {
-		this.ConstructView = function (node) {
-			
+		this.ConstructView = function (node) {	
+			var that = this;
+								
 			var div = document.createElement('div');
 			div.className = node.type;
 			div.id = node.path;
 			
 			if (!node.active) {
 				div.style.visibility = 'hidden';
-			}			
+			}		
 			
-			this.el = div;			
-			this.node = node;
-			node.view = this;
+			that.el = div;			
+			that.node = node;
 			
+			that.node.view = that;
+			
+			function delegateInstance(prototype) {
+				function Instance() {}
+				Instance.prototype = prototype;
+				return new Instance();
+			}
+						
+			if (node.viewDelegate) {
+				that.delegate = delegateInstance(node.viewDelegate);
+			} else {
+				that.delegate = delegateInstance(F5.DefaultViewDelegates[that.node.type]);			
+			}
+						
 			if (node.children) {
 				var container = document.createElement('div');
 				container.className = 'container';
-				node.view.el.appendChild(container);	
+				that.el.appendChild(container);	
 
 				if (node.type === 'switcher' || node.type === 'set') {
 					node.children.forEach(function (id, child) {
-						var view = new F5.DefaultViews[child.type](child);
-						container.appendChild(view.el);
+						child.view = new F5.View(child);
+						container.appendChild(child.view.el);
 					});					
 				} else {
-					var view = new F5.DefaultViews[node.selection.type](node.selection);
-					container.appendChild(view.el);
+					node.selection.view = new F5.View(node.selection);
+					container.appendChild(node.selection.view.el);
 				}
 			}
 
 			function doSubflowRecursive(node, id, subflow) {
 				if (subflow && subflow.type === 'subflow') {
-					subflow.view = new F5.DefaultViews[subflow.type](subflow);
+					subflow.view = new F5.View(subflow);
 					F5.Global.flow.root.view.el.appendChild(subflow.view.el);
 					subflow.choices.forEach(function (id, child) {
 						doSubflowRecursive(node, id, child);
@@ -81,18 +95,16 @@ define('viewcontroller', exports, function (exports) {
 					doSubflowRecursive(node, id, subflow);
 				});
 			}	
+
+			that.delegate.initialize(that.el, that.node);			
 			
 			// TODO: move to customization layer? or customization says where to put the navbar?
 			// can there be multiple navbars? Sometimes that seems necessary. . .
-			if (this.node.path === 'root-main') {
-				F5.Widgets.Utils.attachNavbar(this.el);				
-			}
+			if (that.node.path === 'root-main') {
+				F5.Widgets.Utils.attachNavbar(that.el);				
+			}			
 		};
-		
-		this.attachViewsRecursive = function (node) {
-			return new F5.DefaultViews[node.type](node);	
-		};
-		
+				
 		this.viewWillBecomeActive = function () {
 			
 		};
@@ -110,12 +122,16 @@ define('viewcontroller', exports, function (exports) {
 		};
 		
 		this.getNavigationControllerConfiguration = function () {
-			if (this.node.back) {
-				return {label: this.node.back.id, action: function () {
-					F5.Global.flowController.doBack();
-				}};				
+			if (this.delegate.getNavigationControllerConfiguration) {
+				return this.delegate.getNavigationControllerConfiguration(this.node);
 			} else {
-				return null;
+				if (this.node.back) {
+					return {label: this.node.back.id, action: function () {
+						F5.Global.flowController.doBack();
+					}};				
+				} else {
+					return null;
+				}				
 			}
 		};
 		
@@ -128,7 +144,10 @@ define('viewcontroller', exports, function (exports) {
 			this.el.visibility = 'hidden';
 		};
 	}
-	F5.Prototypes.View = new ViewPrototype();
+	F5.View = function (node) {
+		this.ConstructView(node);
+	};
+	F5.View.prototype = new ViewPrototype();
 			
 	function ViewController(flow, applicationFrame) {
 				
@@ -140,7 +159,7 @@ define('viewcontroller', exports, function (exports) {
 		this.nodeWillBecomeActive = function (node) {
 //			console.log('ViewController.nodeWillBecomeActive');
 			if (!node.view) {
-				F5.Prototypes.View.attachViewsRecursive(node);
+				node.view = new F5.View(node);
 				if (node === F5.Global.flow.root) {
 					applicationFrame.appendChild(node.view.el);
 				} else {
@@ -151,8 +170,8 @@ define('viewcontroller', exports, function (exports) {
 		};				
 		
 		this.start = function () {	
-			var rootView = new F5.DefaultViews[flow.root.type](flow.root);
-			applicationFrame.appendChild(rootView.el);
+			F5.Global.flow.root.view = new F5.View(flow.root);
+			applicationFrame.appendChild(F5.Global.flow.root.view.el);
 			
 			if (F5.Global.navigationController) {
 				F5.Global.navigationController.start();
