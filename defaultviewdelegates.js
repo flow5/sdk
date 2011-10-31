@@ -82,25 +82,24 @@ define('defaultviewdelegates', exports, function (exports) {
 		
 	function SwitcherViewDelegate() {
 		this.initialize = function (el, node) {
-			var tabset = document.createElement('div');
-			tabset.className = 'tabset';
-			el.insertBefore(tabset);
-
-			node.children.forEach(function (id, child) {
-				var tab = document.createElement('div');
-				tab.className = 'tab';
-				tab.innerHTML = id;
-				tabset.appendChild(tab);
-
-				F5.UI.Utils.addTouchListener(tab, function () {
-					F5.Global.flowController.doSelection(node, id);
-				});
+			var ids = [];
+			node.children.forEach(function (id) {
+				ids.push(id);
 			});			
+			this.tabset = F5.object(F5.UI.Widgets.tabset);			
+			this.tabset.construct(el, ids, function (id) {
+				F5.Global.flowController.doSelection(node, id);
+			});	
+			this.tabset.select(node.selection.id);					
 			
 			var div = document.createElement('div');
 			div.className = 'nodelabel';
 			div.innerHTML = node.id;
 			el.insertBefore(div, el.firstChild);				
+		};
+		
+		this.doSelection = function (node, id) {
+			this.tabset.select(id);
 		};
 	}
 		

@@ -40,7 +40,7 @@ define('webharness', exports, function (exports) {
 			viewerbuttonEl = document.getElementById('viewerbutton'),			
 			backbuttonEl = document.getElementById('backbutton');
 
-		F5.UI.Utils.addTracker(svgframeEl);
+		F5.UI.Utils.attachTracker(svgframeEl);
 
 		function setStyles(el, styles) {
 			styles.forEach(function (id, value) {

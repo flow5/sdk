@@ -86,7 +86,7 @@ define('ui', exports, function (exports) {
 		el.addEventListener(stopEventName(), cb);
 	}	
 	
-	function addTracker(el) {
+	function attachTracker(el) {
 		var tracking;
 		var startLocation;
 		var startTransform;
@@ -230,6 +230,43 @@ define('ui', exports, function (exports) {
 		};		
 	}	
 	
+	function Tabset() {
+		
+		this.construct = function (el, ids, cb) {
+			var tabset = document.createElement('div');
+			tabset.className = 'tabset';
+			el.insertBefore(tabset);
+			
+			var tabs = {};
+
+			ids.forEach(function (id) {
+				var tab = document.createElement('div');
+				tab.className = 'tab';
+				tab.innerHTML = id;
+				tab.setAttribute('f5_id', id);
+				tabset.appendChild(tab);
+
+				F5.UI.Utils.addTouchListener(tab, function (e) {
+					cb(id);
+				});
+				
+				tabs[id] = tab;
+			});	
+			
+			this.tabs = tabs;				
+		};
+		
+		this.select = function (selection) {
+			this.tabs.forEach(function (id, tab) {
+				if (selection === id) {
+					tab.style.color = 'black';
+				} else {
+					tab.style.color = 'grey';
+				}
+			});
+		};
+	}
+	
 	function Button() {		
 		this.construct = function () {
 			// nothing to do yet
@@ -245,11 +282,12 @@ define('ui', exports, function (exports) {
 		
 	F5.UI = {
 		Widgets: {
-			button: new Button()
+			button: new Button(),
+			tabset: new Tabset()
 		},
 		Utils: {
 			attachNavbar: attachNavbar,
-			addTracker: addTracker,
+			attachTracker: attachTracker,
 			startEventName: startEventName,
 			stopEventName: stopEventName,
 			moveEventName: moveEventName,

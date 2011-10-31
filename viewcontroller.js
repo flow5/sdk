@@ -185,7 +185,11 @@ define('viewcontroller', exports, function (exports) {
 			
 			if (F5.Global.navigationController) {
 				F5.Global.navigationController.doSelection(node, id);
-			}																
+			}				
+			
+			if (node.view.delegate.doSelection) {
+				node.view.delegate.doSelection(node, id);
+			}												
 			
 			var oldEl = document.getElementById(node.selection.path);
 			var newEl = document.getElementById(node.children[id].path);
