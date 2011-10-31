@@ -36,6 +36,7 @@ var http = require('http'),
 
 /*global Iuppiter*/
 require('./Iuppiter.js');
+
 	
 var WEBROOT = path.dirname(__filename);	
 
@@ -44,6 +45,8 @@ cli.setUsage("node devserv.js [OPTIONS]");
 cli.parse({
 	port: ['p', 'port', 'number'],
 });
+
+paperboy.contentTypes.manifest = 'text/cache-manifest';
 
 
 function dot2svg(req, res) {

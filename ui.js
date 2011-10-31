@@ -40,11 +40,31 @@ define('ui', exports, function (exports) {
 			}	
 		}		
 		else {
-			x = event.clientX;
-			y = event.clientY; 
+			// divide by 2 in browser because of the use of zoom: 2 on the 'screen' div
+			// TODO: link this and the zoom level. annoying
+			x = event.clientX / 2;
+			y = event.clientY / 2; 
 		}	
 
 		return {x: x, y: y};
+	}
+	
+	function elementAbsolutePosition(el) {
+		var x = 0;
+		var y = 0;
+		while (el) {
+			x += el.offsetLeft;
+			y += el.offsetTop;
+
+			el = el.offsetParent;			
+		}
+		return {x: x, y: y};
+	}
+	
+	function pointInElement(el, point) {
+		var pos = elementAbsolutePosition(el);
+		return point.x >= pos.x && point.x < pos.x + el.offsetWidth &&
+				point.y >= pos.y && point.y < pos.y + el.offsetHeight;
 	}
 
 	function startEventName() {
@@ -230,6 +250,8 @@ define('ui', exports, function (exports) {
 		};		
 	}	
 	
+	// TODO: fix asymmtery between Tabset and Button construction. This is because Tabset is being
+	// created programmatically from the switcher default view. Should all go through the same method
 	function Tabset() {
 		
 		this.construct = function (el, ids, cb) {
@@ -273,10 +295,29 @@ define('ui', exports, function (exports) {
 		};
 		
 		this.setAction = function (cb) {
+			var that = this;
+			var startTime;
+			var startLoc;
 			this.el.addEventListener(startEventName(), function (e) {
-				e.preventDefault();
-				cb();
+				that.el.style.color = 'grey';
+				startTime = Date.now();
+				startLoc = eventLocation(e);
 			});
+			this.el.addEventListener(stopEventName(), function (e) {
+				if (startTime && pointInElement(that.el, eventLocation(e))) {
+					that.el.style.color = 'black';
+					cb();
+					
+					startTime = null;
+					startLoc = null;					
+				}
+			});	
+			// if the touch up is outside the button div, cancel out
+			document.body.addEventListener(stopEventName(), function (e) {
+				startTime = null;
+				startLoc = null;	
+				that.el.style.color = 'black';							
+			});	
 		};
 	}
 		

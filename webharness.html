@@ -1,4 +1,5 @@
 <html>
+<!-- html manifest='cache.manifest'-->
 
 <!--
 
@@ -30,7 +31,8 @@
 <head>
 	
 	<meta name="viewport" content="width=device-width initial-scale=1.0 maximum-scale=1.0 user-scalable=0" />
-	<meta http-equiv='Content-type' content='text/html; charset=utf-8'>
+	<meta name="apple-mobile-web-app-status-bar-style" content="black" />	
+	<meta http-equiv='Content-type' content='text/html; charset=utf-8' />
 	<meta name="apple-mobile-web-app-capable" content="yes" />	
 	
 	<script src='require.js'></script>	
@@ -74,7 +76,12 @@
 			return params;
 		}		
 		var app = getURLParams().app;
-		document.write('<script src="apps/' + app + '/manifest.js"><\/script>');		
+		document.write('<script src="apps/' + app + '/manifest.js"><\/script>');	
+		
+		// icon and splash screen
+		document.write('<link rel="apple-touch-icon" href="apps/' + app + '/icon.png" />');	
+		document.write('<link rel="apple-touch-startup-image" href="apps/' + app + '/splash.png" />');	
+					
 	</script>
 					
 	<script>		
