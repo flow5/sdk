@@ -238,18 +238,20 @@ define('flowcontroller', exports, function (exports) {
 			}
 												
 			function complete() {
-				nodeDidBecomeInactive(container.selection, function () {
-					// TODO: does this delay the selection?
-					// I don't think so
-					// TODO: maybe allow passing null here. otherwise pretty confusing
-				});		
-
+				var oldSelection = container.selection;
+				
 				if (id === 'back') {
 					container.selection = backNode.back;
 					delete node.back;
 				} else {
 					container.selection = node.transitions[id].to;
 				}		
+				
+				nodeDidBecomeInactive(oldSelection, function () {
+					// TODO: does this delay the selection?
+					// I don't think so
+					// TODO: maybe allow passing null here. otherwise pretty confusing
+				});						
 								
 				nodeDidBecomeActive(container.selection, function () {
 					// TODO: does this delay the selection?

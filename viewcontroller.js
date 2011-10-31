@@ -77,8 +77,10 @@ define('viewcontroller', exports, function (exports) {
 
 			function doSubflowRecursive(node, id, subflow) {
 				if (subflow && subflow.type === 'subflow') {
-					subflow.view = new F5.View(subflow);
-					F5.Global.flow.root.view.el.appendChild(subflow.view.el);
+					if (subflow.userInput) {
+						subflow.view = new F5.View(subflow);
+						F5.Global.flow.root.view.el.appendChild(subflow.view.el);						
+					}
 					subflow.choices.forEach(function (id, child) {
 						doSubflowRecursive(node, id, child);
 					});			
@@ -190,8 +192,6 @@ define('viewcontroller', exports, function (exports) {
 			
 			// TODO: get animation name from mapping			
 			F5.Animation.fadeOut(node.view.el, oldEl, newEl, function () {
-				
-				// TODO: call viewDidBecomeInactive
 				cb();
 			});			
 		};
@@ -258,14 +258,16 @@ define('viewcontroller', exports, function (exports) {
 				F5.Global.navigationController.completeSubflow(subflow);
 			}																			
 			
-			subflow.view.el.style.opacity = 0;
-			subflow.view.el.style['pointer-events'] = '';
-			
 			function fadeComplete() {
 				subflow.view.el.style.visibility = 'hidden';
 				subflow.view.el.removeEventListener('webkitAnimationEnd', fadeComplete);
 			}
-			subflow.view.el.addEventListener('webkitAnimationEnd', fadeComplete);
+			if (subflow.userInput) {
+				subflow.view.el.style.opacity = 0;
+				subflow.view.el.style['pointer-events'] = '';
+
+				subflow.view.el.addEventListener('webkitAnimationEnd', fadeComplete);				
+			}
 		};
 				
 		this.doSubflowChoice = function (subflow, choice) {
@@ -273,14 +275,18 @@ define('viewcontroller', exports, function (exports) {
 				subflow.view.el.style.visibility = 'hidden';
 				subflow.view.el.removeEventListener('webkitAnimationEnd', fadeComplete);
 			}
-			subflow.view.el.addEventListener('webkitAnimationEnd', fadeComplete);
-			subflow.view.el.style['pointer-events'] = '';
-			subflow.view.el.style.opacity = 0;
+			if (subflow.userInput) {
+				subflow.view.el.addEventListener('webkitAnimationEnd', fadeComplete);
+				subflow.view.el.style['pointer-events'] = '';
+				subflow.view.el.style.opacity = 0;				
+			}
 						
 			var nextSubflow = subflow.choices[choice];
-			nextSubflow.view.el.style.visibility = '';			
-			nextSubflow.view.el.style.opacity = 1;
-			nextSubflow.view.el.style['pointer-events'] = 'auto';
+			if (nextSubflow.userInput) {
+				nextSubflow.view.el.style.visibility = '';			
+				nextSubflow.view.el.style.opacity = 1;
+				nextSubflow.view.el.style['pointer-events'] = 'auto';				
+			}
 		};
 	}
 		

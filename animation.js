@@ -64,10 +64,11 @@ define('animation', exports, function (exports) {
 		fadeOut: function (container, oldEl, newEl, cb) {
 			
 			oldEl.style['z-index'] = 1;
-			newEl.style['z-index'] = 0;
-									
 			oldEl.style['-webkit-transition'] = 'opacity .5s';
-			
+
+			newEl.style['z-index'] = 0;
+			newEl.style.visibility = '';				
+												
 			function completeFadeOut() {
 				
 				oldEl.style['z-index'] = '';
@@ -86,7 +87,6 @@ define('animation', exports, function (exports) {
 			
 			setTimeout(function () {
 				oldEl.style.opacity = 0;
-				newEl.style.visibility = '';				
 			}, 0);		
 		},
 		
