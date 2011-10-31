@@ -49,6 +49,19 @@ define('flow', exports, function (exports) {
 						viewDelegate: nodeSpec.viewDelegate,
 						spec: nodeSpec, 
 						active: false};
+						
+			
+			// TODO: move to utils			
+			function delegateInstance(prototype) {
+				function Instance() {}
+				Instance.prototype = prototype;
+				return new Instance();
+			}
+						
+			var flowDelegatePrototype = F5.FlowDelegates[node.id];
+			if (flowDelegatePrototype) {
+				node.flowDelegate = delegateInstance(flowDelegatePrototype);			
+			}									
 							
 			if (nodeSpec.children) {
 				node.children = {};

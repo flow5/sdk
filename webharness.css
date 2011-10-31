@@ -144,7 +144,7 @@
 	-webkit-box-sizing: border-box;
 }
 
-#jsonbutton, #backbutton, #framesbutton {
+#jsonbutton, #backbutton, #framesbutton, #resetbutton {
 	background-color: grey;
 	display: -webkit-box;
 	-webkit-box-pack: center;

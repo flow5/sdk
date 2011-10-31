@@ -258,7 +258,23 @@ define('flowcontroller', exports, function (exports) {
 			F5.assert(node.activeSubflow, 'No active subflow');
 
 			console.log('choose: ' + id);
-			F5.assert(node.activeSubflow.choices.hasOwnProperty(id), 'No such choice');			
+			F5.assert(node.activeSubflow.choices.hasOwnProperty(id), 'No such choice');	
+			
+			
+			// TODO: does this need to be asynchronous?
+			// give the flow delegate a chance to do something with the result
+			if (node.activeSubflow.userInput) {
+				var name = node.activeSubflow.method + 'Choice';
+				var method = node.flowDelegate ? node.flowDelegate[name] : null;
+				if (!method) {
+					method = F5.Global.flow.root.flowDelegate ? F5.Global.flow.root.flowDelegate[name] : null;
+				}
+				if (method) {
+					method(node, id);
+				} else {
+					console.log('No flowDelegate for method: ' + name);
+				}							
+			}					
 
 			var newSubflow = node.activeSubflow.choices[id];
 			var oldSubflow = node.activeSubflow;
@@ -350,12 +366,25 @@ define('flowcontroller', exports, function (exports) {
 			subflow.completionCb = cb;
 			subflow.active = true;
 			node.activeSubflow = subflow;
+			
+			if (!subflow.userInput) {
+				var method = node.flowDelegate ? node.flowDelegate[subflow.method] : null;
+				if (!method) {
+					method = F5.Global.flow.root.flowDelegate ? F5.Global.flow.root.flowDelegate[subflow.method] : null;
+				}
 				
-			if (F5.Global.viewController) {
-				F5.Global.viewController.startSubflow(node.activeSubflow);
+				F5.assert(method, 'No flowDelegate for method: ' + subflow.method);
+				method(node, function (choice) {
+					that.doSubflowChoice(node, choice);
+					console.log(choice);
+				});
 			} else {
-				doSubflowPrompt(node);												
-			}
+				if (F5.Global.viewController) {
+					F5.Global.viewController.startSubflow(node.activeSubflow);
+				} else {
+					doSubflowPrompt(node);												
+				}				
+			}				
 
 //			console.log(node.path + '.' + id + ' started');
 

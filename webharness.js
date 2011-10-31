@@ -36,6 +36,7 @@ define('webharness', exports, function (exports) {
 			jsonframeEl = document.getElementById('jsonframe'),
 			jsonbuttonEl = document.getElementById('jsonbutton'),
 			framesbuttonEl = document.getElementById('framesbutton'),
+			resetbuttonEl = document.getElementById('resetbutton'),
 			viewerbuttonEl = document.getElementById('viewerbutton'),			
 			backbuttonEl = document.getElementById('backbutton');
 
@@ -172,8 +173,19 @@ define('webharness', exports, function (exports) {
 			});										
 		});		
 		
+		resetbuttonEl.addEventListener('click', function () {
+			var showViewer = localStorage.showViewer;
+			localStorage.clear();
+			localStorage.showViewer = showViewer;
+			
+			location.reload();
+		});		
+		
+		if (!localStorage.showViewer) {
+			localStorage.showViewer = true;
+		}
 		function updateViewerButton() {
-			var showViewer = JSON.parse(localStorage.showViewer);
+			var showViewer  = JSON.parse(localStorage.showViewer);
 			setStyles(viewerbuttonEl, {
 				'background-color': showViewer ? 'lightblue' : 'grey',
 				'border': '2px solid ' + (showViewer ? 'white' : 'black')								
@@ -191,7 +203,7 @@ define('webharness', exports, function (exports) {
 		});	
 		updateViewerButton();
 		
-		if (JSON.parse(localStorage.showViewer)) {
+		if (localStorage.showViewer && JSON.parse(localStorage.showViewer)) {
 			viewerFrameEl.style.display = '';
 		} else {
 			viewerFrameEl.style.display = 'none';
