@@ -61,32 +61,33 @@ define('animation', exports, function (exports) {
 	F5.Animation = {
 		
 		// oldElement sits on top, fades out to reveal newEl
-		fadeOut: function (container, oldEl, newEl, cb) {
+		fadeIn: function (container, oldEl, newEl, cb) {
 			
-			oldEl.style['z-index'] = 1;
-			oldEl.style['-webkit-transition'] = 'opacity .5s';
+			oldEl.style['z-index'] = 0;
 
-			newEl.style['z-index'] = 0;
-			newEl.style.visibility = '';				
-												
-			function completeFadeOut() {
+			newEl.style['z-index'] = 1;
+			newEl.style.visibility = '';	
+			newEl.style.opacity = 0;
+															
+			function completeFadeIn() {
 				
 				oldEl.style['z-index'] = '';
 				newEl.style['z-index'] = '';
-
-				oldEl.style['-webkit-transition'] = '';
-				oldEl.style.opacity = 1;
+				newEl.style['-webkit-transition'] = '';
+				
+				oldEl.style.opacity = '';
 				oldEl.style.visibility = 'hidden';
 				
-				oldEl.removeEventListener('webkitTransitionEnd', completeFadeOut);
+				newEl.removeEventListener('webkitTransitionEnd', completeFadeIn);
 				
 				cb();
 			}
 						
-			oldEl.addEventListener('webkitTransitionEnd', completeFadeOut);
+			newEl.addEventListener('webkitTransitionEnd', completeFadeIn);
 			
 			setTimeout(function () {
-				oldEl.style.opacity = 0;
+				newEl.style['-webkit-transition'] = 'opacity .5s';				
+				newEl.style.opacity = 1;
 			}, 0);		
 		},
 		

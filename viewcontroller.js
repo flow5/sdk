@@ -191,7 +191,7 @@ define('viewcontroller', exports, function (exports) {
 			var newEl = document.getElementById(node.children[id].path);
 			
 			// TODO: get animation name from mapping			
-			F5.Animation.fadeOut(node.view.el, oldEl, newEl, function () {
+			F5.Animation.fadeIn(node.view.el, oldEl, newEl, function () {
 				cb();
 			});			
 		};
