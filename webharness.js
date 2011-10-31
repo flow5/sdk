@@ -91,7 +91,7 @@ define('webharness', exports, function (exports) {
 				var svg = document.querySelector('svg');
 
 				var transform = svg.querySelector('g').getAttribute('transform');
-				transform = transform.replace('scale(1 1)', 'scale(.5 .5)');
+				transform = transform.replace('scale(1 1)', 'scale(0.4 0.4)');
 				svg.querySelector('g').setAttribute('transform', transform);
 
 				// Make the main poly the same color as background
@@ -112,9 +112,9 @@ define('webharness', exports, function (exports) {
 				var svgElementBBox = document.getElementById('svg-' + activeLeafNode.path).getBBox();
 				var svgRootBBox = svg.getBBox();
 
-				var offset = {x: svgElementBBox.x - svgRootBBox.width * 0.5, y: svgRootBBox.height + svgElementBBox.y + svgRootBBox.height * 0.5};
+				var offset = {x: svgElementBBox.x - svgRootBBox.width * 0.4, y: svgRootBBox.height + svgElementBBox.y + svgRootBBox.height * 0.4};
 
-				svgframeEl.style['-webkit-transform'] = 'translate3d(' + -offset.x * 0.5 + 'px,' + -offset.y * 0.5 + 'px, 0px)';
+				svgframeEl.style['-webkit-transform'] = 'translate3d(' + -offset.x * 0.4 + 'px,' + -offset.y * 0.4 + 'px, 0px)';
 			}, function (error) {
 				console.log('error');
 			}, {'sequence-number': sequenceNumber});

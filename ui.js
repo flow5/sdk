@@ -164,24 +164,38 @@ define('ui', exports, function (exports) {
 					}
 					if (!configuration.right) {
 						configuration.right = nodeConfiguration.right;
-					}					
+					}	
+					if (nodeConfiguration.hide) {
+						configuration.hide = nodeConfiguration.hide;									
+					}
 				}
 				
 				node = node.parent;
 			}
-
-			if (configuration.left) {
-				leftButtonEl.style.visibility = '';
-				leftButtonEl.innerText = configuration.left.label;					
+			
+			if (configuration.hide) {
+				navbarEl.style.visibility = 'hidden';
+				leftButtonEl.style['pointer-events'] = '';
+				rightButtonEl.style['pointer-events'] = '';				
 			} else {
-				leftButtonEl.style.visibility = 'hidden';					
+				navbarEl.style.visibility = '';
+				if (configuration.left) {
+					leftButtonEl.style.visibility = '';
+					leftButtonEl.style['pointer-events'] = '';
+					leftButtonEl.innerText = configuration.left.label;					
+				} else {
+					leftButtonEl.style.visibility = 'hidden';					
+					leftButtonEl.style['pointer-events'] = 'none';
+				}
+				if (configuration.right) {
+					rightButtonEl.style.visibility = '';
+					rightButtonEl.style['pointer-events'] = '';				
+					rightButtonEl.innerText = configuration.right.label;					
+				} else {
+					rightButtonEl.style.visibility = 'hidden';					
+					rightButtonEl.style['pointer-events'] = 'none';
+				}				
 			}
-			if (configuration.right) {
-				rightButtonEl.style.visibility = '';
-				rightButtonEl.innerText = configuration.right.label;					
-			} else {
-				rightButtonEl.style.visibility = 'hidden';					
-			}	
 			
 			F5.Global.navigationControllerConfiguration = configuration;
 		}				
@@ -227,7 +241,7 @@ define('ui', exports, function (exports) {
 				cb();
 			});
 		};
-	}	
+	}
 		
 	F5.UI = {
 		Widgets: {

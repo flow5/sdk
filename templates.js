@@ -31,6 +31,7 @@ define('templates', exports, function (exports) {
 		
 	function loadTemplate(id) {
 		var instance = document.getElementById(id).cloneNode(true);
+		instance.removeAttribute('id');
 		
 		var widgetEls = [];
 		
@@ -43,14 +44,8 @@ define('templates', exports, function (exports) {
 			widgetEls.push(nodes.item(i));
 		}		
 		
-		function widgetInstance(prototype) {
-			function Instance() {}
-			Instance.prototype = prototype;
-			return new Instance();
-		}
-		
 		widgetEls.forEach(function (el) {
-			var widget = widgetInstance(F5.UI.Widgets[el.getAttribute('f5_widget')]);
+			var widget = F5.object(F5.UI.Widgets[el.getAttribute('f5_widget')]);
 			widget.el = el;
 			el.widget = widget;
 			widget.construct();

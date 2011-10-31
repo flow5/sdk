@@ -52,18 +52,12 @@ define('viewcontroller', exports, function (exports) {
 			
 			that.node.view = that;
 			
-			function delegateInstance(prototype) {
-				function Instance() {}
-				Instance.prototype = prototype;
-				return new Instance();
-			}
-						
 			var viewDelegatePrototype = F5.ViewDelegates[node.id];
 			if (!viewDelegatePrototype) {
 //				console.log('Using default view delegate for: ' + node.path);
 				viewDelegatePrototype = F5.DefaultViewDelegates[that.node.type];
 			}			
-			that.delegate = delegateInstance(viewDelegatePrototype);			
+			that.delegate = F5.object(viewDelegatePrototype);			
 						
 			if (node.children) {
 				var container = document.createElement('div');
@@ -97,13 +91,7 @@ define('viewcontroller', exports, function (exports) {
 				});
 			}	
 
-			that.delegate.initialize(that.el, that.node);			
-			
-			// TODO: move to customization layer? or customization says where to put the navbar?
-			// can there be multiple navbars? Sometimes that seems necessary. . .
-			if (that.node.path === 'root-main') {
-				F5.UI.Utils.attachNavbar(that.el);				
-			}			
+			that.delegate.initialize(that.el, that.node);						
 		};
 				
 		this.viewWillBecomeActive = function () {
@@ -162,6 +150,11 @@ define('viewcontroller', exports, function (exports) {
 			// TODO: call viewDidBecomeActive recursively
 		};				
 
+		this.nodeDidBecomeInactive = function (node) {
+//			console.log('ViewController.nodeDidBecomeActive');
+			// TODO: call viewDidBecomeActive recursively
+		};				
+
 		this.nodeWillBecomeActive = function (node) {
 //			console.log('ViewController.nodeWillBecomeActive');
 			if (!node.view) {
@@ -177,6 +170,7 @@ define('viewcontroller', exports, function (exports) {
 		
 		this.start = function () {	
 			F5.Global.flow.root.view = new F5.View(flow.root);
+			
 			applicationFrame.appendChild(F5.Global.flow.root.view.el);
 			
 			if (F5.Global.navigationController) {

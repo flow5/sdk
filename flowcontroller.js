@@ -67,6 +67,16 @@ define('flowcontroller', exports, function (exports) {
 			});
 		}									
 
+		function nodeDidBecomeInactive(node, cb) {								
+			node.active = false;
+			if (F5.Global.viewController) {
+				F5.Global.viewController.nodeDidBecomeInactive(node);
+			}
+			doLifecycleSubflowRecursive('didBecomeInactive', node, function () {
+				cb();
+			});
+		}									
+
 		function nodeWillBecomeActive(node, cb) {								
 			if (F5.Global.viewController) {
 				F5.Global.viewController.nodeWillBecomeActive(node);
@@ -133,11 +143,17 @@ define('flowcontroller', exports, function (exports) {
 				'Can only doSelection on node of types switcher or set');
 			F5.assert(flow.diags.isNodePathActive(node), 'Attempt to select on an inactive node');	
 			F5.assert(!flow.diags.isSubflowActive(node), 'Cannot select with a subflow active');				
-			F5.assert(node.children[id], 'No child with id: ' + id);				
+			F5.assert(node.children[id], 'No child with id: ' + id);
+			
+			var oldSelection = node.selection;				
 			
 			function completeSelection() {				
 				node.selection.active = false;
 				node.selection = node.children[id];
+				
+				nodeDidBecomeInactive(oldSelection, function () {
+					
+				});
 							
 				nodeDidBecomeActive(node.selection, function () {
 					// TODO: does this delay the selection?
@@ -222,14 +238,19 @@ define('flowcontroller', exports, function (exports) {
 			}
 												
 			function complete() {
-				container.selection.active = false;								
+				nodeDidBecomeInactive(container.selection, function () {
+					// TODO: does this delay the selection?
+					// I don't think so
+					// TODO: maybe allow passing null here. otherwise pretty confusing
+				});		
+
 				if (id === 'back') {
 					container.selection = backNode.back;
 					delete node.back;
 				} else {
 					container.selection = node.transitions[id].to;
-				}			
-				
+				}		
+								
 				nodeDidBecomeActive(container.selection, function () {
 					// TODO: does this delay the selection?
 					// I don't think so
@@ -244,7 +265,7 @@ define('flowcontroller', exports, function (exports) {
 			cancelSubflowRecursive(node);			
 			
 			var target = id === 'back' ? backNode.back : node.transitions[id].to;
-			var animation = id === 'back' ? null : node.transitions[id].animation;
+			var animation = node.transitions && node.transitions[id] ? node.transitions[id].animation : null;
 			nodeWillBecomeActive(target, function () {			
 				if (F5.Global.viewController) {
 					F5.Global.viewController.doTransition(container, id, target, animation, complete);										
@@ -357,7 +378,7 @@ define('flowcontroller', exports, function (exports) {
 		};			
 		
 		that.doSubflow = function (node, id, cb) {
-			F5.assert(id === 'willBecomeActive' || flow.diags.isNodePathActive(node), 
+			F5.assert(id === 'willBecomeActive' || id === 'didBecomeInactive' || flow.diags.isNodePathActive(node), 
 				'Attempt to execute subflow from an inactive node');	
 			F5.assert(node.subflows && node.subflows[id], 'No such subflow');
 			F5.assert(!flow.diags.isSubflowActive(node), 'Subflow already in progress');						
@@ -367,7 +388,16 @@ define('flowcontroller', exports, function (exports) {
 			subflow.active = true;
 			node.activeSubflow = subflow;
 			
-			if (!subflow.userInput) {
+			// TODO: if there's not supposed to be user input but there's no flow delegate, go ahead
+			// and put up the standard input dialog anyway
+			if (subflow.userInput) {
+				if (F5.Global.viewController) {
+					F5.Global.viewController.startSubflow(node.activeSubflow);
+				} else {
+					// TODO: need to sort out for headless testing
+					doSubflowPrompt(node);												
+				}				
+			} else {
 				var method = node.flowDelegate ? node.flowDelegate[subflow.method] : null;
 				if (!method) {
 					method = F5.Global.flow.root.flowDelegate ? F5.Global.flow.root.flowDelegate[subflow.method] : null;
@@ -377,13 +407,7 @@ define('flowcontroller', exports, function (exports) {
 				method(node, function (choice) {
 					that.doSubflowChoice(node, choice);
 					console.log(choice);
-				});
-			} else {
-				if (F5.Global.viewController) {
-					F5.Global.viewController.startSubflow(node.activeSubflow);
-				} else {
-					doSubflowPrompt(node);												
-				}				
+				});				
 			}				
 
 //			console.log(node.path + '.' + id + ' started');

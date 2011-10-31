@@ -92,9 +92,16 @@ define('utils', exports, function (exports) {
 			throw new Error(message);
 		}
 	}
+	
+	function object(prototype) {
+		function Instance() {}
+		Instance.prototype = prototype;
+		return new Instance();
+	}
 		
 	exports.post = post;
-	exports.assert = assert;	
+	exports.assert = assert;
+	exports.object = object;	
 });
 
 

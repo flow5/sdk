@@ -51,16 +51,9 @@ define('flow', exports, function (exports) {
 						active: false};
 						
 			
-			// TODO: move to utils			
-			function delegateInstance(prototype) {
-				function Instance() {}
-				Instance.prototype = prototype;
-				return new Instance();
-			}
-						
 			var flowDelegatePrototype = F5.FlowDelegates[node.id];
 			if (flowDelegatePrototype) {
-				node.flowDelegate = delegateInstance(flowDelegatePrototype);			
+				node.flowDelegate = F5.object(flowDelegatePrototype);			
 			}									
 							
 			if (nodeSpec.children) {
@@ -111,15 +104,21 @@ define('flow', exports, function (exports) {
 					var id;
 					if (typeof transition === 'object') {
 						id = transition.to;
-						node.transitions[id] = {to: findNodeUp(node, id), animation: transition.animation};						
+						if (id === 'back') {
+							node.transitions[id] = {animation: transition.animation};													
+						} else {
+							node.transitions[id] = {to: findNodeUp(node, id), animation: transition.animation};																				
+						}
 					} else {
 						id = transition;
 						node.transitions[id] = {to: findNodeUp(node, id)};						
 					}
 					
 					// break cycles
-					if (!node.transitions[id].to.transitions) {
-						resolveTransitionsRecursive(node.transitions[id].to);							
+					if (id !== 'back') {
+						if (!node.transitions[id].to.transitions) {
+							resolveTransitionsRecursive(node.transitions[id].to);							
+						}						
 					}
 				});
 			}
