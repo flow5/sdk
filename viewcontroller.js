@@ -212,7 +212,7 @@ define('viewcontroller', exports, function (exports) {
 			});			
 		};
 						
-		this.doTransition = function (container, node, id, to, animation, cb) {
+		this.doTransition = function (container, id, to, animation, cb) {
 			if (F5.Global.navigationController) {
 				F5.Global.navigationController.doTransition(container, id, to);
 			}																			
@@ -242,7 +242,7 @@ define('viewcontroller', exports, function (exports) {
 				return inverse;
 			}
 			if (id === 'back') {
-				animation = inverseAnimation(node.animation);
+				animation = inverseAnimation(oldNode.animation);
 			}			
 			if (!animation)  {
 				animation = 'pushLeft';

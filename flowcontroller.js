@@ -281,7 +281,7 @@ define('flowcontroller', exports, function (exports) {
 			nodeWillBecomeInactive(node, function () {
 				nodeWillBecomeActive(target, function () {			
 					if (F5.Global.viewController) {
-						F5.Global.viewController.doTransition(container, node, id, target, animation, complete);										
+						F5.Global.viewController.doTransition(container, id, target, animation, complete);										
 					} else {
 						complete();
 					}			
