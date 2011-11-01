@@ -177,7 +177,7 @@ define('ui', exports, function (exports) {
 
 			var configuration = {};
 			while (node && (!configuration.left || !configuration.right)) {
-				var nodeConfiguration = node.view.getNavigationControllerConfiguration();
+				var nodeConfiguration = node.view.getNavConfig();
 				if (nodeConfiguration) {
 					if (!configuration.left) {
 						configuration.left = nodeConfiguration.left;
@@ -302,9 +302,11 @@ define('ui', exports, function (exports) {
 				that.el.style.color = 'grey';
 				startTime = Date.now();
 				startLoc = eventLocation(e);
+				e.stopPropagation();
 			});
 			this.el.addEventListener(stopEventName(), function (e) {
-				if (startTime && pointInElement(that.el, eventLocation(e))) {
+//				if (startTime && pointInElement(that.el, eventLocation(e))) {
+				if (startTime) {
 					that.el.style.color = 'black';
 					cb();
 					

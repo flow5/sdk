@@ -68,6 +68,7 @@ define('flow', exports, function (exports) {
 				});					
 			}		
 			
+			
 			function decorateSubflowRecursive(subflow, node) {
 				if (subflow && subflow.choices) {
 					subflow.active = false;

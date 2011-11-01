@@ -26,38 +26,29 @@
 ***********************************************************************************************************************/
 /*global define F5*/
 
-	
-	// OPTION: to minimize transition time, could
-	// only construct the selected child for selections as well
-	// then construct the new child when doing a selection
-	// might cause latency on tab switching though
-	
-	
 define('viewcontroller', exports, function (exports) {
 	
+	var buildViewForNode;
 	function ViewPrototype() {
 		this.ConstructView = function (node) {	
+
 			var that = this;
-								
+																
 			var div = document.createElement('div');
 			div.className = node.type;
 			div.id = node.path;
-			
-			if (!node.active) {
-				div.style.visibility = 'hidden';
-			}		
-			
+						
 			that.el = div;			
 			that.node = node;
+			node.view = that;
 			
-			that.node.view = that;
 			
 			var viewDelegatePrototype = F5.ViewDelegates[node.id];
 			if (!viewDelegatePrototype) {
-//				console.log('Using default view delegate for: ' + node.path);
 				viewDelegatePrototype = F5.DefaultViewDelegates[that.node.type];
 			}			
-			that.delegate = F5.object(viewDelegatePrototype);			
+			that.delegate = F5.object(viewDelegatePrototype);
+						
 						
 			if (node.children) {
 				var container = document.createElement('div');
@@ -66,55 +57,68 @@ define('viewcontroller', exports, function (exports) {
 
 				if (node.type === 'switcher' || node.type === 'set') {
 					node.children.forEach(function (id, child) {
-						child.view = new F5.View(child);
+						buildViewForNode(child);
 						container.appendChild(child.view.el);
 					});					
 				} else {
-					node.selection.view = new F5.View(node.selection);
+					buildViewForNode(node.selection);
 					container.appendChild(node.selection.view.el);
 				}
 			}
 
+
+			// TODO: dump this. just put up widgets from the view controller when needed
 			function doSubflowRecursive(node, id, subflow) {
 				if (subflow && subflow.type === 'subflow') {
-					if (subflow.userInput) {
-						subflow.view = new F5.View(subflow);
-						F5.Global.flow.root.view.el.appendChild(subflow.view.el);						
-					}
+					buildViewForNode(subflow);
+					F5.Global.flow.root.view.el.appendChild(subflow.view.el);						
+
 					subflow.choices.forEach(function (id, child) {
 						doSubflowRecursive(node, id, child);
 					});			
 				}
 			}
-
 			if (node.subflows) {
 				node.subflows.forEach(function (id, subflow) {
 					doSubflowRecursive(node, id, subflow);
 				});
 			}	
 
-			that.delegate.initialize(that.el, that.node);						
+
+			that.delegate.initialize(that.el, that.node);
+			
+			if (!node.active) {
+				div.style.visibility = 'hidden';
+			}										
 		};
 				
 		this.viewWillBecomeActive = function () {
-			
+			if (this.delegate.viewWillBecomeActive) {
+				this.delegate.viewWillBecomeActive(this.el, this.node);
+			}			
 		};
 		
 		this.viewWillBecomeInactive = function () {
-						
+			if (this.delegate.viewWillBecomeInactive) {
+				this.delegate.viewWillBecomeInactive(this.el, this.node);
+			}			
 		};
 		
 		this.viewDidBecomeActive = function () {
-			
+			if (this.delegate.viewDidBecomeActive) {
+				this.delegate.viewDidBecomeActive(this.el, this.node);
+			}						
 		};
 		
 		this.viewDidBecomeInactive = function () {
-			
+			if (this.delegate.viewDidBecomeInactive) {
+				this.delegate.viewDidBecomeInactive(this.el, this.node);
+			}						
 		};
 		
-		this.getNavigationControllerConfiguration = function () {
-			if (this.delegate.getNavigationControllerConfiguration) {
-				return this.delegate.getNavigationControllerConfiguration(this.node);
+		this.getNavConfig = function () {
+			if (this.delegate.getNavConfig) {
+				return this.delegate.getNavConfig(this.node);
 			} else {
 				if (this.node.back) {
 					return {
@@ -140,38 +144,48 @@ define('viewcontroller', exports, function (exports) {
 			this.el.visibility = 'hidden';
 		};
 	}
-	F5.View = function (node) {
-		this.ConstructView(node);
+	var viewPrototype = new ViewPrototype();
+	buildViewForNode = function (node) {
+		F5.object(viewPrototype).ConstructView(node);
 	};
-	F5.View.prototype = new ViewPrototype();
+
 			
 	function ViewController(flow, applicationFrame) {
+		
+		function doLifecycleEventRecursive(node, event) {
+			while (node) {
+				node.view[event]();
+				node = node.selection;				
+			}			
+		}
 				
 		this.nodeDidBecomeActive = function (node) {
-//			console.log('ViewController.nodeDidBecomeActive');
-			// TODO: call viewDidBecomeActive recursively
+			doLifecycleEventRecursive(node, 'viewDidBecomeActive');
 		};				
 
 		this.nodeDidBecomeInactive = function (node) {
-//			console.log('ViewController.nodeDidBecomeActive');
-			// TODO: call viewDidBecomeActive recursively
+			doLifecycleEventRecursive(node, 'viewDidBecomeInactive');
+		};		
+		
+		this.nodeWillBecomeInactive = function (node) {
+			doLifecycleEventRecursive(node, 'viewWillBecomeInactive');
 		};				
 
 		this.nodeWillBecomeActive = function (node) {
-//			console.log('ViewController.nodeWillBecomeActive');
 			if (!node.view) {
-				node.view = new F5.View(node);
+				buildViewForNode(node);
 				if (node === F5.Global.flow.root) {
 					applicationFrame.appendChild(node.view.el);
 				} else {
 					node.parent.view.el.querySelector('[class=container]').appendChild(node.view.el);												
 				}
 			}
-			// TODO: call viewWillBecomeActive recursively
+			
+			doLifecycleEventRecursive(node, 'viewWillBecomeActive');		
 		};				
 		
 		this.start = function () {	
-			F5.Global.flow.root.view = new F5.View(flow.root);
+			buildViewForNode(F5.Global.flow.root);
 			
 			applicationFrame.appendChild(F5.Global.flow.root.view.el);
 			
@@ -181,8 +195,6 @@ define('viewcontroller', exports, function (exports) {
 		};
 		
 		this.doSelection = function (node, id, cb) {
-			console.log('ViewController.doSelection');	
-			
 			if (F5.Global.navigationController) {
 				F5.Global.navigationController.doSelection(node, id);
 			}				
@@ -194,15 +206,13 @@ define('viewcontroller', exports, function (exports) {
 			var oldEl = document.getElementById(node.selection.path);
 			var newEl = document.getElementById(node.children[id].path);
 			
-			// TODO: get animation name from mapping			
+			// TODO: get animation name from the node		
 			F5.Animation.fadeIn(node.view.el, oldEl, newEl, function () {
 				cb();
 			});			
 		};
 						
 		this.doTransition = function (container, id, to, animation, cb) {
-			console.log('ViewController.doTransition');	
-			
 			if (F5.Global.navigationController) {
 				F5.Global.navigationController.doTransition(container, id, to);
 			}																			
@@ -235,7 +245,7 @@ define('viewcontroller', exports, function (exports) {
 			});	
 		};		
 		
-		// called in a willBecomeActive context to conditionally pick a starting screen
+		// called in a willBecomeActive context to conditionally pick a starting view
 		this.syncSet = function (node) {
 			if (F5.Global.navigationController) {
 				F5.Global.navigationController.syncSet(node);
@@ -266,12 +276,10 @@ define('viewcontroller', exports, function (exports) {
 				subflow.view.el.style.visibility = 'hidden';
 				subflow.view.el.removeEventListener('webkitAnimationEnd', fadeComplete);
 			}
-			if (subflow.userInput) {
-				subflow.view.el.style.opacity = 0;
-				subflow.view.el.style['pointer-events'] = '';
+			subflow.view.el.style.opacity = 0;
+			subflow.view.el.style['pointer-events'] = '';
 
-				subflow.view.el.addEventListener('webkitAnimationEnd', fadeComplete);				
-			}
+			subflow.view.el.addEventListener('webkitAnimationEnd', fadeComplete);				
 		};
 				
 		this.doSubflowChoice = function (subflow, choice) {
@@ -279,11 +287,10 @@ define('viewcontroller', exports, function (exports) {
 				subflow.view.el.style.visibility = 'hidden';
 				subflow.view.el.removeEventListener('webkitAnimationEnd', fadeComplete);
 			}
-			if (subflow.userInput) {
-				subflow.view.el.addEventListener('webkitAnimationEnd', fadeComplete);
-				subflow.view.el.style['pointer-events'] = '';
-				subflow.view.el.style.opacity = 0;				
-			}
+
+			subflow.view.el.addEventListener('webkitAnimationEnd', fadeComplete);
+			subflow.view.el.style['pointer-events'] = '';
+			subflow.view.el.style.opacity = 0;				
 						
 			var nextSubflow = subflow.choices[choice];
 			if (nextSubflow.userInput) {

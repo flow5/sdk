@@ -84,9 +84,9 @@ define('flow_diags', exports, function (exports) {
 				obj.forEach(function (id, child) {
 					if (child && typeof child === 'object') {
 						// break cycles and use paths to indicate references
-						if (id === 'parent' || id === 'selection' || id === 'node' || id === 'to') {
+						if (id === 'parent' || id === 'selection' || id === 'node' || id === 'to' || id === 'back') {
 							copy[id] = '[-> ' + child.path + ']';
-						} else if (id !== 'view') {
+						} else if (id !== 'view' && id !== 'flowDelegate') {
 							copy[id] = copyForPrettyPrintRecursive(child, id);
 						}
 					} else {

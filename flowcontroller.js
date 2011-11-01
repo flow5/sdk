@@ -390,23 +390,21 @@ define('flowcontroller', exports, function (exports) {
 			subflow.active = true;
 			node.activeSubflow = subflow;
 			
-			// TODO: if there's not supposed to be user input but there's no flow delegate, go ahead
-			// and put up the standard input dialog anyway
-			if (subflow.userInput) {
+			
+			var delegateMethod = node.flowDelegate ? node.flowDelegate[subflow.method] : null;
+			if (!delegateMethod) {
+				delegateMethod = F5.Global.flow.root.flowDelegate ? F5.Global.flow.root.flowDelegate[subflow.method] : null;
+			}
+						
+			if (subflow.userInput || !delegateMethod) {
 				if (F5.Global.viewController) {
 					F5.Global.viewController.startSubflow(node.activeSubflow);
 				} else {
 					// TODO: need to sort out for headless testing
 					doSubflowPrompt(node);												
 				}				
-			} else {
-				var method = node.flowDelegate ? node.flowDelegate[subflow.method] : null;
-				if (!method) {
-					method = F5.Global.flow.root.flowDelegate ? F5.Global.flow.root.flowDelegate[subflow.method] : null;
-				}
-				
-				F5.assert(method, 'No flowDelegate for method: ' + subflow.method);
-				method(node, function (choice) {
+			} else {				
+				delegateMethod(node, function (choice) {
 					that.doSubflowChoice(node, choice);
 					console.log(choice);
 				});				
