@@ -94,6 +94,7 @@ define('ui', exports, function (exports) {
 		}
 	}
 	
+	// TODO: save the callback on the div
 	function addTouchListener(el, cb) {
 		el.addEventListener(startEventName(), cb);
 	}
@@ -220,11 +221,11 @@ define('ui', exports, function (exports) {
 			F5.Global.navigationControllerConfiguration = configuration;
 		}				
 
-		F5.UI.Utils.addTouchListener(leftButtonEl, function () {
+		F5.UI.addTouchListener(leftButtonEl, function () {
 			F5.Global.navigationControllerConfiguration.left.action();
 		});																					
 
-		F5.UI.Utils.addTouchListener(rightButtonEl, function () {
+		F5.UI.addTouchListener(rightButtonEl, function () {
 			F5.Global.navigationControllerConfiguration.right.action();
 		});																					
 
@@ -254,28 +255,35 @@ define('ui', exports, function (exports) {
 	// created programmatically from the switcher default view. Should all go through the same method
 	function Tabset() {
 		
-		this.construct = function (el, ids, cb) {
+		this.construct = function () {
+			var that = this;
+			
 			var tabset = document.createElement('div');
 			tabset.className = 'tabset';
-			el.insertBefore(tabset);
+			that.el.insertBefore(tabset);
 			
-			var tabs = {};
-
-			ids.forEach(function (id) {
+			that.tabs = {};
+			
+			that.el.querySelectorAll('[f5_tab]').forEach(function (el) {
+				var id = el.getAttribute('f5_tab');
+				
 				var tab = document.createElement('div');
 				tab.className = 'tab';
 				tab.innerHTML = id;
-				tab.setAttribute('f5_id', id);
+				that.tabs[id] = tab;
+
 				tabset.appendChild(tab);
 
-				F5.UI.Utils.addTouchListener(tab, function (e) {
-					cb(id);
-				});
-				
-				tabs[id] = tab;
-			});	
-			
-			this.tabs = tabs;				
+				F5.UI.addTouchListener(tab, function (e) {
+					if (that.action) {
+						that.action(id);
+					}
+				});				
+			});			
+		};
+		
+		this.setAction = function (cb) {
+			this.action = cb;
 		};
 		
 		this.select = function (selection) {
@@ -305,6 +313,9 @@ define('ui', exports, function (exports) {
 				e.stopPropagation();
 			});
 			this.el.addEventListener(stopEventName(), function (e) {
+				// TODO: if stop event is outside div, don't fire
+				// however, pointInElement fails if there's a transform because
+				// the event coordinates don't know about the transform
 //				if (startTime && pointInElement(that.el, eventLocation(e))) {
 				if (startTime) {
 					that.el.style.color = 'black';
@@ -322,21 +333,29 @@ define('ui', exports, function (exports) {
 			});	
 		};
 	}
+	
+	var widgetPrototypes = {
+		Button: new Button(),
+		Tabset: new Tabset()
+	};
+	
+	function attachWidget(el) {
+		var type = el.getAttribute('f5_widget');
+		F5.assert(widgetPrototypes[type], 'No widget: ' + type);
+		var widget = F5.object(widgetPrototypes[type]);
+		widget.el = el;
+		el.widget = widget;
+		widget.construct();		
+	}
 		
 	F5.UI = {
-		Widgets: {
-			button: new Button(),
-			tabset: new Tabset()
-		},
-		Utils: {
-			attachNavbar: attachNavbar,
-			attachTracker: attachTracker,
-			startEventName: startEventName,
-			stopEventName: stopEventName,
-			moveEventName: moveEventName,
-			addTouchListener: addTouchListener,
-			addMoveListener: addMoveListener,
-			addStopListener: addStopListener					
-		}
+		attachWidget: attachWidget,
+		attachNavbar: attachNavbar,
+		attachTracker: attachTracker,
+		startEventName: startEventName,
+		stopEventName: stopEventName,
+		moveEventName: moveEventName,
+		addTouchListener: addTouchListener,
+		addMoveListener: addMoveListener,
 	};
 });

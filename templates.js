@@ -39,16 +39,12 @@ define('templates', exports, function (exports) {
 			widgetEls.push(instance);
 		}
 
-		var nodes = instance.querySelectorAll('[f5_widget]');
-		for (var i = 0; i < nodes.length; i += 1) {
-			widgetEls.push(nodes.item(i));
-		}		
+		instance.querySelectorAll('[f5_widget]').forEach(function (el) {
+			widgetEls.push(el);			
+		});
 		
 		widgetEls.forEach(function (el) {
-			var widget = F5.object(F5.UI.Widgets[el.getAttribute('f5_widget')]);
-			widget.el = el;
-			el.widget = widget;
-			widget.construct();
+			F5.UI.attachWidget(el);
 		});
 		
 		return instance;

@@ -33,6 +33,22 @@ body {
 	display: -webkit-box;	
 }
 
+@media screen and (max-width: 320px)
+{
+	.device #screen {
+		width:320px;
+		height:460px;
+	}
+}
+ 
+@media screen and (min-width: 321px)
+{
+	.device #screen {
+		width:480px;
+		height:300px;
+	}
+}
+
 .container {
 	display: -webkit-box;
 	-webkit-box-flex: 1;

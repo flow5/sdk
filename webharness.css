@@ -99,23 +99,6 @@
 	-webkit-transform: translate3d(0px, 0px, 0px);
 }
 
-@media screen and (max-width: 320px)
-{
-	.device #screen {
-		width:320px;
-		height:460px;
-	}
-}
- 
-@media screen and (min-width: 321px)
-{
-	.device #screen {
-		width:480px;
-		height:300px;
-	}
-
-}
-
 #screen {
 	margin-left:30px;
 	margin-right:30px;

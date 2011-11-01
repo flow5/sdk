@@ -44,7 +44,7 @@ define('defaultviewdelegates', exports, function (exports) {
 						subflowEl.className = 'do-subflow';
 						subflowsEl.appendChild(subflowEl);	
 
-						F5.UI.Utils.addTouchListener(subflowEl, function () {
+						F5.UI.addTouchListener(subflowEl, function () {
 							F5.Global.flowController.doSubflow(node, id);
 						});						
 					}
@@ -66,7 +66,7 @@ define('defaultviewdelegates', exports, function (exports) {
 					transitionEl.className = 'do-transition';
 					transitionsEl.appendChild(transitionEl);	
 
-					F5.UI.Utils.addTouchListener(transitionEl, function () {
+					F5.UI.addTouchListener(transitionEl, function () {
 						F5.Global.flowController.doTransition(node, id);
 					});
 
@@ -82,15 +82,16 @@ define('defaultviewdelegates', exports, function (exports) {
 		
 	function SwitcherViewDelegate() {
 		this.initialize = function (el, node) {
-			var ids = [];
-			node.children.forEach(function (id) {
-				ids.push(id);
+			node.children.forEach(function (id, child) {
+				child.view.el.setAttribute('f5_tab', id);
 			});			
-			this.tabset = F5.object(F5.UI.Widgets.tabset);			
-			this.tabset.construct(el, ids, function (id) {
-				F5.Global.flowController.doSelection(node, id);
-			});	
-			this.tabset.select(node.selection.id);					
+			el.setAttribute('f5_widget', 'Tabset');
+			
+			F5.UI.attachWidget(el);
+			el.widget.setAction(function (id) {
+				F5.Global.flowController.doSelection(node, id);				
+			});
+			el.widget.select(node.selection.id);
 			
 			var div = document.createElement('div');
 			div.className = 'nodelabel';
@@ -99,7 +100,7 @@ define('defaultviewdelegates', exports, function (exports) {
 		};
 		
 		this.doSelection = function (node, id) {
-			this.tabset.select(id);
+			node.view.el.widget.select(id);
 		};
 	}
 		
@@ -112,6 +113,7 @@ define('defaultviewdelegates', exports, function (exports) {
 		};
 	}
 		
+	// TODO: get rid of this and use F5.UI to post the appropriate picker widget
 	function SubflowViewDelegate() {
 		this.initialize = function (el, subflow) {			
 			var div = document.createElement('div');
@@ -128,7 +130,7 @@ define('defaultviewdelegates', exports, function (exports) {
 				choiceEl.className = 'do-choice';
 				choicesEl.appendChild(choiceEl);	
 								
-				F5.UI.Utils.addTouchListener(choiceEl, function () {
+				F5.UI.addTouchListener(choiceEl, function () {
 					F5.Global.flowController.doSubflowChoice(subflow.node, id);
 				});
 							

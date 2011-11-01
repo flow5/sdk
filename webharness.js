@@ -40,7 +40,7 @@ define('webharness', exports, function (exports) {
 			viewerbuttonEl = document.getElementById('viewerbutton'),			
 			backbuttonEl = document.getElementById('backbutton');
 
-		F5.UI.Utils.attachTracker(svgframeEl);
+		F5.UI.attachTracker(svgframeEl);
 
 		function setStyles(el, styles) {
 			styles.forEach(function (id, value) {
@@ -100,11 +100,9 @@ define('webharness', exports, function (exports) {
 				document.getElementById('graph1').querySelector('polygon').setAttribute('stroke', '');
 
 				// the clickable elements have id with / prefix
-				var clickable = document.querySelectorAll('[id^="svg-"]');
-				for (var i = 0; i < clickable.length; i += 1) {
-					makeClick(clickable[i]);
-				}
-
+				document.querySelectorAll('[id^="svg-"]').forEach(function (el) {
+					makeClick(el);
+				});
 
 				// determine the offset of the current node
 				var activeLeafNode = F5.Global.flow.diags.getActiveLeafNode();

@@ -228,6 +228,8 @@ define('viewcontroller', exports, function (exports) {
 				method = id === 'back' ? 'pushRight' : 'pushLeft';
 			}			
 			F5.Animation[method](containerElement, oldEl, newEl, function () {
+				cb();
+				
 				function deleteViewsRecursive(node) {
 					delete node.view;
 					if (node.children) {
@@ -241,7 +243,6 @@ define('viewcontroller', exports, function (exports) {
 					deleteViewsRecursive(oldNode);
 					containerElement.removeChild(oldEl);
 				}				
-				cb();
 			});	
 		};		
 		
