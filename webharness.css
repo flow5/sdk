@@ -43,6 +43,7 @@
 	-webkit-box-orient: vertical;
 	position: relative;
 	border-left: 4px double black;	
+	-webkit-user-select: none;			
 }
 
 .device #viewerFrame {
@@ -53,7 +54,7 @@
 	overflow: hidden;
 	-webkit-box-flex:1.0;
 	position:relative;
-	display: -webkit-box;	
+	display: -webkit-box;
 }
 
 .errorframe {
@@ -69,12 +70,12 @@
 	position: relative;
 }
 
-#appframe * {
+#appframe {
 	/* for browser dev. keeps images from getting drag events and screwing up swipes */
 	-webkit-user-drag: none;
 
 	/* prevent text selection */
-//	-webkit-user-select:none;
+	-webkit-user-select:none;
 }
 
 #viewerbutton {
@@ -96,7 +97,7 @@
 	position: absolute;
 	
 	-webkit-transition: -webkit-transform ease-in .15s;
-	-webkit-transform: translate3d(0px, 0px, 0px);
+	-webkit-transform: translate3d(0px, 0px, 0px);	
 }
 
 #screen {
@@ -125,6 +126,7 @@
 	border: 1px solid black;
 	overflow: scroll;
 	-webkit-box-sizing: border-box;
+	-webkit-user-select: auto;				
 }
 
 #jsonbutton, #backbutton, #framesbutton, #resetbutton {

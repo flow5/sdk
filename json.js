@@ -126,8 +126,13 @@ define('json', exports, function (exports) {
 
 			json.forEach(function (prop,obj) {
 		        hasContents = true;
-		        output += '<li><span class="prop"><span class="q">"</span>' + that.jsString(prop) +
-		        '<span class="q">"</span></span>: ' + that.valueToHTML(json[prop]);
+
+				// NOTE: the q class hides the quotes which makes search difficult since they're really there
+//		        output += '<li><span class="prop"><span class="q">"</span>' + that.jsString(prop) +
+//		        '<span class="q">"</span></span>: ' + that.valueToHTML(json[prop]);
+				output += '<li><span class="prop"><span class="string">"</span>' + that.jsString(prop) +
+				'<span class="string">"</span></span>: ' + that.valueToHTML(json[prop]);
+
 		        if (numProps > 1) {
 		            output += ',';
 		        }

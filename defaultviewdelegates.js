@@ -126,7 +126,7 @@ define('defaultviewdelegates', exports, function (exports) {
 		};
 	}
 		
-	// TODO: get rid of this and use F5.UI to post the appropriate picker widget
+	// TODO: get rid of this and have the view controller use F5.UI to post the appropriate picker widget
 	function SubflowViewDelegate() {
 		this.initialize = function (el, subflow) {			
 			var div = document.createElement('div');
