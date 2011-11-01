@@ -104,22 +104,16 @@ define('flow', exports, function (exports) {
 					var id;
 					if (typeof transition === 'object') {
 						id = transition.to;
-						if (id === 'back') {
-							node.transitions[id] = {animation: transition.animation};													
-						} else {
-							node.transitions[id] = {to: findNodeUp(node, id), animation: transition.animation};																				
-						}
+						node.transitions[id] = {to: findNodeUp(node, id), animation: transition.animation};																				
 					} else {
 						id = transition;
 						node.transitions[id] = {to: findNodeUp(node, id)};						
 					}
 					
 					// break cycles
-					if (id !== 'back') {
-						if (!node.transitions[id].to.transitions) {
-							resolveTransitionsRecursive(node.transitions[id].to);							
-						}						
-					}
+					if (!node.transitions[id].to.transitions) {
+						resolveTransitionsRecursive(node.transitions[id].to);							
+					}						
 				});
 			}
 							

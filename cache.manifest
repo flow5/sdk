@@ -1,6 +1,6 @@
 CACHE MANIFEST
 
-#2
+#3
 
 NETWORK:
 
@@ -35,6 +35,7 @@ apps/jitc/manifest.js
 apps/jitc/splash.png
 apps/jitc/templates.html
 apps/jitc/viewdelegates.js
+apps/jitc/iscroll-lite.js
 apps/jitc/images/baby.png
 apps/jitc/images/ellen.png
 apps/jitc/images/jitc-logo.png
