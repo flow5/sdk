@@ -212,7 +212,7 @@ define('viewcontroller', exports, function (exports) {
 			});			
 		};
 						
-		this.doTransition = function (container, id, to, animation, cb) {
+		this.doTransition = function (container, node, id, to, animation, cb) {
 			if (F5.Global.navigationController) {
 				F5.Global.navigationController.doTransition(container, id, to);
 			}																			
@@ -223,15 +223,41 @@ define('viewcontroller', exports, function (exports) {
 			var oldEl = oldNode.view.el;
 			var newEl = to.view.el;
 			
-			var method = animation;
-			if (!method)  {
-				method = id === 'back' ? 'pushRight' : 'pushLeft';
+			
+			// TODO: move to Animation module
+			function inverseAnimation(animation) {
+				var inverse;
+				switch (animation) {
+				case 'fadeIn':
+					inverse = 'fadeIn';
+					break;
+				case 'pushRight':
+					inverse = 'pushLeft';
+					break;
+				case 'pushLeft':
+					inverse = 'pushRight';
+					break;
+				}
+				
+				return inverse;
+			}
+			if (id === 'back') {
+				animation = inverseAnimation(node.animation);
 			}			
-			F5.Animation[method](containerElement, oldEl, newEl, function () {
+			if (!animation)  {
+				animation = 'pushLeft';
+			}
+			if (id !== 'back') {
+				to.animation = animation;
+			}
+			
+						
+			F5.Animation[animation](containerElement, oldEl, newEl, function () {
 				cb();
 				
 				function deleteViewsRecursive(node) {
 					delete node.view;
+					delete node.animation;
 					if (node.children) {
 						node.children.forEach(function (id, child) {
 							deleteViewsRecursive(child);

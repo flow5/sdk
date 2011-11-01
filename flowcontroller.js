@@ -275,15 +275,13 @@ define('flowcontroller', exports, function (exports) {
 			cancelSubflowRecursive(node);		
 			
 			var target = id === 'back' ? backNode.back : node.transitions[id].to;
-			
-			// TODO: move all animation logic up to the viewcontroller layer
 			var animation = node.transitions && node.transitions[id] ? node.transitions[id].animation : null;
 			
 			// TODO: call nodeWillBecomeInactive
 			nodeWillBecomeInactive(node, function () {
 				nodeWillBecomeActive(target, function () {			
 					if (F5.Global.viewController) {
-						F5.Global.viewController.doTransition(container, id, target, animation, complete);										
+						F5.Global.viewController.doTransition(container, node, id, target, animation, complete);										
 					} else {
 						complete();
 					}			
