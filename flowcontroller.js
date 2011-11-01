@@ -85,6 +85,15 @@ define('flowcontroller', exports, function (exports) {
 				cb();
 			});
 		}									
+
+		function nodeWillBecomeInactive(node, cb) {								
+			if (F5.Global.viewController) {
+				F5.Global.viewController.nodeWillBecomeInactive(node);
+			}
+			doLifecycleSubflowRecursive('willBecomeInactive', node, function () {
+				cb();
+			});
+		}									
 		
 		// TODO: move this to debug layer
 		function doSubflowPrompt(node) {
@@ -174,15 +183,15 @@ define('flowcontroller', exports, function (exports) {
 				}						
 				cancelSubflowRecursive(node);
 				
-				// TODO: call nodeWillBecomeInactive
-				
-				nodeWillBecomeActive(node.children[id], function () {
-					if (F5.Global.viewController) {
-						F5.Global.viewController.doSelection(node, id, completeSelection);
-					} else {
-						completeSelection();
-					}												
-				});				
+				nodeWillBecomeInactive(oldSelection, function () {
+					nodeWillBecomeActive(node.children[id], function () {
+						if (F5.Global.viewController) {
+							F5.Global.viewController.doSelection(node, id, completeSelection);
+						} else {
+							completeSelection();
+						}												
+					});									
+				});
 			} else {
 				cb();
 			}
@@ -271,14 +280,15 @@ define('flowcontroller', exports, function (exports) {
 			var animation = node.transitions && node.transitions[id] ? node.transitions[id].animation : null;
 			
 			// TODO: call nodeWillBecomeInactive
-			
-			nodeWillBecomeActive(target, function () {			
-				if (F5.Global.viewController) {
-					F5.Global.viewController.doTransition(container, id, target, animation, complete);										
-				} else {
-					complete();
-				}			
-			});		
+			nodeWillBecomeInactive(node, function () {
+				nodeWillBecomeActive(target, function () {			
+					if (F5.Global.viewController) {
+						F5.Global.viewController.doTransition(container, id, target, animation, complete);										
+					} else {
+						complete();
+					}			
+				});				
+			});
 		};	
 				
 		that.doSubflowChoice = function (node, id) {	
