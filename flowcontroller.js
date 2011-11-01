@@ -151,13 +151,14 @@ define('flowcontroller', exports, function (exports) {
 				node.selection.active = false;
 				node.selection = node.children[id];
 				
+				// TODO: should thse delay the callback?
+
 				nodeDidBecomeInactive(oldSelection, function () {
 					
 				});
 							
 				nodeDidBecomeActive(node.selection, function () {
-					// TODO: does this delay the selection?
-					// I don't think so.
+
 				});
 
 				that.observer();	
@@ -165,14 +166,15 @@ define('flowcontroller', exports, function (exports) {
 				cb();			
 			}					
 
-			if (node.selection !== node.children[id]) {
-						
+			if (node.selection !== node.children[id]) {						
 				if (!cb) {
 					cb = function () {
-						console.log('selection complete');
+//						console.log('selection complete');
 					};
 				}						
 				cancelSubflowRecursive(node);
+				
+				// TODO: call nodeWillBecomeInactive
 				
 				nodeWillBecomeActive(node.children[id], function () {
 					if (F5.Global.viewController) {
@@ -187,7 +189,6 @@ define('flowcontroller', exports, function (exports) {
 		};
 				
 		// use the transition on the node with the given id 
-		// NOTE: parameters are specified in the flowgraph
 		that.doTransition = function (node, id, cb) {
 			F5.assert(node.type === 'flow' || node.type === 'set', 
 				'Can only doTransition on node of types flow or set');			
@@ -198,7 +199,7 @@ define('flowcontroller', exports, function (exports) {
 			
 			if (!cb) {
 				cb = function () {
-					console.log('transition complete');
+//					console.log('transition complete');
 				};
 			}
 
@@ -247,16 +248,14 @@ define('flowcontroller', exports, function (exports) {
 					container.selection = node.transitions[id].to;
 				}		
 				
+				// TODO: should these delay the callback?
+
 				nodeDidBecomeInactive(oldSelection, function () {
-					// TODO: does this delay the selection?
-					// I don't think so
-					// TODO: maybe allow passing null here. otherwise pretty confusing
+
 				});						
 								
 				nodeDidBecomeActive(container.selection, function () {
-					// TODO: does this delay the selection?
-					// I don't think so
-					// TODO: maybe allow passing null here. otherwise pretty confusing
+
 				});		
 					
 				that.observer();					
@@ -264,10 +263,15 @@ define('flowcontroller', exports, function (exports) {
 				cb();
 			}
 			
-			cancelSubflowRecursive(node);			
+			cancelSubflowRecursive(node);		
 			
 			var target = id === 'back' ? backNode.back : node.transitions[id].to;
+			
+			// TODO: move all animation logic up to the viewcontroller layer
 			var animation = node.transitions && node.transitions[id] ? node.transitions[id].animation : null;
+			
+			// TODO: call nodeWillBecomeInactive
+			
 			nodeWillBecomeActive(target, function () {			
 				if (F5.Global.viewController) {
 					F5.Global.viewController.doTransition(container, id, target, animation, complete);										
@@ -280,11 +284,10 @@ define('flowcontroller', exports, function (exports) {
 		that.doSubflowChoice = function (node, id) {	
 			F5.assert(node.activeSubflow, 'No active subflow');
 
-			console.log('choose: ' + id);
+//			console.log('choose: ' + id);
 			F5.assert(node.activeSubflow.choices.hasOwnProperty(id), 'No such choice');	
-			
-			
-			// TODO: does this need to be asynchronous?
+						
+			// TODO: does this need to be asynchronous?			
 			// give the flow delegate a chance to do something with the result
 			if (node.activeSubflow.userInput) {
 				var name = node.activeSubflow.method + 'Choice';
@@ -295,7 +298,7 @@ define('flowcontroller', exports, function (exports) {
 				if (method) {
 					method(node, id);
 				} else {
-					console.log('No flowDelegate for method: ' + name);
+//					console.log('No flowDelegate for method: ' + name);
 				}							
 			}					
 
@@ -406,7 +409,7 @@ define('flowcontroller', exports, function (exports) {
 			} else {				
 				delegateMethod(node, function (choice) {
 					that.doSubflowChoice(node, choice);
-					console.log(choice);
+//					console.log(choice);
 				});				
 			}				
 

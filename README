@@ -30,6 +30,7 @@
 
 * Install
 
+graphviz
 nodejs
 nodelint
 paperboy
@@ -39,8 +40,6 @@ https://github.com/mkitt/nodelint.tmbundle
 TODO: list npm installs required
 
 	npm install json-command
-
-https://github.com/jamiew/jsonview-chrome
 	
 * Usage
 
@@ -48,209 +47,112 @@ DOT visualization
 
 in browser:
 
-	host/webharness.html?app=APP_NAME
+	http://localhost:8008/webharness.html?app=APPNAME
 	
 command line:
 
-	node nodharness.js 2>&1 >/dev/null | chrome
+	node nodharness.js 2>&1 >/dev/null
 	
 	
-Chrome flags:
 
-	/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --allow-file-access-from-files	
+***** BASICS (w.i.p) *****
+	
+	An application is constructed by creating
+
+		1) a flowspec
+		2) flow delegates
+		3) view delegates
+		4) html templates
+	
+	1) The core of the application is the flow spec
+	
+		The flow spec defines all of the application flow logic by specifying a hierarchical set of nodes
+		These nodes are used to generate the HTML DOM scaffolding 
 	
 	
-	4 types of nodes: set, switcher, flow, subflow. default (and most common) is flow
+		There are 4 types of nodes: set, switcher, flow, subflow. default (and most common) is flow
 	
-	set is the base type and allows transition or selection semantics
-	flow is a restricted type of set that assumes every forward transition has a back transition
-		for flows, the framework will record the from location of every transition and install it on the target node
-		also, in a flow, the framework can dispose of views when going back. in a set the framework cannot
-		so it doesn't release the views until the set is exited
-	switcher is a restricted type of set that does not allow transitions between nodes
-		for switchers, the framework will create a UI element for the node. this is customizable TBD
-	subflow is a restricted type of node that is used only within the subflow decision tree
+		- set is the base type and allows transition or selection semantics
+
+		- flow is a restricted type of set that assumes every forward transition has a back transition
+			for flows, the framework will record the from location of every transition and install it on the target node
+			also, in a flow, the framework can dispose of views when going back. in a set the framework cannot
+			so it doesn't release the views until the set is exited
+	
+		- switcher is a restricted type of set that does not allow transitions between nodes
+			for switchers, the framework will create a UI element for the node. this is customizable TBD
+	
+		- subflow is a restricted type of node that is used only within the subflow decision tree
 		
+	2) flow delegates implement application specific behaviors. these include
+	
+		- lifecycle events
+		- subflow methods
+		- application specific functions
+	
+	3) view delegates are used to customize the presentation of nodes
+	
+		view delegates may implement methods for the life cycle events:
+	
+		- initialize
+		called before the view element has been inserted into the DOM
+	
+		- viewWillBecomeActive
+		called after the view element has been inserted into the DOM but before it has been presented
+	
+		- viewWillBecomeInactive
+		called before the view element will be made 'inactive' note this does not necessarily mean it will not be visible
+	
+		- viewDidBecomeActive
+		called after the view element has been presented and the associated node is active
+	
+		- viewDidBecomeInactive
+		called after the view element has been made inactive. note this does not necessarily mean it will not be visible
+	
+		- release (TBD)
+		called after the view element has been removed from the DOM
 	
 	
-	a nodespec may either be an object literal or a nodespec template name
-		if a template name the template is resolved by climbing the hierarchy and examining
-	probably: a node spec may also be a function which evaluates to a node literal (e.g. by using require)
+	4) html templates are used by view delegates
 	
-	a model may either be an object literal or a model template name
-		if a model name then the name is resolved by climbing the hierachy and examining the template section. . .
+		html templates may include any html
+		they may also use f5_widget attributes which will result in widgets being constructed and attached
+		to the DOM when the template is loaded
 		
 
-	customization is done through
-	1) definition of the flow spec
-	2) specification of flow delegates
-	3) specification of view delegates
+		An application causes its files to be included with its manifest.js file
 	
-	the application can add delegates to F5.ViewDelegates and F5.FlowDelegates
-	then the framework will attach instances of the delegate prototype to the node
+		flow and view delegates are registered with the framework by adding prototype objects to the F5.ViewDelegates and
+		F5.FlowDelegates name spaces
+
+		NOTE: delegates have a flat namespace based on nod ids. This works because while the same behaviors may
+		be present at different locations in the application, it's unlikely that it would be necessary or desirable
+		to have nodes with the same ID but different behaviors
 	
-	DELEGATES are a flat namespace. This seems okay given that they refer to behaviors rather than locations
-		in the flow. i.e., there may be multiple nodes with the same id, but it's unlikely that it would be 
-		necessary or even useful to have nodes with the same ids but with different behaviors.
-			
-	delegates implement the following lifecycle calls:
 	
-		initialize
-		willBecomeActive
-		willBecomeInactive
-		didBecomeActive
-		didBecomeInactive
-		(possibly) release
-	
-	there is no notion of an application controller. the root flow delegate manages application lifecycle
-	
-	SUBFLOWS
+	Other concepts:
+		
+	Subflows
 	
 		subflows may be of either user input or non user input types
-		when user input, a corresponding controller method is called with the result of the user input
-		a subflow may reference either the associated flow controller delegate for the node or the root flow controller
+		when no user input is specified, the framework looks for a delegate method for the subflow's node
+		if there is none, then it looks to the root delegate for a method
 		
-		
-		
-	TRANSITIONS
+		when user input is required, the viewcontroller will create an appropriate user interface element
+		when the user has made a choice, a corresponding Choice method is called on the delegate for the node
+		or the root delegate with the users's choice
+
+		a subflow may terminate with null or with a name. if null, control is returned to the current node
+		if a name, then a transition or selection is executed to the named target		
+				
+	Transitions
 	
 		each node can specify a list of transitions. each item in the list may be
 		1) a string with the name of the node which is the target of the transition
 		2) and object with to: the name of the transition target and animation: the name of the animation to use
 		
 		
-	WIDGETS
+	Widgets
 	
-		widgets are bits of javascript that control a div. they do not know about
-		
-		
-	SUBFLOW WIDGETS
-	
-		subflow views are simple widgets with a uniform interface: here is the node id and the choices (which can
-		be localized or mapped through a string table) and give back the response
-		
-		
-	
-	
-	TODO: CLEAN THIS UP
-
-	SCHEMA
-
-	(root): node
-		type: switcher|flow|subflow
-		active: id 
-		templates
-			nodes
-		children
-			nodes
-			alises (parser will go through templates until it finds a template with that name)
-		transitions
-			to: id (parser will go up until it finds a node with that name)
-
-
-
-
-	subflows
-		subflows allow flowchart semantics to be attached to states
-		subflows are a linked series of controller actions where the result of one action triggers the next
-			callbacks are async
-			default behavior is to request data from the user
-			client may provide a subflow controller (uses same mapping logic) to delegate subflow actions
-				to examine the data model
-				to request data from a server
-
-		the subflow has a reference to the node that uses it
-
-		logically a subflow operates within a state
-
-		a subflow may terminate in null in which case control returns to the node
-		or it may terminate in a string in which case:
-
-		- if the node is a flow the string is used as the argument to doTransition
-		- if the node is a switcher the string is used as the argument to doSelection
-
-		a special subflow called didBecomeActive is executed recursively when a node is selected or transitioned to
-		this allows logic to execute before user interaction can occur
-
-		one complex case is when an didBecomeActive subflow ends in a transition or selection. when this occurs,
-		the didBecomeActive recursion is terminated becuase the transition or selection will trigger didBecomeActive
-		for the newly active node
-
-	Flow Documentation
-
-	- each step in the flow can have:
-
-		- selection
-			legal only for switcher type step
-			activates a child
-			no interaction with controller
-
-		- transition
-			specifies the field of the data model which is passed
-				on step initialization, there's a hook to transform input parameters into a form that can be used this way
-				default behavior is that the input parameters to a step are used as its model			
-			passes parameters to a new step
-			no interaction with controller
-
-			transitions: {
-				viewSlideshow: {
-					to:'slideshow'
-					value:'selection'			
-				}
-			}
-
-			itemElement.addTapListener(function () {
-				step.setValue('selection',list[index]);
-				step.transition('viewSlideshow');		
-			});
-
-
-		- subflow
-			delegates to the controller method of that name
-			controller can do whatever it likes		
-				- perform a computation
-				- request user input
-				- request data from a network service
-				- examine the data model
-			calls back with result
-			result can be evaluated and further invocations can be chained into a decision tree
-
-
-	flowcontroller prototype is what does everything except the delegate methods which include
-		initialize
-		valueChange
-
-
-		static definition of a state represents the full state hierarchy at the time the state is entered
-
-
-		usually transitions and conditions will not be implemented on states of type selection or flow.
-		they usually are implemented
-		at the leaf node level
-
-
-
-		(maybe) group schema: state with multiple children all of which are active simultaneously
-			children
-
-
-			/*
-
-			Node controllers will probably just be initialized with approprate ID etc. and get their own 
-			parameter set. then they'll delegate through the singleton FlowController
-
-			FlowController manages the flow graph
-			It executions selections, transitions, subflows and arbitrary invocations on each node
-			On transitions the flow controller will construct a hierarchy of NodeControllers corresponding to the
-			nodes at that state. 
-			For subflows and invocations the controller will delegate to client provided delegate code (NodeControllerDelegate?)
-			Flow controller also manages transition state. e.g. during an async operation, the flow controller will 
-			indicate that there is a transition underway to lock out further operations
-
-			subflow rules:
-				can select away from a node that contains an active subflow
-				can't select or transition away from a node that has an ancestor with an active subflow
-
-
-
-			*/
+		widgets are javscript objects which control DOM subtrees and provide an interface to view delegates
+		widgets may rely on particular div structures and custom attributes within the DOM subtrees they control								

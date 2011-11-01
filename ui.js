@@ -221,11 +221,11 @@ define('ui', exports, function (exports) {
 			F5.Global.navigationControllerConfiguration = configuration;
 		}				
 
-		F5.UI.addTouchListener(leftButtonEl, function () {
+		addTouchListener(leftButtonEl, function () {
 			F5.Global.navigationControllerConfiguration.left.action();
 		});																					
 
-		F5.UI.addTouchListener(rightButtonEl, function () {
+		addTouchListener(rightButtonEl, function () {
 			F5.Global.navigationControllerConfiguration.right.action();
 		});																					
 
@@ -251,8 +251,9 @@ define('ui', exports, function (exports) {
 		};		
 	}	
 	
-	// TODO: fix asymmtery between Tabset and Button construction. This is because Tabset is being
-	// created programmatically from the switcher default view. Should all go through the same method
+	// Tabset works by looking for elements with f5_tab attribute set
+	// TODO: customize with images or alternate text
+	// TODO: can't really go querySelectorAll since there might be nested tab sets
 	function Tabset() {
 		
 		this.construct = function () {
@@ -274,7 +275,7 @@ define('ui', exports, function (exports) {
 
 				tabset.appendChild(tab);
 
-				F5.UI.addTouchListener(tab, function (e) {
+				addTouchListener(tab, function (e) {
 					if (that.action) {
 						that.action(id);
 					}
@@ -297,6 +298,7 @@ define('ui', exports, function (exports) {
 		};
 	}
 	
+	// TODO: 
 	function Button() {		
 		this.construct = function () {
 			// nothing to do yet
@@ -307,7 +309,7 @@ define('ui', exports, function (exports) {
 			var startTime;
 			var startLoc;
 			this.el.addEventListener(startEventName(), function (e) {
-				that.el.style.color = 'grey';
+				that.el.style.color = 'darkslategray';
 				startTime = Date.now();
 				startLoc = eventLocation(e);
 				e.stopPropagation();
@@ -347,15 +349,12 @@ define('ui', exports, function (exports) {
 		el.widget = widget;
 		widget.construct();		
 	}
+	
+	// TODO: unify all of the widgets under the same API
 		
 	F5.UI = {
 		attachWidget: attachWidget,
 		attachNavbar: attachNavbar,
-		attachTracker: attachTracker,
-		startEventName: startEventName,
-		stopEventName: stopEventName,
-		moveEventName: moveEventName,
-		addTouchListener: addTouchListener,
-		addMoveListener: addMoveListener,
+		attachTracker: attachTracker
 	};
 });

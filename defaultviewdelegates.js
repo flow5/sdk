@@ -28,6 +28,13 @@
 
 define('defaultviewdelegates', exports, function (exports) {
 	
+	function isLifecycleSubflow(id) {
+		return {didBecomeActive: true, 
+				didBecomeInactive: true, 
+				willBecomeActive: true, 
+				willBecomeInactive: true}[id];
+	}
+	
 	function FlowViewDelegate() {		
 		this.initialize = function (el, node) {
 			if (node.subflows) {
@@ -36,15 +43,18 @@ define('defaultviewdelegates', exports, function (exports) {
 				
 				var showSubflows = false;
 				node.subflows.forEach(function (id, subflow) {
-					if (id !== 'didBecomeActive') {
+					if (!isLifecycleSubflow(id)) {
 						showSubflows = true;
 						
 						var subflowEl = document.createElement('div');
 						subflowEl.innerHTML = id;
 						subflowEl.className = 'do-subflow';
+						subflowEl.setAttribute('f5_widget', 'Button');
 						subflowsEl.appendChild(subflowEl);	
+						
+						F5.UI.attachWidget(subflowEl);
 
-						F5.UI.addTouchListener(subflowEl, function () {
+						subflowEl.widget.setAction(function () {
 							F5.Global.flowController.doSubflow(node, id);
 						});						
 					}
@@ -63,13 +73,14 @@ define('defaultviewdelegates', exports, function (exports) {
 				node.transitions.forEach(function (id, transition) {
 					var transitionEl = document.createElement('div');
 					transitionEl.innerHTML = id;
+					transitionEl.setAttribute('f5_widget', 'Button');
 					transitionEl.className = 'do-transition';
 					transitionsEl.appendChild(transitionEl);	
 
-					F5.UI.addTouchListener(transitionEl, function () {
+					F5.UI.attachWidget(transitionEl);
+					transitionEl.widget.setAction(function () {
 						F5.Global.flowController.doTransition(node, id);
 					});
-
 				});				
 			}			
 			
@@ -89,7 +100,9 @@ define('defaultviewdelegates', exports, function (exports) {
 			
 			F5.UI.attachWidget(el);
 			el.widget.setAction(function (id) {
-				F5.Global.flowController.doSelection(node, id);				
+				F5.Global.flowController.doSelection(node, id, function () {
+					
+				});				
 			});
 			el.widget.select(node.selection.id);
 			
@@ -127,13 +140,14 @@ define('defaultviewdelegates', exports, function (exports) {
 			subflow.choices.forEach(function (id, choice) {
 				var choiceEl = document.createElement('div');
 				choiceEl.innerHTML = id;
+				choiceEl.setAttribute('f5_widget', 'Button');
 				choiceEl.className = 'do-choice';
-				choicesEl.appendChild(choiceEl);	
-								
-				F5.UI.addTouchListener(choiceEl, function () {
+				choicesEl.appendChild(choiceEl);
+				
+				F5.UI.attachWidget(choiceEl);									
+				choiceEl.widget.setAction(function () {
 					F5.Global.flowController.doSubflowChoice(subflow.node, id);
-				});
-							
+				});							
 			});					
 		};
 	}	

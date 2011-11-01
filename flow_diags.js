@@ -75,16 +75,25 @@ define('flow_diags', exports, function (exports) {
 			return node;
 		};		
 					
+		// creates JSON representation of the current Flow graph
 		flow.diags.toJSON = function () {
 			
 			var filteredCopy = {};
+			
+			function isReference(id) {
+				return {parent: true,
+						selection: true,
+						node: true,
+						to: true,
+						back: true}[id];
+			}
 			
 			function copyForPrettyPrintRecursive(obj, objId) {
 				var copy = {};
 				obj.forEach(function (id, child) {
 					if (child && typeof child === 'object') {
 						// break cycles and use paths to indicate references
-						if (id === 'parent' || id === 'selection' || id === 'node' || id === 'to' || id === 'back') {
+						if (isReference(id)) {
 							copy[id] = '[-> ' + child.path + ']';
 						} else if (id !== 'view' && id !== 'flowDelegate') {
 							copy[id] = copyForPrettyPrintRecursive(child, id);
@@ -100,7 +109,7 @@ define('flow_diags', exports, function (exports) {
 			return JSON.stringify(copyForPrettyPrintRecursive(flow.root, ''));
 		};
 
-		// creates DOT output representing the current Flow graph
+		// creates DOT representation of the current Flow graph
 		flow.diags.toDOT = function () {
 			
 			var that = this;
@@ -503,9 +512,6 @@ define('flow_diags', exports, function (exports) {
 			digraphStart();
 			
 			// create the nodes
-//			flow.root.children.forEach(function (id, node) {
-//				visitNodeRecursive(node, flow.root);
-//			});	
 			visitNodeRecursive(flow.root);
 			
 			// create the transition edges
