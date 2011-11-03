@@ -25,6 +25,11 @@
 
 ***********************************************************************************************************************/
 
+var WEBROOT = process.cwd();
+
+require.paths.push(process.cwd());	
+
+// nodelibs
 var http = require('http'),
 	fs = require('fs'),
 	cli = require('cli'),
@@ -33,14 +38,10 @@ var http = require('http'),
 	exec = require('child_process').exec,	 
 	spawn = require('child_process').spawn,	
 	url = require('url'),
-	generator = require('./generator'),
 	sys = require('sys');
-
-/*global Iuppiter*/
-require('./Iuppiter.js');
-
 	
-var WEBROOT = path.dirname(__filename);	
+// flow5 libs
+var generator = require('server/generator.js');	
 
 cli.setUsage("node devserv.js [OPTIONS]");
 
@@ -51,7 +52,9 @@ cli.parse({
 paperboy.contentTypes.manifest = 'text/cache-manifest';
 
 
-function dot2svg(req, res) {
+function dot2svg(req, res) {	
+	/*global Iuppiter*/
+//	require('Iuppiter.js');	
 		
 	var child = spawn('dot', ['-Tsvg']);		
 

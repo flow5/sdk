@@ -70,7 +70,7 @@ function generate(app) {
 	injectLink('apple-touch-icon', 'apps/' + app + '/icon.png');
 	injectLink('apple-touch-startup-image', 'apps/' + app + '/splash.png');
 	
-	document.body.innerHTML = fs.readFileSync('./body.html').toString();	
+	document.body.innerHTML = fs.readFileSync('server/body.html').toString();	
 
 	var templates = document.createElement('div');
 	templates.id = 'f5_templates';
@@ -104,13 +104,13 @@ function generate(app) {
 	}
 			
 
-	inject('./');
+	inject('');
 	
 	var init = document.createElement('script');
 	init.innerHTML = 'require("./f5.js")';
 	document.head.appendChild(init);
 	
-	inject('./apps/' + app + '/');
+	inject('apps/' + app + '/');
 	
 	var start = document.createElement('script');
 	start.src = 'start.js';
