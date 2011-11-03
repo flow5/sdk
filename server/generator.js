@@ -25,9 +25,55 @@
 
 ***********************************************************************************************************************/
 
-function generate(app) {
+var fs = require('fs');
 
-	var fs = require('fs');
+
+function generateCacheManifest(app) {
+	var cacheManifest = 'CACHE MANIFEST\n';
+	cacheManifest += 'CACHE:\n';
+	
+	var latestDate;
+	
+	function check(path) {
+		var modDate = new Date(fs.statSync(path).mtime);
+		if (!latestDate || modDate > latestDate) {
+			latestDate = modDate;
+		}
+	}
+	
+	function inject(path) {		
+		var manifest = require(path + 'manifest.js');
+		
+		manifest.scripts.forEach(function (file) {
+			cacheManifest += path + file + '\n';
+			check(path + file);
+		});
+
+		if (manifest.images) {
+			manifest.images.forEach(function (file) {
+				cacheManifest += path + file + '\n';
+				check(path + file);
+			});			
+		}
+
+		manifest.elements.forEach(function (file) {
+			check(path + file);
+		});		
+	}
+	
+	inject('');
+	inject('apps/' + app + '/');
+	
+	// TODO: slightly annoying
+	check('start.js');	
+	cacheManifest += 'start.js\n';
+			
+	cacheManifest += '#' + latestDate;
+	
+	return cacheManifest;
+}
+
+function generateHtml(app) {
 
 	var jsdom = require('jsdom');
 	jsdom.defaultDocumentFeatures = {
@@ -50,7 +96,6 @@ function generate(app) {
 			}
 		}		
 		document.head.appendChild(meta);
-		console.log(meta.outerHTML);
 	}
 	
 	// standard meta
@@ -127,4 +172,5 @@ function generate(app) {
 	return document.outerHTML;
 }
 
-exports.generate = generate;
+exports.generateHtml = generateHtml;
+exports.generateCacheManifest = generateCacheManifest;

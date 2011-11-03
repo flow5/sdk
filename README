@@ -32,27 +32,36 @@
 
 graphviz
 nodejs
-nodelint
-paperboy
+npm
+
 https://github.com/mkitt/nodelint.tmbundle
 	seems that it's necessary to symlink from the Support/bin/nodelint folder to the node lint installation location
-	
-TODO: list npm installs required
 
-	npm install json-command
-	
-* Usage
+node packages:
 
-DOT visualization
+json-command
+nodelint
+paperboy
+jsdom
+cli	
 
-in browser:
+Others?
 
-	http://localhost:8008/webharness.html?app=APPNAME
+
+** Usage
+
+To serve an application
+
+	From flow5 root
+		> node server/devserv.js
+
+	In browser:
+		http://HOSTNAME.local:8008/generate?app=APPNAME
 	
 command line:
 
-	node nodharness.js 2>&1 >/dev/null
-	
+	> node nodeharness.js 2>&1 >/dev/null | json
+		
 	
 
 ***** BASICS (w.i.p) *****

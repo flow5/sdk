@@ -49,8 +49,6 @@ cli.parse({
 	port: ['p', 'port', 'number'],
 });
 
-paperboy.contentTypes.manifest = 'text/cache-manifest';
-
 
 function dot2svg(req, res) {	
 	/*global Iuppiter*/
@@ -113,8 +111,12 @@ cli.main(function (args, options) {
 		case 'GET':
 			if (req.url.match('generate')) {
 				res.writeHead(200, {'Content-Type': 'text/html'});
-				res.write(generator.generate(url.parse(req.url, true).query.app));
+				res.write(generator.generateHtml(url.parse(req.url, true).query.app));
 				res.end();
+			} else if (req.url.match('cache.manifest')) {
+				res.writeHead(200, {'Content-Type': 'text/cache-manifest'});
+				res.write(generator.generateCacheManifest(url.parse(req.url, true).query.app));
+				res.end();				
 			} else {
 				paperboy
 					.deliver(WEBROOT, req, res)

@@ -1,5 +1,5 @@
 /**
- * Derived from jsonview by Benjamin Hollis
+ * Based on jsonview by Benjamin Hollis
  * 
  * https://github.com/bhollis/jsonview
  *
