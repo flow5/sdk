@@ -29,16 +29,22 @@
 define('webharness', exports, function (exports) {
 	
 	function attach(screenEl) {
-		var viewerEl = document.getElementById('viewer'),
-			viewerFrameEl = document.getElementById('viewerframe'),
-			appframeEl = document.getElementById('appframe'),
-			svgframeEl = document.getElementById('svgframe'),
-			jsonframeEl = document.getElementById('jsonframe'),
-			jsonbuttonEl = document.getElementById('jsonbutton'),
-			framesbuttonEl = document.getElementById('framesbutton'),
-			resetbuttonEl = document.getElementById('resetbutton'),
-			viewerbuttonEl = document.getElementById('viewerbutton'),			
-			backbuttonEl = document.getElementById('backbutton');
+		
+		var appframeEl = document.getElementById('appframe');
+
+		var viewerframeEl = F5.Templates.loadTemplate('viewerframe');
+		document.body.appendChild(viewerframeEl);
+
+		var viewerbuttonEl = F5.Templates.loadTemplate('viewerbutton');
+		document.body.appendChild(viewerbuttonEl);
+		
+		var viewerEl = viewerframeEl.querySelector('[f5_id=viewer]'),
+			svgframeEl = viewerframeEl.querySelector('[f5_id=svgframe]'),
+			jsonframeEl = viewerframeEl.querySelector('[f5_id=jsonframe]'),
+			jsonbuttonEl = viewerframeEl.querySelector('[f5_id=jsonbutton]'),
+			framesbuttonEl = viewerframeEl.querySelector('[f5_id=framesbutton]'),
+			resetbuttonEl = viewerframeEl.querySelector('[f5_id=resetbutton]'),
+			backbuttonEl = viewerframeEl.querySelector('[f5_id=backbutton]');
 
 		F5.UI.attachTracker(svgframeEl);
 
@@ -190,21 +196,21 @@ define('webharness', exports, function (exports) {
 			});																
 		}
 		viewerbuttonEl.addEventListener('click', function () {
-			if (viewerFrameEl.style.display === 'none') {
-				viewerFrameEl.style.display = '';
+			if (viewerframeEl.style.display === 'none') {
+				viewerframeEl.style.display = '';
 				localStorage.showViewer = true;
 			} else {
 				localStorage.showViewer = false;
-				viewerFrameEl.style.display = 'none';				
+				viewerframeEl.style.display = 'none';				
 			}
 			updateViewerButton();
 		});	
 		updateViewerButton();
 		
 		if (localStorage.showViewer && JSON.parse(localStorage.showViewer)) {
-			viewerFrameEl.style.display = '';
+			viewerframeEl.style.display = '';
 		} else {
-			viewerFrameEl.style.display = 'none';
+			viewerframeEl.style.display = 'none';
 		}
 	}
 

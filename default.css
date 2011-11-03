@@ -33,6 +33,38 @@ body {
 	display: -webkit-box;	
 }
 
+#screen {
+	margin-left:30px;
+	margin-right:30px;
+	overflow: hidden;
+	position: relative;
+	zoom: 2;
+	width:320px;
+	height:460px;
+}
+
+#appframe {
+	display: -webkit-box;
+	-webkit-box-align: center;
+	-webkit-box-pack: center;
+	position: relative;
+}
+
+#appframe {
+	/* for browser dev. keeps images from getting drag events and screwing up swipes */
+	-webkit-user-drag: none;
+
+	/* prevent text selection */
+	-webkit-user-select:none;
+}
+
+
+.device #screen {
+	zoom: 1;
+	margin-left:0px;
+	margin-right:0px;
+}
+
 @media screen and (orientation: portrait)
 {
 	.device #screen {
