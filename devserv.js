@@ -32,6 +32,8 @@ var http = require('http'),
 	paperboy = require('paperboy'),
 	exec = require('child_process').exec,	 
 	spawn = require('child_process').spawn,	
+	url = require('url'),
+	generator = require('./generator'),
 	sys = require('sys');
 
 /*global Iuppiter*/
@@ -84,6 +86,7 @@ cli.main(function (args, options) {
 
 	http.createServer(function (req, res) {
 //		sys.puts('------------------------------------');
+//		sys.puts(req.url);
 //		for (var name in req.headers) {
 //			if (req.headers.hasOwnProperty(name)) {
 //				sys.puts(name + ' : ' + req.headers[name]);				
@@ -105,15 +108,24 @@ cli.main(function (args, options) {
 			}
 			break;
 		case 'GET':
-			paperboy
-				.deliver(WEBROOT, req, res)
-				.error(function () {
-					sys.puts('Error delivering: ' + req.url);
-				})
-				.otherwise(function () {
-					res.writeHead(404, {'Content-Type': 'text/plain'});
-					res.end();
-				});		
+			if (req.url.match('generate')) {
+				res.writeHead(200, {'Content-Type': 'text/html'});
+				res.write(generator.generate(url.parse(req.url, true).query.app));
+				res.end();
+			} else {
+				paperboy
+					.deliver(WEBROOT, req, res)
+	//				.before(function () {
+	//					sys.puts('Delivering: ' + req.url);
+	//				})
+					.error(function () {
+						sys.puts('Error delivering: ' + req.url);
+					})
+					.otherwise(function () {
+						res.writeHead(404, {'Content-Type': 'text/plain'});
+						res.end();
+					});				
+			}
 			break;
 		case 'OPTIONS':
 			// allow everything

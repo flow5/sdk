@@ -33,7 +33,7 @@ body {
 	display: -webkit-box;	
 }
 
-@media screen and (max-width: 320px)
+@media screen and (orientation: portrait)
 {
 	.device #screen {
 		width:320px;
@@ -41,7 +41,7 @@ body {
 	}
 }
  
-@media screen and (min-width: 321px)
+@media screen and (orientation: landscape)
 {
 	.device #screen {
 		width:480px;
