@@ -46,14 +46,15 @@ function generate(app) {
 		var meta = document.createElement('meta');
 		for (var name in properties) {
 			if (properties.hasOwnProperty(name)) {
-				meta[name] = properties[name];
+				meta.setAttribute(name, properties[name]);
 			}
 		}		
 		document.head.appendChild(meta);
+		console.log(meta.outerHTML);
 	}
 	
 	// standard meta
-	injectMeta({'http-equiv': 'Content-type', content: 'text/html; charset=utf-8'});
+	injectMeta({'http-equiv': 'Content-Type', content: 'text/html; charset=UTF-8'});
 	injectMeta({name: 'viewport', content: 'width=device-width initial-scale=1.0 maximum-scale=1.0 user-scalable=0'});
 
 	// ios webapp stuff
