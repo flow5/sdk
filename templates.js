@@ -29,7 +29,17 @@
 
 define('templates', exports, function (exports) {
 		
-	function loadTemplate(id) {
+	function loadTemplate(arg1, arg2) {
+		
+		var id;
+		var node;
+		if (typeof arg1 === 'string') {
+			id = arg1;
+		} else {
+			node = arg1;
+			id = node.id;
+		}
+				
 		var instance = document.getElementById(id).cloneNode(true);
 		instance.removeAttribute('id');
 		
@@ -43,8 +53,30 @@ define('templates', exports, function (exports) {
 			widgetEls.push(el);			
 		});
 		
+		// if arg2 is provided, copy out its fields
+		var data = {};
+		function assign(id, value) {
+			if (!data[id]) {
+				data[id] = value;				
+			} else {
+				console.log('Data field name shadowed');
+			}
+		}
+		if (arg2 && typeof arg2 === 'object') {
+			arg2.forEach(assign);
+		}
+		
+		// then add all of the strings resources associated with this node and ancestors
+		while (node) {
+			var strings = F5.Strings[node.id];
+			if (strings) {
+				strings.forEach(assign);				
+			}
+			node = node.parent;
+		}
+		
 		widgetEls.forEach(function (el) {
-			F5.UI.attachWidget(el);
+			F5.UI.attachWidget(el, data);
 		});
 		
 		return instance;

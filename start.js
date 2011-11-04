@@ -133,5 +133,10 @@ window.addEventListener('load', function (e) {
 		console.log('cached');
 		start();
 	}, false);
+
+	window.applicationCache.addEventListener('error', function (e) {
+		console.log('error');
+		start();
+	}, false);
 	
 }, false);					

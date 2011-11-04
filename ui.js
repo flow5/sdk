@@ -298,10 +298,18 @@ define('ui', exports, function (exports) {
 		};
 	}
 	
+	function StaticText() {
+		this.construct = function (data) {
+			var id = this.el.getAttribute('f5_id');
+			this.el.innerText = data[id];
+		};
+	}
+	
 	// TODO: 
 	function Button() {		
-		this.construct = function () {
-			// nothing to do yet
+		this.construct = function (data) {
+			var id = this.el.getAttribute('f5_id');
+			this.el.innerText = data[id];
 		};
 		
 		this.setAction = function (cb) {
@@ -337,17 +345,18 @@ define('ui', exports, function (exports) {
 	}
 	
 	var widgetPrototypes = {
+		StaticText: new StaticText(),
 		Button: new Button(),
 		Tabset: new Tabset()
 	};
 	
-	function attachWidget(el) {
+	function attachWidget(el, data) {
 		var type = el.getAttribute('f5_widget');
 		F5.assert(widgetPrototypes[type], 'No widget: ' + type);
 		var widget = F5.object(widgetPrototypes[type]);
 		widget.el = el;
 		el.widget = widget;
-		widget.construct();		
+		widget.construct(data);		
 	}
 	
 	// TODO: unify all of the widgets under the same API

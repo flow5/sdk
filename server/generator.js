@@ -41,7 +41,9 @@ function generateCacheManifest(app) {
 		}
 	}
 	
-	function inject(path) {		
+	function inject(path) {	
+		check(path + 'manifest.js');
+			
 		var manifest = require(path + 'manifest.js');
 		
 		manifest.scripts.forEach(function (file) {
@@ -67,6 +69,8 @@ function generateCacheManifest(app) {
 	// TODO: slightly annoying
 	check('start.js');	
 	cacheManifest += 'start.js\n';
+	
+	check('server/generator.js');
 			
 	cacheManifest += '#' + latestDate;
 	
@@ -161,10 +165,16 @@ function generateHtml(app) {
 	var screenframeEl = document.createElement('div');
 	screenframeEl.id = 'screen';
 	screenframeEl.className = 'portrait';
+	
+	var splashEl = document.createElement('img');
+	splashEl.src = 'apps/' + app + '/splash.png';
+	splashEl.className = 'screen';
+	splashEl.setAttribute('style', 'position: absolute; top: 0px; left: 0px;');
+	screenframeEl.appendChild(splashEl);	
+	
 	appframeEl.appendChild(screenframeEl);
 	document.body.appendChild(appframeEl);
-	
-	
+		
 	var start = document.createElement('script');
 	start.src = 'start.js';
 	document.body.appendChild(start);	

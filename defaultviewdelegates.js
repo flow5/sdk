@@ -47,12 +47,12 @@ define('defaultviewdelegates', exports, function (exports) {
 						showSubflows = true;
 						
 						var subflowEl = document.createElement('div');
-						subflowEl.innerHTML = id;
 						subflowEl.className = 'do-subflow';
 						subflowEl.setAttribute('f5_widget', 'Button');
+						subflowEl.setAttribute('f5_id', 'id');
 						subflowsEl.appendChild(subflowEl);	
 						
-						F5.UI.attachWidget(subflowEl);
+						F5.UI.attachWidget(subflowEl, {id: id});
 
 						subflowEl.widget.setAction(function () {
 							F5.Global.flowController.doSubflow(node, id);
@@ -72,12 +72,12 @@ define('defaultviewdelegates', exports, function (exports) {
 
 				node.transitions.forEach(function (id, transition) {
 					var transitionEl = document.createElement('div');
-					transitionEl.innerHTML = id;
+					transitionEl.setAttribute('f5_id', 'id');
 					transitionEl.setAttribute('f5_widget', 'Button');
 					transitionEl.className = 'do-transition';
 					transitionsEl.appendChild(transitionEl);	
 
-					F5.UI.attachWidget(transitionEl);
+					F5.UI.attachWidget(transitionEl, {id: id});
 					transitionEl.widget.setAction(function () {
 						F5.Global.flowController.doTransition(node, id);
 					});
@@ -141,10 +141,11 @@ define('defaultviewdelegates', exports, function (exports) {
 				var choiceEl = document.createElement('div');
 				choiceEl.innerHTML = id;
 				choiceEl.setAttribute('f5_widget', 'Button');
+				choiceEl.setAttribute('f5_id', 'choice');
 				choiceEl.className = 'do-choice';
 				choicesEl.appendChild(choiceEl);
 				
-				F5.UI.attachWidget(choiceEl);									
+				F5.UI.attachWidget(choiceEl, {choice: id});									
 				choiceEl.widget.setAction(function () {
 					F5.Global.flowController.doSubflowChoice(subflow.node, id);
 				});							
