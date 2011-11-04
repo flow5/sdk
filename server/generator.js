@@ -27,7 +27,6 @@
 
 var fs = require('fs');
 
-
 function generateCacheManifest(app) {
 	var cacheManifest = 'CACHE MANIFEST\n';
 	cacheManifest += 'CACHE:\n';
@@ -60,7 +59,9 @@ function generateCacheManifest(app) {
 
 		manifest.elements.forEach(function (file) {
 			check(path + file);
-		});		
+		});	
+		
+		delete require.cache[require('path').resolve(path + 'manifest.js')];
 	}
 	
 	inject('');
