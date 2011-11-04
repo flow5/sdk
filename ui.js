@@ -305,11 +305,26 @@ define('ui', exports, function (exports) {
 		};
 	}
 	
-	// TODO: 
+	function Picture() {
+		this.construct = function (data) {
+			var id = this.el.getAttribute('f5_id');
+
+			var img = document.createElement('img');
+			img.src = data[id];
+			this.el.appendChild(img);
+		};
+	}
+	
 	function Button() {		
 		this.construct = function (data) {
 			var id = this.el.getAttribute('f5_id');
-			this.el.innerText = data[id];
+			if (data[id]) {
+				this.el.innerText = data[id];				
+			}
+			// TODO: use f5_image to get the base name of an image
+			// say f5_image='buttonStandard' then look for data.buttonStandard.up/down
+			// for the srcs of the two images
+			// and buttonStandard can be defined at root scope
 		};
 		
 		this.setAction = function (cb) {
@@ -345,6 +360,7 @@ define('ui', exports, function (exports) {
 	}
 	
 	var widgetPrototypes = {
+		Picture: new Picture(),
 		StaticText: new StaticText(),
 		Button: new Button(),
 		Tabset: new Tabset()

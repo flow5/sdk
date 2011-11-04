@@ -71,8 +71,11 @@ function generateCacheManifest(app) {
 	cacheManifest += 'start.js\n';
 	
 	check('server/generator.js');
-			
-	cacheManifest += '#' + latestDate;
+				
+	cacheManifest += 'NETWORK:\n';
+	cacheManifest += '*\n';
+	
+	cacheManifest += '#' + latestDate + '\n';
 	
 	return cacheManifest;
 }

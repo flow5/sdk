@@ -114,9 +114,9 @@ cli.main(function (args, options) {
 				res.write(generator.generateHtml(url.parse(req.url, true).query.app));
 				res.end();
 			} else if (req.url.match('cache.manifest')) {
-				res.writeHead(404);
-//				res.writeHead(200, {'Content-Type': 'text/cache-manifest'});
-//				res.write(generator.generateCacheManifest(url.parse(req.url, true).query.app));
+//				res.writeHead(404);
+				res.writeHead(200, {'Content-Type': 'text/cache-manifest'});
+				res.write(generator.generateCacheManifest(url.parse(req.url, true).query.app));
 				res.end();				
 			} else {
 				paperboy

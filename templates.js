@@ -72,8 +72,12 @@ define('templates', exports, function (exports) {
 			if (strings) {
 				strings.forEach(assign);				
 			}
+			var images = F5.Images[node.id];
+			if (images) {
+				images.forEach(assign);
+			}
 			node = node.parent;
-		}
+		}				
 		
 		widgetEls.forEach(function (el) {
 			F5.UI.attachWidget(el, data);
