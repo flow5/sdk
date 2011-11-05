@@ -49,6 +49,28 @@ cli.parse({
 	port: ['p', 'port', 'number'],
 });
 
+function compress(html, res) {
+		
+	var options = ['-jar', process.cwd() + '/server/htmlcompressor-1.5.2.jar', '--compress-css', '--compress-js'];
+	var child = spawn('java', options);
+	
+	child.stdout.on('data', function (data) {
+		console.log(data.toString());
+		res.write(data);
+	});
+	child.on('exit', function (code) {
+		res.end();
+	});		
+	child.stderr.on('data', function (data) {
+		sys.puts(data);
+	});	
+
+	res.writeHead(200, {'Content-Type': 'text/html'});
+	
+	child.stdin.write(html);
+	child.stdin.end();		
+}
+
 
 function dot2svg(req, res) {	
 	/*global Iuppiter*/
@@ -114,9 +136,14 @@ cli.main(function (args, options) {
 			var app = parsed.query.app;
 
 			if (req.url.match('generate')) {
-				res.writeHead(200, {'Content-Type': 'text/html'});
-				res.write(generator.generateHtml(app, debug));
-				res.end();
+				var html = generator.generateHtml(app, debug);
+				if (debug) {
+					res.writeHead(200, {'Content-Type': 'text/html'});
+					res.write(generator.generateHtml(app, debug));
+					res.end();					
+				} else {
+					compress(html, res);					
+				}
 			} else if (req.url.match('cache.manifest')) {
 //				res.writeHead(404);
 				res.writeHead(200, {'Content-Type': 'text/cache-manifest'});
@@ -125,9 +152,6 @@ cli.main(function (args, options) {
 			} else {
 				paperboy
 					.deliver(WEBROOT, req, res)
-	//				.before(function () {
-	//					sys.puts('Delivering: ' + req.url);
-	//				})
 					.error(function () {
 						sys.puts('Error delivering: ' + req.url);
 					})

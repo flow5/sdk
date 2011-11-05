@@ -33,9 +33,16 @@
 graphviz
 nodejs
 npm
-http://cairographics.org
-sudo port install cairo
 
+for html/css/javascript compression
+http://code.google.com/p/htmlcompressor/
+	download zip
+	copy to flow5/server
+		bin/htmlcompressor-1.5.2.jar
+		lib/yuicompressor-2.4.6.jar
+		lib/compiler.jar
+		
+	
 https://github.com/mkitt/nodelint.tmbundle
 	seems that it's necessary to symlink from the Support/bin/nodelint folder to the node lint installation location
 
@@ -46,9 +53,10 @@ nodelint
 paperboy
 jsdom
 cli	
-uglify-js
 
 Others?
+
+JSV
 
 
 ** Usage

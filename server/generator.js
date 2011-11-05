@@ -25,9 +25,7 @@
 
 ***********************************************************************************************************************/
 
-var fs = require('fs'),
-	parser = require("uglify-js").parser,
-	uglify = require("uglify-js").uglify;
+var fs = require('fs');
 	
 require('../require.js');
 require('../jsext.js');
@@ -168,12 +166,10 @@ function generateHtml(app, debug) {
 			// reference scripts
 			script.src = src;				
 		} else {
-			// inline and minify scripts	
+			// inline scripts
+			// devserv layer will compress and minify	
 			script.id = src;			
-			var ast = parser.parse(fs.readFileSync(src).toString());
-			ast = uglify.ast_mangle(ast);
-			ast = uglify.ast_squeeze(ast);
-			script.innerHTML = '//<!--\n' + uglify.gen_code(ast) + '\n//-->';				
+			script.innerHTML = '//<!--\n' + fs.readFileSync(src).toString() + '\n//-->';
 		}
 		return script;
 	}
