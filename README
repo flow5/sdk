@@ -33,6 +33,8 @@
 graphviz
 nodejs
 npm
+http://cairographics.org
+sudo port install cairo
 
 https://github.com/mkitt/nodelint.tmbundle
 	seems that it's necessary to symlink from the Support/bin/nodelint folder to the node lint installation location
@@ -44,6 +46,8 @@ nodelint
 paperboy
 jsdom
 cli	
+canvas
+uglify-js
 
 Others?
 
@@ -137,7 +141,54 @@ command line:
 		NOTE: delegates have a flat namespace based on nod ids. This works because while the same behaviors may
 		be present at different locations in the application, it's unlikely that it would be necessary or desirable
 		to have nodes with the same ID but different behaviors
+		
+		
+(WIP) Also represented in the flow spec is the data model for the application. This is done by defining:
 	
+	1) schemas
+	
+		Each node may have an object called 'schemas' which contains a map of schema definitions compliant with
+			http://tools.ietf.org/html/draft-zyp-json-schema-03
+
+		In addition to the normal schema fields, an additional field "example" provides sample data for use in 
+		designing screens.
+
+		In debug builds, the devserver will validate both the schema of the flowspec and also that integrity
+		of the embedded schema references
+		
+		In release builds the schema blocks will be stripped from the flow spec
+
+	2) models
+
+		each node may define two models:
+		
+		models: {
+			inFlow: schema
+			cache: schema
+		}
+	
+		inModel is used to validate the parameters which are passed from a node upstream in the flow
+		cacheModel is used to specify the nodes local cache structure 
+
+		while it is possible for flow or view delegates to use private data structures, it is recommended
+		that the cache model be used exclusively. this will allow the framework to properly serialize/deserialize
+		the state of the node
+		
+	The data model interface
+	
+		flowdelegates and viewdelegates are provided a reference to the node data model
+		model.forEach() will iterate over the contents of the model
+		model.get(path) returns a model wrapper for the path
+		model.value() will return a deep copy of the referenced value
+		model.set(path, obj) will deep copy the obj into the data model
+		
+		in debug builds model.set will validate against the model's schema
+		
+	In addition to the node model, services will define in and out parameter models which will be used
+	to validate data in debug builds 	
+		
+
+
 	
 	Other concepts:
 		

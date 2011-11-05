@@ -25,63 +25,65 @@
 
 ***********************************************************************************************************************/
 
-var fs = require('fs');
+var fs = require('fs'),
+	parser = require("uglify-js").parser,
+	uglify = require("uglify-js").uglify;
+	
+function generateCacheManifest(app, debug) {
 
-function generateCacheManifest(app) {
-	var cacheManifest = 'CACHE MANIFEST\n';
-	cacheManifest += 'CACHE:\n';
-	
 	var latestDate;
-	
-	function check(path) {
+	function checkDate(path) {
 		var modDate = new Date(fs.statSync(path).mtime);
 		if (!latestDate || modDate > latestDate) {
 			latestDate = modDate;
 		}
 	}
-	
+
+	var cacheManifest = 'CACHE MANIFEST\n';
+	cacheManifest += 'CACHE:\n';
+		
+	checkDate('start.js');		
+	checkDate('server/generator.js');
+			
 	function inject(path) {	
-		check(path + 'manifest.js');
+		checkDate(path + 'manifest.js');
 			
 		var manifest = require(path + 'manifest.js');
 		
 		manifest.scripts.forEach(function (file) {
 			cacheManifest += path + file + '\n';
-			check(path + file);
+			checkDate(path + file);
 		});
 
 		if (manifest.images) {
 			manifest.images.forEach(function (file) {
 				cacheManifest += path + file + '\n';
-				check(path + file);
+				checkDate(path + file);
 			});			
 		}
 
 		manifest.elements.forEach(function (file) {
-			check(path + file);
+			checkDate(path + file);
 		});	
 		
 		delete require.cache[require('path').resolve(path + 'manifest.js')];
 	}
 	
-	inject('');
-	inject('apps/' + app + '/');
-	
-	// TODO: slightly annoying
-	check('start.js');	
-	cacheManifest += 'start.js\n';
-	
-	check('server/generator.js');
-				
+	if (debug) {
+		inject('');
+		inject('apps/' + app + '/');
+		cacheManifest += 'start.js\n';		
+	}
+		
 	cacheManifest += 'NETWORK:\n';
 	cacheManifest += '*\n';
-	
+						
 	cacheManifest += '#' + latestDate + '\n';
 	
 	return cacheManifest;
 }
 
-function generateHtml(app) {
+function generateHtml(app, debug) {
 
 	var jsdom = require('jsdom');
 	jsdom.defaultDocumentFeatures = {
@@ -130,14 +132,27 @@ function generateHtml(app) {
 	
 	document.body.appendChild(templates);
 	
+	function makeScript(src) {
+		var script = document.createElement('script');		
+		if (debug) {
+			// reference scripts
+			script.src = src;				
+		} else {
+			// inline and minify scripts	
+			script.id = src;			
+			var ast = parser.parse(fs.readFileSync(src).toString());
+			ast = uglify.ast_mangle(ast);
+			ast = uglify.ast_squeeze(ast);
+			script.innerHTML = '//<!--\n' + uglify.gen_code(ast) + '\n//-->';				
+		}
+		return script;
+	}
+	
 	function inject(path) {		
 		var manifest = require(path + 'manifest.js');
 		
-		manifest.scripts.forEach(function (file) {
-			var script = document.createElement('script');
-			script.src = path + file;
-			
-			document.head.appendChild(script);
+		manifest.scripts.forEach(function (file) {				
+			document.head.appendChild(makeScript(path + file));
 		});
 
 		manifest.elements.forEach(function (file) {
@@ -179,9 +194,7 @@ function generateHtml(app) {
 	appframeEl.appendChild(screenframeEl);
 	document.body.appendChild(appframeEl);
 		
-	var start = document.createElement('script');
-	start.src = 'start.js';
-	document.body.appendChild(start);	
+	document.body.appendChild(makeScript('start.js'));	
 			
 	return document.outerHTML;
 }
