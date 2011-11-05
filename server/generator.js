@@ -27,8 +27,7 @@
 
 var fs = require('fs'),
 	parser = require("uglify-js").parser,
-	uglify = require("uglify-js").uglify,
-	Canvas = require('canvas');
+	uglify = require("uglify-js").uglify;
 	
 require('../require.js');
 require('../jsext.js');
@@ -199,17 +198,7 @@ function generateHtml(app, debug) {
 			
 			templates.appendChild(elements);
 		});	
-		
-		function inlineImage(src) {
-			var image = new Canvas.Image();		
-			image.src = fs.readFileSync(src);
-
-			var canvas = new Canvas(image.width, image.height);
-			canvas.getContext('2d').drawImage(image, 0, 0);
-
-			return canvas.toDataURL('image/png');
-		}
-		
+				
 		if (debug) {
 			document.head.appendChild(makeScript(path + 'images.js'));
 		} else {
@@ -220,12 +209,13 @@ function generateHtml(app, debug) {
 				require(path + 'images.js');	
 				F5.Images.forEach(function (id, node) {
 					node.forEach(function (id, src) {
-						node[id] = inlineImage(src);
+						var prefix = 'data:image/' + require('path').extname(src).substring(1) + ';base64,';
+						node[id] = prefix + fs.readFileSync(src, 'base64');						
 					});
 				});	
 				var script = document.createElement('script');	
 				script.id = 'images.js';	
-				script.innerHTML = '//<!--\nF5.Images = ' + JSON.stringify(F5.Images) + '\n//-->';
+				script.innerHTML = '//<!--\nF5.Images.extend(' + JSON.stringify(F5.Images) + ');\n//-->';
 				document.head.appendChild(script);
 			} catch (e) {
 				console.log(e.message);
@@ -260,6 +250,8 @@ function generateHtml(app, debug) {
 	document.body.appendChild(makeScript('start.js'));	
 	
 	deleteCaches();	
+	
+	console.log('Size: ' + document.outerHTML.length);
 			
 	return document.outerHTML;
 }
