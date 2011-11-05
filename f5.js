@@ -26,11 +26,11 @@
 ***********************************************************************************************************************/
 /*global define F5: true*/
 
-F5 = {Global: {}, Prototypes: {}};
+require('./jsext.js');
+
+F5 = {Global: {}, Prototypes: {}, Images: {}};
 
 define('f5', exports, function (exports) {
-
-	require('./jsext.js');
 
 	// utils go to top level for convenince
 	require('./utils.js').forEach(function (id, fn) {

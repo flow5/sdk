@@ -27,10 +27,23 @@
 
 var fs = require('fs'),
 	parser = require("uglify-js").parser,
-	uglify = require("uglify-js").uglify;
+	uglify = require("uglify-js").uglify,
+	Canvas = require('canvas');
+	
+require('../require.js');
+require('../jsext.js');
+
+function deleteCaches() {
+	// delete all of the cached entries so we reload the next time
+	require.cache.forEach(function (id, obj) {
+		if (id.match('manifest.js') || id.match('images.js')) {
+			delete require.cache[id];
+		}
+	});	
+}
 	
 function generateCacheManifest(app, debug) {
-
+	
 	var latestDate;
 	function checkDate(path) {
 		var modDate = new Date(fs.statSync(path).mtime);
@@ -51,27 +64,41 @@ function generateCacheManifest(app, debug) {
 		var manifest = require(path + 'manifest.js');
 		
 		manifest.scripts.forEach(function (file) {
-			cacheManifest += path + file + '\n';
+			if (debug) {
+				cacheManifest += path + file + '\n';				
+			}
 			checkDate(path + file);
 		});
-
-		if (manifest.images) {
-			manifest.images.forEach(function (file) {
-				cacheManifest += path + file + '\n';
-				checkDate(path + file);
-			});			
-		}
 
 		manifest.elements.forEach(function (file) {
 			checkDate(path + file);
 		});	
 		
-		delete require.cache[require('path').resolve(path + 'manifest.js')];
+		if (debug) {
+			cacheManifest += path + 'images.js\n';
+		}
+		try {
+			/*global F5: true*/
+			// TODO: ugly?
+			F5 = {Images: {}};				
+			require(path + 'images.js');
+			F5.Images.forEach(function (id, node) {
+				node.forEach(function (id, src) {
+					checkDate(src);
+					if (debug) {
+						cacheManifest += src + '\n';
+					}
+				});
+			});				
+		} catch (e) {
+//			console.log(e.message);
+		}				
 	}
 	
+	inject('');
+	inject('apps/' + app + '/');
+	
 	if (debug) {
-		inject('');
-		inject('apps/' + app + '/');
 		cacheManifest += 'start.js\n';		
 	}
 		
@@ -79,6 +106,10 @@ function generateCacheManifest(app, debug) {
 	cacheManifest += '*\n';
 						
 	cacheManifest += '#' + latestDate + '\n';
+	
+//	console.log(cacheManifest)
+	
+	deleteCaches();
 	
 	return cacheManifest;
 }
@@ -96,7 +127,7 @@ function generateHtml(app, debug) {
 	var document = jsdom.jsdom();
 	
 	// manifest
-	document.documentElement.setAttribute('manifest', 'cache.manifest?app=' + app);
+	document.documentElement.setAttribute('manifest', 'cache.manifest?app=' + app + '&debug=' + debug);
 	
 	function injectMeta(properties) {
 		var meta = document.createElement('meta');
@@ -167,7 +198,39 @@ function generateHtml(app, debug) {
 			elements.id = file;				
 			
 			templates.appendChild(elements);
-		});		
+		});	
+		
+		function inlineImage(src) {
+			var image = new Canvas.Image();		
+			image.src = fs.readFileSync(src);
+
+			var canvas = new Canvas(image.width, image.height);
+			canvas.getContext('2d').drawImage(image, 0, 0);
+
+			return canvas.toDataURL('image/png');
+		}
+		
+		if (debug) {
+			document.head.appendChild(makeScript(path + 'images.js'));
+		} else {
+			/*global F5: true*/
+			try {
+				// TODO: ugly?
+				F5 = {Images: {}};
+				require(path + 'images.js');	
+				F5.Images.forEach(function (id, node) {
+					node.forEach(function (id, src) {
+						node[id] = inlineImage(src);
+					});
+				});	
+				var script = document.createElement('script');	
+				script.id = 'images.js';	
+				script.innerHTML = '//<!--\nF5.Images = ' + JSON.stringify(F5.Images) + '\n//-->';
+				document.head.appendChild(script);
+			} catch (e) {
+				console.log(e.message);
+			}			
+		}		
 	}
 			
 
@@ -195,6 +258,8 @@ function generateHtml(app, debug) {
 	document.body.appendChild(appframeEl);
 		
 	document.body.appendChild(makeScript('start.js'));	
+	
+	deleteCaches();	
 			
 	return document.outerHTML;
 }
