@@ -55,7 +55,7 @@ function compress(html, res) {
 	var child = spawn('java', options);
 	
 	child.stdout.on('data', function (data) {
-		console.log(data.toString());
+//		console.log(data.toString());
 		res.write(data);
 	});
 	child.on('exit', function (code) {

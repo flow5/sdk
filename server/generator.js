@@ -55,15 +55,12 @@ function generateCacheManifest(app, debug) {
 	checkDate('start.js');		
 	checkDate('server/generator.js');
 			
-	function inject(path) {	
+	function checkManifest(path) {	
 		checkDate(path + 'manifest.js');
 			
 		var manifest = require(path + 'manifest.js');
 		
 		manifest.scripts.forEach(function (file) {
-			if (debug) {
-				cacheManifest += path + file + '\n';				
-			}
 			checkDate(path + file);
 		});
 
@@ -71,9 +68,6 @@ function generateCacheManifest(app, debug) {
 			checkDate(path + file);
 		});	
 		
-		if (debug) {
-			cacheManifest += path + 'images.js\n';
-		}
 		try {
 			/*global F5: true*/
 			// TODO: ugly?
@@ -82,9 +76,6 @@ function generateCacheManifest(app, debug) {
 			F5.Images.forEach(function (id, node) {
 				node.forEach(function (id, src) {
 					checkDate(src);
-					if (debug) {
-						cacheManifest += src + '\n';
-					}
 				});
 			});				
 		} catch (e) {
@@ -92,13 +83,9 @@ function generateCacheManifest(app, debug) {
 		}				
 	}
 	
-	inject('');
-	inject('apps/' + app + '/');
+	checkManifest('');
+	checkManifest('apps/' + app + '/');
 	
-	if (debug) {
-		cacheManifest += 'start.js\n';		
-	}
-		
 	cacheManifest += 'NETWORK:\n';
 	cacheManifest += '*\n';
 						
@@ -247,7 +234,7 @@ function generateHtml(app, debug) {
 	
 	deleteCaches();	
 	
-	console.log('Size: ' + document.outerHTML.length);
+//	console.log('Size: ' + document.outerHTML.length);
 			
 	return document.outerHTML;
 }
