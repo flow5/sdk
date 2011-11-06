@@ -133,13 +133,15 @@ cli.main(function (args, options) {
 		case 'GET':
 			var parsed = url.parse(req.url, true);
 			var debug = (parsed.query.debug === 'true');
+			var device = (parsed.query.device === 'true');
+			
 			var app = parsed.query.app;
 
 			if (req.url.match('generate')) {
 				var html = generator.generateHtml(app, debug);
 				if (debug) {
 					res.writeHead(200, {'Content-Type': 'text/html'});
-					res.write(generator.generateHtml(app, debug));
+					res.write(generator.generateHtml(app, debug, device));
 					res.end();					
 				} else {
 					compress(html, res);					
@@ -147,7 +149,7 @@ cli.main(function (args, options) {
 			} else if (req.url.match('cache.manifest')) {
 //				res.writeHead(404);
 				res.writeHead(200, {'Content-Type': 'text/cache-manifest'});
-				res.write(generator.generateCacheManifest(app, debug));
+				res.write(generator.generateCacheManifest(app, debug, device));
 				res.end();				
 			} else {
 				paperboy

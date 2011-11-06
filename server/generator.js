@@ -39,7 +39,7 @@ function deleteCaches() {
 	});	
 }
 	
-function generateCacheManifest(app, debug) {
+function generateCacheManifest(app, debug, device) {
 	
 	var latestDate;
 	function checkDate(path) {
@@ -63,6 +63,12 @@ function generateCacheManifest(app, debug) {
 		manifest.scripts.forEach(function (file) {
 			checkDate(path + file);
 		});
+		
+		if (device && manifest.device) {
+			manifest.device.forEach(function (file) {
+				checkDate(path + file);
+			});			
+		}
 
 		manifest.elements.forEach(function (file) {
 			checkDate(path + file);
@@ -98,7 +104,7 @@ function generateCacheManifest(app, debug) {
 	return cacheManifest;
 }
 
-function generateHtml(app, debug) {
+function generateHtml(app, debug, device) {
 
 	var jsdom = require('jsdom');
 	jsdom.defaultDocumentFeatures = {
@@ -167,6 +173,12 @@ function generateHtml(app, debug) {
 		manifest.scripts.forEach(function (file) {				
 			document.head.appendChild(makeScript(path + file));
 		});
+		
+		if (device && manifest.device) {
+			manifest.device.forEach(function (file) {				
+				document.head.appendChild(makeScript(path + file));
+			});			
+		}
 
 		manifest.elements.forEach(function (file) {
 			var elements;

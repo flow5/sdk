@@ -43,6 +43,10 @@ exports.scripts = [
 	'viewcontroller.js',
 	'webharness.js',
 ];
+
+exports.device = [
+	'3p/phonegap-1.1.0.js'
+];
 		
 exports.elements = [
 	'default.css',
