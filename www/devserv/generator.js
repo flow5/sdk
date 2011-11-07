@@ -53,7 +53,7 @@ function generateCacheManifest(app, debug, device) {
 	cacheManifest += 'CACHE:\n';
 		
 	checkDate('start.js');		
-	checkDate('server/generator.js');
+	checkDate(__filename);
 			
 	function checkManifest(path) {	
 		checkDate(path + 'manifest.js');
@@ -90,7 +90,7 @@ function generateCacheManifest(app, debug, device) {
 	}
 	
 	checkManifest('');
-	checkManifest('apps/' + app + '/');
+	checkManifest('apps/' + app + '/www/');
 	
 	cacheManifest += 'NETWORK:\n';
 	cacheManifest += '*\n';
@@ -233,7 +233,7 @@ function generateHtml(app, debug, device) {
 		document.head.appendChild(weinre);		
 	}	
 	
-	inject('apps/' + app + '/');
+	inject('apps/' + app + '/www/');
 		
 	var appframeEl = document.createElement('div');
 	appframeEl.id = 'appframe';

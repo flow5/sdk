@@ -169,6 +169,17 @@ define('ui', exports, function (exports) {
 		navbarEl.appendChild(rightButtonEl);
 		
 		function configureNavbar(node) {
+			
+			if (typeof PhoneGap !== 'undefined') {
+				PhoneGap.exec(function (result) {
+					// success
+					console.log(result);
+				}, function () {
+					// failure
+					console.log(result);
+				}, "NavigationBar", "print", ['HelloWorld']);				
+			}
+			
 			// find the leaf node
 			while (node.selection) {
 				node = node.selection;
