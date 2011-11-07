@@ -225,6 +225,13 @@ function generateHtml(app, debug, device) {
 	init.innerHTML = 'require("./f5.js")';
 	document.head.appendChild(init);
 	
+	if (device) {
+		var weinre = document.createElement('script');
+		weinre.src = 'http://' + require('os').hostname() + ':8081/target/target-script-min.js#anonymous';
+		console.log(weinre.src);
+		document.head.appendChild(weinre);		
+	}	
+	
 	inject('apps/' + app + '/');
 		
 	var appframeEl = document.createElement('div');

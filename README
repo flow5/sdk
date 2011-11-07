@@ -42,6 +42,14 @@ http://code.google.com/p/htmlcompressor/
 		lib/yuicompressor-2.4.6.jar
 		lib/compiler.jar
 		
+for weinre device debugging
+https://github.com/callback/callback-weinre/archives/master
+	~/.weinre/server.properties
+		boundHost:    -all-
+		httpPort:     8081
+		reuseAddr:    true
+		readTimeout:  1
+		deathTimeout: 5
 	
 https://github.com/mkitt/nodelint.tmbundle
 	seems that it's necessary to symlink from the Support/bin/nodelint folder to the node lint installation location

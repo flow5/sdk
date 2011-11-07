@@ -29,9 +29,7 @@
 
 require('./f5.js');
 
-(function () {
-	
-
+(function () {	
 	// prevent scrolling
 	document.body.addEventListener('touchmove', function (e) {
 		e.preventDefault();
