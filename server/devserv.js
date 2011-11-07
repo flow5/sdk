@@ -138,10 +138,10 @@ cli.main(function (args, options) {
 			var app = parsed.query.app;
 
 			if (req.url.match('generate')) {
-				var html = generator.generateHtml(app, debug);
+				var html = generator.generateHtml(app, debug, device);
 				if (debug) {
 					res.writeHead(200, {'Content-Type': 'text/html'});
-					res.write(generator.generateHtml(app, debug, device));
+					res.write(html);
 					res.end();					
 				} else {
 					compress(html, res);					
