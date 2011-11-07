@@ -27,9 +27,15 @@
 }
 
 // f5
++ (NSString*) appname
+{
+	return [[[self class] getBundlePlist:@"Flow5"] objectForKey:@"appname"];
+}
+
+// f5
 + (NSString*) startPage
 {
-	return [NSString stringWithFormat:@"http://%@:8008//generate?app=jitc&device=true", [AppDelegate devservhost]];
+	return [NSString stringWithFormat:@"http://%@:8008//generate?app=%@&device=true", [AppDelegate devservhost], [AppDelegate appname]];
 }
 
 - (id) init

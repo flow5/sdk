@@ -1,4 +1,6 @@
 project.xcworkspace/contents.xcworkspacedata
-project.xcworkspace/xcuserdata/paulgreyson.xcuserdatad/UserInterfaceState.xcuserstate
+project.xcworkspace/xcuserdata/*.xcuserdatad/UserInterfaceState.xcuserstate
 xcuserdata/paulgreyson.xcuserdatad/xcschemes/ios.xcscheme
 xcuserdata/paulgreyson.xcuserdatad/xcschemes/xcschememanagement.plist
+*.mode1v3
+*.pbxuser

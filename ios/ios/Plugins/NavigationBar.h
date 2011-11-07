@@ -6,7 +6,11 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
+#ifdef PHONEGAP_FRAMEWORK
+#import <PhoneGap/PGPlugin.h>
+#else
 #import "PGPlugin.h"
+#endif
 
 @interface NavigationBar : PGPlugin {
 
