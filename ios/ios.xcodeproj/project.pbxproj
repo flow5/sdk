@@ -33,6 +33,7 @@
 		BE29F61D14686984009B0CB6 /* Capture.bundle in Resources */ = {isa = PBXBuildFile; fileRef = BE29F61C14686984009B0CB6 /* Capture.bundle */; };
 		BE29F61F14686984009B0CB6 /* PhoneGap.plist in Resources */ = {isa = PBXBuildFile; fileRef = BE29F61E14686984009B0CB6 /* PhoneGap.plist */; };
 		BE29F62314686984009B0CB6 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BE29F62214686984009B0CB6 /* AppDelegate.m */; };
+		BE29F63B14686DEE009B0CB6 /* NavigationBar.m in Sources */ = {isa = PBXBuildFile; fileRef = BE29F63A14686DEE009B0CB6 /* NavigationBar.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -67,6 +68,8 @@
 		BE29F62114686984009B0CB6 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = Classes/AppDelegate.h; sourceTree = "<group>"; };
 		BE29F62214686984009B0CB6 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = Classes/AppDelegate.m; sourceTree = "<group>"; };
 		BE29F62514686984009B0CB6 /* README */ = {isa = PBXFileReference; lastKnownFileType = text; name = README; path = Plugins/README; sourceTree = "<group>"; };
+		BE29F63914686DEE009B0CB6 /* NavigationBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NavigationBar.h; path = "../../../jitc-mobile/ios/Plugins/NavigationBar.h"; sourceTree = "<group>"; };
+		BE29F63A14686DEE009B0CB6 /* NavigationBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NavigationBar.m; path = "../../../jitc-mobile/ios/Plugins/NavigationBar.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -221,6 +224,8 @@
 		BE29F62414686984009B0CB6 /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
+				BE29F63914686DEE009B0CB6 /* NavigationBar.h */,
+				BE29F63A14686DEE009B0CB6 /* NavigationBar.m */,
 				BE29F62514686984009B0CB6 /* README */,
 			);
 			name = Plugins;
@@ -333,6 +338,7 @@
 			files = (
 				BE29F60314686984009B0CB6 /* main.m in Sources */,
 				BE29F62314686984009B0CB6 /* AppDelegate.m in Sources */,
+				BE29F63B14686DEE009B0CB6 /* NavigationBar.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
