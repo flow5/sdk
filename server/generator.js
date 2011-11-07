@@ -58,7 +58,7 @@ function generateCacheManifest(app, debug, device) {
 	function checkManifest(path) {	
 		checkDate(path + 'manifest.js');
 			
-		var manifest = require(path + 'manifest.js');
+		var manifest = require('../' + path + 'manifest.js');
 		
 		manifest.scripts.forEach(function (file) {
 			checkDate(path + file);
@@ -168,7 +168,7 @@ function generateHtml(app, debug, device) {
 	}
 	
 	function inject(path) {		
-		var manifest = require(path + 'manifest.js');
+		var manifest = require('../' + path + 'manifest.js');
 		
 		manifest.scripts.forEach(function (file) {				
 			document.head.appendChild(makeScript(path + file));
@@ -201,7 +201,7 @@ function generateHtml(app, debug, device) {
 			try {
 				// TODO: ugly?
 				F5 = {Images: {}};
-				require(path + 'images.js');	
+				require('../' + path + 'images.js');	
 				F5.Images.forEach(function (id, node) {
 					node.forEach(function (id, src) {
 						var prefix = 'data:image/' + require('path').extname(src).substring(1) + ';base64,';
@@ -225,10 +225,11 @@ function generateHtml(app, debug, device) {
 	init.innerHTML = 'require("./f5.js")';
 	document.head.appendChild(init);
 	
+	// should be device+debug
 	if (device) {
 		var weinre = document.createElement('script');
 		weinre.src = 'http://' + require('os').hostname() + ':8081/target/target-script-min.js#anonymous';
-		console.log(weinre.src);
+//		console.log(weinre.src);
 		document.head.appendChild(weinre);		
 	}	
 	
@@ -240,6 +241,7 @@ function generateHtml(app, debug, device) {
 	screenframeEl.id = 'screen';
 	screenframeEl.className = 'portrait';
 	
+	// not sure about this
 	var splashEl = document.createElement('img');
 	splashEl.src = 'apps/' + app + '/splash.png';
 	splashEl.className = 'screen';

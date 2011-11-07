@@ -27,8 +27,6 @@
 
 var WEBROOT = process.cwd();
 
-require.paths.push(process.cwd());	
-
 // nodelibs
 var http = require('http'),
 	fs = require('fs'),
@@ -41,7 +39,7 @@ var http = require('http'),
 	sys = require('sys');
 	
 // flow5 libs
-var generator = require('server/generator.js');	
+var generator = require('./generator.js');	
 
 cli.setUsage("node devserv.js [OPTIONS]");
 
@@ -105,7 +103,7 @@ function dot2svg(req, res) {
 // http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
 cli.main(function (args, options) {
 
-	options.port = options.port ? options.port : 8008;
+	options.port = options.port || 8008;
 
 	http.createServer(function (req, res) {
 //		sys.puts('------------------------------------');

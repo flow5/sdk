@@ -30,9 +30,12 @@
 
 * Install
 
+python 2.7
+
 graphviz
-nodejs
-npm
+
+nodejs (0.6.0)
+npm (1.0.104)
 
 for html/css/javascript compression
 http://code.google.com/p/htmlcompressor/
