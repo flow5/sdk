@@ -24,7 +24,7 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global define F5*/
+/*global define, F5*/
 
 define('flowcontroller', exports, function (exports) {
 					
@@ -305,9 +305,10 @@ define('flowcontroller', exports, function (exports) {
 				}
 				if (method) {
 					method(node, id);
-				} else {
+				}
+//				else {
 //					console.log('No flowDelegate for method: ' + name);
-				}							
+//				}							
 			}					
 
 			var newSubflow = node.activeSubflow.choices[id];

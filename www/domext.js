@@ -24,12 +24,13 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global define NodeList */
+/*global define, NodeList */
 
 define('domext', exports, function (exports) {
 	
 	NodeList.prototype.forEach = function (fn) {
-		for (var i = 0; i < this.length; i += 1) {
+		var i;
+		for (i = 0; i < this.length; i += 1) {
 			fn(this[i]);
 		}
 	};		

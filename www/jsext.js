@@ -29,7 +29,8 @@
 define('jsext', exports, function (exports) {
 	
 	Object.prototype.forEach = function (fn) {
-		for (var name in this) {
+		var name;
+		for (name in this) {
 			if (this.hasOwnProperty(name)) {
 				fn(name, this[name]);
 			}

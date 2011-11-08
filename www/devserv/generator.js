@@ -121,7 +121,8 @@ function generateHtml(app, debug, device) {
 	
 	function injectMeta(properties) {
 		var meta = document.createElement('meta');
-		for (var name in properties) {
+		var name;
+		for (name in properties) {
 			if (properties.hasOwnProperty(name)) {
 				meta.setAttribute(name, properties[name]);
 			}
@@ -249,7 +250,6 @@ function generateHtml(app, debug, device) {
 		// TODO: only device+debug
 		var weinre = document.createElement('script');
 		weinre.src = 'http://' + require('os').hostname() + ':8081/target/target-script-min.js#anonymous';
-//		console.log(weinre.src);
 		document.head.appendChild(weinre);	
 		
 		document.body.appendChild(makeScript('3p/phonegap-1.1.0.js'));				

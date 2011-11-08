@@ -24,8 +24,7 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global F5 define*/
-
+/*global F5, define*/
 
 define('animation', exports, function (exports) {
 	

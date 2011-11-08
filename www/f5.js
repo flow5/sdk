@@ -24,7 +24,7 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global define F5: true*/
+/*global define, F5: true*/
 
 require('./jsext.js');
 

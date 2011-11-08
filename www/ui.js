@@ -180,8 +180,13 @@ define('ui', exports, function (exports) {
 			}, "NavigationBar", "create", []);				
 		}	
 		
-		function getConfiguration(node) {
-			var configuration = {title: node.id};
+		function getConfiguration(node) {			
+			// find the leaf node
+			while (node.selection) {
+				node = node.selection;
+			}
+						
+			var configuration = {title: node.id, node: node};
 			while (node && (!configuration.left || !configuration.right)) {
 				var nodeConfiguration = node.view.getNavConfig();
 				if (nodeConfiguration) {
@@ -206,7 +211,7 @@ define('ui', exports, function (exports) {
 					var transition = F5.Global.navigationControllerConfiguration.left.transition;
 					var node = F5.Global.navigationControllerConfiguration.left.node;
 					F5.Global.flowController.doTransition(node, transition);				
-				}				
+				};
 			}
 			
 			if (configuration.right) {
@@ -214,23 +219,15 @@ define('ui', exports, function (exports) {
 					var transition = F5.Global.navigationControllerConfiguration.right.transition;
 					var node = F5.Global.navigationControllerConfiguration.right.node;
 					F5.Global.flowController.doTransition(node, transition);				
-				}							
+				};			
 			}
 			
 			return configuration;	
 		}	
 		
-		function configureNavbar(node) {
-						
-			// find the leaf node
-			var leafNode = node;
-			while (leafNode.selection) {
-				leafNode = leafNode.selection;
-			}		
+		function configureNavbar(node) {								
 
-			var configuration = F5.Global.navigationControllerConfiguration = getConfiguration(leafNode);
-			
-			configuration.node = leafNode;					
+			var configuration = F5.Global.navigationControllerConfiguration = getConfiguration(node);											
 			
 			// TODO: modify the prototype of the navbar object from a device-only include script
 			if (typeof PhoneGap === 'undefined') {				
@@ -273,11 +270,12 @@ define('ui', exports, function (exports) {
 			var gapConfig = {
 				title: configuration.title,
 				id: configuration.node.path,
-			}
+				hide: configuration.hide
+			};
 			if (configuration.left) {
 				gapConfig.left = {
 					label: configuration.left.label,
-				}
+				};
 				if (configuration.left.transition === 'back') {
 					var backNode = F5.Global.flowController.getBackNode(configuration.left.node).back;
 					while (backNode.selection) {
@@ -292,13 +290,11 @@ define('ui', exports, function (exports) {
 			console.log(gapConfig);
 									
 			return gapConfig;
-		}																			
-
+		}				
+		
 		F5.Global.navigationController = {
 			start: function () {
 				configureNavbar(F5.Global.flow.root);
-				
-				console.log(JSON.stringify(gapify(F5.Global.navigationControllerConfiguration)))
 				
 				if (typeof PhoneGap !== 'undefined') {
 					PhoneGap.exec(function (result) {
@@ -309,18 +305,12 @@ define('ui', exports, function (exports) {
 							console.log(result);
 						}, 'NavigationBar',
 						'configure',
-						[gapify(F5.Global.navigationControllerConfiguration)]
+						[false, gapify(F5.Global.navigationControllerConfiguration)]
 					);					
 				}								
 			},
 			doSelection: function (node, id) {
 				configureNavbar(node.children[id]);
-			},
-			doTransition: function (container, animation, to) {
-				configureNavbar(to);		
-				
-				console.log(JSON.stringify(gapify(F5.Global.navigationControllerConfiguration)))
-				
 				
 				if (typeof PhoneGap !== 'undefined') {
 					PhoneGap.exec(function (result) {
@@ -331,18 +321,74 @@ define('ui', exports, function (exports) {
 							console.log(result);
 						}, 'NavigationBar',
 						'configure',
-						[gapify(F5.Global.navigationControllerConfiguration)]
+						[false, gapify(F5.Global.navigationControllerConfiguration)]
+					);					
+				}												
+			},
+			doTransition: function (container, animation, to) {
+				configureNavbar(to);		
+								
+				if (typeof PhoneGap !== 'undefined') {
+					PhoneGap.exec(function (result) {
+							// success
+							console.log(result);
+						}, function (result) {
+							// failure
+							console.log(result);
+						}, 'NavigationBar',
+						'configure',
+						[animation === 'pushLeft' || animation === 'pushRight', 
+							gapify(F5.Global.navigationControllerConfiguration)]
 					);					
 				}											
 			},
 			startSubflow: function () {
-				leftButtonEl.style.visibility = 'hidden';						
+				leftButtonEl.style.visibility = 'hidden';	
+				
+				if (typeof PhoneGap !== 'undefined') {
+					PhoneGap.exec(function (result) {
+							// success
+							console.log(result);
+						}, function (result) {
+							// failure
+							console.log(result);
+						}, 'NavigationBar',
+						'configure',
+						[false, gapify(F5.Global.navigationControllerConfiguration)]
+					);					
+				}																	
 			},
 			syncSet: function (node) {
 				configureNavbar(node);
+				
+				if (typeof PhoneGap !== 'undefined') {
+					PhoneGap.exec(function (result) {
+							// success
+							console.log(result);
+						}, function (result) {
+							// failure
+							console.log(result);
+						}, 'NavigationBar',
+						'configure',
+						[false, gapify(F5.Global.navigationControllerConfiguration)]
+					);					
+				}												
 			},
 			completeSubflow: function () {
 				configureNavbar(F5.Global.flow.root);
+				
+				if (typeof PhoneGap !== 'undefined') {
+					PhoneGap.exec(function (result) {
+							// success
+							console.log(result);
+						}, function (result) {
+							// failure
+							console.log(result);
+						}, 'NavigationBar',
+						'configure',
+						[false, gapify(F5.Global.navigationControllerConfiguration)]
+					);					
+				}												
 			}
 		};		
 	}	

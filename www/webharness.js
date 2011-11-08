@@ -24,7 +24,7 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global define F5 localStorage*/
+/*global define, F5, localStorage*/
 
 define('webharness', exports, function (exports) {
 	
@@ -64,7 +64,7 @@ define('webharness', exports, function (exports) {
 			sequenceNumber += 1;						
 			F5.post('dot2svg', F5.Global.flow.diags.toDOT(), function (response, headers) {
 				
-				if (headers['sequence-number'] !== sequenceNumber + '') {
+				if (parseInt(headers['sequence-number'], 10) !== sequenceNumber) {
 					return;
 				}
 
@@ -116,9 +116,11 @@ define('webharness', exports, function (exports) {
 				var svgElementBBox = document.getElementById('svg-' + activeLeafNode.path).getBBox();
 				var svgRootBBox = svg.getBBox();
 
-				var offset = {x: svgElementBBox.x - svgRootBBox.width * 0.4, y: svgRootBBox.height + svgElementBBox.y + svgRootBBox.height * 0.4};
+				var offset = {x: svgElementBBox.x - svgRootBBox.width * 0.4, 
+								y: svgRootBBox.height + svgElementBBox.y + svgRootBBox.height * 0.4};
 
-				svgframeEl.style['-webkit-transform'] = 'translate3d(' + -offset.x * 0.4 + 'px,' + -offset.y * 0.4 + 'px, 0px)';
+				svgframeEl.style['-webkit-transform'] = 
+								'translate3d(' + -offset.x * 0.4 + 'px,' + -offset.y * 0.4 + 'px, 0px)';
 			}, function (error) {
 				console.log('error');
 			}, {'sequence-number': sequenceNumber});
@@ -136,7 +138,7 @@ define('webharness', exports, function (exports) {
 		});				
 
 		var jsonDiv;
-
+		
 		jsonbuttonEl.addEventListener('click', function () {
 			if (jsonDiv) {
 				jsonframeEl.removeChild(jsonDiv);

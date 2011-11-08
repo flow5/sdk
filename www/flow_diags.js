@@ -24,7 +24,7 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global define F5*/
+/*global define, F5*/
 
 define('flow_diags', exports, function (exports) {
 			
@@ -121,14 +121,16 @@ define('flow_diags', exports, function (exports) {
 			
 			// used for cluster/edge workaround below
 			function getAProperty(obj) {
-				for (var name in obj) {
+				var name;
+				for (name in obj) {
 					if (obj.hasOwnProperty(name)) {
 						return obj[name];
 					}
 				}
 			}
 			function getAnId(obj) {
-				for (var name in obj) {
+				var name;
+				for (name in obj) {
 					if (obj.hasOwnProperty(name)) {
 						return name;
 					}

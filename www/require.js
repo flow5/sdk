@@ -25,7 +25,7 @@
 
 ***********************************************************************************************************************/
 
-/*global define:true require:true exports:true*/
+/*global define: true, require: true, exports: true*/
 
 // OPTION: bring up to final spec when v0.5.x is stable
 	// see: http://nodejs.org/docs/v0.5.0/api/modules.html

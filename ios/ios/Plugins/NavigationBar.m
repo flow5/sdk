@@ -1,10 +1,29 @@
-//
-//  NavigationBar.m
-//  jitc
-//
-//  Created by Paul Greyson on 11/7/11.
-//  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
-//
+/***********************************************************************************************************************
+     
+     Copyright (c) 2011 Paul Greyson
+     
+     Permission is hereby granted, free of charge, to any person 
+     obtaining a copy of this software and associated documentation 
+     files (the "Software"), to deal in the Software without 
+     restriction, including without limitation the rights to use, 
+     copy, modify, merge, publish, distribute, sublicense, and/or 
+     sell copies of the Software, and to permit persons to whom the 
+     Software is furnished to do so, subject to the following 
+     conditions:
+     
+     The above copyright notice and this permission notice shall be 
+     included in all copies or substantial portions of the Software.
+     
+     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, 
+     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES 
+     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
+     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT 
+     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
+     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR 
+     OTHER DEALINGS IN THE SOFTWARE.
+ 
+***********************************************************************************************************************/
 
 #import "NavigationBar.h"
 #import "AppDelegate.h"
@@ -47,32 +66,36 @@
 
 -(void)configure:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)configuration {
     self.callbackID = [arguments pop];
+    BOOL animated = [[arguments pop] boolValue];
     
-    if (self.navigationBar) {                        
-        NSArray *items;
-        NSString *title = [configuration valueForKey:@"title"];        
-        UINavigationItem *currentItem = [self.itemCache valueForKey:[configuration valueForKey:@"id"]];
-        if (!currentItem) {
-            currentItem = [[UINavigationItem alloc] initWithTitle:title];
-            [self.itemCache setValue:currentItem forKey:[configuration valueForKey:@"id"]];
-        }
-        
-        NSDictionary *left = [configuration valueForKey:@"left"];
-        if (left) {                        
-            NSString *label = [left valueForKey:@"label"];
-            UINavigationItem *backItem = [self.itemCache valueForKey:[left valueForKey:@"id"]];
-            if (!backItem) {                
-                backItem = [[UINavigationItem alloc] initWithTitle:[left valueForKey:@"label"]];
-                [self.itemCache setValue:backItem forKey:[left valueForKey:@"id"]];                
+    if (self.navigationBar) {          
+        if ([configuration valueForKey:@"hide"]) {
+            self.navigationBar.hidden = YES;
+        } else {
+            self.navigationBar.hidden = NO;
+
+            NSArray *items;
+            UINavigationItem *currentItem = [self.itemCache valueForKey:[configuration valueForKey:@"id"]];
+            if (!currentItem) {
+                currentItem = [[UINavigationItem alloc] initWithTitle:[configuration valueForKey:@"title"]];
+                [self.itemCache setValue:currentItem forKey:[configuration valueForKey:@"id"]];
             }
             
-            items = [NSArray arrayWithObjects:backItem, currentItem, nil];            
-        } else {
-            items = [NSArray arrayWithObject:currentItem];
+            NSDictionary *left = [configuration valueForKey:@"left"];
+            if (left) {                        
+                UINavigationItem *backItem = [self.itemCache valueForKey:[left valueForKey:@"id"]];
+                if (!backItem) {                
+                    backItem = [[UINavigationItem alloc] initWithTitle:[left valueForKey:@"label"]];
+                    [self.itemCache setValue:backItem forKey:[left valueForKey:@"id"]];                
+                }
+                
+                items = [NSArray arrayWithObjects:backItem, currentItem, nil];            
+            } else {
+                items = [NSArray arrayWithObject:currentItem];
+            }
+            
+            [self.navigationBar setItems:items animated:animated];            
         }
-        
-        [self.navigationBar setItems:items animated:YES];
-        
                         
         PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];        
         [self writeJavascript: [pluginResult toSuccessCallbackString:self.callbackID]];        

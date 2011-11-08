@@ -24,7 +24,7 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global define F5*/
+/*global define, F5*/
 
 define('flow', exports, function (exports) {
 		
@@ -44,7 +44,7 @@ define('flow', exports, function (exports) {
 								
 		function injectNodeRecursive(id, nodeSpec, parent) {										
 			var node = {id: id, 
-						type: nodeSpec.type ? nodeSpec.type : 'flow', 
+						type: nodeSpec.type || 'flow', 
 						parent: parent,
 						viewDelegate: nodeSpec.viewDelegate,
 						spec: nodeSpec, 
@@ -99,13 +99,14 @@ define('flow', exports, function (exports) {
 		function resolveTransitionsRecursive(node) {								
 			
 			if (node.spec.transitions) {
-				F5.assert(node.type === 'flow' || node.type === 'set', 'A node with transitions must be of type flow or set');
+				F5.assert(node.type === 'flow' || node.type === 'set', 
+							'A node with transitions must be of type flow or set');
 				node.transitions = {};
 				node.spec.transitions.forEach(function (transition) {
 					var id;
 					if (typeof transition === 'object') {
 						id = transition.to;
-						node.transitions[id] = {to: findNodeUp(node, id), animation: transition.animation};																				
+						node.transitions[id] = {to: findNodeUp(node, id), animation: transition.animation};
 					} else {
 						id = transition;
 						node.transitions[id] = {to: findNodeUp(node, id)};						

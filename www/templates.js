@@ -24,7 +24,7 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global define F5*/
+/*global define, F5*/
 
 
 define('templates', exports, function (exports) {
