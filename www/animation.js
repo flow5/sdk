@@ -24,10 +24,10 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global F5, define*/
+/*global F5*/
 
-define('animation', exports, function (exports) {
-	
+(function () {
+		
 	function pushHorizontal(container, oldEl, newEl, distance, cb) {			
 		oldEl.style['-webkit-transform'] = 'translate3d(0px, 0px, 0px)';			
 		newEl.style['-webkit-transform'] = 'translate3d(' + distance + 'px, 0px, 0px)';
@@ -98,4 +98,5 @@ define('animation', exports, function (exports) {
 			pushHorizontal(container, oldEl, newEl, -container.offsetWidth, cb);						
 		}
 	};
-});
+}());
+

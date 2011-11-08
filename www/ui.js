@@ -24,10 +24,10 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global define, WebKitCSSMatrix, F5*/
+/*global WebKitCSSMatrix, F5*/
 
-define('ui', exports, function (exports) {
-
+(function () {
+	
 	function eventLocation(event) {
 		var x, y;
 		if (navigator.userAgent.match(/(iPhone)|(Android)/i)) {
@@ -148,39 +148,8 @@ define('ui', exports, function (exports) {
 		});
 	}
 	
-	function attachNavbar(container) {
-		
-		var navbarEl = document.createElement('div');
-		navbarEl.className = 'navbar';
-		container.insertBefore(navbarEl, container.firstChild);	
-						
-		var leftButtonEl = document.createElement('div');
-		leftButtonEl.className = 'leftbutton';
-		leftButtonEl.style.visibility = 'hidden';
-		navbarEl.appendChild(leftButtonEl);
-
-		var titleEl = document.createElement('div');
-		titleEl.className = 'title';
-		navbarEl.appendChild(titleEl);
-
-		var rightButtonEl = document.createElement('div');
-		rightButtonEl.className = 'rightbutton';
-		rightButtonEl.style.visibility = 'hidden';
-		navbarEl.appendChild(rightButtonEl);
-		
-		// TODO: override the prototype method from an extensions script
-		// that gets loaded on device
-		if (typeof PhoneGap !== 'undefined') {
-			PhoneGap.exec(function (result) {
-				// success
-				console.log(result);
-			}, function (result) {
-				// failure
-				console.log(result);
-			}, "NavigationBar", "create", []);				
-		}	
-		
-		function getConfiguration(node) {			
+	F5.Prototypes.navigationConfigurator = {
+		updateConfiguration: function (node) {
 			// find the leaf node
 			while (node.selection) {
 				node = node.selection;
@@ -222,175 +191,14 @@ define('ui', exports, function (exports) {
 				};			
 			}
 			
-			return configuration;	
-		}	
-		
-		function configureNavbar(node) {								
-
-			var configuration = F5.Global.navigationControllerConfiguration = getConfiguration(node);											
-			
-			// TODO: modify the prototype of the navbar object from a device-only include script
-			if (typeof PhoneGap === 'undefined') {				
-				if (configuration.hide) {
-					navbarEl.style.visibility = 'hidden';
-					leftButtonEl.style['pointer-events'] = '';
-					rightButtonEl.style['pointer-events'] = '';				
-				} else {
-					navbarEl.style.visibility = '';
-					titleEl.innerHTML = configuration.title;																	
-					if (configuration.left) {
-						leftButtonEl.style.visibility = '';
-						leftButtonEl.style['pointer-events'] = '';
-						leftButtonEl.innerText = configuration.left.label;					
-					} else {
-						leftButtonEl.style.visibility = 'hidden';					
-						leftButtonEl.style['pointer-events'] = 'none';
-					}
-					if (configuration.right) {
-						rightButtonEl.style.visibility = '';
-						rightButtonEl.style['pointer-events'] = '';				
-						rightButtonEl.innerText = configuration.right.label;					
-					} else {
-						rightButtonEl.style.visibility = 'hidden';					
-						rightButtonEl.style['pointer-events'] = 'none';
-					}				
-				}				
-			}							
-		}				
-
-		addTouchListener(leftButtonEl, function () {
-			F5.Global.navigationControllerConfiguration.left.action();
-		});																					
-
-		addTouchListener(rightButtonEl, function () {
-			F5.Global.navigationControllerConfiguration.right.action();
-		});		
-		
-		function gapify(configuration) {
-			var gapConfig = {
-				title: configuration.title,
-				id: configuration.node.path,
-				hide: configuration.hide
-			};
-			if (configuration.left) {
-				gapConfig.left = {
-					label: configuration.left.label,
-				};
-				if (configuration.left.transition === 'back') {
-					var backNode = F5.Global.flowController.getBackNode(configuration.left.node).back;
-					while (backNode.selection) {
-						backNode = backNode.selection;
-					}
-					gapConfig.left.id = backNode.path;
-				} else {
-					gapConfig.left.id = configuration.left.node.transitions[configuration.left.transition].to.path;
-				}
-			}
-			
-			console.log(gapConfig);
-									
-			return gapConfig;
-		}				
-		
-		F5.Global.navigationController = {
-			start: function () {
-				configureNavbar(F5.Global.flow.root);
-				
-				if (typeof PhoneGap !== 'undefined') {
-					PhoneGap.exec(function (result) {
-							// success
-							console.log(result);
-						}, function (result) {
-							// failure
-							console.log(result);
-						}, 'NavigationBar',
-						'configure',
-						[false, gapify(F5.Global.navigationControllerConfiguration)]
-					);					
-				}								
-			},
-			doSelection: function (node, id) {
-				configureNavbar(node.children[id]);
-				
-				if (typeof PhoneGap !== 'undefined') {
-					PhoneGap.exec(function (result) {
-							// success
-							console.log(result);
-						}, function (result) {
-							// failure
-							console.log(result);
-						}, 'NavigationBar',
-						'configure',
-						[false, gapify(F5.Global.navigationControllerConfiguration)]
-					);					
-				}												
-			},
-			doTransition: function (container, animation, to) {
-				configureNavbar(to);		
-								
-				if (typeof PhoneGap !== 'undefined') {
-					PhoneGap.exec(function (result) {
-							// success
-							console.log(result);
-						}, function (result) {
-							// failure
-							console.log(result);
-						}, 'NavigationBar',
-						'configure',
-						[animation === 'pushLeft' || animation === 'pushRight', 
-							gapify(F5.Global.navigationControllerConfiguration)]
-					);					
-				}											
-			},
-			startSubflow: function () {
-				leftButtonEl.style.visibility = 'hidden';	
-				
-				if (typeof PhoneGap !== 'undefined') {
-					PhoneGap.exec(function (result) {
-							// success
-							console.log(result);
-						}, function (result) {
-							// failure
-							console.log(result);
-						}, 'NavigationBar',
-						'configure',
-						[false, gapify(F5.Global.navigationControllerConfiguration)]
-					);					
-				}																	
-			},
-			syncSet: function (node) {
-				configureNavbar(node);
-				
-				if (typeof PhoneGap !== 'undefined') {
-					PhoneGap.exec(function (result) {
-							// success
-							console.log(result);
-						}, function (result) {
-							// failure
-							console.log(result);
-						}, 'NavigationBar',
-						'configure',
-						[false, gapify(F5.Global.navigationControllerConfiguration)]
-					);					
-				}												
-			},
-			completeSubflow: function () {
-				configureNavbar(F5.Global.flow.root);
-				
-				if (typeof PhoneGap !== 'undefined') {
-					PhoneGap.exec(function (result) {
-							// success
-							console.log(result);
-						}, function (result) {
-							// failure
-							console.log(result);
-						}, 'NavigationBar',
-						'configure',
-						[false, gapify(F5.Global.navigationControllerConfiguration)]
-					);					
-				}												
-			}
-		};		
+			F5.Global.navigationControllerConfiguration = configuration;
+		}
+	};	
+	
+	// TODO: there can only be one nav bar. move this to a framework only location
+	function attachNavbar(container) {
+		F5.Global.navigationController = F5.object(F5.Prototypes.navigationController);
+		F5.Global.navigationController.setup(container);																
 	}	
 	
 	// Tabset works by looking for elements with f5_tab attribute set
@@ -524,4 +332,4 @@ define('ui', exports, function (exports) {
 		attachNavbar: attachNavbar,
 		attachTracker: attachTracker
 	};
-});
+}());

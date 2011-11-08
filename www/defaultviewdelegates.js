@@ -24,9 +24,9 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global define, F5*/
+/*global F5*/
 
-define('defaultviewdelegates', exports, function (exports) {
+(function () {
 	
 	function isLifecycleSubflow(id) {
 		return {didBecomeActive: true, 
@@ -159,4 +159,5 @@ define('defaultviewdelegates', exports, function (exports) {
 		set: new SetViewDelegate(),
 		subflow: new SubflowViewDelegate()
 	};
-});
+
+}());

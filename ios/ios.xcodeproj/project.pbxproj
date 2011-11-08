@@ -68,7 +68,6 @@
 		BE29F61E14686984009B0CB6 /* PhoneGap.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = PhoneGap.plist; sourceTree = "<group>"; };
 		BE29F62114686984009B0CB6 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = Classes/AppDelegate.h; sourceTree = "<group>"; };
 		BE29F62214686984009B0CB6 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = Classes/AppDelegate.m; sourceTree = "<group>"; };
-		BE29F62514686984009B0CB6 /* README */ = {isa = PBXFileReference; lastKnownFileType = text; name = README; path = Plugins/README; sourceTree = "<group>"; };
 		BE29F64514686F7C009B0CB6 /* NavigationBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NavigationBar.h; path = Plugins/NavigationBar.h; sourceTree = "<group>"; };
 		BE29F64614686F7C009B0CB6 /* NavigationBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NavigationBar.m; path = Plugins/NavigationBar.m; sourceTree = "<group>"; };
 		BEC4988714686FF1008281AB /* Flow5.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Flow5.plist; sourceTree = "<group>"; };
@@ -229,7 +228,6 @@
 			children = (
 				BE29F64514686F7C009B0CB6 /* NavigationBar.h */,
 				BE29F64614686F7C009B0CB6 /* NavigationBar.m */,
-				BE29F62514686984009B0CB6 /* README */,
 			);
 			name = Plugins;
 			sourceTree = "<group>";

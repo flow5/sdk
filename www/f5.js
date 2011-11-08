@@ -43,13 +43,6 @@ define('f5', exports, function (exports) {
 	F5.FlowDelegates = {};	
 		
 	if (typeof document !== 'undefined') {
-		require('./domext.js');		
-		require('./viewcontroller.js');
-		require('./animation.js');
-		require('./ui.js');
-		require('./defaultviewdelegates.js');
-		require('./templates.js');
-
 		F5.ViewDelegates = {};
 	}	
 });

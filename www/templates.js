@@ -24,11 +24,10 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global define, F5*/
+/*global F5*/
 
-
-define('templates', exports, function (exports) {
-		
+(function () {
+			
 	function loadTemplate(arg1, arg2) {
 		
 		var id;
@@ -87,4 +86,5 @@ define('templates', exports, function (exports) {
 	}
 	
 	F5.Templates = {loadTemplate: loadTemplate};
-});
+
+}());

@@ -57,33 +57,33 @@ function generateCacheManifest(app, debug, device) {
 			
 	function checkManifest(path) {	
 		checkDate(path + 'manifest.js');
+		
+		function checkDates(files) {
+			if (files) {
+				files.forEach(function (file) {
+					checkDate(path + file);
+				});				
+			}
+		}
 			
 		var manifest = require('../' + path + 'manifest.js');
 		
-		manifest.scripts.forEach(function (file) {
-			checkDate(path + file);
-		});
+		checkDates(manifest.scripts);
 		
-		if (debug && manifest.debugScripts) {
-			manifest.debugScripts.forEach(function (file) {
-				checkDate(path + file);
-			});			
+		if (debug) {
+			checkDates(manifest.debugScripts);
 		}
 		
-		if (device && manifest.device) {
-			manifest.device.forEach(function (file) {
-				checkDate(path + file);
-			});			
-		}
-
-		manifest.elements.forEach(function (file) {
-			checkDate(path + file);
-		});	
+		checkDates(manifest.elements);
 		
-		if (debug && manifest.debugElements) {
-			manifest.debugElements.forEach(function (file) {
-				checkDate(path + file);
-			});				
+		if (debug) {
+			checkDates(manifest.debugElements);
+		}
+		
+		if (device) {
+			checkDates(manifest.deviceScripts);
+		} else {
+			checkDates(manifest.webScripts);
 		}
 		
 		try {
@@ -180,49 +180,52 @@ function generateHtml(app, debug, device) {
 		return script;
 	}
 	
-	function inject(path) {		
+	function injectManifest(path) {		
 		var manifest = require('../' + path + 'manifest.js');
 		
-		manifest.scripts.forEach(function (file) {				
-			document.head.appendChild(makeScript(path + file));
-		});
-		
-		if (debug && manifest.debugScripts) {
-			manifest.debugScripts.forEach(function (file) {				
-				document.head.appendChild(makeScript(path + file));
-			});			
-		}
-		
-		if (device && manifest.device) {
-			manifest.device.forEach(function (file) {				
-				document.head.appendChild(makeScript(path + file));
-			});			
-		}
-		
-		function injectElements(file) {
-			var elements;
-			if (file.match('.css')) {
-				elements = document.createElement('style');
-			} else {
-				elements = document.createElement('div');
+		// javascript
+		function injectScripts(scripts) {
+			if (scripts) {
+				scripts.forEach(function (file) {
+					document.head.appendChild(makeScript(path + file));				
+				});				
 			}
-
-			elements.innerHTML = fs.readFileSync(path + file).toString();
-			elements.id = file;				
-			
-			templates.appendChild(elements);			
 		}
-
-		manifest.elements.forEach(function (file) {
-			injectElements(file);
-		});	
 		
-		if (debug && manifest.debugElements) {
-			manifest.debugElements.forEach(function (file) {
-				injectElements(file);
-			});				
+		injectScripts(manifest.scripts);
+		if (debug) {
+			injectScripts(manifest.debugScripts);
+		}				
+		if (device) {
+			injectScripts(manifest.deviceScripts);
+		} else {
+			injectScripts(manifest.webScripts);
+		}		
+		
+		// html and css
+		function injectElements(elements) {
+			if (elements) {
+				elements.forEach(function (file) {
+					var elementsDiv;
+					if (file.match('.css')) {
+						elementsDiv = document.createElement('style');
+					} else {
+						elementsDiv = document.createElement('div');
+					}
+
+					elementsDiv.innerHTML = fs.readFileSync(path + file).toString();
+					elementsDiv.id = file;				
+
+					templates.appendChild(elementsDiv);
+				});
+			}					
+		}		
+		injectElements(manifest.elements);
+		if (debug) {
+			injectElements(manifest.debugElements);
 		}
-				
+		
+		// images		
 		if (debug) {
 			document.head.appendChild(makeScript(path + 'images.js'));
 		} else {
@@ -248,13 +251,13 @@ function generateHtml(app, debug, device) {
 	}
 			
 
-	inject('');
+	injectManifest('');
 	
 	var init = document.createElement('script');
 	init.innerHTML = 'require("./f5.js")';
 	document.head.appendChild(init);
 		
-	inject('apps/' + app + '/www/');
+	injectManifest('apps/' + app + '/www/');
 		
 	var appframeEl = document.createElement('div');
 	appframeEl.id = 'appframe';
@@ -274,13 +277,14 @@ function generateHtml(app, debug, device) {
 		
 	document.body.appendChild(makeScript('start.js'));	
 	
-	if (device) {
-		// TODO: only device+debug
-		var weinre = document.createElement('script');
-		weinre.src = 'http://' + require('os').hostname() + ':8081/target/target-script-min.js#anonymous';
-		document.head.appendChild(weinre);	
-		
+	if (device) {		
 		document.body.appendChild(makeScript('3p/phonegap-1.1.0.js'));				
+		
+		if (debug) {
+			var weinre = document.createElement('script');
+			weinre.src = 'http://' + require('os').hostname() + ':8081/target/target-script-min.js#anonymous';
+			document.head.appendChild(weinre);			
+		}
 	}	
 	
 	deleteCaches();	

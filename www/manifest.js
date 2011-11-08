@@ -41,23 +41,27 @@ exports.scripts = [
 	'viewcontroller.js',
 ];
 
+exports.elements = [
+	'default.css',
+];
+
+exports.webScripts = [
+	'widgets/navigationcontroller.js'
+];
+
+exports.deviceScripts = [
+	'widgets/navigationcontroller_native.js'
+];
+
 exports.debugScripts = [
 	'debug/flow_diags.js',
 	'debug/flowcontroller_diags.js',
 	'debug/webharness.js',
 	'debug/json.js'
 ];
-		
-exports.elements = [
-	'default.css',
-];
 
 exports.debugElements = [
 	'debug/json.css',
 	'debug/webharness.css',
 	'debug/webharness.html'
-];
-
-exports.device = [
-	
 ];

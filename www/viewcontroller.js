@@ -24,10 +24,9 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global define, F5*/
+/*global F5*/
 
-define('viewcontroller', exports, function (exports) {
-	
+(function () {	
 	var buildViewForNode;
 	function ViewPrototype() {
 		this.ConstructView = function (node) {	
@@ -331,4 +330,4 @@ define('viewcontroller', exports, function (exports) {
 	}
 		
 	F5.ViewController = ViewController;	
-});
+}());
