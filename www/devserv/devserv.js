@@ -107,7 +107,7 @@ cli.main(function (args, options) {
 
 	http.createServer(function (req, res) {
 //		sys.puts('------------------------------------');
-//		sys.puts(req.url);
+		sys.puts(req.url);
 //		for (var name in req.headers) {
 //			if (req.headers.hasOwnProperty(name)) {
 //				sys.puts(name + ' : ' + req.headers[name]);				

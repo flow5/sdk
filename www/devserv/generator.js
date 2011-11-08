@@ -224,15 +224,7 @@ function generateHtml(app, debug, device) {
 	var init = document.createElement('script');
 	init.innerHTML = 'require("./f5.js")';
 	document.head.appendChild(init);
-	
-	// should be device+debug
-	if (device) {
-		var weinre = document.createElement('script');
-		weinre.src = 'http://' + require('os').hostname() + ':8081/target/target-script-min.js#anonymous';
-//		console.log(weinre.src);
-		document.head.appendChild(weinre);		
-	}	
-	
+		
 	inject('apps/' + app + '/www/');
 		
 	var appframeEl = document.createElement('div');
@@ -252,6 +244,16 @@ function generateHtml(app, debug, device) {
 	document.body.appendChild(appframeEl);
 		
 	document.body.appendChild(makeScript('start.js'));	
+	
+	if (device) {
+		// TODO: only device+debug
+		var weinre = document.createElement('script');
+		weinre.src = 'http://' + require('os').hostname() + ':8081/target/target-script-min.js#anonymous';
+//		console.log(weinre.src);
+		document.head.appendChild(weinre);	
+		
+		document.body.appendChild(makeScript('3p/phonegap-1.1.0.js'));				
+	}	
 	
 	deleteCaches();	
 	

@@ -24,7 +24,7 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global define WebKitCSSMatrix F5*/
+/*global define, WebKitCSSMatrix, F5*/
 
 define('ui', exports, function (exports) {
 
@@ -168,34 +168,30 @@ define('ui', exports, function (exports) {
 		rightButtonEl.style.visibility = 'hidden';
 		navbarEl.appendChild(rightButtonEl);
 		
-		function configureNavbar(node) {
-			
-			if (typeof PhoneGap !== 'undefined') {
-				PhoneGap.exec(function (result) {
-					// success
-					console.log(result);
-				}, function () {
-					// failure
-					console.log(result);
-				}, "NavigationBar", "print", ['HelloWorld']);				
-			}
-			
-			// find the leaf node
-			while (node.selection) {
-				node = node.selection;
-			}		
-			
-			titleEl.innerHTML = node.id;													
-
-			var configuration = {};
+		// TODO: override the prototype method from an extensions script
+		// that gets loaded on device
+		if (typeof PhoneGap !== 'undefined') {
+			PhoneGap.exec(function (result) {
+				// success
+				console.log(result);
+			}, function (result) {
+				// failure
+				console.log(result);
+			}, "NavigationBar", "create", []);				
+		}	
+		
+		function getConfiguration(node) {
+			var configuration = {title: node.id};
 			while (node && (!configuration.left || !configuration.right)) {
 				var nodeConfiguration = node.view.getNavConfig();
 				if (nodeConfiguration) {
-					if (!configuration.left) {
+					if (!configuration.left && nodeConfiguration.left) {
 						configuration.left = nodeConfiguration.left;
+						configuration.left.node = node;
 					}
-					if (!configuration.right) {
+					if (!configuration.right && nodeConfiguration.right) {
 						configuration.right = nodeConfiguration.right;
+						configuration.right.node = node;
 					}	
 					if (nodeConfiguration.hide) {
 						configuration.hide = nodeConfiguration.hide;									
@@ -205,31 +201,64 @@ define('ui', exports, function (exports) {
 				node = node.parent;
 			}
 			
-			if (configuration.hide) {
-				navbarEl.style.visibility = 'hidden';
-				leftButtonEl.style['pointer-events'] = '';
-				rightButtonEl.style['pointer-events'] = '';				
-			} else {
-				navbarEl.style.visibility = '';
-				if (configuration.left) {
-					leftButtonEl.style.visibility = '';
-					leftButtonEl.style['pointer-events'] = '';
-					leftButtonEl.innerText = configuration.left.label;					
-				} else {
-					leftButtonEl.style.visibility = 'hidden';					
-					leftButtonEl.style['pointer-events'] = 'none';
-				}
-				if (configuration.right) {
-					rightButtonEl.style.visibility = '';
-					rightButtonEl.style['pointer-events'] = '';				
-					rightButtonEl.innerText = configuration.right.label;					
-				} else {
-					rightButtonEl.style.visibility = 'hidden';					
-					rightButtonEl.style['pointer-events'] = 'none';
+			if (configuration.left) {
+				configuration.left.action = function () {
+					var transition = F5.Global.navigationControllerConfiguration.left.transition;
+					var node = F5.Global.navigationControllerConfiguration.left.node;
+					F5.Global.flowController.doTransition(node, transition);				
 				}				
 			}
 			
-			F5.Global.navigationControllerConfiguration = configuration;
+			if (configuration.right) {
+				configuration.right.action = function () {
+					var transition = F5.Global.navigationControllerConfiguration.right.transition;
+					var node = F5.Global.navigationControllerConfiguration.right.node;
+					F5.Global.flowController.doTransition(node, transition);				
+				}							
+			}
+			
+			return configuration;	
+		}	
+		
+		function configureNavbar(node) {
+						
+			// find the leaf node
+			var leafNode = node;
+			while (leafNode.selection) {
+				leafNode = leafNode.selection;
+			}		
+
+			var configuration = F5.Global.navigationControllerConfiguration = getConfiguration(leafNode);
+			
+			configuration.node = leafNode;					
+			
+			// TODO: modify the prototype of the navbar object from a device-only include script
+			if (typeof PhoneGap === 'undefined') {				
+				if (configuration.hide) {
+					navbarEl.style.visibility = 'hidden';
+					leftButtonEl.style['pointer-events'] = '';
+					rightButtonEl.style['pointer-events'] = '';				
+				} else {
+					navbarEl.style.visibility = '';
+					titleEl.innerHTML = configuration.title;																	
+					if (configuration.left) {
+						leftButtonEl.style.visibility = '';
+						leftButtonEl.style['pointer-events'] = '';
+						leftButtonEl.innerText = configuration.left.label;					
+					} else {
+						leftButtonEl.style.visibility = 'hidden';					
+						leftButtonEl.style['pointer-events'] = 'none';
+					}
+					if (configuration.right) {
+						rightButtonEl.style.visibility = '';
+						rightButtonEl.style['pointer-events'] = '';				
+						rightButtonEl.innerText = configuration.right.label;					
+					} else {
+						rightButtonEl.style.visibility = 'hidden';					
+						rightButtonEl.style['pointer-events'] = 'none';
+					}				
+				}				
+			}							
 		}				
 
 		addTouchListener(leftButtonEl, function () {
@@ -238,17 +267,73 @@ define('ui', exports, function (exports) {
 
 		addTouchListener(rightButtonEl, function () {
 			F5.Global.navigationControllerConfiguration.right.action();
-		});																					
+		});		
+		
+		function gapify(configuration) {
+			var gapConfig = {
+				title: configuration.title,
+				id: configuration.node.path,
+			}
+			if (configuration.left) {
+				gapConfig.left = {
+					label: configuration.left.label,
+				}
+				if (configuration.left.transition === 'back') {
+					var backNode = F5.Global.flowController.getBackNode(configuration.left.node).back;
+					while (backNode.selection) {
+						backNode = backNode.selection;
+					}
+					gapConfig.left.id = backNode.path;
+				} else {
+					gapConfig.left.id = configuration.left.node.transitions[configuration.left.transition].to.path;
+				}
+			}
+			
+			console.log(gapConfig);
+									
+			return gapConfig;
+		}																			
 
 		F5.Global.navigationController = {
 			start: function () {
 				configureNavbar(F5.Global.flow.root);
+				
+				console.log(JSON.stringify(gapify(F5.Global.navigationControllerConfiguration)))
+				
+				if (typeof PhoneGap !== 'undefined') {
+					PhoneGap.exec(function (result) {
+							// success
+							console.log(result);
+						}, function (result) {
+							// failure
+							console.log(result);
+						}, 'NavigationBar',
+						'configure',
+						[gapify(F5.Global.navigationControllerConfiguration)]
+					);					
+				}								
 			},
 			doSelection: function (node, id) {
 				configureNavbar(node.children[id]);
 			},
-			doTransition: function (container, id, to) {
-				configureNavbar(to);
+			doTransition: function (container, animation, to) {
+				configureNavbar(to);		
+				
+				console.log(JSON.stringify(gapify(F5.Global.navigationControllerConfiguration)))
+				
+				
+				if (typeof PhoneGap !== 'undefined') {
+					PhoneGap.exec(function (result) {
+							// success
+							console.log(result);
+						}, function (result) {
+							// failure
+							console.log(result);
+						}, 'NavigationBar',
+						'configure',
+						[gapify(F5.Global.navigationControllerConfiguration)]
+					);					
+				}											
 			},
 			startSubflow: function () {
 				leftButtonEl.style.visibility = 'hidden';						

@@ -373,8 +373,8 @@ define('flowcontroller', exports, function (exports) {
 		
 		// find an active leaf node
 		// then climb up the stack for the first node with 'back'		
-		that.getBackNode = function () {
-			var leaf = flow.root;
+		that.getBackNode = function (leaf) {
+			leaf = leaf || flow.root;
 			while (leaf.selection) {
 				leaf = leaf.selection;
 			}

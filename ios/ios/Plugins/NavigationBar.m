@@ -7,29 +7,82 @@
 //
 
 #import "NavigationBar.h"
+#import "AppDelegate.h"
 
 @implementation NavigationBar
 
 @synthesize callbackID;
+@synthesize navigationBar;
+@synthesize itemCache;
 
--(void)print:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
+
+-(BOOL)navigationBar:(UINavigationBar *)navigationBar shouldPopItem:(UINavigationItem *)item {
+    [self writeJavascript: @"F5.Global.navigationControllerConfiguration.left.action()"]; 
     
+    return NO;
+}
+
+
+-(void)create:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
+
+    if (self.navigationBar) {
+        NSLog(@"NavigationBar already created. Was location.reload() called?");
+    } else {
+        AppDelegate *appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];        
+        
+        self.navigationBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, 0, 320, 44)];
+        [self.navigationBar setDelegate:self];
+        
+        UIView *mainView = [appDelegate.viewController view];
+        
+        [mainView addSubview:self.navigationBar];
+        [mainView sendSubviewToBack: [appDelegate.viewController webView]];     
+        
+        self.itemCache = [[NSMutableDictionary alloc] init];
+    }
+    
+    PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];        
+    [self writeJavascript: [pluginResult toSuccessCallbackString:self.callbackID]];      
+}
+
+-(void)configure:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)configuration {
     self.callbackID = [arguments pop];
     
-    NSString *stringObtainedFromJavascript = [arguments objectAtIndex:0];                 
-    
-    NSMutableString *stringToReturn = [NSMutableString stringWithString: @"StringReceived:"];
-
-    [stringToReturn appendString: stringObtainedFromJavascript];
-
-    PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsString: [stringToReturn stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
-    
-    if([stringObtainedFromJavascript isEqualToString:@"HelloWorld"]==YES) {
-        [self writeJavascript: [pluginResult toSuccessCallbackString:self.callbackID]];
+    if (self.navigationBar) {                        
+        NSArray *items;
+        NSString *title = [configuration valueForKey:@"title"];        
+        UINavigationItem *currentItem = [self.itemCache valueForKey:[configuration valueForKey:@"id"]];
+        if (!currentItem) {
+            currentItem = [[UINavigationItem alloc] initWithTitle:title];
+            [self.itemCache setValue:currentItem forKey:[configuration valueForKey:@"id"]];
+        }
         
-    } else {    
-        [self writeJavascript: [pluginResult toErrorCallbackString:self.callbackID]];        
-    }    
+        NSDictionary *left = [configuration valueForKey:@"left"];
+        if (left) {                        
+            NSString *label = [left valueForKey:@"label"];
+            UINavigationItem *backItem = [self.itemCache valueForKey:[left valueForKey:@"id"]];
+            if (!backItem) {                
+                backItem = [[UINavigationItem alloc] initWithTitle:[left valueForKey:@"label"]];
+                [self.itemCache setValue:backItem forKey:[left valueForKey:@"id"]];                
+            }
+            
+            items = [NSArray arrayWithObjects:backItem, currentItem, nil];            
+        } else {
+            items = [NSArray arrayWithObject:currentItem];
+        }
+        
+        [self.navigationBar setItems:items animated:YES];
+        
+                        
+        PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];        
+        [self writeJavascript: [pluginResult toSuccessCallbackString:self.callbackID]];        
+    } else {
+        NSLog(@"Trying to use configure NavigationBar without calling create first");
+        
+        PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_INVALID_ACTION];        
+        [self writeJavascript: [pluginResult toSuccessCallbackString:self.callbackID]];        
+    }  
+
 }
 
 

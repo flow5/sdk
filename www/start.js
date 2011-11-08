@@ -29,7 +29,7 @@
 
 require('./f5.js');
 
-(function () {	
+(function () {		
 	// prevent scrolling
 	document.body.addEventListener('touchmove', function (e) {
 		e.preventDefault();
@@ -90,8 +90,11 @@ require('./f5.js');
 
 */
 
-	window.addEventListener('load', function (e) {	
+	// TODO: use the device block of manifest to avoid the PhoneGap reference
+	var startEvent = isDevice ? 'deviceready' : 'load';
+	var listener = isDevice ? document : window;
 	
+	listener.addEventListener(startEvent, function (e) {	
 		function start() {
 			try {
 				F5.Global.flow = new F5.Flow(require('flowspec.js').root);
@@ -126,28 +129,31 @@ require('./f5.js');
 			console.log('updateready');
 			window.location.reload();
 		}
-	
+		
 		window.applicationCache.addEventListener('updateready', function (e) {
 			updateReady();
 		}, false);
 		if (window.applicationCache.status === window.applicationCache.UPDATEREADY) {
 			updateReady();
 		}
-	
-		window.applicationCache.addEventListener('noupdate', function (e) {
-			console.log('noupdate');
-			start();
-		}, false);
 
-		window.applicationCache.addEventListener('cached', function (e) {
-			console.log('cached');
-			start();
-		}, false);
+		if (window.applicationCache.status === window.applicationCache.IDLE) {
+			start();			
+		} else {
+			window.applicationCache.addEventListener('noupdate', function (e) {
+				console.log('noupdate');
+				start();
+			}, false);
 
-		window.applicationCache.addEventListener('error', function (e) {
-			console.log('error');
-			start();
-		}, false);
-	
+			window.applicationCache.addEventListener('cached', function (e) {
+				console.log('cached');
+				start();
+			}, false);
+
+			window.applicationCache.addEventListener('error', function (e) {
+				console.log('error');
+				start();
+			}, false);			
+		}				
 	}, false);					
 }());

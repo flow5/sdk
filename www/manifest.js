@@ -41,11 +41,11 @@ exports.scripts = [
 	'ui.js',
 	'utils.js',
 	'viewcontroller.js',
-	'webharness.js',
+	'webharness.js'
 ];
 
 exports.device = [
-	'3p/phonegap-1.1.0.js'
+	
 ];
 		
 exports.elements = [

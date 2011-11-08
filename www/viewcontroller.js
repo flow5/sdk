@@ -121,12 +121,15 @@ define('viewcontroller', exports, function (exports) {
 				return this.delegate.getNavConfig(this.node);
 			} else {
 				if (this.node.back) {
+					var leaf = this.node.back;
+					while (leaf.selection) {
+						leaf = leaf.selection;
+					}
+										
 					return {
 						left: {
-							label: this.node.back.id, 
-							action: function () {
-									F5.Global.flowController.doBack();
-								}
+							label: leaf.id, 
+							transition: 'back'
 						}											
 					};
 				} else {
@@ -212,11 +215,7 @@ define('viewcontroller', exports, function (exports) {
 			});			
 		};
 						
-		this.doTransition = function (container, id, to, animation, cb) {
-			if (F5.Global.navigationController) {
-				F5.Global.navigationController.doTransition(container, id, to);
-			}																			
-						
+		this.doTransition = function (container, id, to, animation, cb) {						
 			var containerElement = container.view.el.querySelector('[class=container]');
 			var oldNode = container.selection;
 			
@@ -251,6 +250,9 @@ define('viewcontroller', exports, function (exports) {
 				to.animation = animation;
 			}
 			
+			if (F5.Global.navigationController) {
+				F5.Global.navigationController.doTransition(container, animation, to);
+			}																			
 						
 			F5.Animation[animation](containerElement, oldEl, newEl, function () {
 				cb();

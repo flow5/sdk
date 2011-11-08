@@ -15,11 +15,16 @@
 @interface NavigationBar : PGPlugin {
 
     NSString* callbackID; 
-
+    UINavigationBar *navigationBar;
+    NSMutableDictionary *itemCache;
 }
 
 @property (nonatomic, copy) NSString* callbackID;
+@property (nonatomic, retain) UINavigationBar* navigationBar;
+@property (nonatomic, retain) NSMutableDictionary *itemCache;
 
-- (void) print:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+
+- (void) create:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) configure:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
 @end
