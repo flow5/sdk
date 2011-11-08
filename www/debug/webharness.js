@@ -26,10 +26,8 @@
 ***********************************************************************************************************************/
 /*global define, F5, localStorage*/
 
-define('webharness', exports, function (exports) {
-	
-	function attach(screenEl) {
-		
+(function () {		
+	document.addEventListener('f5ready', function () {
 		var appframeEl = document.getElementById('appframe');
 
 		var viewerframeEl = F5.Templates.loadTemplate('viewerframe');
@@ -37,7 +35,7 @@ define('webharness', exports, function (exports) {
 
 		var viewerbuttonEl = F5.Templates.loadTemplate('viewerbutton');
 		document.body.appendChild(viewerbuttonEl);
-		
+
 		var viewerEl = viewerframeEl.querySelector('[f5_id=viewer]'),
 			svgframeEl = viewerframeEl.querySelector('[f5_id=svgframe]'),
 			jsonframeEl = viewerframeEl.querySelector('[f5_id=jsonframe]'),
@@ -53,7 +51,7 @@ define('webharness', exports, function (exports) {
 				el.style[id] = value;
 			});
 		}		
-		
+
 		var sequenceNumber = 0;
 		function observer() {	
 			setStyles(backbuttonEl, {
@@ -63,7 +61,7 @@ define('webharness', exports, function (exports) {
 
 			sequenceNumber += 1;						
 			F5.post('dot2svg', F5.Global.flow.diags.toDOT(), function (response, headers) {
-				
+
 				if (parseInt(headers['sequence-number'], 10) !== sequenceNumber) {
 					return;
 				}
@@ -125,7 +123,7 @@ define('webharness', exports, function (exports) {
 				console.log('error');
 			}, {'sequence-number': sequenceNumber});
 		}	
-						
+
 		F5.Global.flowController.setObserver(observer);
 
 		// make the back button
@@ -138,7 +136,7 @@ define('webharness', exports, function (exports) {
 		});				
 
 		var jsonDiv;
-		
+
 		jsonbuttonEl.addEventListener('click', function () {
 			if (jsonDiv) {
 				jsonframeEl.removeChild(jsonDiv);
@@ -146,7 +144,8 @@ define('webharness', exports, function (exports) {
 				jsonframeEl.style.display = '';
 			} else {
 				try {					
-					var jsonFormatter = new F5.Diags.JSON.Formatter();
+					var JSONFormatter = require('./json.js').Formatter;
+					var jsonFormatter = new JSONFormatter();
 					jsonDiv = document.createElement('div');
 					jsonDiv.className = 'json';
 					jsonDiv.innerHTML = jsonFormatter.valueToHTML(JSON.parse(F5.Global.flow.diags.toJSON()));
@@ -164,7 +163,7 @@ define('webharness', exports, function (exports) {
 				'border': '2px solid ' + (jsonDiv ? 'white' : 'black')								
 			});							
 		});	
-		
+
 		framesbuttonEl.addEventListener('click', function () {
 			var selected = true;
 			if (appframeEl.className.match('frames')) {
@@ -178,15 +177,15 @@ define('webharness', exports, function (exports) {
 				'border': '2px solid ' + (selected ? 'white' : 'black')								
 			});										
 		});		
-		
+
 		resetbuttonEl.addEventListener('click', function () {
 			var showViewer = localStorage.showViewer;
 			localStorage.clear();
 			localStorage.showViewer = showViewer;
-			
+
 			location.reload();
 		});		
-		
+
 		if (!localStorage.showViewer) {
 			localStorage.showViewer = true;
 		}
@@ -208,14 +207,11 @@ define('webharness', exports, function (exports) {
 			updateViewerButton();
 		});	
 		updateViewerButton();
-		
+
 		if (localStorage.showViewer && JSON.parse(localStorage.showViewer)) {
 			viewerframeEl.style.display = '';
 		} else {
 			viewerframeEl.style.display = 'none';
-		}
-	}
-
-	F5.Webharness = {attach: attach};
-
-});
+		}		
+	});	
+}());	

@@ -72,7 +72,7 @@ function compress(html, res) {
 
 function dot2svg(req, res) {	
 	/*global Iuppiter*/
-//	require('Iuppiter.js');	
+//	require('3p/Iuppiter.js');	
 		
 	var child = spawn('dot', ['-Tsvg']);		
 

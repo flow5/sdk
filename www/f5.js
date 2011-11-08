@@ -39,9 +39,7 @@ define('f5', exports, function (exports) {
 	
 	require('./flow.js');
 	require('./flowcontroller.js');
-		
-	F5.Diags = {JSON: require('./json.js')};
-	
+			
 	F5.FlowDelegates = {};	
 		
 	if (typeof document !== 'undefined') {
@@ -50,7 +48,6 @@ define('f5', exports, function (exports) {
 		require('./animation.js');
 		require('./ui.js');
 		require('./defaultviewdelegates.js');
-		require('./webharness.js');
 		require('./templates.js');
 
 		F5.ViewDelegates = {};

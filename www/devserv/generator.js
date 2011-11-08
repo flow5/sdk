@@ -64,6 +64,12 @@ function generateCacheManifest(app, debug, device) {
 			checkDate(path + file);
 		});
 		
+		if (debug && manifest.debugScripts) {
+			manifest.debugScripts.forEach(function (file) {
+				checkDate(path + file);
+			});			
+		}
+		
 		if (device && manifest.device) {
 			manifest.device.forEach(function (file) {
 				checkDate(path + file);
@@ -73,6 +79,12 @@ function generateCacheManifest(app, debug, device) {
 		manifest.elements.forEach(function (file) {
 			checkDate(path + file);
 		});	
+		
+		if (debug && manifest.debugElements) {
+			manifest.debugElements.forEach(function (file) {
+				checkDate(path + file);
+			});				
+		}
 		
 		try {
 			/*global F5: true*/
@@ -175,13 +187,19 @@ function generateHtml(app, debug, device) {
 			document.head.appendChild(makeScript(path + file));
 		});
 		
+		if (debug && manifest.debugScripts) {
+			manifest.debugScripts.forEach(function (file) {				
+				document.head.appendChild(makeScript(path + file));
+			});			
+		}
+		
 		if (device && manifest.device) {
 			manifest.device.forEach(function (file) {				
 				document.head.appendChild(makeScript(path + file));
 			});			
 		}
-
-		manifest.elements.forEach(function (file) {
+		
+		function injectElements(file) {
 			var elements;
 			if (file.match('.css')) {
 				elements = document.createElement('style');
@@ -192,8 +210,18 @@ function generateHtml(app, debug, device) {
 			elements.innerHTML = fs.readFileSync(path + file).toString();
 			elements.id = file;				
 			
-			templates.appendChild(elements);
+			templates.appendChild(elements);			
+		}
+
+		manifest.elements.forEach(function (file) {
+			injectElements(file);
 		});	
+		
+		if (debug && manifest.debugElements) {
+			manifest.debugElements.forEach(function (file) {
+				injectElements(file);
+			});				
+		}
 				
 		if (debug) {
 			document.head.appendChild(makeScript(path + 'images.js'));

@@ -30,27 +30,34 @@ exports.scripts = [
 	'jsext.js',
 	'f5.js',
 	'animation.js',
-	'defaultviewdelegates.js',
+	'defaultviewdelegates.js', // TODO: move this to debugScripts?
 	'domext.js',
 	'flow.js',
-	'flow_diags.js',
 	'flowcontroller.js',
-	'Iuppiter.js',
-	'json.js',
+	'3p/Iuppiter.js',
 	'templates.js',
 	'ui.js',
 	'utils.js',
 	'viewcontroller.js',
-	'webharness.js'
 ];
 
-exports.device = [
-	
+exports.debugScripts = [
+	'debug/flow_diags.js',
+	'debug/flowcontroller_diags.js',
+	'debug/webharness.js',
+	'debug/json.js'
 ];
 		
 exports.elements = [
 	'default.css',
-	'json.css',
-	'webharness.css',
-	'webharness.html'
+];
+
+exports.debugElements = [
+	'debug/json.css',
+	'debug/webharness.css',
+	'debug/webharness.html'
+];
+
+exports.device = [
+	
 ];

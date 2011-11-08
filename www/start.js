@@ -98,25 +98,15 @@ require('./f5.js');
 		function start() {
 			try {
 				F5.Global.flow = new F5.Flow(require('flowspec.js').root);
-
-				// TODO: make this optional. currently asserts rely on the diags
-				require('./flow_diags.js').instrument(F5.Global.flow);
-
+				
 				F5.Global.flowController = new F5.FlowController(F5.Global.flow);
-
+				
 				F5.Global.viewController = new F5.ViewController(F5.Global.flow, screenEl);
 
-				if (!isDevice) {
-	                   // TODO: factor out the state upload part so that the viewer can be
-	                   // used for an application running on device
-					F5.Webharness.attach(screenEl);
-				} else {
-					// TODO: make the viewer HTML a template and load from webharness.js
-					document.getElementById('viewerframe').style.display = 'none';
-					document.getElementById('viewerbutton').style.display = 'none';
-				}
-
 				F5.Global.flowController.start(function () {
+					var e = document.createEvent('Events'); 
+		            e.initEvent('f5ready');
+		            document.dispatchEvent(e);		            
 					//console.log('application started');																
 				});
 			} catch (exception) {

@@ -150,8 +150,6 @@ define('flowcontroller', exports, function (exports) {
 		that.doSelection = function (node, id, cb) {		
 			F5.assert(node.type === 'switcher' || node.type === 'set', 
 				'Can only doSelection on node of types switcher or set');
-			F5.assert(flow.diags.isNodePathActive(node), 'Attempt to select on an inactive node');	
-			F5.assert(!flow.diags.isSubflowActive(node), 'Cannot select with a subflow active');				
 			F5.assert(node.children[id], 'No child with id: ' + id);
 			
 			var oldSelection = node.selection;				
@@ -201,8 +199,6 @@ define('flowcontroller', exports, function (exports) {
 		that.doTransition = function (node, id, cb) {
 			F5.assert(node.type === 'flow' || node.type === 'set', 
 				'Can only doTransition on node of types flow or set');			
-			F5.assert(flow.diags.isNodePathActive(node), 'Attempt to transition from an inactive node');
-			F5.assert(!flow.diags.isSubflowActive(node), 'Cannot transition with a subflow active');	
 			F5.assert(id === 'back' || node.transitions, 'No transitions defined for node: ' + node.path);
 			F5.assert(id === 'back' || node.transitions[id], 'No transition with id: ' + id);
 			
@@ -392,10 +388,7 @@ define('flowcontroller', exports, function (exports) {
 		};			
 		
 		that.doSubflow = function (node, id, cb) {
-			F5.assert(id === 'willBecomeActive' || id === 'didBecomeInactive' || flow.diags.isNodePathActive(node), 
-				'Attempt to execute subflow from an inactive node');	
 			F5.assert(node.subflows && node.subflows[id], 'No such subflow');
-			F5.assert(!flow.diags.isSubflowActive(node), 'Subflow already in progress');						
 			
 			var subflow = node.subflows[id];
 			subflow.completionCb = cb;
@@ -434,10 +427,6 @@ define('flowcontroller', exports, function (exports) {
 		that.doBack = function () {			
 			var backNode = that.getBackNode();
 			F5.assert(backNode, 'Cannot go back');
-			
-			F5.assert(!flow.diags.isSubflowActive(backNode), 'Cannot go back with a subflow active');							
-			
-
 			that.doTransition(backNode, 'back');
 		};
 	}	
