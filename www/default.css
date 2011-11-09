@@ -81,6 +81,13 @@ body {
 	}
 }
 
+.splash {
+	position: absolute;
+	top: -20px;
+	width: 320px;
+	height: 480px;
+}
+
 .container {
 	display: -webkit-box;
 	-webkit-box-flex: 1;

@@ -157,8 +157,8 @@ function generateHtml(app, debug, device) {
 		document.head.appendChild(link);
 	}
 	
-	injectLink('apple-touch-icon', 'apps/' + app + '/www/icon@2x.png');
-	injectLink('apple-touch-startup-image', 'apps/' + app + '/www/splash.png');
+	injectLink('apple-touch-icon', 'apps/' + app + '/www/images/icon@114x114.png');
+	injectLink('apple-touch-startup-image', 'apps/' + app + '/www/images/splash@320x460.png');
 	
 	var templates = document.createElement('div');
 	templates.id = 'f5_templates';
@@ -265,11 +265,10 @@ function generateHtml(app, debug, device) {
 	screenframeEl.id = 'screen';
 	screenframeEl.className = 'portrait';
 	
-	// not sure about this
+	// TODO: probably not right
 	var splashEl = document.createElement('img');
-	splashEl.src = 'apps/' + app + '/www/splash.png';
-	splashEl.className = 'screen';
-	splashEl.setAttribute('style', 'position: absolute; top: 0px; left: 0px;');
+	splashEl.src = 'apps/' + app + '/www/images/splash@640x960.png';
+	splashEl.className = 'splash';
 	screenframeEl.appendChild(splashEl);	
 	
 	appframeEl.appendChild(screenframeEl);
