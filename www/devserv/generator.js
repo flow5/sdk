@@ -157,7 +157,7 @@ function generateHtml(app, debug, device) {
 		document.head.appendChild(link);
 	}
 	
-	injectLink('apple-touch-icon', 'apps/' + app + '/icon.png');
+	injectLink('apple-touch-icon', 'apps/' + app + '/www/icon@2x.png');
 	injectLink('apple-touch-startup-image', 'apps/' + app + '/www/splash.png');
 	
 	var templates = document.createElement('div');
