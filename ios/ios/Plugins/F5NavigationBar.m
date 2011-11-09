@@ -25,10 +25,10 @@
  
 ***********************************************************************************************************************/
 
-#import "NavigationBar.h"
+#import "F5NavigationBar.h"
 #import "AppDelegate.h"
 
-@implementation NavigationBar
+@implementation F5NavigationBar
 
 @synthesize callbackID;
 @synthesize navigationBar;

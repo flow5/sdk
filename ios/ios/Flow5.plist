@@ -4,5 +4,7 @@
 <dict>
 	<key>appname</key>
 	<string>jitc</string>
+	<key>company</key>
+	<string>juiceinthecity</string>
 </dict>
 </plist>

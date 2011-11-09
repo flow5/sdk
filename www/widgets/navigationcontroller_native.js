@@ -39,7 +39,7 @@
 				console.log(result);
 			}, function (result) { // failure
 				console.log(result);
-			}, "NavigationBar", "create", []);							
+			}, "com.flow5.navigationbar", "create", []);							
 		};
 	
 		function gapify(configuration) {
@@ -76,7 +76,7 @@
 				function (result) { // failure
 					console.log(result);
 				}, 
-				'NavigationBar', // the plugin name
+				'com.flow5.navigationbar', // the plugin name
 				'configure', // the method
 				[animate, gapify(F5.Global.navigationControllerConfiguration)]
 			);								

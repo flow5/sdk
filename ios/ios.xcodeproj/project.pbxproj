@@ -33,7 +33,7 @@
 		BE29F61D14686984009B0CB6 /* Capture.bundle in Resources */ = {isa = PBXBuildFile; fileRef = BE29F61C14686984009B0CB6 /* Capture.bundle */; };
 		BE29F61F14686984009B0CB6 /* PhoneGap.plist in Resources */ = {isa = PBXBuildFile; fileRef = BE29F61E14686984009B0CB6 /* PhoneGap.plist */; };
 		BE29F62314686984009B0CB6 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BE29F62214686984009B0CB6 /* AppDelegate.m */; };
-		BE29F64714686F7C009B0CB6 /* NavigationBar.m in Sources */ = {isa = PBXBuildFile; fileRef = BE29F64614686F7C009B0CB6 /* NavigationBar.m */; };
+		BE29F64714686F7C009B0CB6 /* F5NavigationBar.m in Sources */ = {isa = PBXBuildFile; fileRef = BE29F64614686F7C009B0CB6 /* F5NavigationBar.m */; };
 		BEC4988814686FF1008281AB /* Flow5.plist in Resources */ = {isa = PBXBuildFile; fileRef = BEC4988714686FF1008281AB /* Flow5.plist */; };
 /* End PBXBuildFile section */
 
@@ -68,8 +68,8 @@
 		BE29F61E14686984009B0CB6 /* PhoneGap.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = PhoneGap.plist; sourceTree = "<group>"; };
 		BE29F62114686984009B0CB6 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = Classes/AppDelegate.h; sourceTree = "<group>"; };
 		BE29F62214686984009B0CB6 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = Classes/AppDelegate.m; sourceTree = "<group>"; };
-		BE29F64514686F7C009B0CB6 /* NavigationBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NavigationBar.h; path = Plugins/NavigationBar.h; sourceTree = "<group>"; };
-		BE29F64614686F7C009B0CB6 /* NavigationBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NavigationBar.m; path = Plugins/NavigationBar.m; sourceTree = "<group>"; };
+		BE29F64514686F7C009B0CB6 /* F5NavigationBar.h */ = {isa = PBXFileReference; fileEncoding = 4; name = F5NavigationBar.h; path = Plugins/F5NavigationBar.h; sourceTree = "<group>"; };
+		BE29F64614686F7C009B0CB6 /* F5NavigationBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = F5NavigationBar.m; path = Plugins/F5NavigationBar.m; sourceTree = "<group>"; };
 		BEC4988714686FF1008281AB /* Flow5.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Flow5.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -226,8 +226,8 @@
 		BE29F62414686984009B0CB6 /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
-				BE29F64514686F7C009B0CB6 /* NavigationBar.h */,
-				BE29F64614686F7C009B0CB6 /* NavigationBar.m */,
+				BE29F64514686F7C009B0CB6 /* F5NavigationBar.h */,
+				BE29F64614686F7C009B0CB6 /* F5NavigationBar.m */,
 			);
 			name = Plugins;
 			sourceTree = "<group>";
@@ -329,7 +329,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# write the current hostname into the Flow5.plist so the app can use it to find the devserv\ndefaults write ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Flow5 devservhost -string $HOSTNAME\n\n#get the icon resources\nAPP=`defaults read /Users/paulgreyson/Dev/flow5/ios/ios/Flow5 appname`\n/usr/local/bin/wget http://\"$HOSTNAME\":8008/apps/\"$APP\"/www/images/splash@320x480.png -O ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Default.png\n/usr/local/bin/wget http://\"$HOSTNAME\":8008/apps/\"$APP\"/www/images/splash@640x960.png -O ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Default@2x.png\n/usr/local/bin/wget http://\"$HOSTNAME\":8008/apps/\"$APP\"/www/images/icon@114x114.png -O ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/icon@2x.png\n/usr/local/bin/wget http://\"$HOSTNAME\":8008/apps/\"$APP\"/www/images/icon@57x57.png -O ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/icon.png\n/usr/local/bin/wget http://\"$HOSTNAME\":8008/apps/\"$APP\"/www/images/icon@72x72.png -O ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/icon-72.png\n\n";
+			shellScript = "#write the current hostname into the Flow5.plist so the app can use it to find the devserv\ndefaults write ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Flow5 devservhost -string $HOSTNAME\n\n#get the app name from the Flow5 plist (may be a command line option at some point)\nAPP=`defaults read /Users/paulgreyson/Dev/flow5/ios/ios/Flow5 appname`\nCOMPANY=`defaults read /Users/paulgreyson/Dev/flow5/ios/ios/Flow5 company`\n\n#set the bundle display name\ndefaults write ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Info CFBundleDisplayName -string $APP\ndefaults write ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Info CFBundleName -string $APP\n#defaults write ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Info CFBundleExecutable -string $APP\ndefaults write ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Info CFBundleIdentifier -string \"com.$COMPANY.$APP\"\n\n#get the icon resources\n\n/usr/local/bin/wget http://\"$HOSTNAME\":8008/apps/\"$APP\"/www/images/splash@320x480.png -O ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Default.png\n/usr/local/bin/wget http://\"$HOSTNAME\":8008/apps/\"$APP\"/www/images/splash@640x960.png -O ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Default@2x.png\n/usr/local/bin/wget http://\"$HOSTNAME\":8008/apps/\"$APP\"/www/images/icon@114x114.png -O ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/icon@2x.png\n/usr/local/bin/wget http://\"$HOSTNAME\":8008/apps/\"$APP\"/www/images/icon@57x57.png -O ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/icon.png\n/usr/local/bin/wget http://\"$HOSTNAME\":8008/apps/\"$APP\"/www/images/icon@72x72.png -O ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/icon-72.png\n\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -340,7 +340,7 @@
 			files = (
 				BE29F60314686984009B0CB6 /* main.m in Sources */,
 				BE29F62314686984009B0CB6 /* AppDelegate.m in Sources */,
-				BE29F64714686F7C009B0CB6 /* NavigationBar.m in Sources */,
+				BE29F64714686F7C009B0CB6 /* F5NavigationBar.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

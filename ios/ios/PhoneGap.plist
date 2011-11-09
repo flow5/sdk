@@ -24,8 +24,8 @@
 	<array/>
 	<key>Plugins</key>
 	<dict>
-		<key>NavigationBar</key>
-		<string>NavigationBar</string>
+		<key>com.flow5.navigationbar</key>
+		<string>F5NavigationBar</string>
 		<key>com.phonegap.accelerometer</key>
 		<string>PGAccelerometer</string>
 		<key>com.phonegap.camera</key>

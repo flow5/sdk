@@ -31,7 +31,7 @@
 #import "PGPlugin.h"
 #endif
 
-@interface NavigationBar : PGPlugin {
+@interface F5NavigationBar : PGPlugin {
 
     NSString* callbackID; 
     UINavigationBar *navigationBar;
