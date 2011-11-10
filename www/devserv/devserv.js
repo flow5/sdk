@@ -100,19 +100,27 @@ function dot2svg(req, res) {
 	res.writeHead(200, {'Content-Type': 'image/svg+xml', 'sequence-number': req.headers['sequence-number']});		
 }
 
+function showRequest(req, printHeaders) {
+	sys.puts('------------------------------------');
+	sys.puts(req.url);
+	if (printHeaders) {
+		var name;
+		for (name in req.headers) {
+			if (req.headers.hasOwnProperty(name)) {
+				sys.puts(name + ' : ' + req.headers[name]);				
+			}
+		}			
+	}
+}
+
 // http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
 cli.main(function (args, options) {
 
 	options.port = options.port || 8008;
 
 	http.createServer(function (req, res) {
-//		sys.puts('------------------------------------');
-		sys.puts(req.url);
-//		for (var name in req.headers) {
-//			if (req.headers.hasOwnProperty(name)) {
-//				sys.puts(name + ' : ' + req.headers[name]);				
-//			}
-//		}
+	//	showRequest(req, false);
+		
 		switch (req.method) {
 		case 'POST':
 			switch (req.url) {
@@ -131,12 +139,15 @@ cli.main(function (args, options) {
 		case 'GET':
 			var parsed = url.parse(req.url, true);
 			var debug = (parsed.query.debug === 'true');
-			var device = (parsed.query.device === 'true');
+			var native = (parsed.query['native'] === 'true');
+			
+			var agent = req.headers['user-agent'];
+			var mobile = agent.match(/iPhone/) || agent.match(/Android/);
 			
 			var app = parsed.query.app;
 
 			if (req.url.match('generate')) {
-				var html = generator.generateHtml(app, debug, device);
+				var html = generator.generateHtml(app, debug, mobile, native);
 				if (debug) {
 					res.writeHead(200, {'Content-Type': 'text/html'});
 					res.write(html);
@@ -147,7 +158,7 @@ cli.main(function (args, options) {
 			} else if (req.url.match('cache.manifest')) {
 //				res.writeHead(404);
 				res.writeHead(200, {'Content-Type': 'text/cache-manifest'});
-				res.write(generator.generateCacheManifest(app, debug, device));
+				res.write(generator.generateCacheManifest(app, debug, mobile, native));
 				res.end();				
 			} else {
 				paperboy

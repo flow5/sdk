@@ -39,7 +39,7 @@ function deleteCaches() {
 	});	
 }
 	
-function generateCacheManifest(app, debug, device) {
+function generateCacheManifest(app, debug, mobile, native) {
 	
 	var latestDate;
 	function checkDate(path) {
@@ -71,7 +71,11 @@ function generateCacheManifest(app, debug, device) {
 		checkDates(manifest.scripts);
 		
 		if (debug) {
-			checkDates(manifest.debugScripts);
+			if (mobile) {
+				checkDates(manifest.debugMobileScripts);								
+			} else {
+				checkDates(manifest.debugDesktopScripts);				
+			}
 		}
 		
 		checkDates(manifest.elements);
@@ -80,8 +84,8 @@ function generateCacheManifest(app, debug, device) {
 			checkDates(manifest.debugElements);
 		}
 		
-		if (device) {
-			checkDates(manifest.deviceScripts);
+		if (native) {
+			checkDates(manifest.nativeScripts);
 		} else {
 			checkDates(manifest.webScripts);
 		}
@@ -116,7 +120,7 @@ function generateCacheManifest(app, debug, device) {
 	return cacheManifest;
 }
 
-function generateHtml(app, debug, device) {
+function generateHtml(app, debug, mobile, native) {
 
 	var jsdom = require('jsdom');
 	jsdom.defaultDocumentFeatures = {
@@ -194,10 +198,14 @@ function generateHtml(app, debug, device) {
 		
 		injectScripts(manifest.scripts);
 		if (debug) {
-			injectScripts(manifest.debugScripts);
+			if (mobile) {
+				injectScripts(manifest.debugMobileScripts);				
+			} else {
+				injectScripts(manifest.debugDesktopScripts);				
+			}
 		}				
-		if (device) {
-			injectScripts(manifest.deviceScripts);
+		if (native) {
+			injectScripts(manifest.nativeScripts);
 		} else {
 			injectScripts(manifest.webScripts);
 		}		
@@ -276,16 +284,16 @@ function generateHtml(app, debug, device) {
 		
 	document.body.appendChild(makeScript('start.js'));	
 	
-	if (device) {		
+	if (native) {		
 		document.body.appendChild(makeScript('3p/phonegap-1.1.0.js'));				
-		
-		if (debug) {
-			var weinre = document.createElement('script');
-			weinre.src = 'http://' + require('os').hostname() + ':8081/target/target-script-min.js#anonymous';
-			document.head.appendChild(weinre);			
-		}
-	}	
+	}
 	
+	if (mobile && debug) {
+		var weinre = document.createElement('script');
+		weinre.src = 'http://' + require('os').hostname() + ':8081/target/target-script-min.js#anonymous';
+		document.head.appendChild(weinre);			
+	}
+			
 	deleteCaches();	
 	
 //	console.log('Size: ' + document.outerHTML.length);

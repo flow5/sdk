@@ -30,6 +30,18 @@
 require('./f5.js');
 
 (function () {		
+	
+	// detect mobile browser
+	if (navigator.userAgent.match(/iPhone/) || navigator.userAgent.match(/Android/)) {
+		document.body.className += ' mobile';
+	}
+	
+	// detect 
+	var urlParameters = {};
+	window.location.search.substring(1).split('&').forEach(function (parameter) {
+		urlParameters[parameter.split('=')[0]] = parameter.split('=')[1];
+	});
+	
 	// prevent scrolling
 	document.body.addEventListener('touchmove', function (e) {
 		e.preventDefault();
@@ -43,13 +55,6 @@ require('./f5.js');
 
 	window.addEventListener('load', hideAddressBar, false);
 	window.addEventListener('touchstart', hideAddressBar, false);
-
-	// detect mobile devices
-	var isDevice = false;
-	if (navigator.userAgent.match(/iPhone/) || navigator.userAgent.match(/Android/)) {
-		isDevice = true;
-		document.body.className += ' device';
-	}
 	
 	var screenEl = document.getElementById('screen');
 	
@@ -61,38 +66,15 @@ require('./f5.js');
 		}
 	});
 
-/*
-	// Fired after the first cache of the manifest.
-	appCache.addEventListener('cached', handleCacheEvent, false);
-
-	// Checking for an update. Always the first event fired in the sequence.
-	appCache.addEventListener('checking', handleCacheEvent, false);
-
-	// An update was found. The browser is fetching resources.
-	appCache.addEventListener('downloading', handleCacheEvent, false);
-
-	// The manifest returns 404 or 410, the download failed,
-	// or the manifest changed while the download was in progress.
-	appCache.addEventListener('error', handleCacheError, false);
-
-	// Fired after the first download of the manifest.
-	appCache.addEventListener('noupdate', handleCacheEvent, false);
-
-	// Fired if the manifest file returns a 404 or 410.
-	// This results in the application cache being deleted.
-	appCache.addEventListener('obsolete', handleCacheEvent, false);
-
-	// Fired for each resource listed in the manifest as it is being fetched.
-	appCache.addEventListener('progress', handleCacheEvent, false);
-
-	// Fired when the manifest resources have been newly redownloaded.
-	appCache.addEventListener('updateready', handleCacheEvent, false);
-
-*/
-
 	// TODO: use the device block of manifest to avoid the PhoneGap reference
-	var startEvent = isDevice ? 'deviceready' : 'load';
-	var listener = isDevice ? document : window;
+	var startEvent, listener;
+	if (urlParameters['native'] === 'true') {
+		startEvent = 'deviceready';
+		listener = document;
+	} else {
+		startEvent = 'load';
+		listener = window;
+	}
 	
 	listener.addEventListener(startEvent, function (e) {	
 		function start() {
@@ -147,3 +129,33 @@ require('./f5.js');
 		}				
 	}, false);					
 }());
+
+
+/*
+	// Fired after the first cache of the manifest.
+	appCache.addEventListener('cached', handleCacheEvent, false);
+
+	// Checking for an update. Always the first event fired in the sequence.
+	appCache.addEventListener('checking', handleCacheEvent, false);
+
+	// An update was found. The browser is fetching resources.
+	appCache.addEventListener('downloading', handleCacheEvent, false);
+
+	// The manifest returns 404 or 410, the download failed,
+	// or the manifest changed while the download was in progress.
+	appCache.addEventListener('error', handleCacheError, false);
+
+	// Fired after the first download of the manifest.
+	appCache.addEventListener('noupdate', handleCacheEvent, false);
+
+	// Fired if the manifest file returns a 404 or 410.
+	// This results in the application cache being deleted.
+	appCache.addEventListener('obsolete', handleCacheEvent, false);
+
+	// Fired for each resource listed in the manifest as it is being fetched.
+	appCache.addEventListener('progress', handleCacheEvent, false);
+
+	// Fired when the manifest resources have been newly redownloaded.
+	appCache.addEventListener('updateready', handleCacheEvent, false);
+
+*/

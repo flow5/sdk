@@ -59,7 +59,7 @@ body {
 }
 
 
-.device #screen {
+.mobile #screen {
 	zoom: 1;
 	margin-left:0px;
 	margin-right:0px;
@@ -67,7 +67,7 @@ body {
 
 @media screen and (orientation: portrait)
 {
-	.device #screen {
+	.mobile #screen {
 		width:320px;
 		height:460px;
 	}
@@ -75,7 +75,7 @@ body {
  
 @media screen and (orientation: landscape)
 {
-	.device #screen {
+	.mobile #screen {
 		width:480px;
 		height:300px;
 	}

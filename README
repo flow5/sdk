@@ -58,7 +58,8 @@ https://github.com/mkitt/nodelint.tmbundle
 	seems that it's necessary to symlink from the Support/bin/nodelint folder to the node lint installation location
 	modify JavaScript NodeLint.tmbundle/conf/config.js
 		maxlen: 120 // make a reasonable max line length
-  		vars : true // Tolerate many var statements per function
+  		vars: true // Tolerate many var statements per function
+  		sub: true, // allow ['identifier'] style
 
 node packages:
 

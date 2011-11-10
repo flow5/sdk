@@ -46,7 +46,7 @@
 	-webkit-user-select: none;			
 }
 
-.device .viewerFrame {
+.mobile .viewerFrame {
 	display: none;
 }
 

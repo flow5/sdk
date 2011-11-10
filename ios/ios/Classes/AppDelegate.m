@@ -55,7 +55,7 @@
 + (NSString*) startPage
 {
     // TODO: debug setting
-	return [NSString stringWithFormat:@"http://%@:8008/generate?app=%@&device=true&debug=true", [AppDelegate devservhost], [AppDelegate appname]];
+	return [NSString stringWithFormat:@"http://%@:8008/generate?app=%@&native=true&debug=true", [AppDelegate devservhost], [AppDelegate appname]];
 }
 
 - (id) init

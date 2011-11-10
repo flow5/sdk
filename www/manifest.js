@@ -49,11 +49,11 @@ exports.webScripts = [
 	'widgets/navigationcontroller.js'
 ];
 
-exports.deviceScripts = [
+exports.nativeScripts = [
 	'widgets/navigationcontroller_native.js'
 ];
 
-exports.debugScripts = [
+exports.debugDesktopScripts = [
 	'debug/flow_diags.js',
 	'debug/flowcontroller_diags.js',
 	'debug/webharness.js',
