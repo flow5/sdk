@@ -28,7 +28,7 @@
 
 // make the define method available in the nodejs environment
 // TODO: upgrade to v5 where define is built in
-require('./require.js');
+require('../require.js');
 
 var cli = require('cli');
 
@@ -42,14 +42,12 @@ cli.parse({
 
 
 cli.main(function (args, options) {				
-	require.paths.push('./apps/' + options.app);
-	
-	require('./f5.js');
+	require('../f5.js');
 
-	var flow = new F5.Flow(require('flowspec.js').root);
-	require('./flow_diags.js').instrument(flow);	
+	F5.Global.flow = new F5.Flow(require('../apps/' + options.app + '/www/flowspec.js').root);
+	require('./flow_diags.js');
 
-	process[options.output].write(flow.diags[options.format]());		
+	process[options.output].write(F5.Global.flow.diags[options.format]());		
 });
 
 

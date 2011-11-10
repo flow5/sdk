@@ -26,9 +26,6 @@
 ***********************************************************************************************************************/
 /*global define*/
 
-define('manifest', exports, function (exports) {
-
-	exports.scripts = [
-		'flowspec.js'
-	];
-});
+exports.scripts = [
+	'flowspec.js'
+];

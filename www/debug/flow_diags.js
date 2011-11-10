@@ -28,7 +28,7 @@
 
 (function () {
 
-	document.addEventListener('f5ready', function () {
+	function instrument () {
 		var flow = F5.Global.flow;
 
 		flow.diags = {};		
@@ -561,7 +561,12 @@
 
 			return result;			
 		};
-	});
-
+	}
+	
+	if (typeof document === 'undefined') {
+		instrument();
+	} else {
+		document.addEventListener('f5ready', instrument);		
+	}
 	
 }());
