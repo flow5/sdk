@@ -34,6 +34,7 @@
 		BE29F61F14686984009B0CB6 /* PhoneGap.plist in Resources */ = {isa = PBXBuildFile; fileRef = BE29F61E14686984009B0CB6 /* PhoneGap.plist */; };
 		BE29F62314686984009B0CB6 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BE29F62214686984009B0CB6 /* AppDelegate.m */; };
 		BE29F64714686F7C009B0CB6 /* F5NavigationBar.m in Sources */ = {isa = PBXBuildFile; fileRef = BE29F64614686F7C009B0CB6 /* F5NavigationBar.m */; };
+		BEBE2E2F146C67D3005AE140 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = BEBE2E2E146C67D3005AE140 /* Settings.bundle */; };
 		BEC4988814686FF1008281AB /* Flow5.plist in Resources */ = {isa = PBXBuildFile; fileRef = BEC4988714686FF1008281AB /* Flow5.plist */; };
 /* End PBXBuildFile section */
 
@@ -70,6 +71,7 @@
 		BE29F62214686984009B0CB6 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = Classes/AppDelegate.m; sourceTree = "<group>"; };
 		BE29F64514686F7C009B0CB6 /* F5NavigationBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = F5NavigationBar.h; path = Plugins/F5NavigationBar.h; sourceTree = "<group>"; };
 		BE29F64614686F7C009B0CB6 /* F5NavigationBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = F5NavigationBar.m; path = Plugins/F5NavigationBar.m; sourceTree = "<group>"; };
+		BEBE2E2E146C67D3005AE140 /* Settings.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = Settings.bundle; sourceTree = "<group>"; };
 		BEC4988714686FF1008281AB /* Flow5.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Flow5.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -175,6 +177,7 @@
 				BE29F60C14686984009B0CB6 /* es.lproj */,
 				BE29F61014686984009B0CB6 /* icons */,
 				BE29F61714686984009B0CB6 /* splash */,
+				BEBE2E2E146C67D3005AE140 /* Settings.bundle */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -298,6 +301,7 @@
 				BE29F61D14686984009B0CB6 /* Capture.bundle in Resources */,
 				BE29F61F14686984009B0CB6 /* PhoneGap.plist in Resources */,
 				BEC4988814686FF1008281AB /* Flow5.plist in Resources */,
+				BEBE2E2F146C67D3005AE140 /* Settings.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

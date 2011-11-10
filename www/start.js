@@ -36,8 +36,13 @@ require('./f5.js');
 		document.body.className += ' mobile';
 	}
 	
-	// detect 
-	var isNative = window.location.protocol === 'file:';
+	var urlParameters = {};
+	window.location.search.substring(1).split('&').forEach(function (parameter) {
+		urlParameters[parameter.split('=')[0]] = parameter.split('=')[1];
+	});	
+	// PhoneGap does not make it easy to pass URL parameters to the start page
+	// so check for the file protocl or the url parameter
+	var isNative = window.location.protocol === 'file:' || urlParameters['native'] === 'true';	
 	
 	// prevent scrolling
 	document.body.addEventListener('touchmove', function (e) {

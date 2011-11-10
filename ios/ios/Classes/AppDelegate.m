@@ -54,9 +54,12 @@
 // f5
 + (NSString*) startPage
 {
-    // TODO: debug setting, use devserv setting
-//	return [NSString stringWithFormat:@"http://%@:8008/generate?app=%@&native=true&inline=true&debug=true", [AppDelegate devservhost], [AppDelegate appname]];
-    return [super startPage];
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"use_devserv"]) {        
+        // TODO: debug setting, use devserv setting        
+        return [NSString stringWithFormat:@"http://%@:8008/generate?app=%@&native=true&inline=true&debug=true", [AppDelegate devservhost], [AppDelegate appname]];
+    } else {
+        return [super startPage];        
+    }
 }
 
 - (id) init
@@ -89,6 +92,12 @@
 		[whitelist addObject:[AppDelegate devservhost]];
 		[self.whitelist initWithArray:whitelist];
 	}    
+    
+    // f5: setup defaults
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSDictionary *appDefaults = [NSDictionary dictionaryWithObject:@"NO" forKey:@"use_devserv"];
+    [defaults registerDefaults:appDefaults];
+    [defaults synchronize];    
     
     return result;
 }
