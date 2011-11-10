@@ -54,8 +54,9 @@
 // f5
 + (NSString*) startPage
 {
-    // TODO: debug setting
-	return [NSString stringWithFormat:@"http://%@:8008/generate?app=%@&native=true&debug=true", [AppDelegate devservhost], [AppDelegate appname]];
+    // TODO: debug setting, use devserv setting
+//	return [NSString stringWithFormat:@"http://%@:8008/generate?app=%@&native=true&inline=true&debug=true", [AppDelegate devservhost], [AppDelegate appname]];
+    return [super startPage];
 }
 
 - (id) init

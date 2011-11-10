@@ -138,17 +138,18 @@ cli.main(function (args, options) {
 			break;
 		case 'GET':
 			var parsed = url.parse(req.url, true);
-			var debug = (parsed.query.debug === 'true');
-			var native = (parsed.query['native'] === 'true');
+			var isDebug = (parsed.query.debug === 'true');
+			var isNative = (parsed.query['native'] === 'true');
+			var doInline = (parsed.query['inline'] === 'true');
 			
 			var agent = req.headers['user-agent'];
-			var mobile = agent.match(/iPhone/) || agent.match(/Android/);
+			var isMobile = agent.match(/iPhone/) || agent.match(/Android/);
 			
 			var app = parsed.query.app;
 
 			if (req.url.match('generate')) {
-				var html = generator.generateHtml(app, debug, mobile, native);
-				if (debug) {
+				var html = generator.generateHtml(app, isDebug, doInline, isMobile, isNative);
+				if (isDebug) {
 					res.writeHead(200, {'Content-Type': 'text/html'});
 					res.write(html);
 					res.end();					
@@ -158,7 +159,7 @@ cli.main(function (args, options) {
 			} else if (req.url.match('cache.manifest')) {
 //				res.writeHead(404);
 				res.writeHead(200, {'Content-Type': 'text/cache-manifest'});
-				res.write(generator.generateCacheManifest(app, debug, mobile, native));
+				res.write(generator.generateCacheManifest(app, isDebug, isMobile, isNative));
 				res.end();				
 			} else {
 				paperboy

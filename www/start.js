@@ -37,10 +37,8 @@ require('./f5.js');
 	}
 	
 	// detect 
-	var urlParameters = {};
-	window.location.search.substring(1).split('&').forEach(function (parameter) {
-		urlParameters[parameter.split('=')[0]] = parameter.split('=')[1];
-	});
+	var isNative = window.location.protocol === 'file:';
+	console.log(window.location.protocol);
 	
 	// prevent scrolling
 	document.body.addEventListener('touchmove', function (e) {
@@ -68,7 +66,7 @@ require('./f5.js');
 
 	// TODO: use the device block of manifest to avoid the PhoneGap reference
 	var startEvent, listener;
-	if (urlParameters['native'] === 'true') {
+	if (isNative) {
 		startEvent = 'deviceready';
 		listener = document;
 	} else {
@@ -109,7 +107,8 @@ require('./f5.js');
 			updateReady();
 		}
 
-		if (window.applicationCache.status === window.applicationCache.IDLE) {
+		if (window.applicationCache.status === window.applicationCache.IDLE || 
+			window.applicationCache.status === window.applicationCache.UNCACHED) {
 			start();			
 		} else {
 			window.applicationCache.addEventListener('noupdate', function (e) {

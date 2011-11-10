@@ -39,7 +39,7 @@ function deleteCaches() {
 	});	
 }
 	
-function generateCacheManifest(app, debug, mobile, native) {
+function generateCacheManifest(app, isDebug, isMobile, isNative) {
 	
 	var latestDate;
 	function checkDate(path) {
@@ -70,8 +70,8 @@ function generateCacheManifest(app, debug, mobile, native) {
 		
 		checkDates(manifest.scripts);
 		
-		if (debug) {
-			if (mobile) {
+		if (isDebug) {
+			if (isMobile) {
 				checkDates(manifest.debugMobileScripts);								
 			} else {
 				checkDates(manifest.debugDesktopScripts);				
@@ -80,11 +80,11 @@ function generateCacheManifest(app, debug, mobile, native) {
 		
 		checkDates(manifest.elements);
 		
-		if (debug) {
+		if (isDebug) {
 			checkDates(manifest.debugElements);
 		}
 		
-		if (native) {
+		if (isNative) {
 			checkDates(manifest.nativeScripts);
 		} else {
 			checkDates(manifest.webScripts);
@@ -120,7 +120,7 @@ function generateCacheManifest(app, debug, mobile, native) {
 	return cacheManifest;
 }
 
-function generateHtml(app, debug, mobile, native) {
+function generateHtml(app, isDebug, doInline, isMobile, isNative) {
 
 	var jsdom = require('jsdom');
 	jsdom.defaultDocumentFeatures = {
@@ -133,7 +133,7 @@ function generateHtml(app, debug, mobile, native) {
 	var document = jsdom.jsdom();
 	
 	// manifest
-	document.documentElement.setAttribute('manifest', 'cache.manifest?app=' + app + '&debug=' + debug);
+//	document.documentElement.setAttribute('manifest', 'cache.manifest?app=' + app + '&debug=' + isDebug);
 	
 	function injectMeta(properties) {
 		var meta = document.createElement('meta');
@@ -172,7 +172,7 @@ function generateHtml(app, debug, mobile, native) {
 	
 	function makeScript(src) {
 		var script = document.createElement('script');		
-		if (debug) {
+		if (!doInline) {
 			// reference scripts
 			script.src = src;				
 		} else {
@@ -197,14 +197,14 @@ function generateHtml(app, debug, mobile, native) {
 		}
 		
 		injectScripts(manifest.scripts);
-		if (debug) {
-			if (mobile) {
+		if (isDebug) {
+			if (isMobile) {
 				injectScripts(manifest.debugMobileScripts);				
 			} else {
 				injectScripts(manifest.debugDesktopScripts);				
 			}
 		}				
-		if (native) {
+		if (isNative) {
 			injectScripts(manifest.nativeScripts);
 		} else {
 			injectScripts(manifest.webScripts);
@@ -229,12 +229,12 @@ function generateHtml(app, debug, mobile, native) {
 			}					
 		}		
 		injectElements(manifest.elements);
-		if (debug) {
+		if (isDebug) {
 			injectElements(manifest.debugElements);
 		}
 		
 		// images		
-		if (debug) {
+		if (!doInline) {
 			document.head.appendChild(makeScript(path + 'images.js'));
 		} else {
 			/*global F5: true*/
@@ -274,21 +274,21 @@ function generateHtml(app, debug, mobile, native) {
 	screenframeEl.className = 'portrait';
 	
 	// TODO: probably not right
-	var splashEl = document.createElement('img');
-	splashEl.src = 'apps/' + app + '/www/images/splash@640x960.png';
-	splashEl.className = 'splash';
-	screenframeEl.appendChild(splashEl);	
+//	var splashEl = document.createElement('img');
+//	splashEl.src = 'apps/' + app + '/www/images/splash@640x960.png';
+//	splashEl.className = 'splash';
+//	screenframeEl.appendChild(splashEl);	
 	
 	appframeEl.appendChild(screenframeEl);
 	document.body.appendChild(appframeEl);
 		
 	document.body.appendChild(makeScript('start.js'));	
 	
-	if (native) {		
+	if (isNative) {		
 		document.body.appendChild(makeScript('3p/phonegap-1.1.0.js'));				
 	}
 	
-	if (mobile && debug) {
+	if (isMobile && isDebug) {
 		var weinre = document.createElement('script');
 		weinre.src = 'http://' + require('os').hostname() + ':8081/target/target-script-min.js#anonymous';
 		document.head.appendChild(weinre);			
