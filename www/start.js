@@ -38,7 +38,6 @@ require('./f5.js');
 	
 	// detect 
 	var isNative = window.location.protocol === 'file:';
-	console.log(window.location.protocol);
 	
 	// prevent scrolling
 	document.body.addEventListener('touchmove', function (e) {

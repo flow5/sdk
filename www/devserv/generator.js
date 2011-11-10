@@ -133,7 +133,7 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative) {
 	var document = jsdom.jsdom();
 	
 	// manifest
-//	document.documentElement.setAttribute('manifest', 'cache.manifest?app=' + app + '&debug=' + isDebug);
+	document.documentElement.setAttribute('manifest', 'cache.manifest?app=' + app + '&debug=' + isDebug);
 	
 	function injectMeta(properties) {
 		var meta = document.createElement('meta');
