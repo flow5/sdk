@@ -26,10 +26,6 @@
 ***********************************************************************************************************************/
 /*global F5*/
 
-// make the define method available in the nodejs environment
-// TODO: upgrade to v5 where define is built in
-require('../require.js');
-
 var cli = require('cli');
 
 cli.setUsage("node devserv.js [OPTIONS]");

@@ -27,7 +27,6 @@
 
 var fs = require('fs');
 	
-require('../require.js');
 require('../jsext.js');
 
 function deleteCaches() {
