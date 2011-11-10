@@ -42,9 +42,14 @@ cli.parse({
 
 
 cli.main(function (args, options) {				
+	require('../jsext.js');
 	require('../f5.js');
-
-	F5.Global.flow = new F5.Flow(require('../apps/' + options.app + '/www/flowspec.js').root);
+	require('../utils.js');
+	require('../flow.js');
+	require('../apps/' + options.app + '/www/flowspec.js');
+	
+	F5.Global.flow = new F5.Flow(F5.flowspec);
+	
 	require('./flow_diags.js');
 
 	process[options.output].write(F5.Global.flow.diags[options.format]());		

@@ -27,8 +27,6 @@
 
 /*global F5*/
 
-require('./f5.js');
-
 (function () {		
 	
 	// detect mobile browser
@@ -43,6 +41,13 @@ require('./f5.js');
 	// PhoneGap does not make it easy to pass URL parameters to the start page
 	// so check for the file protocl or the url parameter
 	var isNative = window.location.protocol === 'file:' || urlParameters['native'] === 'true';	
+	
+	// TODO: specify a mock image server location
+	if (window.location.protocol === 'file:') {
+		F5.imageServerHost = 'http://www.flow5.com/';
+	} else {
+		F5.imageServerHost = '';
+	}
 	
 	// prevent scrolling
 	document.body.addEventListener('touchmove', function (e) {
@@ -81,7 +86,7 @@ require('./f5.js');
 	listener.addEventListener(startEvent, function (e) {	
 		function start() {
 			try {
-				F5.Global.flow = new F5.Flow(require('flowspec.js').root);
+				F5.Global.flow = new F5.Flow(F5.flowspec);
 				
 				F5.Global.flowController = new F5.FlowController(F5.Global.flow);
 				

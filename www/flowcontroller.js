@@ -24,10 +24,10 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global define, F5*/
+/*global F5*/
 
-define('flowcontroller', exports, function (exports) {
-					
+(function () {
+						
 	function FlowController(flow) {
 
 		var that = this;
@@ -432,4 +432,5 @@ define('flowcontroller', exports, function (exports) {
 	}	
 	
 	F5.FlowController = FlowController;	
-});
+
+}());

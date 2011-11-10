@@ -29,6 +29,7 @@ exports.scripts = [
 	'require.js',
 	'jsext.js',
 	'f5.js',
+	'utils.js',
 	'animation.js',
 	'defaultviewdelegates.js', // TODO: move this to debugScripts?
 	'domext.js',
@@ -37,7 +38,6 @@ exports.scripts = [
 	'3p/Iuppiter.js',
 	'templates.js',
 	'ui.js',
-	'utils.js',
 	'viewcontroller.js',
 ];
 

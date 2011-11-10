@@ -26,23 +26,19 @@
 ***********************************************************************************************************************/
 /*global define, F5: true*/
 
-require('./jsext.js');
+F5 = {};
 
-F5 = {Global: {}, Prototypes: {}, Images: {}};
+(function () {
 
-define('f5', exports, function (exports) {
-
-	// utils go to top level for convenince
-	require('./utils.js').forEach(function (id, fn) {
-		F5[id] = fn;
-	});
-	
-	require('./flow.js');
-	require('./flowcontroller.js');
-			
+	F5.Global = {};
+	F5.Prototypes = {};
+	F5.Images = {};
 	F5.FlowDelegates = {};	
-		
+			
 	if (typeof document !== 'undefined') {
 		F5.ViewDelegates = {};
-	}	
-});
+	}
+	
+}());
+
+	

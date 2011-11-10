@@ -24,33 +24,28 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global define*/
-
-define('jsext', exports, function (exports) {
 	
-	Object.prototype.forEach = function (fn) {
-		var name;
-		for (name in this) {
-			if (this.hasOwnProperty(name)) {
-				fn(name, this[name]);
-			}
+Object.prototype.forEach = function (fn) {
+	var name;
+	for (name in this) {
+		if (this.hasOwnProperty(name)) {
+			fn(name, this[name]);
 		}
-	};	
-	
-	Object.prototype.extend = function (obj) {
-		var that = this;
-		obj.forEach(function (id, value) {
-			that[id] = value;
-		});
-	};
-	
-	// FIX: this is wrong for functions
-	Object.prototype.isObject = function (arg) {
-		return typeof arg === 'object';
-	};
-	
-	String.isString = function (arg) {
-		return typeof arg === 'string';
-	};
-	
-});
+	}
+};	
+
+Object.prototype.extend = function (obj) {
+	var that = this;
+	obj.forEach(function (id, value) {
+		that[id] = value;
+	});
+};
+
+// FIX: this is wrong for functions
+Object.prototype.isObject = function (arg) {
+	return typeof arg === 'object';
+};
+
+String.isString = function (arg) {
+	return typeof arg === 'string';
+};

@@ -144,7 +144,6 @@
 				jsonframeEl.style.display = '';
 			} else {
 				try {					
-					var JSONFormatter = require('./json.js').Formatter;
 					var jsonFormatter = new JSONFormatter();
 					jsonDiv = document.createElement('div');
 					jsonDiv.className = 'json';

@@ -24,11 +24,11 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global define*/
+/*global F5*/
 
 
-define('utils', exports, function (exports) {
-	
+(function () {
+		
 	function post(url, body, success, error, headers) {
 		var xhr = new XMLHttpRequest();
 		xhr.open('POST', url, true);
@@ -99,10 +99,12 @@ define('utils', exports, function (exports) {
 		return new Instance();
 	}
 		
-	exports.post = post;
-	exports.assert = assert;
-	exports.object = object;	
-});
+	F5.post = post;
+	F5.assert = assert;
+	F5.object = object;	
+
+}());
+
 
 
 

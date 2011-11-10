@@ -260,11 +260,7 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative) {
 			
 
 	injectManifest('');
-	
-	var init = document.createElement('script');
-	init.innerHTML = 'require("./f5.js")';
-	document.head.appendChild(init);
-		
+			
 	injectManifest('apps/' + app + '/www/');
 		
 	var appframeEl = document.createElement('div');

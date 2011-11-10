@@ -24,109 +24,106 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global define*/
+/*global F5*/
 
-define('flowspec', exports, function (exports) {
-	
-	exports.root = {
-		selection: 'home',
-		children: {	
-			done: {},
-			home: {
-				subflows: {
-					didBecomeActive: {
-						method: 'aOrMore',
-						choices: {
-							a: 'a',
-							more: {
-								method: 'aORb',
-								choices: {
-									a: 'a',
-									b: 'b'
-								}
-							}							
-						}
+F5.flowspec = {
+	selection: 'home',
+	children: {	
+		done: {},
+		home: {
+			subflows: {
+				didBecomeActive: {
+					method: 'aOrMore',
+					choices: {
+						a: 'a',
+						more: {
+							method: 'aORb',
+							choices: {
+								a: 'a',
+								b: 'b'
+							}
+						}							
 					}
-				},
-				type: 'switcher',
-				selection: 'a',
-				children: {			
-					a: {
-						selection: 'start',
-						children: {
-							start: {
-								selection: 'begin',
-								children: {
-									begin: {
-										subflows: {
-											didBecomeActive: {
-												method: 'goOrStay',
-												choices: {
-													go: 'end',
-													stay: null													
-												}
+				}
+			},
+			type: 'switcher',
+			selection: 'a',
+			children: {			
+				a: {
+					selection: 'start',
+					children: {
+						start: {
+							selection: 'begin',
+							children: {
+								begin: {
+									subflows: {
+										didBecomeActive: {
+											method: 'goOrStay',
+											choices: {
+												go: 'end',
+												stay: null													
 											}
-										},
-										transitions: ['end'],
+										}
 									},
-									end: {
-										
+									transitions: ['end'],
+								},
+								end: {
+									
+								}
+							},
+							transitions: ['middle', 'done'],
+							subflows: {
+								didBecomeActive: {
+									method: 'yesOrNo',
+									choices: {
+										yes: null,
+										no: null,											
 									}
 								},
-								transitions: ['middle', 'done'],
-								subflows: {
-									didBecomeActive: {
-										method: 'yesOrNo',
-										choices: {
-											yes: null,
-											no: null,											
-										}
-									},
-									pick: {
-										method: 'getWhere',
-										choices: {
-											goToMiddle: 'middle',
-											moreChoices: {
-												method: 'getMoreWhere',
-												choices: {
-													'middle': 'middle',
-													'done': 'done'													
-												}
-											}											
-										}
+								pick: {
+									method: 'getWhere',
+									choices: {
+										goToMiddle: 'middle',
+										moreChoices: {
+											method: 'getMoreWhere',
+											choices: {
+												'middle': 'middle',
+												'done': 'done'													
+											}
+										}											
 									}
 								}
-							},
-							middle: {
-								selection: 'middleStart',
-								children: {
-									middleStart: {
-										transitions: ['done']
-									}
-								}
-							},
-							done: {}													
+							}
 						},
-					
-					},
-					b: {
-						selection: 'start',
-						children: {
-							start: {
-								transitions: ['middle']													
-							},
-							middle: {
-								selection: 'middleStart',
-								children: {
-									middleStart: {
-										transitions: ['done']
-									}
+						middle: {
+							selection: 'middleStart',
+							children: {
+								middleStart: {
+									transitions: ['done']
 								}
-							}						
-						}
+							}
+						},
+						done: {}													
+					},
+				
+				},
+				b: {
+					selection: 'start',
+					children: {
+						start: {
+							transitions: ['middle']													
+						},
+						middle: {
+							selection: 'middleStart',
+							children: {
+								middleStart: {
+									transitions: ['done']
+								}
+							}
+						}						
 					}
-				}				
-			}
-		}	
-	};
-});
+				}
+			}				
+		}
+	}	
+};
