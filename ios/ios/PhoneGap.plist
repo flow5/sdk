@@ -23,6 +23,7 @@
 	<key>ExternalHosts</key>
 	<array>
 		<string>www.flow5.com</string>
+		<string>www.w3.org</string>
 	</array>
 	<key>Plugins</key>
 	<dict>

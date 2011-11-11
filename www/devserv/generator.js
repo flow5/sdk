@@ -70,6 +70,7 @@ function generateCacheManifest(app, isDebug, isMobile, isNative) {
 		checkDates(manifest.scripts);
 		
 		if (isDebug) {
+			checkDates(manifest.debugScripts);
 			if (isMobile) {
 				checkDates(manifest.debugMobileScripts);								
 			} else {
@@ -197,6 +198,7 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative) {
 		
 		injectScripts(manifest.scripts);
 		if (isDebug) {
+			injectScripts(manifest.debugScripts);
 			if (isMobile) {
 				injectScripts(manifest.debugMobileScripts);				
 			} else {

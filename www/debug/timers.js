@@ -25,46 +25,23 @@
 
 ***********************************************************************************************************************/
 
-exports.scripts = [
-	'jsext.js',
-	'f5.js',
-	'utils.js',
-	'animation.js',
-	'defaultviewdelegates.js', // TODO: move this to debugScripts?
-	'domext.js',
-	'flow.js',
-	'flowcontroller.js',
-	'3p/Iuppiter.js',
-	'templates.js',
-	'ui.js',
-	'viewcontroller.js',
-];
-
-exports.elements = [
-	'default.css',
-];
-
-exports.webScripts = [
-	'widgets/navigationcontroller.js'
-];
-
-exports.nativeScripts = [
-	'widgets/navigationcontroller_native.js'
-];
-
-exports.debugScripts = [
-	'debug/timers.js'
-];
-
-exports.debugDesktopScripts = [
-	'debug/flow_diags.js',
-	'debug/flowcontroller_diags.js',
-	'debug/webharness.js',
-	'debug/json.js'
-];
-
-exports.debugElements = [
-	'debug/json.css',
-	'debug/webharness.css',
-	'debug/webharness.html'
-];
+(function () {
+		
+	var last = Date.now();
+	var longest = 0;		
+	
+	setInterval(function () {		
+		var now = Date.now();
+		if (now - last > longest) {
+			longest = now - last;
+			console.log('longest: ' + longest);
+		}
+		last = now;
+	}, 1);	
+	
+	F5.resetJitterTimer = function () {
+		last = Date.now();
+		longest = 0;
+	}
+	
+}());
