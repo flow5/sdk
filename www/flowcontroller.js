@@ -40,6 +40,8 @@
 				
 		flow.controller = this;
 		
+		var lockout = false;
+		
 		// TODO: fix the case where the recursive flow terminates in a selection or transition
 		// before a leaf node is reached
 		function doLifecycleSubflowRecursive(name, node, cb) {
@@ -147,10 +149,13 @@
 		}		
 		
 		// select the child of node with the given id
-		that.doSelection = function (node, id, cb) {		
+		that.doSelection = function (node, id, cb) {	
+			F5.assert(!lockout, 'Locked out');				
 			F5.assert(node.type === 'switcher' || node.type === 'set', 
 				'Can only doSelection on node of types switcher or set');
 			F5.assert(node.children[id], 'No child with id: ' + id);
+			
+			lockout = true;
 			
 			var oldSelection = node.selection;				
 			
@@ -168,8 +173,10 @@
 
 				});
 
-				that.observer();	
-			
+				lockout = false;	
+
+				that.observer();
+							
 				cb();			
 			}					
 
@@ -197,11 +204,14 @@
 				
 		// use the transition on the node with the given id 
 		that.doTransition = function (node, id, cb) {
+			F5.assert(!lockout, 'Locked out');
 			F5.assert(node.type === 'flow' || node.type === 'set', 
 				'Can only doTransition on node of types flow or set');			
 			F5.assert(id === 'back' || node.transitions, 'No transitions defined for node: ' + node.path);
 			F5.assert(id === 'back' || node.transitions[id], 'No transition with id: ' + id);
 			
+			lockout = true;
+						
 			if (!cb) {
 				cb = function () {
 //					console.log('transition complete');
@@ -262,9 +272,11 @@
 				nodeDidBecomeActive(container.selection, function () {
 
 				});		
-					
-				that.observer();					
 				
+				lockout = false;				
+					
+				that.observer();	
+								
 				cb();
 			}
 			

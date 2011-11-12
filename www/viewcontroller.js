@@ -306,10 +306,11 @@
 				subflow.view.el.style.visibility = 'hidden';
 				F5.removeTransitionEndListener(subflow.view.el);
 			}
-			subflow.view.el.style.opacity = 0;
-			subflow.view.el.style['pointer-events'] = '';
 
 			F5.addTransitionEndListener(subflow.view.el, fadeComplete);				
+			
+			subflow.view.el.style.opacity = 0;
+			subflow.view.el.style['pointer-events'] = '';			
 		};
 				
 		this.doSubflowChoice = function (subflow, choice) {
@@ -319,6 +320,7 @@
 			}
 
 			F5.addTransitionEndListener(subflow.view.el, fadeComplete);
+
 			subflow.view.el.style['pointer-events'] = '';
 			subflow.view.el.style.opacity = 0;				
 						
