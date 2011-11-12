@@ -65,22 +65,6 @@ body {
 	margin-right:0px;
 }
 
-@media screen and (orientation: portrait)
-{
-	.mobile #screen {
-		width:320px;
-		height:460px;
-	}
-}
- 
-@media screen and (orientation: landscape)
-{
-	.mobile #screen {
-		width:480px;
-		height:300px;
-	}
-}
-
 .splash {
 	position: absolute;
 	top: -20px;

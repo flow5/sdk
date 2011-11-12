@@ -49,7 +49,9 @@
     } else {
         AppDelegate *appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];        
         
-        self.navigationBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, 0, 320, 44)];
+        self.navigationBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, 0, 320, 44)];        
+        self.navigationBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+                                 
         [self.navigationBar setDelegate:self];
         
         UIView *mainView = [appDelegate.viewController view];

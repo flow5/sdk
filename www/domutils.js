@@ -206,6 +206,27 @@
 		return Math.sqrt(deltaX*deltaX+deltaY*deltaY);
 	};
 	
+	F5.modifyCSSRule = function (selectorText, properties) {	
+		var styleSheets = document.styleSheets;
+		var i;
+		for (i = 0; i < styleSheets.length; i += 1) {
+			var cssRules = styleSheets.item(i).cssRules;
+			if (cssRules) {
+				var j;
+				for (j = 0; j < cssRules.length; j += 1) {
+					var rule = cssRules.item(j);
+					if (rule && rule.selectorText) {
+						if (rule.selectorText === selectorText){
+							properties.forEach(function (id, value) {
+								rule.style[id] = value;
+							});
+						}										
+					}
+				}				
+			}
+		}
+	};		
+	
 }());
 
 

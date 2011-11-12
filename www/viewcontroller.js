@@ -152,7 +152,7 @@
 	};
 
 			
-	function ViewController(flow, applicationFrame) {
+	function ViewController(flow, screenFrame) {						
 		
 		function doLifecycleEventRecursive(node, event) {
 			while (node) {
@@ -177,7 +177,7 @@
 			if (!node.view) {
 				buildViewForNode(node);
 				if (node === F5.Global.flow.root) {
-					applicationFrame.appendChild(node.view.el);
+					screenFrame.appendChild(node.view.el);
 				} else {
 					node.parent.view.el.querySelector('[class=container]').appendChild(node.view.el);												
 				}
@@ -189,7 +189,7 @@
 		this.start = function () {	
 			buildViewForNode(F5.Global.flow.root);
 			
-			applicationFrame.appendChild(F5.Global.flow.root.view.el);
+			screenFrame.appendChild(F5.Global.flow.root.view.el);
 			
 			if (F5.Global.navigationController) {
 				F5.Global.navigationController.start();
