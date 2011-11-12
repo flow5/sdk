@@ -27,94 +27,15 @@
 /*global WebKitCSSMatrix, F5*/
 
 (function () {
-	
-	function eventLocation(event) {
-		var x, y;
-		if (navigator.userAgent.match(/(iPhone)|(Android)/i)) {
-			if (event.touches[0]) {
-				x = event.touches[0].screenX;
-				y = event.touches[0].screenY;					
-			} else {
-				x = event.changedTouches[0].screenX;
-				y = event.changedTouches[0].screenY;			
-			}	
-		}		
-		else {
-			// divide by 2 in browser because of the use of zoom: 2 on the 'screen' div
-			// TODO: link this and the zoom level. annoying
-			x = event.clientX / 2;
-			y = event.clientY / 2; 
-		}	
-
-		return {x: x, y: y};
-	}
-	
-	function elementAbsolutePosition(el) {
-		var x = 0;
-		var y = 0;
-		while (el) {
-			x += el.offsetLeft;
-			y += el.offsetTop;
-
-			el = el.offsetParent;			
-		}
-		return {x: x, y: y};
-	}
-	
-	function pointInElement(el, point) {
-		var pos = elementAbsolutePosition(el);
-		return point.x >= pos.x && point.x < pos.x + el.offsetWidth &&
-				point.y >= pos.y && point.y < pos.y + el.offsetHeight;
-	}
-
-	function startEventName() {
-		if (navigator.userAgent.match(/(iPhone)|(Android)/i)) {
-			return 'touchstart';		
-		}
-		else {
-			return 'mousedown';				
-		}
-	}
-
-	function stopEventName() {
-		if (navigator.userAgent.match(/(iPhone)|(Android)/i)) {
-			return 'touchend';		
-		}
-		else {
-			return 'mouseup';				
-		}
-	}
-
-	function moveEventName() {
-		if (navigator.userAgent.match(/(iPhone)|(Android)/i)) {
-			return 'touchmove';		
-		}
-		else {
-			return 'mousemove';		
-		}
-	}
-	
-	// TODO: save the callback on the div
-	function addTouchListener(el, cb) {
-		el.addEventListener(startEventName(), cb);
-	}
-
-	function addMoveListener(el, cb) {
-		el.addEventListener(moveEventName(), cb);
-	}
-	
-	function addStopListener(el, cb) {
-		el.addEventListener(stopEventName(), cb);
-	}	
-	
+				
 	function attachTracker(el) {
 		var tracking;
 		var startLocation;
 		var startTransform;
 
-		addTouchListener(el, function (e) {
+		F5.addTouchStartListener(el, function (e) {
 			tracking = true;
-			startLocation = eventLocation(e);
+			startLocation = F5.eventLocation(e);
 			var transformMatrix = new WebKitCSSMatrix(el.style.webkitTransform);
 			startTransform = {x: transformMatrix.m41, y: transformMatrix.m42};
 			el.style['-webkit-transition'] = 'opacity 1s';						
@@ -132,8 +53,8 @@
 		});
 */
 
-		addMoveListener(document.body, function (e) {
-			var currentLocation = eventLocation(e);
+		F5.addTouchMoveListener(document.body, function (e) {
+			var currentLocation = F5.eventLocation(e);
 			if (tracking) {
 				var deltaH = currentLocation.x - startLocation.x;
 				var deltaY = currentLocation.y - startLocation.y;
@@ -142,7 +63,7 @@
 			}			
 		});
 
-		addStopListener(document.body, function (e) {
+		F5.addTouchStopListener(document.body, function (e) {
 			tracking = false;
 			el.style['-webkit-transition'] = '';
 		});
@@ -197,7 +118,7 @@
 	
 	// TODO: there can only be one nav bar. move this to a framework only location
 	function attachNavbar(container) {
-		F5.Global.navigationController = F5.object(F5.Prototypes.navigationController);
+		F5.Global.navigationController = F5.objectFromPrototype(F5.Prototypes.navigationController);
 		F5.Global.navigationController.setup(container);																
 	}	
 	
@@ -225,7 +146,7 @@
 
 				tabset.appendChild(tab);
 
-				addTouchListener(tab, function (e) {
+				F5.addTouchStartListener(tab, function (e) {
 					if (that.action) {
 						that.action(id);
 					}
@@ -283,33 +204,14 @@
 		
 		this.setAction = function (cb) {
 			var that = this;
-			var startTime;
-			var startLoc;
-			this.el.addEventListener(startEventName(), function (e) {
+			F5.addTouchStartListener(this.el, function (e) {
 				that.el.style.color = 'darkslategray';
-				startTime = Date.now();
-				startLoc = eventLocation(e);
 				e.stopPropagation();
 			});
-			this.el.addEventListener(stopEventName(), function (e) {
-				// TODO: if stop event is outside div, don't fire
-				// however, pointInElement fails if there's a transform because
-				// the event coordinates don't know about the transform
-//				if (startTime && pointInElement(that.el, eventLocation(e))) {
-				if (startTime) {
-					that.el.style.color = 'black';
-					cb();
-					
-					startTime = null;
-					startLoc = null;					
-				}
-			});	
-			// if the touch up is outside the button div, cancel out
-			document.body.addEventListener(stopEventName(), function (e) {
-				startTime = null;
-				startLoc = null;	
-				that.el.style.color = 'black';							
-			});	
+			F5.addTouchStopListener(this.el, function (e) {
+				that.el.style.color = 'black';
+			});				
+			F5.addTapListener(this.el, cb);			
 		};
 	}
 	
@@ -323,7 +225,7 @@
 	function attachWidget(el, data) {
 		var type = el.getAttribute('f5_widget');
 		F5.assert(widgetPrototypes[type], 'No widget: ' + type);
-		var widget = F5.object(widgetPrototypes[type]);
+		var widget = F5.objectFromPrototype(widgetPrototypes[type]);
 		widget.el = el;
 		el.widget = widget;
 		widget.construct(data);		

@@ -24,10 +24,10 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global define, F5, localStorage*/
+/*global define, F5, localStorage, JSONFormatter*/
 
 (function () {		
-	document.addEventListener('f5ready', function () {
+	F5.addF5ReadyListener(function () {
 		var appframeEl = document.getElementById('appframe');
 
 		var viewerframeEl = F5.Templates.loadTemplate('viewerframe');
@@ -127,7 +127,7 @@
 		F5.Global.flowController.setObserver(observer);
 
 		// make the back button
-		backbuttonEl.addEventListener('click', function () {
+		F5.addTapListener(backbuttonEl, function () {
 			try {
 				F5.Global.flowController.doBack();								
 			} catch (e) {
@@ -137,7 +137,8 @@
 
 		var jsonDiv;
 
-		jsonbuttonEl.addEventListener('click', function () {
+		// TODO: show hide and update the jsonDiv rather than adding/removing
+		F5.addTapListener(jsonbuttonEl, function () {
 			if (jsonDiv) {
 				jsonframeEl.removeChild(jsonDiv);
 				jsonDiv = null;
@@ -163,7 +164,7 @@
 			});							
 		});	
 
-		framesbuttonEl.addEventListener('click', function () {
+		F5.addTapListener(framesbuttonEl, function () {
 			var selected = true;
 			if (appframeEl.className.match('frames')) {
 				appframeEl.className = appframeEl.className.replace('frames', '');
@@ -177,7 +178,7 @@
 			});										
 		});		
 
-		resetbuttonEl.addEventListener('click', function () {
+		F5.addTapListener(resetbuttonEl, function () {
 			var showViewer = localStorage.showViewer;
 			localStorage.clear();
 			localStorage.showViewer = showViewer;
@@ -195,7 +196,7 @@
 				'border': '2px solid ' + (showViewer ? 'white' : 'black')								
 			});																
 		}
-		viewerbuttonEl.addEventListener('click', function () {
+		F5.addTapListener(viewerbuttonEl, function () {
 			if (viewerframeEl.style.display === 'none') {
 				viewerframeEl.style.display = '';
 				localStorage.showViewer = true;

@@ -27,20 +27,7 @@
 /*global F5*/
 
 (function () {
-	
-	// TODO: move to domext
-	function startEventName() {
-		if (navigator.userAgent.match(/(iPhone)|(Android)/i)) {
-			return 'touchstart';		
-		}
-		else {
-			return 'mousedown';				
-		}
-	}	
-	function addTouchListener(el, cb) {
-		el.addEventListener(startEventName(), cb);
-	}
-		
+			
 	function NavigationController() {
 	
 		var navbarEl, leftButtonEl, rightButtonEl, titleEl;
@@ -64,11 +51,11 @@
 			rightButtonEl.style.visibility = 'hidden';
 			navbarEl.appendChild(rightButtonEl);
 
-			addTouchListener(leftButtonEl, function () {
+			F5.addTapListener(leftButtonEl, function () {
 				F5.Global.navigationControllerConfiguration.left.action();
 			});																					
 
-			addTouchListener(rightButtonEl, function () {
+			F5.addTapListener(rightButtonEl, function () {
 				F5.Global.navigationControllerConfiguration.right.action();
 			});		
 		};

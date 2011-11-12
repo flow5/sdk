@@ -566,7 +566,7 @@
 	if (typeof document === 'undefined') {
 		instrument();
 	} else {
-		document.addEventListener('f5ready', instrument);		
+		F5.addF5ReadyListener(instrument);
 	}
 	
 }());

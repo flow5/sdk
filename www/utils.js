@@ -29,7 +29,7 @@
 
 (function () {
 		
-	function post(url, body, success, error, headers) {
+	F5.post = function(url, body, success, error, headers) {
 		var xhr = new XMLHttpRequest();
 		xhr.open('POST', url, true);
 		
@@ -84,25 +84,29 @@
 //			xhr.send(compressed);
 			xhr.send(body);
 		}, 0);		
-	}	
+	};
 	
-	function assert(condition, message) {
+	F5.assert = function(condition, message) {
 		// TODO: disable in release builds?
 		if (!condition) {
 			throw new Error(message);
 		}
-	}
+	};
 	
-	function object(prototype) {
+	F5.objectFromPrototype = function(prototype) {
 		function Instance() {}
 		Instance.prototype = prototype;
 		return new Instance();
-	}
-		
-	F5.post = post;
-	F5.assert = assert;
-	F5.object = object;	
-
+	};
+	
+	F5.callback = function (cb, arg) {
+		try {
+			cb(arg);
+		} catch (e) {
+			console.log(e.message);
+		}
+	};
+	
 }());
 
 

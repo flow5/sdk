@@ -184,7 +184,7 @@ function JSONFormatterPrototype() {
 		    var collapser = document.createElement('div');
 		    collapser.className = 'collapser';
 		    collapser.innerHTML = '-';
-		    collapser.addEventListener('click', collapse, false);
+			F5.addTapListener(collapser, collapse);
 		    item.insertBefore(collapser, item.firstChild);
 		}
 

@@ -29,6 +29,7 @@ exports.scripts = [
 	'jsext.js',
 	'f5.js',
 	'utils.js',
+	'domutils.js',
 	'animation.js',
 	'defaultviewdelegates.js', // TODO: move this to debugScripts?
 	'domext.js',

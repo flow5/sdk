@@ -1,0 +1,234 @@
+/***********************************************************************************************************************
+
+	Copyright (c) 2011 Paul Greyson
+
+	Permission is hereby granted, free of charge, to any person 
+	obtaining a copy of this software and associated documentation 
+	files (the "Software"), to deal in the Software without 
+	restriction, including without limitation the rights to use, 
+	copy, modify, merge, publish, distribute, sublicense, and/or 
+	sell copies of the Software, and to permit persons to whom the 
+	Software is furnished to do so, subject to the following 
+	conditions:
+
+	The above copyright notice and this permission notice shall be 
+	included in all copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, 
+	EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES 
+	OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
+	NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT 
+	HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+	WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
+	FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR 
+	OTHER DEALINGS IN THE SOFTWARE.
+
+***********************************************************************************************************************/
+/*global F5*/
+
+(function () {
+	
+	function startEventName() {
+		if (navigator.userAgent.match(/(iPhone)|(Android)/i)) {
+			return 'touchstart';		
+		}
+		else {
+			return 'mousedown';				
+		}
+	}
+
+	function stopEventName() {
+		if (navigator.userAgent.match(/(iPhone)|(Android)/i)) {
+			return 'touchend';		
+		}
+		else {
+			return 'mouseup';				
+		}
+	}
+
+	function moveEventName() {
+		if (navigator.userAgent.match(/(iPhone)|(Android)/i)) {
+			return 'touchmove';		
+		}
+		else {
+			return 'mousemove';		
+		}
+	}	
+	
+	// OPTION: retain references to the DOM elements to help track down dangling listeners
+	var eventListenerCount = 0;
+		
+	function addEventListener(el, eventType, cb, eventName) {
+		if (!el.F5) {
+			el.F5 = {};
+		}
+		if (!el.F5.listeners) {
+			el.F5.listeners = {};
+		}
+		eventName = eventName || eventType;
+		
+		F5.assert(!el.F5.listeners[eventName], 'Already listening for: ' + eventName + ' on: ' + el.outerHTML);
+		
+		el.F5.listeners[eventName] = function (e) {
+			e.preventDefault();
+			
+			// TODO: check for transitioning for all event callbacks?
+			F5.callback(cb, e);
+		};
+		el.addEventListener(eventType, el.F5.listeners[eventName], false);	
+		eventListenerCount += 1;
+	}
+	
+	function removeEventListener(el, eventType, eventName) {
+		eventName = eventName || eventType;
+		if (el.F5 && el.F5.listeners && el.F5.listeners[eventName]) {
+			el.removeEventListener(eventType, el.F5.listeners[eventName]);
+			delete el.F5.listeners[eventName];
+			eventListenerCount -= 1;
+		}
+	}
+	
+	// TODO: move this to diags layer
+	F5.logEventListenerCount = function () {
+		console.log('event listeners: ' + eventListenerCount);
+	};
+	
+	// NOTE: used by the view controller as a workaround for an iOS 4.x memory leak
+	// when an element is removed from the DOM when there is a touch event listener attached
+	F5.removeTouchEventListenersRecursive = function (el) {
+		function removeTouchEventListeners(el) {
+			F5.removeTouchStartListener(el);
+			F5.removeTouchStopListener(el);
+			F5.removeTouchMoveListener(el);
+			F5.removeTapListener(el);			
+		}
+		
+		removeTouchEventListeners(el);
+		el.querySelectorAll('*').forEach(function (el) {
+			removeTouchEventListeners(el);
+		});		
+	};
+	
+				
+	F5.addTouchStartListener = function (el, cb) {
+		addEventListener(el, startEventName(), cb);
+	};
+	
+	F5.removeTouchStartListener = function (el) {
+		removeEventListener(el, startEventName());		
+	};
+	
+	F5.addTouchStopListener = function (el, cb) {
+		addEventListener(el, stopEventName(), cb);
+	};
+	
+	F5.removeTouchStopListener = function (el) {
+		removeEventListener(el, stopEventName());		
+	};
+	
+	F5.addTouchMoveListener = function (el, cb) {
+		addEventListener(el, moveEventName(), cb);
+	};
+	
+	F5.removeTouchMoveListener = function (el) {
+		removeEventListener(el, moveEventName());		
+	};	
+	
+	// TODO: if stop event is outside div, don't fire
+	F5.addTapListener = function (el, cb) {
+		var maxClickTime = 1000;
+		var maxClickMove = 10;
+				
+		addEventListener(el, startEventName(), function (startEvent) {
+			removeEventListener(el, startEventName(), 'tap');
+			addEventListener(el, stopEventName(), function (stopEvent) {
+				removeEventListener(el, stopEventName(), 'tap');
+				
+				var clickTime = stopEvent.timeStamp - startEvent.timeStamp;
+				var clickMove = F5.eventDistance(startEvent, stopEvent);
+				
+				if (clickTime <= maxClickTime && clickMove <= maxClickMove) {
+					F5.callback(cb);
+				}
+				
+				F5.addTapListener(el, cb);
+				
+			}, 'tap');
+		}, 'tap');
+	};
+	
+	F5.removeTapListener = function (el) {
+		// TODO: maybe include the event name with the el.F5 object so this is guaranteed
+		// to work even if called before the stop event fires
+		removeEventListener(el, startEventName(), 'tap');
+	};
+	
+	F5.addTransitionEndListener = function (el, cb) {
+		addEventListener(el, 'webkitTransitionEnd', cb);
+	};
+	
+	F5.removeTransitionEndListener = function (el) {
+		removeEventListener(el, 'webkitTransitionEnd');		
+	};
+	
+	F5.addF5ReadyListener = function (cb) {
+		document.addEventListener('f5ready', cb);
+	};	
+	
+	F5.eventLocation = function(event) {
+		var x, y;
+		if (navigator.userAgent.match(/(iPhone)|(Android)/i)) {
+			if (event.touches[0]) {
+				x = event.touches[0].screenX;
+				y = event.touches[0].screenY;					
+			} else {
+				x = event.changedTouches[0].screenX;
+				y = event.changedTouches[0].screenY;			
+			}	
+		}		
+		else {
+			// divide by 2 in browser because of the use of zoom: 2 on the 'screen' div
+			// TODO: link this and the zoom level. annoying
+			x = event.clientX / 2;
+			y = event.clientY / 2; 
+		}	
+
+		return {x: x, y: y};
+	};	
+	
+	F5.eventDistance = function(e1, e2) {
+		var loc1 = F5.eventLocation(e1);
+		var loc2 = F5.eventLocation(e2);
+		
+		var deltaX = loc2.x - loc1.x;
+		var deltaY = loc2.y - loc1.y;
+
+		return Math.sqrt(deltaX*deltaX+deltaY*deltaY);
+	};
+	
+}());
+
+
+/*
+
+function pointInElement(el, point) {
+	var pos = elementAbsolutePosition(el);
+	return point.x >= pos.x && point.x < pos.x + el.offsetWidth &&
+			point.y >= pos.y && point.y < pos.y + el.offsetHeight;
+}
+
+function elementAbsolutePosition(el) {
+	var x = 0;
+	var y = 0;
+	while (el) {
+		x += el.offsetLeft;
+		y += el.offsetTop;
+
+		el = el.offsetParent;			
+	}
+	return {x: x, y: y};
+}
+
+
+
+*/

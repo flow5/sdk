@@ -41,11 +41,11 @@
 			newEl.style['-webkit-transform'] = '';
 			newEl.style['-webkit-transition'] = '';
 			
-			oldEl.removeEventListener('webkitTransitionEnd', completePushLeft);
+			F5.removeTransitionEndListener(oldEl);			
 
 			cb();
 		}			
-		oldEl.addEventListener('webkitTransitionEnd', completePushLeft);		
+		F5.addTransitionEndListener(oldEl, completePushLeft);		
 		
 		setTimeout(function () {
 			var transition = '-webkit-transform ease-in .25s';
@@ -77,12 +77,12 @@
 				oldEl.style.opacity = '';
 				oldEl.style.visibility = 'hidden';
 				
-				newEl.removeEventListener('webkitTransitionEnd', completeFadeIn);
+				F5.removeTransitionEndListener(newEl);
 				
 				cb();
 			}
 						
-			newEl.addEventListener('webkitTransitionEnd', completeFadeIn);
+			F5.addTransitionEndListener(newEl, completeFadeIn);
 			
 			setTimeout(function () {
 				newEl.style['-webkit-transition'] = 'opacity .5s';				

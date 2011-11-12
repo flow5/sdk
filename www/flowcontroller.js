@@ -135,7 +135,7 @@
 		// needs to run again
 		// TODO: this has an effect at the widget layer
 		function cancelSubflowRecursive(node) {
-			if (F5.Global.viewController && node.activeSubflow) {
+			if (F5.Global.viewController && node.activeSubflow && node.activeSubflow.userInput) {
 				F5.Global.viewController.completeSubflow(node.activeSubflow);					
 			}
 			delete node.activeSubflow;
@@ -318,13 +318,13 @@
 				that.observer();
 
 				if (node.activeSubflow) {
-					if (F5.Global.viewController) {
+					if (node.activeSubflow.userInput && F5.Global.viewController) {
 						F5.Global.viewController.doSubflowChoice(oldSubflow, id);
 					} else {
 						doSubflowPrompt(node);												
 					}
 				} else {
-					if (F5.Global.viewController) {
+					if (oldSubflow.userInput && F5.Global.viewController) {
 						F5.Global.viewController.completeSubflow(oldSubflow);
 					}
 					if (completionCb) {
@@ -402,13 +402,18 @@
 			}
 						
 			if (subflow.userInput || !delegateMethod) {
+				if (!subflow.userInput) {
+					// flag as requiring user input
+					console.log('Subflow not flagged for user input but no delegate method found');
+					subflow.userInput = true;						
+				}
 				if (F5.Global.viewController) {
 					F5.Global.viewController.startSubflow(node.activeSubflow);
 				} else {
 					// TODO: need to sort out for headless testing
 					doSubflowPrompt(node);												
 				}				
-			} else {				
+			} else {			
 				delegateMethod(node, function (choice) {
 					that.doSubflowChoice(node, choice);
 //					console.log(choice);

@@ -46,7 +46,7 @@
 			if (!viewDelegatePrototype) {
 				viewDelegatePrototype = F5.DefaultViewDelegates[that.node.type];
 			}			
-			that.delegate = F5.object(viewDelegatePrototype);
+			that.delegate = F5.objectFromPrototype(viewDelegatePrototype);
 						
 						
 			if (node.children) {
@@ -148,7 +148,7 @@
 	}
 	var viewPrototype = new ViewPrototype();
 	buildViewForNode = function (node) {
-		F5.object(viewPrototype).ConstructView(node);
+		F5.objectFromPrototype(viewPrototype).ConstructView(node);
 	};
 
 			
@@ -268,6 +268,8 @@
 				if (id === 'back') {
 					// TODO: call viewRelease?
 					deleteViewsRecursive(oldNode);
+
+					F5.removeTouchEventListenersRecursive(oldEl);
 					containerElement.removeChild(oldEl);
 				}				
 			});	
@@ -302,21 +304,21 @@
 			
 			function fadeComplete() {
 				subflow.view.el.style.visibility = 'hidden';
-				subflow.view.el.removeEventListener('webkitAnimationEnd', fadeComplete);
+				F5.removeTransitionEndListener(subflow.view.el);
 			}
 			subflow.view.el.style.opacity = 0;
 			subflow.view.el.style['pointer-events'] = '';
 
-			subflow.view.el.addEventListener('webkitAnimationEnd', fadeComplete);				
+			F5.addTransitionEndListener(subflow.view.el, fadeComplete);				
 		};
 				
 		this.doSubflowChoice = function (subflow, choice) {
 			function fadeComplete() {
 				subflow.view.el.style.visibility = 'hidden';
-				subflow.view.el.removeEventListener('webkitAnimationEnd', fadeComplete);
+				F5.removeTransitionEndListener(subflow.view.el);
 			}
 
-			subflow.view.el.addEventListener('webkitAnimationEnd', fadeComplete);
+			F5.addTransitionEndListener(subflow.view.el, fadeComplete);
 			subflow.view.el.style['pointer-events'] = '';
 			subflow.view.el.style.opacity = 0;				
 						
