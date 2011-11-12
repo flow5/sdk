@@ -67,42 +67,7 @@
 	
 	var screenEl = document.getElementById('screen');
 	
-	var portraitToolbarDelta = 0;
-	var landscapeToolbarDelta = 0;
-	if (isMobile) {
-		// TODO: get base dimensions from device params
-		var isFullScreen = (window.innerHeight === 460);		
-		if (!isNative) {
-			// get toolbar deltas based on platform lookup table
-			if (isFullScreen) {
-				portraitToolbarDelta = 0;
-				landscapeToolbarDelta = 20;					
-			} else {
-				portraitToolbarDelta = 44;	
-				landscapeToolbarDelta = 44;						
-			}
-		} else {
-			landscapeToolbarDelta = 20;
-		}
-		var style = document.createElement('style');
-		style.innerHTML = '@media screen and (orientation: portrait)				\
-							{														\
-								.mobile #screen {									\
-									width:320px;									\
-									height:' + (460 - portraitToolbarDelta) + 'px;	\
-								}													\
-							}														\
-							@media screen and (orientation: landscape)				\
-							{														\
-								.mobile #screen {									\
-									width:480px;									\
-									height:' + (320 - landscapeToolbarDelta) + 'px;	\
-								}													\
-							}';
-		document.head.appendChild(style);
-	}
-	// otherwise should get the dimensions from the url parameters	
-		
+	F5.setupScreenGeometry(isMobile, isNative);		
 
 	// TODO: use the device block of manifest to avoid the PhoneGap reference
 	var startEvent, listener;

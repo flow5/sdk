@@ -217,15 +217,57 @@
 					var rule = cssRules.item(j);
 					if (rule && rule.selectorText) {
 						if (rule.selectorText === selectorText){
-							properties.forEach(function (id, value) {
-								rule.style[id] = value;
-							});
+							var id;
+							for (id in properties) {
+								if (properties.hasOwnProperty(id)) {
+									rule.style[id] = properties[id];									
+								}
+							}
 						}										
 					}
 				}				
 			}
 		}
-	};		
+	};	
+	
+	F5.setupScreenGeometry = function (isMobile, isNative) {
+		// TODO: get toolbar deltas based on platform lookup table
+		var portraitToolbarDelta = 20;
+		var landscapeToolbarDelta = 20;
+		if (isMobile) {
+			var isFullScreen = (window.innerHeight === screen.height - portraitToolbarDelta);		
+			if (!isNative) {
+				// TODO: get toolbar deltas based on platform lookup table
+				if (!isFullScreen) {
+					portraitToolbarDelta += 44;	
+					landscapeToolbarDelta = 44;						
+				}
+			}
+			var style = document.createElement('style');
+			style.innerHTML = '@media screen and (orientation: portrait)							\
+								{																	\
+									.mobile #screen {												\
+										width:' + screen.width + 'px;								\
+										height:' + (screen.height - portraitToolbarDelta) + 'px;	\
+									}																\
+								}																	\
+								@media screen and (orientation: landscape)							\
+								{																	\
+									.mobile #screen {												\
+										width:' + screen.height + 'px;								\
+										height:' + (screen.width - landscapeToolbarDelta) + 'px;	\
+									}																\
+								}';
+			document.head.appendChild(style);
+
+			document.addEventListener('orientationchange', function () {
+				setTimeout(function () {
+					window.scrollTo(0, 1);
+				}, 0);			
+			});		
+		}
+		// otherwise should get the dimensions from the url parameters		
+	};	
 	
 }());
 
