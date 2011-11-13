@@ -33,7 +33,7 @@
 	#import "PhoneGapViewController.h"
 #endif
 
-
+#import "Debug.h"
 
 @implementation AppDelegate
 
@@ -97,7 +97,9 @@
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSDictionary *appDefaults = [NSDictionary dictionaryWithObject:@"NO" forKey:@"use_devserv"];
     [defaults registerDefaults:appDefaults];
-    [defaults synchronize];    
+    [defaults synchronize];  
+    
+    [Debug instrumentWebView:self.viewController.webView];
     
     return result;
 }

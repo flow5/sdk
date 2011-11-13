@@ -220,3 +220,22 @@ body {
 	font-size: 16px;
 	padding:2px;
 }
+
+
+.f5button {
+	position: relative;
+}
+
+.f5button-label, .f5button-imagecontainer .up {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+}
+
+.f5button-label {
+	height: 100%;
+	width: 100%;
+	display: -webkit-box;
+	-webkit-box-pack: center;
+	-webkit-box-align: center;
+}

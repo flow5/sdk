@@ -27,7 +27,7 @@
 
 /*global F5*/
 
-(function () {		
+(function () {	
 	
 	// detect mobile browser
 	var isMobile = false;
@@ -104,7 +104,7 @@
 			console.log('updateready');
 			window.location.reload();
 		}
-		
+				
 		window.applicationCache.addEventListener('updateready', function (e) {
 			updateReady();
 		}, false);

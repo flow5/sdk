@@ -240,6 +240,8 @@
 	function Button() {		
 		this.construct = function (data) {
 			
+			var that = this;
+			
 			F5.addClass(this.el, 'f5button');
 			
 			var imageContainer, up, down;
@@ -253,16 +255,18 @@
 					this.el.removeChild(imageContainer);
 				}
 				imageContainer = document.createElement('div');
+				F5.addClass(imageContainer, 'f5button-imagecontainer');
 
-				up = document.createElement('div');
-				F5.addClass(up, 'f5button-image up');
-				imageContainer.appendChild(up);
+				this.up = document.createElement('img');
+				F5.addClass(this.up, 'up');
+				imageContainer.appendChild(this.up);
 				
-				down = document.createElement('div');
-				F5.addClass(down, 'f5button-image down');
-				imageContainer.appendChild(down);
+				this.down = document.createElement('img');
+				F5.addClass(this.down, 'down');
+				this.down.style.visibility = 'hidden';
+				imageContainer.appendChild(this.down);
 				
-				this.el.appendChild(imageContainer);
+				this.el.insertBefore(imageContainer, label);
 			}
 						
 			function makeStretchyButton(value) {
@@ -270,13 +274,29 @@
 			}
 			
 			function makeFixedButton(value) {
-				makeImageContainer.apply(this);				
+				makeImageContainer.apply(this);	
+												
+				this.up.src = value.up;
+				this.down.src = value.down;
+				
+				F5.assert(this.up.width === this.down.width && this.up.height === this.down.height, 
+					'Up and down images should have the same dimensions');
+					
+				// TODO: for now assume images are always at 2x pixel density
+				// this can be extended so that a build preprocess step resizes images
+				// and packages them into an app for each device target
+				// Ultimately also need to take into account device dimensions and aspect ratio
+				// for some skinning. Will get to that with Android work
+				this.up.style.width = this.up.width / 2;
+				this.up.style.height = this.up.height / 2;
+				this.down.style.width = this.down.width / 2;
+				this.down.style.height = this.down.height / 2;
 			}
 			
 			function applyValue(value) {
 				if (typeof value === 'object') {
 					if (value.label) {
-						this.el.innerText = value.label;
+						label.innerText = value.label;
 					}
 					if (value.image.up) {
 						F5.assert(value.image.down, 'Both up and down images should be defined together');
@@ -288,7 +308,7 @@
 						}						
 					}
 				} else {
-					this.el.innerText = value;
+					label.innerText = value;
 				}
 			}
 
@@ -302,11 +322,17 @@
 		this.setAction = function (cb) {
 			var that = this;
 			F5.addTouchStartListener(this.el, function (e) {
-				that.el.style.color = 'darkslategray';
+				if (that.up) {
+					that.up.style.visibility = 'hidden';
+					that.down.style.visibility = '';					
+				}
 				e.stopPropagation();
 			});
 			F5.addTouchStopListener(this.el, function (e) {
-				that.el.style.color = 'black';
+				if (that.up) {
+					that.up.style.visibility = '';
+					that.down.style.visibility = 'hidden';					
+				}
 			});				
 			F5.addTapListener(this.el, cb);			
 		};

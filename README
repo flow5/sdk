@@ -237,4 +237,13 @@ command line:
 	Widgets
 	
 		widgets are javscript objects which control DOM subtrees and provide an interface to view delegates
-		widgets may rely on particular div structures and custom attributes within the DOM subtrees they control								
+		widgets may rely on particular div structures and custom attributes within the DOM subtrees they control
+		
+		
+	Skinning
+		
+		F5 widgets which are image based (buttons, tabs etc) take their dimensions from the image and the
+		pixel density of the device. this means that images are never scaled which is important especially on
+		android. it also means that multiple bundles are required. however, on iOS, the size of the non-retina
+		bundle is 25% of the retina bundle so this seems reasonable. for webapps, the bundles are generated
+		for all the various device resolutions you support and then redirect is done based on user agent
