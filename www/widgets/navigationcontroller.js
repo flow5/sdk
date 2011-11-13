@@ -34,20 +34,20 @@
 	
 		this.setup = function (container) {
 			navbarEl = document.createElement('div');
-			navbarEl.className = 'navbar';
+			F5.addClass(navbarEl, 'navbar');
 			container.insertBefore(navbarEl, container.firstChild);	
 
 			leftButtonEl = document.createElement('div');
-			leftButtonEl.className = 'leftbutton';
+			F5.addClass(leftButtonEl, 'leftbutton');
 			leftButtonEl.style.visibility = 'hidden';
 			navbarEl.appendChild(leftButtonEl);
 
 			titleEl = document.createElement('div');
-			titleEl.className = 'title';
+			F5.addClass(titleEl, 'title');
 			navbarEl.appendChild(titleEl);
 
 			rightButtonEl = document.createElement('div');
-			rightButtonEl.className = 'rightbutton';
+			F5.addClass(rightButtonEl, 'rightbutton');
 			rightButtonEl.style.visibility = 'hidden';
 			navbarEl.appendChild(rightButtonEl);
 

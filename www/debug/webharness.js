@@ -147,9 +147,8 @@
 				try {					
 					var jsonFormatter = new JSONFormatter();
 					jsonDiv = document.createElement('div');
-					jsonDiv.className = 'json';
+					F5.addClass(jsonDiv, 'json');
 					jsonDiv.innerHTML = jsonFormatter.valueToHTML(JSON.parse(F5.Global.flow.diags.toJSON()));
-					jsonDiv.className = 'json';
 
 					jsonframeEl.appendChild(jsonDiv);
 					jsonframeEl.style.display = 'block';
@@ -166,11 +165,11 @@
 
 		F5.addTapListener(framesbuttonEl, function () {
 			var selected = true;
-			if (appframeEl.className.match('frames')) {
-				appframeEl.className = appframeEl.className.replace('frames', '');
+			if (F5.hasClass(appframeEl, 'frames')) {
+				F5.removeClass(appframeEl, 'frames');
 				selected = false;				
 			} else {
-				appframeEl.className += ' frames';
+				F5.addClass(appframeEl, 'frames');
 			}
 			setStyles(framesbuttonEl, {
 				'background-color': selected ? 'lightblue' : 'grey',

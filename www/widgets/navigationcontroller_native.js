@@ -31,7 +31,7 @@
 		
 		this.setup = function (container) {
 			var navbarEl = document.createElement('div');
-			navbarEl.className = 'navbar';
+			F5.addClass(navbarEl, 'navbar');
 			container.insertBefore(navbarEl, container.firstChild);	
 			
 			PhoneGap.exec(

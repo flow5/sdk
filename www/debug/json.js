@@ -168,7 +168,7 @@ function JSONFormatterPrototype() {
 		        target.style.display = 'none';
 
 		        ellipsis = document.createElement('span');
-		        ellipsis.className = 'ellipsis';
+				F5.addClass(ellipsis, 'ellipsis');
 		        ellipsis.innerHTML = ' &hellip; ';
 		        target.parentNode.insertBefore(ellipsis, target);
 		        collapser.innerHTML = '+';
@@ -182,7 +182,7 @@ function JSONFormatterPrototype() {
 		    }
 
 		    var collapser = document.createElement('div');
-		    collapser.className = 'collapser';
+			F5.addClass(collapser, 'collapser');
 		    collapser.innerHTML = '-';
 			F5.addTapListener(collapser, collapse);
 		    item.insertBefore(collapser, item.firstChild);

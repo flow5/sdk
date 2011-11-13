@@ -39,7 +39,7 @@
 		this.initialize = function (el, node) {
 			if (node.subflows) {
 				var subflowsEl = document.createElement('div');
-				subflowsEl.className = 'subflows';
+				F5.addClass(subflowsEl, 'subflows');
 				
 				var showSubflows = false;
 				node.subflows.forEach(function (id, subflow) {
@@ -47,7 +47,7 @@
 						showSubflows = true;
 						
 						var subflowEl = document.createElement('div');
-						subflowEl.className = 'do-subflow';
+						F5.addClass(subflowEl, 'do-subflow');
 						subflowEl.setAttribute('f5_widget', 'Button');
 						subflowEl.setAttribute('f5_id', 'id');
 						subflowsEl.appendChild(subflowEl);	
@@ -67,14 +67,14 @@
 			
 			if (node.transitions) {
 				var transitionsEl = document.createElement('div');
-				transitionsEl.className = 'transitions';
+				F5.addClass(transitionsEl, 'transitions');
 				el.insertBefore(transitionsEl, el.firstChild);
 
 				node.transitions.forEach(function (id, transition) {
 					var transitionEl = document.createElement('div');
 					transitionEl.setAttribute('f5_id', 'id');
 					transitionEl.setAttribute('f5_widget', 'Button');
-					transitionEl.className = 'do-transition';
+					F5.addClass(transitionEl, 'do-transition');
 					transitionsEl.appendChild(transitionEl);	
 
 					F5.UI.attachWidget(transitionEl, {id: id});
@@ -86,7 +86,7 @@
 			
 			var div = document.createElement('div');
 			div.innerHTML = node.id;
-			div.className = 'nodelabel';			
+			F5.addClass(div, 'nodelabel');
 			el.insertBefore(div, el.firstChild);				
 		};
 	}
@@ -109,7 +109,7 @@
 			el.widget.select(node.selection.id);
 			
 			var div = document.createElement('div');
-			div.className = 'nodelabel';
+			F5.addClass(div, 'nodelabel');
 			div.innerHTML = node.id;
 			el.insertBefore(div, el.firstChild);				
 		};
@@ -122,7 +122,7 @@
 	function SetViewDelegate() {
 		this.initialize = function (el, node) {
 			var div = document.createElement('div');
-			div.className = 'nodelabel';
+			F5.addClass(div, 'nodelabel');
 			div.innerHTML = node.id;
 			el.insertBefore(div, el.firstChild);				
 		};
@@ -136,7 +136,7 @@
 			el.appendChild(div);
 			
 			var choicesEl = document.createElement('div');
-			choicesEl.className = 'choices';
+			F5.addClass(choicesEl, 'choices');
 			el.appendChild(choicesEl);
 			
 			subflow.choices.forEach(function (id, choice) {
@@ -144,7 +144,7 @@
 				choiceEl.innerHTML = id;
 				choiceEl.setAttribute('f5_widget', 'Button');
 				choiceEl.setAttribute('f5_id', 'choice');
-				choiceEl.className = 'do-choice';
+				F5.addClass(choiceEl, 'do-choice');
 				choicesEl.appendChild(choiceEl);
 				
 				F5.UI.attachWidget(choiceEl, {choice: id});									

@@ -131,7 +131,7 @@
 			var that = this;
 			
 			var tabset = document.createElement('div');
-			tabset.className = 'tabset';
+			F5.addClass(tabset, 'tabset');
 			that.el.insertBefore(tabset);
 			
 			that.tabs = {};
@@ -140,7 +140,7 @@
 				var id = el.getAttribute('f5_tab');
 				
 				var tab = document.createElement('div');
-				tab.className = 'tab';
+				F5.addClass(tab, 'tab');
 				tab.innerHTML = id;
 				that.tabs[id] = tab;
 
@@ -190,16 +190,113 @@
 		};
 	}
 	
+	/*
+	
+		data schema:
+		
+		
+		nodeId: {
+			ButtonClass: {
+				image: {
+					up: <url>,
+					down: <url>
+				}
+				
+					OR
+					
+				image: {
+					up: {
+						left: <url>,
+						middle: <url>,
+						right: <url>
+					},
+					down: etc.
+				}
+			}
+			
+			f5_id: {
+				ButtonF5Id: <string>
+			}
+			
+				OR
+			
+			f5_id: {
+				label: <string>,
+				image: {
+					up: <url>,
+					down: <url>
+				}
+			}
+		}
+		
+		this allows button styles to be defined at any scope using ButtonClass (Toggle, Temporary, Tab)
+		or to be defined for a specific button using f5_id or a combination (probably label for f5_id and 
+		images for ButtonClass)	
+		
+		while CSS can be used to set button dimensions, buttons should be allowed to take dimensions from
+		image and label size. buttons will use device pixel density to convert image dimensions to div dimensions.
+	
+	*/
 	function Button() {		
 		this.construct = function (data) {
-			var id = this.el.getAttribute('f5_id');
-			if (data[id]) {
-				this.el.innerText = data[id];				
+			
+			F5.addClass(this.el, 'f5button');
+			
+			var imageContainer, up, down;
+			
+			var label = document.createElement('div');
+			F5.addClass(label, 'f5button-label');
+			this.el.appendChild(label);
+			
+			function makeImageContainer() {
+				if (imageContainer) {
+					this.el.removeChild(imageContainer);
+				}
+				imageContainer = document.createElement('div');
+
+				up = document.createElement('div');
+				F5.addClass(up, 'f5button-image up');
+				imageContainer.appendChild(up);
+				
+				down = document.createElement('div');
+				F5.addClass(down, 'f5button-image down');
+				imageContainer.appendChild(down);
+				
+				this.el.appendChild(imageContainer);
 			}
-			// TODO: use f5_image to get the base name of an image
-			// say f5_image='buttonStandard' then look for data.buttonStandard.up/down
-			// for the srcs of the two images
-			// and buttonStandard can be defined at root scope
+						
+			function makeStretchyButton(value) {
+				makeImageContainer.apply(this);
+			}
+			
+			function makeFixedButton(value) {
+				makeImageContainer.apply(this);				
+			}
+			
+			function applyValue(value) {
+				if (typeof value === 'object') {
+					if (value.label) {
+						this.el.innerText = value.label;
+					}
+					if (value.image.up) {
+						F5.assert(value.image.down, 'Both up and down images should be defined together');
+						
+						if (typeof value.image.up === 'object') {
+							makeStretchyButton.apply(this, [value.image]);
+						} else {
+							makeFixedButton.apply(this, [value.image]);
+						}						
+					}
+				} else {
+					this.el.innerText = value;
+				}
+			}
+
+			// first apply styles from the Button class
+			applyValue.apply(this, [data[this.el.getAttribute('f5_widget')]]);
+			
+			// then override with styles for the instance
+			applyValue.apply(this, [data[this.el.getAttribute('f5_id')]]);			
 		};
 		
 		this.setAction = function (cb) {

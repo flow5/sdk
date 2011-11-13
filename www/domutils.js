@@ -24,7 +24,7 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global F5*/
+/*global F5, RegExp*/
 
 (function () {
 	
@@ -228,8 +228,40 @@
 				}				
 			}
 		}
-	};	
+	};
 	
+	F5.hasClass = function (el, className) {
+		F5.assert(!className.match(' '), 'className should not have a space');
+				
+		var startRegEx = new RegExp('^' + className + ' ');
+		var stopRegEx = new RegExp(' ' + className + '$');
+		return el.className === className || el.className.match(startRegEx) || el.className.match(stopRegEx);
+	};
+
+	F5.removeClass = function (el, className) {
+		F5.assert(!className.match(' '), 'className should not have a space');	
+			
+		if (el.className === className) {
+			el.className = '';
+		} else {
+			var startRegEx = new RegExp('^' + className + ' ');
+			var stopRegEx = new RegExp(' ' + className + '$');
+			el.className = el.className.replace(startRegEx, '').replace(stopRegEx, '');			
+		}
+	};
+	
+	F5.addClass = function (el, className) {
+		F5.assert(!className.match(' '), 'className should not have a space');
+		
+		if (!F5.hasClass(el, className)) {
+			if (el.className) {
+				el.className += ' ' + className;				
+			} else {
+				el.className = className;
+			}
+		}
+	};
+		
 	F5.setupScreenGeometry = function (isMobile, isNative) {
 		// TODO: get toolbar deltas based on platform lookup table
 		var portraitToolbarDelta = 20;

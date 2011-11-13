@@ -34,7 +34,7 @@
 			var that = this;
 																
 			var div = document.createElement('div');
-			div.className = node.type;
+			F5.addClass(div, node.type);
 			div.id = node.path;
 						
 			that.el = div;			
@@ -51,7 +51,7 @@
 						
 			if (node.children) {
 				var container = document.createElement('div');
-				container.className = 'container';
+				F5.addClass(container, 'container');
 				that.el.appendChild(container);	
 
 				if (node.type === 'switcher' || node.type === 'set') {
