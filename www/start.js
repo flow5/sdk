@@ -33,7 +33,7 @@
 	var isMobile = false;
 	if (navigator.userAgent.match(/iPhone/) || navigator.userAgent.match(/Android/)) {
 		isMobile = true;
-		F5.addClass(document.body, ' mobile');
+		F5.addClass(document.body, 'mobile');
 	}
 	
 	var urlParameters = {};

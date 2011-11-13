@@ -252,45 +252,68 @@
 			
 			function makeImageContainer() {
 				if (imageContainer) {
-					this.el.removeChild(imageContainer);
+					that.el.removeChild(imageContainer);
 				}
 				imageContainer = document.createElement('div');
 				F5.addClass(imageContainer, 'f5button-imagecontainer');
 
-				this.up = document.createElement('img');
-				F5.addClass(this.up, 'up');
-				imageContainer.appendChild(this.up);
+				that.up = document.createElement('div');
+				F5.addClass(that.up, 'up');
+				imageContainer.appendChild(that.up);
 				
-				this.down = document.createElement('img');
-				F5.addClass(this.down, 'down');
-				this.down.style.visibility = 'hidden';
-				imageContainer.appendChild(this.down);
+				that.down = document.createElement('div');
+				F5.addClass(that.down, 'down');
+				that.down.style.visibility = 'hidden';
+				imageContainer.appendChild(that.down);
 				
-				this.el.insertBefore(imageContainer, label);
+				that.el.insertBefore(imageContainer, label);
 			}
-						
+
 			function makeStretchyButton(value) {
-				makeImageContainer.apply(this);
+				makeImageContainer();
+
+				function makeImages(which, value) {
+					F5.assert(value[which].left && value[which].middle && value[which].right, 
+								'Image must specify left, middle and right');
+					function makeImage(which, value, position) {
+						var img = document.createElement('img');
+						img.src = value[which][position];
+						// TODO: need to adjust based on pixel density						
+						img.style.height = '30px';
+						that[which].appendChild(img);
+						
+						if (position === 'middle') {
+							img.style.display = '-webkit-box';
+							img.style['-webkit-box-flex'] = 1.0;
+						}
+					}
+					makeImage(which, value, 'left');
+					makeImage(which, value, 'middle');
+					makeImage(which, value, 'right');
+					
+					that[which].style.display = '-webkit-box';
+				}
+				
+				makeImages('up', value);
+				makeImages('down', value);								
 			}
 			
 			function makeFixedButton(value) {
-				makeImageContainer.apply(this);	
-												
-				this.up.src = value.up;
-				this.down.src = value.down;
+				makeImageContainer();	
 				
-				F5.assert(this.up.width === this.down.width && this.up.height === this.down.height, 
-					'Up and down images should have the same dimensions');
-					
-				// TODO: for now assume images are always at 2x pixel density
-				// this can be extended so that a build preprocess step resizes images
-				// and packages them into an app for each device target
-				// Ultimately also need to take into account device dimensions and aspect ratio
-				// for some skinning. Will get to that with Android work
-				this.up.style.width = this.up.width / 2;
-				this.up.style.height = this.up.height / 2;
-				this.down.style.width = this.down.width / 2;
-				this.down.style.height = this.down.height / 2;
+				function makeImage(which, value) {
+					var img = document.createElement('img');
+					img.src = value[which];
+					// TODO: need to adjust based on pixel density											
+					img.style.height = '30px';
+					that[which].appendChild(img);
+				}
+				
+				makeImage('up', value);
+				makeImage('down', value);
+									
+//				F5.assert(this.up.width === this.down.width && this.up.height === this.down.height, 
+//					'Up and down images should have the same dimensions');				
 			}
 			
 			function applyValue(value) {
@@ -302,9 +325,9 @@
 						F5.assert(value.image.down, 'Both up and down images should be defined together');
 						
 						if (typeof value.image.up === 'object') {
-							makeStretchyButton.apply(this, [value.image]);
+							makeStretchyButton(value.image);
 						} else {
-							makeFixedButton.apply(this, [value.image]);
+							makeFixedButton(value.image);
 						}						
 					}
 				} else {
@@ -313,10 +336,10 @@
 			}
 
 			// first apply styles from the Button class
-			applyValue.apply(this, [data[this.el.getAttribute('f5_widget')]]);
+			applyValue(data[this.el.getAttribute('f5_widget')]);
 			
 			// then override with styles for the instance
-			applyValue.apply(this, [data[this.el.getAttribute('f5_id')]]);			
+			applyValue(data[this.el.getAttribute('f5_id')]);			
 		};
 		
 		this.setAction = function (cb) {

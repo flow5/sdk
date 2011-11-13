@@ -231,7 +231,7 @@
 	};
 	
 	F5.hasClass = function (el, className) {
-		F5.assert(!className.match(' '), 'className should not have a space');
+		F5.assert(!className.match(' '), 'className should not have a space: ' + className);
 				
 		var startRegEx = new RegExp('^' + className + ' ');
 		var stopRegEx = new RegExp(' ' + className + '$');
@@ -239,7 +239,7 @@
 	};
 
 	F5.removeClass = function (el, className) {
-		F5.assert(!className.match(' '), 'className should not have a space');	
+		F5.assert(!className.match(' '), 'className should not have a space: ' + className);	
 			
 		if (el.className === className) {
 			el.className = '';
@@ -251,7 +251,7 @@
 	};
 	
 	F5.addClass = function (el, className) {
-		F5.assert(!className.match(' '), 'className should not have a space');
+		F5.assert(!className.match(' '), 'className should not have a space: ' + className);
 		
 		if (!F5.hasClass(el, className)) {
 			if (el.className) {

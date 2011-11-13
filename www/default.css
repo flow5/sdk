@@ -224,18 +224,28 @@ body {
 
 .f5button {
 	position: relative;
+	display: -webkit-box;
+	-webkit-box-pack: center;
+	-webkit-box-align: center;	
 }
 
-.f5button-label, .f5button-imagecontainer .up {
+.f5button-imagecontainer, .f5button-imagecontainer .up {
 	position: absolute;
 	top: 0px;
 	left: 0px;
 }
 
-.f5button-label {
-	height: 100%;
+.f5button-imagecontainer .up {
 	width: 100%;
-	display: -webkit-box;
-	-webkit-box-pack: center;
-	-webkit-box-align: center;
+}
+
+.f5button-imagecontainer {
+	width:100%;
+}
+
+.f5button-label {
+	white-space: nowrap;
+	position: relative;
+	color: white;
+	padding:5px;
 }
