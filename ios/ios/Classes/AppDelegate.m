@@ -101,6 +101,8 @@
     
     [Debug instrumentWebView:self.viewController.webView];
     
+    self.viewController.webView.dataDetectorTypes = UIDataDetectorTypeNone;
+    
     return result;
 }
 

@@ -85,7 +85,7 @@
 			F5.addTransitionEndListener(newEl, completeFadeIn);
 			
 			setTimeout(function () {
-				newEl.style['-webkit-transition'] = 'opacity .5s';				
+				newEl.style['-webkit-transition'] = 'opacity .15s';				
 				newEl.style.opacity = 1;
 			}, 0);		
 		},

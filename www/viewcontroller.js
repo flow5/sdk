@@ -277,9 +277,9 @@
 		
 		// called in a willBecomeActive context to conditionally pick a starting view
 		this.syncSet = function (node) {
-			if (F5.Global.navigationController) {
-				F5.Global.navigationController.syncSet(node);
-			}
+//			if (F5.Global.navigationController) {
+//				F5.Global.navigationController.syncSet(node);
+//			}
 						
 			node.children.forEach(function (id, child) {
 				child.view.el.style.visibility = 'hidden';

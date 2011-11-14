@@ -55,6 +55,11 @@
 	document.body.addEventListener('touchmove', function (e) {
 		e.preventDefault();
 	});
+	
+	// prevent the webview from doing click stuff
+	document.body.addEventListener('click', function (e) {
+		e.preventDefault();
+	});	
 
 	function hideAddressBar() {
 		setTimeout(function () {

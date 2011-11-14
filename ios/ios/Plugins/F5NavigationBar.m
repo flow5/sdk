@@ -96,7 +96,7 @@
                 items = [NSArray arrayWithObject:currentItem];
             }
             
-            [self.navigationBar setItems:items animated:animated];            
+            [self.navigationBar setItems:items animated:animated];                                        
         }
                         
         PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];        

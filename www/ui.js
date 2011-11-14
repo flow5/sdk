@@ -345,13 +345,14 @@
 		this.setAction = function (cb) {
 			var that = this;
 			F5.addTouchStartListener(this.el, function (e) {
+				e.stopPropagation();
 				if (that.up) {
 					that.up.style.visibility = 'hidden';
 					that.down.style.visibility = '';					
 				}
-				e.stopPropagation();
 			});
 			F5.addTouchStopListener(this.el, function (e) {
+				e.stopPropagation();
 				if (that.up) {
 					that.up.style.visibility = '';
 					that.down.style.visibility = 'hidden';					

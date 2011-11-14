@@ -27,7 +27,7 @@
 /*global F5, RegExp*/
 
 (function () {
-	
+		
 	function startEventName() {
 		if (navigator.userAgent.match(/(iPhone)|(Android)/i)) {
 			return 'touchstart';		
@@ -140,8 +140,12 @@
 		var maxClickMove = 10;
 				
 		addEventListener(el, startEventName(), function (startEvent) {
+			startEvent.preventDefault();
+			startEvent.stopPropagation();
 			removeEventListener(el, startEventName(), 'tap');
 			addEventListener(el, stopEventName(), function (stopEvent) {
+				stopEvent.preventDefault();
+				stopEvent.stopPropagation();
 				removeEventListener(el, stopEventName(), 'tap');
 				
 				var clickTime = stopEvent.timeStamp - startEvent.timeStamp;

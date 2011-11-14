@@ -54,7 +54,7 @@ exports.nativeScripts = [
 ];
 
 exports.debugScripts = [
-	'debug/timers.js'
+//	'debug/timers.js'
 ];
 
 exports.debugDesktopScripts = [
