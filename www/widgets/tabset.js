@@ -33,7 +33,7 @@
 	// TODO: can't really go querySelectorAll since there might be nested tab sets
 	function Tabset() {
 	
-		this.construct = function () {
+		this.construct = function (data) {
 			var that = this;
 		
 			var tabset = document.createElement('div');
@@ -52,10 +52,7 @@
 
 				that.tabs[id] = tab;
 				tabset.appendChild(tab);
-				
-				// TODO: get this from the strings/images config
-				var data = {};
-				data[id] = id;				
+								
 				F5.UI.attachWidget(tab, data);				
 
 				tab.widget.setAction(function (e) {

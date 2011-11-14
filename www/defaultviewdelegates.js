@@ -48,7 +48,7 @@
 						
 						var subflowEl = document.createElement('div');
 						F5.addClass(subflowEl, 'do-subflow');
-						subflowEl.setAttribute('f5_widget', 'Button');
+						subflowEl.setAttribute('f5_widget', 'ImageButton');
 						subflowEl.setAttribute('f5_id', 'id');
 						subflowsEl.appendChild(subflowEl);	
 						
@@ -73,7 +73,7 @@
 				node.transitions.forEach(function (id, transition) {
 					var transitionEl = document.createElement('div');
 					transitionEl.setAttribute('f5_id', 'id');
-					transitionEl.setAttribute('f5_widget', 'Button');
+					transitionEl.setAttribute('f5_widget', 'ImageButton');
 					F5.addClass(transitionEl, 'do-transition');
 					transitionsEl.appendChild(transitionEl);	
 
@@ -98,7 +98,7 @@
 			});			
 			el.setAttribute('f5_widget', 'Tabset');
 			
-			F5.UI.attachWidget(el);
+			F5.UI.attachWidget(el, F5.getNodeData(node));
 			el.widget.setAction(function (id) {
 				if (id !== node.selection.id) {
 					F5.Global.flowController.doSelection(node, id, function () {
@@ -141,7 +141,7 @@
 			
 			subflow.choices.forEach(function (id, choice) {
 				var choiceEl = document.createElement('div');
-				choiceEl.setAttribute('f5_widget', 'Button');
+				choiceEl.setAttribute('f5_widget', 'ImageButton');
 				choiceEl.setAttribute('f5_id', 'choice');
 				F5.addClass(choiceEl, 'do-choice');
 				choicesEl.appendChild(choiceEl);

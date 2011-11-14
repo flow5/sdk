@@ -74,40 +74,40 @@
 	
 	*/
 	
-	function Button() {		
+	function Button() {
+		this.makeContainer = function() {
+			if (this.imageContainer) {
+				this.el.removeChild(this.imageContainer);
+			}
+			this.imageContainer = document.createElement('div');
+			F5.addClass(this.imageContainer, 'f5button-imagecontainer');
+
+			this.up = document.createElement('div');
+			F5.addClass(this.up, 'up');
+			this.imageContainer.appendChild(this.up);
+			
+			this.down = document.createElement('div');
+			F5.addClass(this.down, 'down');
+			this.down.style.visibility = 'hidden';
+			this.imageContainer.appendChild(this.down);
+			
+			this.el.insertBefore(this.imageContainer, this.label);
+		};
+	}
+		
+	function ImageButton() {		
 		this.construct = function (data) {
 			
 			var that = this;
 			
 			F5.addClass(this.el, 'f5button');
-			
-			var imageContainer, up, down;
-			
-			var label = document.createElement('div');
-			F5.addClass(label, 'f5button-label');
-			this.el.appendChild(label);
-			
-			function makeContainer() {
-				if (imageContainer) {
-					that.el.removeChild(imageContainer);
-				}
-				imageContainer = document.createElement('div');
-				F5.addClass(imageContainer, 'f5button-imagecontainer');
 
-				that.up = document.createElement('div');
-				F5.addClass(that.up, 'up');
-				imageContainer.appendChild(that.up);
-				
-				that.down = document.createElement('div');
-				F5.addClass(that.down, 'down');
-				that.down.style.visibility = 'hidden';
-				imageContainer.appendChild(that.down);
-				
-				that.el.insertBefore(imageContainer, label);
-			}
+			this.label = document.createElement('div');
+			F5.addClass(this.label, 'f5button-label');
+			this.el.appendChild(this.label);			
 
 			function makeStretchyButton(value) {
-				makeContainer();
+				that.makeContainer();
 
 				function makeImages(which, value) {
 					F5.assert(value[which].left && value[which].middle && value[which].right, 
@@ -136,7 +136,7 @@
 			}
 			
 			function makeFixedButton(value) {
-				makeContainer();	
+				that.makeContainer();	
 				
 				function makeImage(which, value) {
 					var img = document.createElement('img');
@@ -156,7 +156,7 @@
 			function applyValue(value) {
 				if (typeof value === 'object') {
 					if (value.label) {
-						label.innerText = value.label;
+						that.label.innerText = value.label;
 					}
 					if (value.image.up) {
 						F5.assert(value.image.down, 'Both up and down images should be defined together');
@@ -168,11 +168,11 @@
 						}						
 					}
 				} else {
-					label.innerText = value;
+					that.label.innerText = value;
 				}
 			}
 			
-			makeContainer();
+			this.makeContainer();
 
 			// first apply styles from the Button class
 			applyValue(data[this.el.getAttribute('f5_widget')]);
@@ -200,8 +200,9 @@
 			F5.addTapListener(this.el, cb);			
 		};
 	}
+	ImageButton.prototype = new Button();
 	
-	F5.WidgetPrototypes.Button = new Button();	
+	F5.WidgetPrototypes.ImageButton = new ImageButton();	
 	
 	
 	function ToggleButton() {
@@ -228,13 +229,70 @@
 			});			
 		};
 	}
-	ToggleButton.prototype = new Button();
+	ToggleButton.prototype = new ImageButton();
 	
-	F5.WidgetPrototypes.ToggleButton = new ToggleButton();
+	F5.WidgetPrototypes.ToggleButton = new ToggleButton();				
 	
+	
+	function MaskButton() {		
+		this.construct = function (data) {
+
+			var that = this;
+
+			F5.addClass(this.el, 'f5button');
+
+			this.label = document.createElement('div');
+			F5.addClass(this.label, 'f5button-label');
+			this.el.appendChild(this.label);	
+			
+			function applyValue(value) {
+				if (value) {
+					F5.assert(typeof value === 'object', 'MaskButton requires label and mask image specification');
+					if (value.label) {
+						that.label.innerText = value.label;
+					}
+					if (value.image) {
+						that.makeContainer();	
+						
+						var div;
+						
+						div = document.createElement('div');
+						F5.addClass(div, 'f5mask');
+						div.style['-webkit-mask-image'] = 'url("' + value.image + '")';						
+						that.up.appendChild(div);
+
+						div = document.createElement('div');
+						F5.addClass(div, 'f5mask');
+						div.style['-webkit-mask-image'] = 'url("' + value.image + '")';						
+						that.down.appendChild(div);
+					}					
+				}
+			}
+
+			this.makeContainer();
+
+			// first apply styles from the Button class
+			applyValue(data[this.el.getAttribute('f5_widget')]);
+
+			// then override with styles for the instance
+			applyValue(data[this.el.getAttribute('f5_id')]);			
+		};		
+	}
+	MaskButton.prototype = new Button();						
 	
 	function TabButton() {
 		this.state = false;
+		
+		this.setState = function (state) {
+			this.state = state;
+			if (this.state) {
+				this.up.style.visibility = 'hidden';
+				this.down.style.visibility = '';									
+			} else {
+				this.up.style.visibility = '';
+				this.down.style.visibility = 'hidden';													
+			}
+		};		
 		
 		this.setAction = function (cb) {
 			var that = this;
@@ -247,7 +305,7 @@
 			});						
 		};
 	}
-	TabButton.prototype = new ToggleButton();
+	TabButton.prototype = new MaskButton();
 	
 	F5.WidgetPrototypes.TabButton = new TabButton();
 	

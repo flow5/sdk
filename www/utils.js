@@ -86,6 +86,49 @@
 		}, 0);		
 	};
 	
+	
+	// TODO: need a better name
+	// this function takes the user data and combines it with data from the images
+	// and string files to create a structure which contains all the data that is going
+	// to be used by a widget or view tempalte
+	F5.getNodeData = function (node, userData) {
+		// if arg2 is provided, copy out its fields
+		var data = {};
+		function assign(id, value) {
+			if (!data[id]) {
+				data[id] = value;				
+			} else {
+				// TODO: this allows strings and images to be combined
+				if (typeof value === 'object') {
+					F5.assert(typeof data[id] === 'object', 'mismatched data schema');
+					value.forEach(function (valueid, value) {
+						data[id][valueid] = value;
+					});
+				} else {
+					console.log('Data field name shadowed');					
+				}
+			}
+		}
+		if (userData && typeof userData === 'object') {
+			userData.forEach(assign);
+		}
+		
+		// then add all of the strings resources associated with this node and ancestors
+		while (node) {
+			var strings = F5.Strings[node.id];
+			if (strings) {
+				strings.forEach(assign);				
+			}
+			var images = F5.Images[node.id];
+			if (images) {
+				images.forEach(assign);
+			}
+			node = node.parent;
+		}
+		
+		return data;
+	};	
+	
 	F5.assert = function(condition, message) {
 		// TODO: disable in release builds?
 		if (!condition) {

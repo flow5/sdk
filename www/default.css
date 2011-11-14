@@ -185,7 +185,6 @@ body {
 	-webkit-box-flex: 1.0;
 	-webkit-box-align: center;
 	-webkit-box-pack: center;
-	border-right: 1px solid black;
 	-webkit-box-sizing: border-box;
 	font-family: arial;
 	font-size: 10px;
@@ -254,6 +253,26 @@ body {
 .f5button-imagecontainer .up {
 	width: 100%;
 }
+
+.tab .f5mask {
+	-webkit-mask-origin: border-box;
+	-webkit-mask-repeat: no-repeat;
+	-webkit-mask-size: 25px 25px;
+	-webkit-mask-position: center 3px;
+	width: 100%;
+	height: 100%;
+}
+
+.switcher .tabset .f5button-label {
+	font-family: Arial;
+	font-size: 8px;
+	padding: 2px;
+}
+
+.switcher .tabset .f5button {
+	-webkit-box-align: end;	
+}
+
 
 .f5button-imagecontainer {
 	width:100%;

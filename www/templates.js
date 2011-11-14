@@ -26,7 +26,7 @@
 ***********************************************************************************************************************/
 /*global F5*/
 
-(function () {
+(function () {	
 			
 	function loadTemplate(arg1, arg2) {
 		
@@ -52,31 +52,7 @@
 			widgetEls.push(el);			
 		});
 		
-		// if arg2 is provided, copy out its fields
-		var data = {};
-		function assign(id, value) {
-			if (!data[id]) {
-				data[id] = value;				
-			} else {
-				console.log('Data field name shadowed');
-			}
-		}
-		if (arg2 && typeof arg2 === 'object') {
-			arg2.forEach(assign);
-		}
-		
-		// then add all of the strings resources associated with this node and ancestors
-		while (node) {
-			var strings = F5.Strings[node.id];
-			if (strings) {
-				strings.forEach(assign);				
-			}
-			var images = F5.Images[node.id];
-			if (images) {
-				images.forEach(assign);
-			}
-			node = node.parent;
-		}				
+		var data = F5.getNodeData(node, arg2);							
 		
 		widgetEls.forEach(function (el) {
 			F5.UI.attachWidget(el, data);
