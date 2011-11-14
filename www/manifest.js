@@ -37,8 +37,10 @@ exports.scripts = [
 	'flowcontroller.js',
 	'3p/Iuppiter.js',
 	'templates.js',
-	'ui.js',
 	'viewcontroller.js',
+	'ui.js',
+	'widgets/button.js',
+	'widgets/tabset.js'
 ];
 
 exports.elements = [

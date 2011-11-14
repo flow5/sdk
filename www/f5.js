@@ -36,6 +36,7 @@ F5 = {};
 	F5.FlowDelegates = {};	
 			
 	if (typeof document !== 'undefined') {
+		F5.WidgetPrototypes = {};
 		F5.ViewDelegates = {};
 	}
 	

@@ -141,7 +141,6 @@
 			
 			subflow.choices.forEach(function (id, choice) {
 				var choiceEl = document.createElement('div');
-				choiceEl.innerHTML = id;
 				choiceEl.setAttribute('f5_widget', 'Button');
 				choiceEl.setAttribute('f5_id', 'choice');
 				F5.addClass(choiceEl, 'do-choice');

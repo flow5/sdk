@@ -99,7 +99,9 @@
     [defaults registerDefaults:appDefaults];
     [defaults synchronize];  
     
+#if DEBUG
     [Debug instrumentWebView:self.viewController.webView];
+#endif
     
     self.viewController.webView.dataDetectorTypes = UIDataDetectorTypeNone;
     
