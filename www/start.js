@@ -45,11 +45,11 @@
 	var isNative = window.location.protocol === 'file:' || urlParameters['native'] === 'true';	
 	
 	// TODO: specify a mock image server location
-	if (window.location.protocol === 'file:') {
+//	if (window.location.protocol === 'file:') {
 		F5.imageServerHost = 'http://www.flow5.com/';
-	} else {
-		F5.imageServerHost = '';
-	}
+//	} else {
+//		F5.imageServerHost = '';
+//	}
 	
 	// prevent scrolling
 	document.body.addEventListener('touchmove', function (e) {
