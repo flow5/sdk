@@ -161,6 +161,11 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative) {
 		document.head.appendChild(link);
 	}
 	
+	function inlineImage(src) {
+		var prefix = 'data:image/' + require('path').extname(src).substring(1) + ';base64,';
+		return prefix + fs.readFileSync(src, 'base64');
+	}
+	
 	injectLink('apple-touch-icon', 'apps/' + app + '/www/images/icon@114x114.png');
 	injectLink('apple-touch-startup-image', 'apps/' + app + '/www/images/splash@320x460.png');
 	
@@ -264,9 +269,7 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative) {
 			/*global F5: true*/
 			try {
 				handleImagesRecursive(F5.Images, function (obj, id) {
-					var src = obj[id];
-					var prefix = 'data:image/' + require('path').extname(src).substring(1) + ';base64,';
-					obj[id] = prefix + fs.readFileSync(src, 'base64');											
+					obj[id] = inlineImage(obj[id]);										
 				});
 				var script = document.createElement('script');	
 				script.id = 'images.js';	
@@ -290,10 +293,15 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative) {
 	screenframeEl.className = 'portrait';
 	
 	// TODO: probably not right
-//	var splashEl = document.createElement('img');
-//	splashEl.src = 'apps/' + app + '/www/images/splash@640x960.png';
-//	splashEl.className = 'splash';
-//	screenframeEl.appendChild(splashEl);	
+	var splashEl = document.createElement('img');
+	splashEl.className = 'splash';
+	var splashSrc = 'apps/' + app + '/www/images/splash@640x960.png';
+	if (doInline) {
+		splashEl.src = inlineImage(splashSrc);		
+	} else {
+		splashEl.src = splashSrc;		
+	}
+	screenframeEl.appendChild(splashEl);	
 	
 	appframeEl.appendChild(screenframeEl);
 	document.body.appendChild(appframeEl);
