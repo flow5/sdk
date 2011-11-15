@@ -276,7 +276,7 @@
 				// TODO: get toolbar deltas based on platform lookup table
 				if (!isFullScreen) {
 					portraitToolbarDelta += 44;	
-					landscapeToolbarDelta = 44;						
+					landscapeToolbarDelta += 32;						
 				}
 			}
 			var style = document.createElement('style');
