@@ -149,7 +149,7 @@ cli.main(function (args, options) {
 
 			if (req.url.match('generate')) {
 				var html = generator.generateHtml(app, isDebug, doInline, isMobile, isNative);
-				if (isDebug) {
+				if (isDebug && !isMobile) {
 					res.writeHead(200, {'Content-Type': 'text/html'});
 					res.write(html);
 					res.end();					
