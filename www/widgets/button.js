@@ -304,7 +304,8 @@
 			F5.addTouchStartListener(this.el, function (e) {
 				e.stopPropagation();
 				if (!that.state) {
-					that.setState(true);
+					// do the callback first
+					// if it errors out the state doesn't change
 					cb();
 				}
 			});						

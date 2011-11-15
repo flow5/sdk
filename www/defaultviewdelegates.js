@@ -100,11 +100,9 @@
 			
 			F5.UI.attachWidget(el, F5.getNodeData(node));
 			el.widget.setAction(function (id) {
-				if (id !== node.selection.id) {
-					F5.Global.flowController.doSelection(node, id, function () {
+				F5.Global.flowController.doSelection(node, id, function () {
 
-					});					
-				}
+				});					
 			});
 			el.widget.select(node.selection.id);
 			

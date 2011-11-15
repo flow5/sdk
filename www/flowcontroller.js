@@ -155,6 +155,11 @@
 				'Can only doSelection on node of types switcher or set');
 			F5.assert(node.children[id], 'No child with id: ' + id);
 			
+			// nothing to do
+			if (id === node.selection.id) {
+				cb();
+			}			
+			
 			lockout = true;
 			
 			var oldSelection = node.selection;				

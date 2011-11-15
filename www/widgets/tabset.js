@@ -56,15 +56,15 @@
 				F5.UI.attachWidget(tab, data);				
 
 				tab.widget.setAction(function (e) {
-					that.tabs.forEach(function (tabid, tab) {
-						if (tabid !== id) {
-							tab.widget.setState(false);
-						}
-					});
-					
+					// do the action first. if it errors out, the state of the
+					// controls doesn't change
 					if (that.action) {
 						that.action(id);
 					}
+
+					that.tabs.forEach(function (tabid, tab) {
+						tab.widget.setState(tabid === id);
+					});					
 				});				
 			});			
 		};
