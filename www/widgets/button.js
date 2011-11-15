@@ -154,28 +154,33 @@
 			}
 			
 			function applyValue(value) {
-				if (typeof value === 'object') {
-					if (value.label) {
-						that.label.innerText = value.label;
+				if (value) {
+					if (typeof value === 'object') {
+						if (value.label) {
+							that.label.innerText = value.label;
+						}
+						if (value.image.up) {
+							F5.assert(value.image.down, 'Both up and down images should be defined together');
+
+							if (typeof value.image.up === 'object') {
+								makeStretchyButton(value.image);
+							} else {
+								makeFixedButton(value.image);
+							}						
+						}
+					} else {
+						that.label.innerText = value;
 					}
-					if (value.image.up) {
-						F5.assert(value.image.down, 'Both up and down images should be defined together');
-						
-						if (typeof value.image.up === 'object') {
-							makeStretchyButton(value.image);
-						} else {
-							makeFixedButton(value.image);
-						}						
-					}
-				} else {
-					that.label.innerText = value;
 				}
 			}
 			
 			this.makeContainer();
 
 			// first apply styles from the Button class
-			applyValue(data[this.el.getAttribute('f5_widget')]);
+			var className = this.el.getAttribute('f5_class');
+			if (className) {
+				applyValue(data['.' + className]);
+			}
 			
 			// then override with styles for the instance
 			applyValue(data[this.el.getAttribute('f5_id')]);			
@@ -277,7 +282,10 @@
 			this.makeContainer();
 
 			// first apply styles from the Button class
-			applyValue(data[this.el.getAttribute('f5_widget')]);
+			var className = this.el.getAttribute('f5_class');
+			if (className) {
+				applyValue(data['.' + className]);
+			}
 
 			// then override with styles for the instance
 			applyValue(data[this.el.getAttribute('f5_id')]);			

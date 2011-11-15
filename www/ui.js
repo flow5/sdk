@@ -153,6 +153,11 @@
 		var widget = F5.objectFromPrototype(F5.WidgetPrototypes[type]);
 		widget.el = el;
 		el.widget = widget;
+		
+		var className = el.getAttribute('f5_class');
+		if (className) {
+			F5.addClass(el, className);
+		}
 		widget.construct(data);		
 	}
 	
