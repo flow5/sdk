@@ -283,6 +283,13 @@ body {
 	width:100%;
 }
 
+/* only for the auto generated links. move to optional include */
+.subflow .f5button-label, .transitions .f5button-label {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	width: 100%;
+}
+
 .f5button-label {
 	white-space: nowrap;
 	position: relative;
