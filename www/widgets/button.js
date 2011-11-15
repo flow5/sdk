@@ -262,6 +262,11 @@
 						that.up.appendChild(div);
 
 						div = document.createElement('div');
+						F5.addClass(div, 'f5mask-shadow');
+						div.style['-webkit-mask-image'] = 'url("' + value.image + '")';						
+						that.down.appendChild(div);
+
+						div = document.createElement('div');
 						F5.addClass(div, 'f5mask');
 						div.style['-webkit-mask-image'] = 'url("' + value.image + '")';						
 						that.down.appendChild(div);
