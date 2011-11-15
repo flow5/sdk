@@ -35,8 +35,8 @@
 		BE29F62314686984009B0CB6 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BE29F62214686984009B0CB6 /* AppDelegate.m */; };
 		BE29F64714686F7C009B0CB6 /* F5NavigationBar.m in Sources */ = {isa = PBXBuildFile; fileRef = BE29F64614686F7C009B0CB6 /* F5NavigationBar.m */; };
 		BEBBAE041470731F009945CF /* Debug.m in Sources */ = {isa = PBXBuildFile; fileRef = BEBBAE031470731F009945CF /* Debug.m */; };
-		BEBE2E2F146C67D3005AE140 /* DebugSettings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = BEBE2E2E146C67D3005AE140 /* DebugSettings.bundle */; };
 		BEC4988814686FF1008281AB /* Flow5.plist in Resources */ = {isa = PBXBuildFile; fileRef = BEC4988714686FF1008281AB /* Flow5.plist */; };
+		BEE8904514724360009BD2FC /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = BEE8904414724360009BD2FC /* Settings.bundle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -74,8 +74,8 @@
 		BE29F64614686F7C009B0CB6 /* F5NavigationBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = F5NavigationBar.m; path = Plugins/F5NavigationBar.m; sourceTree = "<group>"; };
 		BEBBAE021470731F009945CF /* Debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Debug.h; path = Classes/Debug.h; sourceTree = "<group>"; };
 		BEBBAE031470731F009945CF /* Debug.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Debug.m; path = Classes/Debug.m; sourceTree = "<group>"; };
-		BEBE2E2E146C67D3005AE140 /* DebugSettings.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = DebugSettings.bundle; sourceTree = "<group>"; };
 		BEC4988714686FF1008281AB /* Flow5.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Flow5.plist; sourceTree = "<group>"; };
+		BEE8904414724360009BD2FC /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -175,12 +175,12 @@
 		BE29F60714686984009B0CB6 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				BEE8904414724360009BD2FC /* Settings.bundle */,
 				BE29F61C14686984009B0CB6 /* Capture.bundle */,
 				BE29F60814686984009B0CB6 /* en.lproj */,
 				BE29F60C14686984009B0CB6 /* es.lproj */,
 				BE29F61014686984009B0CB6 /* icons */,
 				BE29F61714686984009B0CB6 /* splash */,
-				BEBE2E2E146C67D3005AE140 /* DebugSettings.bundle */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -306,7 +306,7 @@
 				BE29F61D14686984009B0CB6 /* Capture.bundle in Resources */,
 				BE29F61F14686984009B0CB6 /* PhoneGap.plist in Resources */,
 				BEC4988814686FF1008281AB /* Flow5.plist in Resources */,
-				BEBE2E2F146C67D3005AE140 /* DebugSettings.bundle in Resources */,
+				BEE8904514724360009BD2FC /* Settings.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
