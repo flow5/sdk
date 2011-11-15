@@ -239,7 +239,11 @@
 				
 		var startRegEx = new RegExp('^' + className + ' ');
 		var stopRegEx = new RegExp(' ' + className + '$');
-		return el.className === className || el.className.match(startRegEx) || el.className.match(stopRegEx);
+		var middleRegEx = new RegExp(' '  + className + ' ');
+		return el.className === className || 
+				el.className.match(startRegEx) ||
+				el.className.match(middleRegEx) || 
+				el.className.match(stopRegEx);
 	};
 
 	F5.removeClass = function (el, className) {
@@ -249,8 +253,9 @@
 			el.className = '';
 		} else {
 			var startRegEx = new RegExp('^' + className + ' ');
+			var middleRegEx = new RegExp(' '  + className + ' ');
 			var stopRegEx = new RegExp(' ' + className + '$');
-			el.className = el.className.replace(startRegEx, '').replace(stopRegEx, '');			
+			el.className = el.className.replace(startRegEx, '').replace(middleRegEx, ' ').replace(stopRegEx, '');			
 		}
 	};
 	

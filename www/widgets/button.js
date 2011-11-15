@@ -88,11 +88,23 @@
 			
 			this.down = document.createElement('div');
 			F5.addClass(this.down, 'down');
-			this.down.style.visibility = 'hidden';
 			this.imageContainer.appendChild(this.down);
 			
 			this.el.insertBefore(this.imageContainer, this.label);
+			
+			F5.addClass(this.el, 'up');
 		};
+		
+		this.setState = function (state) {
+			this.state = state;
+			if (state) {
+				F5.addClass(this.el, 'down');
+				F5.removeClass(this.el, 'up');
+			} else {
+				F5.addClass(this.el, 'up');
+				F5.removeClass(this.el, 'down');
+			}
+		};		
 	}
 		
 	function ImageButton() {		
@@ -190,17 +202,11 @@
 			var that = this;
 			F5.addTouchStartListener(this.el, function (e) {
 				e.stopPropagation();
-				if (that.up) {
-					that.up.style.visibility = 'hidden';
-					that.down.style.visibility = '';					
-				}
+				that.setState(true);
 			});
 			F5.addTouchStopListener(this.el, function (e) {
 				e.stopPropagation();
-				if (that.up) {
-					that.up.style.visibility = '';
-					that.down.style.visibility = 'hidden';					
-				}
+				that.setState(false);
 			});				
 			F5.addTapListener(this.el, cb);			
 		};
@@ -213,18 +219,7 @@
 	function ToggleButton() {
 		
 		this.state = false;
-		
-		this.setState = function (state) {
-			this.state = state;
-			if (this.state) {
-				this.up.style.visibility = 'hidden';
-				this.down.style.visibility = '';									
-			} else {
-				this.up.style.visibility = '';
-				this.down.style.visibility = 'hidden';													
-			}
-		};
-		
+				
 		this.setAction = function (cb) {
 			var that = this;
 			F5.addTouchStartListener(this.el, function (e) {
@@ -294,18 +289,7 @@
 	MaskButton.prototype = new Button();						
 	
 	function TabButton() {
-		this.state = false;
-		
-		this.setState = function (state) {
-			this.state = state;
-			if (this.state) {
-				this.up.style.visibility = 'hidden';
-				this.down.style.visibility = '';									
-			} else {
-				this.up.style.visibility = '';
-				this.down.style.visibility = 'hidden';													
-			}
-		};		
+		this.state = false;			
 		
 		this.setAction = function (cb) {
 			var that = this;

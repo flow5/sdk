@@ -194,6 +194,10 @@ body {
 	border-right: none;
 }
 
+.f5button.up .down, .f5button.down .up {
+	visibility: hidden;
+}
+
 .navbar {
 	display: -webkit-box;
 	width: 100%;
@@ -295,4 +299,12 @@ body {
 	position: relative;
 	color: white;
 	padding:5px;
+}
+
+.switcher .tabset .f5button.down .f5button-label {
+	color: white;
+}
+
+.switcher .tabset .f5button.up .f5button-label {
+	color: grey;
 }
