@@ -24,51 +24,27 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
+/*global F5*/
 
-exports.scripts = [
-	'jsext.js',
-	'f5.js',
-	'utils.js',
-	'domutils.js',
-	'animation.js',
-	'defaultviewdelegates.js', // TODO: move this to debugScripts?
-	'domext.js',
-	'flow.js',
-	'flowcontroller.js',
-	'3p/Iuppiter.js',
-	'templates.js',
-	'viewcontroller.js',
-	'services.js',
-	'ui.js',
-	'widgets/button.js',
-	'widgets/tabset.js'
-];
 
-exports.elements = [
-	'default.css',
-];
-
-exports.webScripts = [
-	'widgets/navigationcontroller.js'
-];
-
-exports.nativeScripts = [
-	'widgets/navigationcontroller_native.js'
-];
-
-exports.debugScripts = [
-//	'debug/timers.js'
-];
-
-exports.debugDesktopScripts = [
-	'debug/flow_diags.js',
-	'debug/flowcontroller_diags.js',
-	'debug/webharness.js',
-	'debug/json.js'
-];
-
-exports.debugElements = [
-	'debug/json.css',
-	'debug/webharness.css',
-	'debug/webharness.html'
-];
+(function () {		
+	
+	// TODO: validate service configs against schema
+	F5.Services = {
+		foursquare: {
+			parameters: {
+				v: '20111111'
+//				client_id: <provided by client>
+//				client_secret: <provided by client>								
+			},
+			venue: {
+				protocol: 'https',
+				method: 'GET',
+				baseUrl: 'api.foursquare.com/v2/venues/search',
+				parameterSchema: {},
+				responseSchema: {},			
+			}			
+		}
+	};		
+	
+}());

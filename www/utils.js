@@ -28,17 +28,17 @@
 
 
 (function () {
-		
-	F5.post = function(url, body, success, error, headers) {
+	
+	function doXHR(method, url, body, success, error, headers) {
 		var xhr = new XMLHttpRequest();
-		xhr.open('POST', url, true);
-		
+		xhr.open(method, url, true);
+
 		if (headers) {
 			headers.forEach(function (id, value) {
 				xhr.setRequestHeader(id, value);
 			});
 		}
-		
+
 		xhr.onreadystatechange = function (e) {
 			switch (xhr.readyState) {
 			case xhr.UNSENT:
@@ -62,7 +62,7 @@
 								responseHeaders[id] =  xhr.getResponseHeader(id);
 							});													
 						}
-						
+
 						success(xhr.responseText, responseHeaders);
 					}
 				} else {
@@ -74,7 +74,7 @@
 				break;				
 			}								
 		};
-		
+
 		// WORKAROUND: it seems that xhr.send can cause pending events to fire with reentrancy
 		// TODO: build test case. need something that takes a long time right after send, and then
 		// some queued events
@@ -84,8 +84,53 @@
 //			xhr.send(compressed);
 			xhr.send(body);
 		}, 0);		
+	}
+	
+	F5.get = function(url, success, error, headers) {
+		doXHR('GET', url, null, success, error, headers);		
+	};
+		
+	F5.post = function(url, body, success, error, headers) {
+		doXHR('POST', url, body, success, error, headers);
 	};
 	
+	F5.execService = function (name, parameters, cb) {
+
+		var service = F5.Services;
+		name.split('.').forEach(function (component) {
+			if (service) {
+				service = service[component];				
+			}
+			if (service.parameters) {
+				parameters.extend(service.parameters);
+			}
+		});
+		F5.assert(service, 'No service called: ' + name);		
+
+		// TODO
+		// validate(parameters, service.parameterSchema);
+
+		var url = service.protocol + '://' + service.baseUrl;
+		if (service.method === 'GET') {
+			var query = [];
+			parameters.forEach(function (id, value) {
+				query.push(id + '=' + encodeURIComponent(value));
+			});
+			url += '?' + query.join('&');
+
+			console.log(url);		
+			F5.get(url, 
+				function success(response) {
+					cb(response);
+				}, function error(response) {
+					console.log('Error from ' + url + ' : ' + response);
+					cb(null);
+				});
+		} 
+//		else {
+			// insert parameters into post body
+//		}		
+	};	
 	
 	// TODO: need a better name
 	// this function takes the user data and combines it with data from the images
