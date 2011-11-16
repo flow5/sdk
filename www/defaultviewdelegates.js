@@ -79,7 +79,7 @@
 
 					F5.UI.attachWidget(transitionEl, {id: id});
 					transitionEl.widget.setAction(function () {
-						F5.Global.flowController.doTransition(node, id);
+						F5.Global.flowController.doTransition(node, id, {});
 					});
 				});				
 			}			

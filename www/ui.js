@@ -100,7 +100,7 @@
 				configuration.left.action = function () {
 					var transition = F5.Global.navigationControllerConfiguration.left.transition;
 					var node = F5.Global.navigationControllerConfiguration.left.node;
-					F5.Global.flowController.doTransition(node, transition);				
+					F5.Global.flowController.doTransition(node, transition, {});				
 				};
 			}
 			
@@ -108,7 +108,7 @@
 				configuration.right.action = function () {
 					var transition = F5.Global.navigationControllerConfiguration.right.transition;
 					var node = F5.Global.navigationControllerConfiguration.right.node;
-					F5.Global.flowController.doTransition(node, transition);				
+					F5.Global.flowController.doTransition(node, transition, {});				
 				};			
 			}
 			

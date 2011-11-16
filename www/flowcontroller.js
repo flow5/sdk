@@ -208,7 +208,7 @@
 		};
 				
 		// use the transition on the node with the given id 
-		that.doTransition = function (node, id, cb) {
+		that.doTransition = function (node, id, parameters, cb) {
 			F5.assert(!lockout, 'Locked out');
 			F5.assert(node.type === 'flow' || node.type === 'set', 
 				'Can only doTransition on node of types flow or set');			
@@ -263,7 +263,7 @@
 				
 				if (id === 'back') {
 					container.selection = backNode.back;
-					delete node.back;
+					delete backNode.back;
 				} else {
 					container.selection = node.transitions[id].to;
 				}		
@@ -290,6 +290,17 @@
 			var target = id === 'back' ? backNode.back : node.transitions[id].to;
 			var animation = node.transitions && node.transitions[id] ? node.transitions[id].animation : null;
 			
+			if (parameters) {
+				if (id === 'back') {
+					if (!target.data) {
+						target.data = {};
+					}					
+					target.data.extend(parameters);
+				} else {
+					target.data = parameters;
+				}
+			}
+			 
 			// TODO: call nodeWillBecomeInactive
 			nodeWillBecomeInactive(node, function () {
 				nodeWillBecomeActive(target, function () {			
@@ -361,7 +372,7 @@
 				if (newSubflow) {
 					if (node.type === 'flow') {
 						completeChoice();							
-						that.doTransition(node, newSubflow, function () {
+						that.doTransition(node, newSubflow, {}, function () {
 
 						});																			
 					} else if (node.type === 'switcher') {
@@ -449,7 +460,7 @@
 		that.doBack = function () {			
 			var backNode = that.getBackNode();
 			F5.assert(backNode, 'Cannot go back');
-			that.doTransition(backNode, 'back');
+			that.doTransition(backNode, 'back', {});
 		};
 	}	
 	

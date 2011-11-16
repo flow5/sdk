@@ -41,11 +41,11 @@
 		};
 		
 		var doTransition = F5.Global.flowController.doTransition;
-		F5.Global.flowController.doTransition = function (node, id, cb) {
+		F5.Global.flowController.doTransition = function (node, id, parameters, cb) {
 			F5.assert(flow.diags.isNodePathActive(node), 'Attempt to transition from an inactive node');
 			F5.assert(!flow.diags.isSubflowActive(node), 'Cannot transition with a subflow active');	
 		
-			doTransition.apply(F5.Global.flowController, [node, id, cb]);
+			doTransition.apply(F5.Global.flowController, [node, id, parameters, cb]);
 		};
 		
 		var doSubflow = F5.Global.flowController.doSubflow;

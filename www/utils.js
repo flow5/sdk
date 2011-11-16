@@ -94,7 +94,7 @@
 		doXHR('POST', url, body, success, error, headers);
 	};
 	
-	F5.execService = function (name, parameters, cb) {
+	F5.execService = function (name, option, parameters, cb) {
 
 		var service = F5.Services;
 		name.split('.').forEach(function (component) {
@@ -110,7 +110,7 @@
 		// TODO
 		// validate(parameters, service.parameterSchema);
 
-		var url = service.protocol + '://' + service.baseUrl;
+		var url = service.protocol + '://' + service.baseUrl + option;
 		if (service.method === 'GET') {
 			var query = [];
 			parameters.forEach(function (id, value) {
@@ -121,7 +121,17 @@
 			console.log(url);		
 			F5.get(url, 
 				function success(response) {
-					cb(response);
+					try {
+						var obj = JSON.parse(response);
+						if (service.postprocess) {
+							obj = service.postprocess(obj);
+						}
+						cb(obj);
+						// TODO: validateSchema(response, service.responseSchema);						
+					} catch (e) {
+						console.log(e.message);
+						cb(null);
+					}
 				}, function error(response) {
 					console.log('Error from ' + url + ' : ' + response);
 					cb(null);

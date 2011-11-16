@@ -58,13 +58,13 @@ exports.nativeScripts = [
 
 exports.debugScripts = [
 //	'debug/timers.js'
+	'debug/flow_diags.js',
+	'debug/flowcontroller_diags.js',
+	'debug/json.js'
 ];
 
 exports.debugDesktopScripts = [
-	'debug/flow_diags.js',
-	'debug/flowcontroller_diags.js',
 	'debug/webharness.js',
-	'debug/json.js'
 ];
 
 exports.debugElements = [

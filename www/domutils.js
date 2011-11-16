@@ -152,7 +152,7 @@
 				var clickMove = F5.eventDistance(startEvent, stopEvent);
 				
 				if (clickTime <= maxClickTime && clickMove <= maxClickMove) {
-					F5.callback(cb);
+					F5.callback(cb, stopEvent);
 				}
 				
 				F5.addTapListener(el, cb);

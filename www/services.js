@@ -37,13 +37,26 @@
 //				client_id: <provided by client>
 //				client_secret: <provided by client>								
 			},
-			venue: {
+			venueSearch: {
 				protocol: 'https',
 				method: 'GET',
 				baseUrl: 'api.foursquare.com/v2/venues/search',
 				parameterSchema: {},
-				responseSchema: {},			
-			}			
+				responseSchema: {},	
+				postprocess: function (response) {
+					return response.response.venues;
+				}				
+			},
+			venue: {
+				protocol: 'https',
+				method: 'GET',
+				baseUrl: 'api.foursquare.com/v2/venues/',
+				parameterSchema: {},
+				responseSchema: {},	
+				postprocess: function (response) {
+					return response.response.venue;
+				}				
+			}					
 		}
 	};		
 	
