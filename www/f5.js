@@ -33,8 +33,7 @@ if (typeof F5 === 'undefined') {
 
 		F5.Global = {};
 		F5.Prototypes = {};
-		F5.Strings = {};
-//		F5.Images = {};
+		F5.Resources = {};
 		F5.FlowDelegates = {};		
 
 		if (typeof document !== 'undefined') {

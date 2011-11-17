@@ -170,13 +170,9 @@
 		
 		// then add all of the strings resources associated with this node and ancestors
 		while (node) {
-			var strings = F5.Strings[node.id];
-			if (strings) {
-				F5.forEach(strings, assign);				
-			}
-			var images = F5.Images[node.id];
-			if (images) {
-				F5.forEach(images, assign);
+			var resources = F5.Resources[node.id];
+			if (resources) {
+				F5.forEach(resources, assign);				
 			}
 			node = node.parent;
 		}
