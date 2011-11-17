@@ -42,7 +42,8 @@
 	});	
 	// PhoneGap does not make it easy to pass URL parameters to the start page
 	// so check for the file protocl or the url parameter
-	var isNative = window.location.protocol === 'file:' || urlParameters['native'] === 'true';	
+	var isNative = window.location.protocol === 'file:' && urlParameters['native'] !== 'false' || 
+						urlParameters['native'] === 'true';	
 	
 	// TODO: specify a mock image server location
 //	if (window.location.protocol === 'file:') {
@@ -83,7 +84,7 @@
 		startEvent = 'load';
 		listener = window;
 	}
-	
+
 	listener.addEventListener(startEvent, function (e) {	
 		function start() {
 			try {
