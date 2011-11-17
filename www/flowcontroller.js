@@ -99,7 +99,7 @@
 		
 		// TODO: move this to debug layer
 		function doSubflowPrompt(node) {
-			node.activeSubflow.choices.forEach(function (id, choice) {
+			F5.forEach(node.activeSubflow.choices, function (id, choice) {
 				console.log('* ' + id);
 			});
 		}	
@@ -142,7 +142,7 @@
 			}
 			delete node.activeSubflow;
 			if (node.children) {
-				node.children.forEach(function (id, child) {
+				F5.forEach(node.children, function (id, child) {
 					cancelSubflowRecursive(child);
 				});					
 			}
@@ -295,7 +295,7 @@
 					if (!target.data) {
 						target.data = {};
 					}					
-					target.data.extend(parameters);
+					F5.extend(target.data, parameters);
 				} else {
 					target.data = parameters;
 				}
@@ -381,7 +381,7 @@
 						});
 					} else if (node.type === 'set') {
 						node.selection = node.children[newSubflow];
-						node.children.forEach(function (id, child) {
+						F5.forEach(node.children, function (id, child) {
 							child.active = false;
 						});
 						node.selection.active = true;

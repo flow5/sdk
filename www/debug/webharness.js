@@ -47,7 +47,7 @@
 		F5.UI.attachTracker(svgframeEl);
 
 		function setStyles(el, styles) {
-			styles.forEach(function (id, value) {
+			F5.forEach(styles, function (id, value) {
 				el.style[id] = value;
 			});
 		}		
@@ -104,7 +104,7 @@
 				document.getElementById('graph1').querySelector('polygon').setAttribute('stroke', '');
 
 				// the clickable elements have id with / prefix
-				document.querySelectorAll('[id^="svg-"]').forEach(function (el) {
+				F5.forEach(document.querySelectorAll('[id^="svg-"]'), function (el) {
 					makeClick(el);
 				});
 

@@ -42,7 +42,7 @@
 				F5.addClass(subflowsEl, 'subflows');
 				
 				var showSubflows = false;
-				node.subflows.forEach(function (id, subflow) {
+				F5.forEach(node.subflows, function (id, subflow) {
 					if (!isLifecycleSubflow(id)) {
 						showSubflows = true;
 						
@@ -70,7 +70,7 @@
 				F5.addClass(transitionsEl, 'transitions');
 				el.insertBefore(transitionsEl, el.firstChild);
 
-				node.transitions.forEach(function (id, transition) {
+				F5.forEach(node.transitions, function (id, transition) {
 					var transitionEl = document.createElement('div');
 					transitionEl.setAttribute('f5_id', 'id');
 					transitionEl.setAttribute('f5_widget', 'ImageButton');
@@ -93,7 +93,7 @@
 		
 	function SwitcherViewDelegate() {
 		this.initialize = function (el, node) {
-			node.children.forEach(function (id, child) {
+			F5.forEach(node.children, function (id, child) {
 				child.view.el.setAttribute('f5_tab', id);
 			});			
 			el.setAttribute('f5_widget', 'Tabset');
@@ -137,7 +137,7 @@
 			F5.addClass(choicesEl, 'choices');
 			el.appendChild(choicesEl);
 			
-			subflow.choices.forEach(function (id, choice) {
+			F5.forEach(subflow.choices, function (id, choice) {
 				var choiceEl = document.createElement('div');
 				choiceEl.setAttribute('f5_widget', 'ImageButton');
 				choiceEl.setAttribute('f5_id', 'choice');

@@ -25,12 +25,3 @@
 
 ***********************************************************************************************************************/
 /*global NodeList */
-
-(function () {
-	NodeList.prototype.forEach = function (fn) {
-		var i;
-		for (i = 0; i < this.length; i += 1) {
-			fn(this[i]);
-		}
-	};			
-}());

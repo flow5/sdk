@@ -42,7 +42,7 @@
 		
 			that.tabs = {};
 		
-			that.el.querySelectorAll('[f5_tab]').forEach(function (el) {
+			F5.forEach(that.el.querySelectorAll('[f5_tab]'), function (el) {
 				var id = el.getAttribute('f5_tab');
 			
 				var tab = document.createElement('div');
@@ -62,7 +62,7 @@
 						that.action(id);
 					}
 
-					that.tabs.forEach(function (tabid, tab) {
+					F5.forEach(that.tabs, function (tabid, tab) {
 						tab.widget.setState(tabid === id);
 					});					
 				});				
@@ -74,7 +74,7 @@
 		};
 	
 		this.select = function (selection) {
-			this.tabs.forEach(function (id, tab) {
+			F5.forEach(this.tabs, function (id, tab) {
 				tab.widget.setState(selection === id);
 			});
 		};

@@ -48,13 +48,13 @@
 			widgetEls.push(instance);
 		}
 
-		instance.querySelectorAll('[f5_widget]').forEach(function (el) {
+		F5.forEach(instance.querySelectorAll('[f5_widget]'), function (el) {
 			widgetEls.push(el);			
 		});
 		
 		var data = F5.getNodeData(node, arg2);							
 		
-		widgetEls.forEach(function (el) {
+		F5.forEach(widgetEls, function (el) {
 			F5.UI.attachWidget(el, data);
 		});
 		

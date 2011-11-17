@@ -55,7 +55,7 @@
 				that.el.appendChild(container);	
 
 				if (node.type === 'switcher' || node.type === 'set') {
-					node.children.forEach(function (id, child) {
+					F5.forEach(node.children, function (id, child) {
 						buildViewForNode(child);
 						container.appendChild(child.view.el);
 					});					
@@ -72,13 +72,13 @@
 					buildViewForNode(subflow);
 					F5.Global.flow.root.view.el.appendChild(subflow.view.el);						
 
-					subflow.choices.forEach(function (id, child) {
+					F5.forEach(subflow.choices, function (id, child) {
 						doSubflowRecursive(node, id, child);
 					});			
 				}
 			}
 			if (node.subflows) {
-				node.subflows.forEach(function (id, subflow) {
+				F5.forEach(node.subflows, function (id, subflow) {
 					doSubflowRecursive(node, id, subflow);
 				});
 			}	
@@ -260,7 +260,7 @@
 					delete node.view;
 					delete node.animation;
 					if (node.children) {
-						node.children.forEach(function (id, child) {
+						F5.forEach(node.children, function (id, child) {
 							deleteViewsRecursive(child);
 						});
 					}
@@ -281,7 +281,7 @@
 //				F5.Global.navigationController.syncSet(node);
 //			}
 						
-			node.children.forEach(function (id, child) {
+			F5.forEach(node.children, function (id, child) {
 				child.view.el.style.visibility = 'hidden';
 			});
 			node.selection.view.el.style.visibility = '';

@@ -59,7 +59,7 @@
 			if (nodeSpec.children) {
 				node.children = {};
 				F5.assert(nodeSpec.selection, 'Parent node must declare child selection: ' + id);
-				nodeSpec.children.forEach(function (id, childSpec) {
+				F5.forEach(nodeSpec.children, function (id, childSpec) {
 					var child = injectNodeRecursive(id, childSpec, node);
 					if (id === nodeSpec.selection) {
 						node.selection = child;
@@ -74,7 +74,7 @@
 					subflow.active = false;
 					subflow.type = 'subflow';
 					subflow.node = node;
-					subflow.choices.forEach(function (id, child) {
+					F5.forEach(subflow.choices, function (id, child) {
 						decorateSubflowRecursive(child, node);
 					});					
 				}
@@ -82,7 +82,7 @@
 			
 			if (nodeSpec.subflows) {
 				node.subflows = {};					
-				nodeSpec.subflows.forEach(function (id, subflow) {
+				F5.forEach(nodeSpec.subflows, function (id, subflow) {
 					subflow.node = node;
 					node.subflows[id] = subflow;
 					decorateSubflowRecursive(subflow, node);
@@ -102,7 +102,7 @@
 				F5.assert(node.type === 'flow' || node.type === 'set', 
 							'A node with transitions must be of type flow or set');
 				node.transitions = {};
-				node.spec.transitions.forEach(function (transition) {
+				F5.forEach(node.spec.transitions, function (transition) {
 					var id;
 					if (typeof transition === 'object') {
 						id = transition.to;
@@ -121,7 +121,7 @@
 							
 			// recurse
 			if (node.children) {
-				node.children.forEach(function (id, child) {
+				F5.forEach(node.children, function (id, child) {
 					resolveTransitionsRecursive(child);
 				});
 			}				
@@ -138,7 +138,7 @@
 			delete obj.spec;
 			// break cycles
 			obj._mark = true;
-			obj.forEach(function (id, child) {
+			F5.forEach(obj, function (id, child) {
 				if (child && typeof child === 'object' && !child._mark) {
 					removeSpecsRecursive(child);
 				}
@@ -159,7 +159,7 @@
 			
 			node.path = getPath(node);
 			if (node.children) {
-				node.children.forEach(function (id, child) {
+				F5.forEach(node.children, function (id, child) {
 					addPathsRecursive(child);
 				});
 			}	
@@ -168,13 +168,13 @@
 				if (subflow && subflow.choices) {
 					subflow.path = path + '_' + subflow.method;
 					subflow.active = false;
-					subflow.choices.forEach(function (id, child) {
+					F5.forEach(subflow.choices, function (id, child) {
 						addSubflowPathsRecursive(child, subflow.path);
 					});					
 				}
 			}
 			if (node.subflows) {
-				node.subflows.forEach(function (id, subflow) {
+				F5.forEach(node.subflows, function (id, subflow) {
 					addSubflowPathsRecursive(subflow, node.path);
 				});
 			}			

@@ -26,21 +26,53 @@
 ***********************************************************************************************************************/
 /*global define, F5: true*/
 
-F5 = {};
+if (typeof F5 === 'undefined') {
+	F5 = {};
 
-(function () {
+	(function () {
 
-	F5.Global = {};
-	F5.Prototypes = {};
-	F5.Strings = {};
-	F5.Images = {};
-	F5.FlowDelegates = {};		
-			
-	if (typeof document !== 'undefined') {
-		F5.WidgetPrototypes = {};
-		F5.ViewDelegates = {};
-	}
-	
-}());
+		F5.Global = {};
+		F5.Prototypes = {};
+		F5.Strings = {};
+//		F5.Images = {};
+		F5.FlowDelegates = {};		
+
+		if (typeof document !== 'undefined') {
+			F5.WidgetPrototypes = {};
+			F5.ViewDelegates = {};
+		}
+
+		F5.forEach = function (obj, fn) {
+			/*global NodeList*/
+			if (typeof NodeList !== 'undefined' && obj.constructor === NodeList) {
+				var i;
+				for (i = 0; i < obj.length; i += 1) {
+					fn(obj[i]);
+				}
+
+			} else if (obj.constructor === Array) {
+				obj.forEach(fn);
+			} else {
+				var name;
+				for (name in obj) {
+					if (obj.hasOwnProperty(name)) {
+						fn(name, obj[name]);
+					}
+				}							
+			}
+		};
+
+		F5.extend = function (obj1, obj2) {
+			F5.forEach(obj2, function (id, value) {
+				obj1[id] = value;
+			});
+		};	
+
+	}());	
+}
+
+if (typeof exports !== 'undefined') {
+	F5.extend(exports, F5);
+}
 
 	

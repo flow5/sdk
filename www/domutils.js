@@ -102,7 +102,7 @@
 		}
 		
 		removeTouchEventListeners(el);
-		el.querySelectorAll('*').forEach(function (el) {
+		F5.forEach(el.querySelectorAll('*'), function (el) {
 			removeTouchEventListeners(el);
 		});		
 	};

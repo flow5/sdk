@@ -27,7 +27,5 @@
 /*global F5*/
 
 (function () {
-	F5.Images.extend({
-		
-	});
+
 }());

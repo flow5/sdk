@@ -29,7 +29,7 @@ function JSONFormatterPrototype() {
 	        '\t': 't'
 	    },
 	    ws;
-		has.forEach(function (ws, obj) {
+		F5.forEach(has, function (ws, obj) {
 	        if ( - 1 === s.indexOf(ws)) {
 	            delete has[ws];
 	        }
@@ -41,7 +41,7 @@ function JSONFormatterPrototype() {
 	    });
 	    s = s.slice(6, -2);
 
-		has.forEach(function (ws, obj) {
+		F5.forEach(has, function (ws, obj) {
 	        s = s.replace(new RegExp('\\\\u000' + (ws.charCodeAt().toString(16)), 'ig'),
 	        '\\' + has[ws]);
 	    });
@@ -87,11 +87,11 @@ function JSONFormatterPrototype() {
 	    var numProps = 0;
 		var prop;
 
-		json.forEach(function (id, obj) {
+		F5.forEach(json, function (id, obj) {
 	        numProps += 1;				
 		});
 		
-		json.forEach(function (prop, obj) {
+		F5.forEach(json, function (prop, obj) {
 	        hasContents = true;
 	        output += '<li>' + that.valueToHTML(json[prop]);
 	        if (numProps > 1) {
@@ -117,11 +117,11 @@ function JSONFormatterPrototype() {
 	    var numProps = 0;
 		var prop;
 		
-		json.forEach(function (id,obj) {
+		F5.forEach(json, function (id,obj) {
 	        numProps += 1;				
 		});
 
-		json.forEach(function (prop,obj) {
+		F5.forEach(json, function (prop,obj) {
 	        hasContents = true;
 
 			// NOTE: the q class hides the quotes which makes search difficult since they're really there

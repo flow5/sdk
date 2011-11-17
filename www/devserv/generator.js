@@ -24,14 +24,15 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
+/*global F5: true*/
 
 var fs = require('fs');
-	
-require('../jsext.js');
+
+F5 = require('../f5.js');
 
 function deleteCaches() {
 	// delete all of the cached entries so we reload the next time
-	require.cache.forEach(function (id, obj) {
+	F5.forEach(require.cache, function (id, obj) {
 		if (id.match('manifest.js') || id.match('images.js')) {
 			delete require.cache[id];
 		}
@@ -91,12 +92,9 @@ function generateCacheManifest(app, isDebug, isMobile, isNative) {
 		}
 		
 		try {
-			/*global F5: true*/
-			// TODO: ugly?
-			F5 = {Images: {}};				
 			require(path + 'images.js');
-			F5.Images.forEach(function (id, node) {
-				node.forEach(function (id, src) {
+			F5.forEach(F5.Images, function (id, node) {
+				F5.forEach(node, function (id, src) {
 					checkDate(src);
 				});
 			});				
@@ -240,13 +238,12 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative) {
 		}
 		
 		// images	
-		// TODO: ugly?
-		F5 = {Images: {}};
+		delete F5.Images;
 		require('../' + path + 'images.js');
-		
+
 		// the image references are at the leaf nodes
 		function handleImagesRecursive(obj, handler) {
-			obj.forEach(function (id, value) {
+			F5.forEach(obj, function (id, value) {
 				if (typeof value === 'object') {
 					handleImagesRecursive(value, handler);
 				} else {
@@ -254,31 +251,33 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative) {
 				}
 			});
 		}
-			
-		if (!doInline) {
-			document.head.appendChild(makeScript(path + 'images.js'));
-			var imagePreload = document.createElement('div');
-			imagePreload.id = 'image-preload';
-			templates.appendChild(imagePreload);
-			handleImagesRecursive(F5.Images, function (obj, id) {
-				var img = document.createElement('img');
-				img.src = obj[id];
-				imagePreload.appendChild(img);
-			});
-		} else {
-			/*global F5: true*/
-			try {
+
+		if (F5.Images) {
+			if (!doInline) {
+				document.head.appendChild(makeScript(path + 'images.js'));
+				var imagePreload = document.createElement('div');
+				imagePreload.id = 'image-preload';
+				templates.appendChild(imagePreload);
 				handleImagesRecursive(F5.Images, function (obj, id) {
-					obj[id] = inlineImage(obj[id]);										
+					var img = document.createElement('img');
+					img.src = obj[id];
+					imagePreload.appendChild(img);
 				});
-				var script = document.createElement('script');	
-				script.id = 'images.js';	
-				script.innerHTML = '//<!--\nF5.Images.extend(' + JSON.stringify(F5.Images) + ');\n//-->';
-				document.head.appendChild(script);
-			} catch (e) {
-				console.log(e.message);
+			} else {
+				/*global F5: true*/
+				try {
+					handleImagesRecursive(F5.Images, function (obj, id) {
+						obj[id] = inlineImage(obj[id]);										
+					});
+					var script = document.createElement('script');	
+					script.id = 'images.js';	
+					script.innerHTML = '//<!--\nF5.Images = ' + JSON.stringify(F5.Images) + ';\n//-->';
+					document.head.appendChild(script);
+				} catch (e) {
+					console.log(e.message);
+				}			
 			}			
-		}		
+		}	
 	}
 			
 

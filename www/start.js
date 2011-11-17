@@ -37,7 +37,7 @@
 	}
 	
 	var urlParameters = {};
-	window.location.search.substring(1).split('&').forEach(function (parameter) {
+	F5.forEach(window.location.search.substring(1).split('&'), function (parameter) {
 		urlParameters[parameter.split('=')[0]] = parameter.split('=')[1];
 	});	
 	// PhoneGap does not make it easy to pass URL parameters to the start page

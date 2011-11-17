@@ -34,7 +34,7 @@
 		xhr.open(method, url, true);
 
 		if (headers) {
-			headers.forEach(function (id, value) {
+			F5.forEach(headers, function (id, value) {
 				xhr.setRequestHeader(id, value);
 			});
 		}
@@ -58,7 +58,7 @@
 					if (success) {
 						var responseHeaders = {};
 						if (headers) {
-							headers.forEach(function (id, value) {
+							F5.forEach(headers, function (id, value) {
 								responseHeaders[id] =  xhr.getResponseHeader(id);
 							});													
 						}
@@ -97,12 +97,12 @@
 	F5.execService = function (name, option, parameters, cb) {
 
 		var service = F5.Services;
-		name.split('.').forEach(function (component) {
+		F5.forEach(name.split('.'), function (component) {
 			if (service) {
 				service = service[component];				
 			}
 			if (service.parameters) {
-				parameters.extend(service.parameters);
+				F5.extend(parameters, service.parameters);
 			}
 		});
 		F5.assert(service, 'No service called: ' + name);		
@@ -113,7 +113,7 @@
 		var url = service.protocol + '://' + service.baseUrl + option;
 		if (service.method === 'GET') {
 			var query = [];
-			parameters.forEach(function (id, value) {
+			F5.forEach(parameters, function (id, value) {
 				query.push(id + '=' + encodeURIComponent(value));
 			});
 			url += '?' + query.join('&');
@@ -156,7 +156,7 @@
 				// TODO: this allows strings and images to be combined
 				if (typeof value === 'object') {
 					F5.assert(typeof data[id] === 'object', 'mismatched data schema');
-					value.forEach(function (valueid, value) {
+					F5.forEach(value, function (valueid, value) {
 						data[id][valueid] = value;
 					});
 				} else {
@@ -165,18 +165,18 @@
 			}
 		}
 		if (userData && typeof userData === 'object') {
-			userData.forEach(assign);
+			F5.forEach(userData, assign);
 		}
 		
 		// then add all of the strings resources associated with this node and ancestors
 		while (node) {
 			var strings = F5.Strings[node.id];
 			if (strings) {
-				strings.forEach(assign);				
+				F5.forEach(strings, assign);				
 			}
 			var images = F5.Images[node.id];
 			if (images) {
-				images.forEach(assign);
+				F5.forEach(images, assign);
 			}
 			node = node.parent;
 		}
@@ -203,7 +203,7 @@
 		} catch (e) {
 			console.log(e.message);
 		}
-	};
+	};	
 	
 }());
 

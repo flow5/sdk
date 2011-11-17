@@ -89,7 +89,7 @@
 
 			function copyForPrettyPrintRecursive(obj, objId) {
 				var copy = {};
-				obj.forEach(function (id, child) {
+				F5.forEach(obj, function (id, child) {
 					if (child && typeof child === 'object') {
 						// break cycles and use paths to indicate references
 						if (isReference(id)) {
@@ -159,7 +159,7 @@
 			function formatAttributes(attributes) {
 				var statement = ' [';
 
-				attributes.forEach(function (attribute) {
+				F5.forEach(attributes, function (attribute) {
 					statement += attribute + ',';
 				});
 
@@ -451,11 +451,11 @@
 				function visitSubflowRecursive(id, subflow) {															
 					if (subflow && subflow.type === 'subflow') {
 						subflowStart(node, subflow, subflow.method);
-						subflow.choices.forEach(function (id, child) {
+						F5.forEach(subflow.choices, function (id, child) {
 							addChoiceNode(subflow, id, node);													
 						});
 						subflowFinish();										
-						subflow.choices.forEach(function (id, child) {
+						F5.forEach(subflow.choices, function (id, child) {
 							visitSubflowRecursive(id, child);
 
 							if (child && child.type === 'subflow') {
@@ -475,7 +475,7 @@
 					clusterStart(node);		
 
 					if (node.subflows) {
-						node.subflows.forEach(function (id, subflow) {
+						F5.forEach(node.subflows, function (id, subflow) {
 							addSubflowSource(node, id);	
 							visitSubflow(id, subflow, node);
 							addEdgeToSubflow(node, node.path + '_' + id, subflow);
@@ -487,13 +487,13 @@
 					}
 
 					if (node.transitions) {
-						node.transitions.forEach(function (id) {
+						F5.forEach(node.transitions, function (id) {
 							addTransitionSource(node, id);								
 						});						
 					}
 
 					if (node.children) {
-						node.children.forEach(function (id, child) {
+						F5.forEach(node.children, function (id, child) {
 							visitNodeRecursive(child, node);
 						});						
 					}
@@ -516,9 +516,9 @@
 			visitNodeRecursive(flow.root);
 
 			// create the transition edges
-			visited.forEach(function (path, fromNode) {
+			F5.forEach(visited, function (path, fromNode) {
 				if (fromNode.transitions) {
-					fromNode.transitions.forEach(function (id, transition) {
+					F5.forEach(fromNode.transitions, function (id, transition) {
 						var toNode = transition.to;
 						var toPath = toNode.path;
 
