@@ -126,7 +126,7 @@
 								'Image must specify left, middle and right');
 					function makeImage(which, value, position) {
 						var img = document.createElement('img');
-						img.src = value[which][position];
+						img.src = F5.sourceFromResourceUrl(value[which][position]);
 						// TODO: need to adjust based on pixel density						
 						img.style.height = '30px';
 						that[which].appendChild(img);
@@ -152,7 +152,7 @@
 				
 				function makeImage(which, value) {
 					var img = document.createElement('img');
-					img.src = value[which];
+					img.src = F5.sourceFromResourceUrl(value[which]);
 					// TODO: need to adjust based on pixel density											
 					img.style.height = '30px';
 					that[which].appendChild(img);
@@ -259,17 +259,17 @@
 						
 						div = document.createElement('div');
 						F5.addClass(div, 'f5mask');
-						div.style['-webkit-mask-image'] = 'url("' + value.image + '")';						
+						div.style['-webkit-mask-image'] = value.image;
 						that.up.appendChild(div);
 
 						div = document.createElement('div');
 						F5.addClass(div, 'f5mask-shadow');
-						div.style['-webkit-mask-image'] = 'url("' + value.image + '")';						
+						div.style['-webkit-mask-image'] = value.image;						
 						that.down.appendChild(div);
 
 						div = document.createElement('div');
 						F5.addClass(div, 'f5mask');
-						div.style['-webkit-mask-image'] = 'url("' + value.image + '")';						
+						div.style['-webkit-mask-image'] = value.image;						
 						that.down.appendChild(div);
 					}					
 				}

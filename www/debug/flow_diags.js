@@ -75,8 +75,8 @@
 		};		
 
 		// creates JSON representation of the current Flow graph
-		flow.diags.toJSON = function () {
-
+		flow.diags.toJSON = function (node) {
+			
 			var filteredCopy = {};
 
 			function isReference(id) {
@@ -105,7 +105,7 @@
 			}	
 
 			// NOTE: stringify strips out any fields with function objects
-			return JSON.stringify(copyForPrettyPrintRecursive(flow.root, ''));
+			return JSON.stringify(copyForPrettyPrintRecursive(node || flow.root, ''));
 		};
 
 		// creates DOT representation of the current Flow graph

@@ -135,10 +135,11 @@
 			var id = this.el.getAttribute('f5_id');
 
 			var img = document.createElement('img');
+			var src = F5.sourceFromResourceUrl(data[id]);
 			if (data[id].match('data:image')) {
-				img.src = data[id];
+				img.src = src;
 			} else {
-				img.src = F5.imageServerHost + data[id];				
+				img.src = F5.imageServerHost + src;				
 			}
 			this.el.appendChild(img);
 		};

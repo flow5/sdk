@@ -199,7 +199,12 @@
 		} catch (e) {
 			console.log(e.message);
 		}
-	};	
+	};
+	
+	F5.sourceFromResourceUrl = function (url) {
+		return url.replace('url("', '').replace('")', '');		
+	};
+		
 	
 }());
 
