@@ -201,11 +201,12 @@
 		this.setAction = function (cb) {
 			var that = this;
 			F5.addTouchStartListener(this.el, function (e) {
-				e.stopPropagation();
 				that.setState(true);
 			});
-			F5.addTouchStopListener(this.el, function (e) {
+			F5.addTouchMoveListener(this.el, function (e) {
 				e.stopPropagation();
+			});
+			F5.addTouchStopListener(this.el, function (e) {
 				that.setState(false);
 			});				
 			F5.addTapListener(this.el, cb);			

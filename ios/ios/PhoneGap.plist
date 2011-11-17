@@ -24,6 +24,7 @@
 	<array>
 		<string>www.flow5.com</string>
 		<string>www.w3.org</string>
+		<string>api.foursquare.com</string>
 	</array>
 	<key>Plugins</key>
 	<dict>

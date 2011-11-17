@@ -70,8 +70,6 @@
 		F5.assert(!el.F5.listeners[eventName], 'Already listening for: ' + eventName + ' on: ' + el.outerHTML);
 		
 		el.F5.listeners[eventName] = function (e) {
-			e.preventDefault();
-			
 			// TODO: check for transitioning for all event callbacks?
 			F5.callback(cb, e);
 		};
@@ -140,16 +138,14 @@
 		var maxClickMove = 10;
 				
 		addEventListener(el, startEventName(), function (startEvent) {
-			startEvent.preventDefault();
-			startEvent.stopPropagation();
+			var startLoc = F5.eventLocation(startEvent);
 			removeEventListener(el, startEventName(), 'tap');
 			addEventListener(el, stopEventName(), function (stopEvent) {
-				stopEvent.preventDefault();
-				stopEvent.stopPropagation();
+				var stopLoc = F5.eventLocation(stopEvent);
 				removeEventListener(el, stopEventName(), 'tap');
 				
 				var clickTime = stopEvent.timeStamp - startEvent.timeStamp;
-				var clickMove = F5.eventDistance(startEvent, stopEvent);
+				var clickMove = F5.eventDistance(startLoc, stopLoc);
 				
 				if (clickTime <= maxClickTime && clickMove <= maxClickMove) {
 					F5.callback(cb, stopEvent);
@@ -200,10 +196,7 @@
 		return {x: x, y: y};
 	};	
 	
-	F5.eventDistance = function(e1, e2) {
-		var loc1 = F5.eventLocation(e1);
-		var loc2 = F5.eventLocation(e2);
-		
+	F5.eventDistance = function(loc1, loc2) {		
 		var deltaX = loc2.x - loc1.x;
 		var deltaY = loc2.y - loc1.y;
 
