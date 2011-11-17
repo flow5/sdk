@@ -170,8 +170,8 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative) {
 	}
 	
 	function inlineImage(src) {
-		var prefix = 'data:image/' + require('path').extname(src).substring(1) + ';base64,';
-		return prefix + fs.readFileSync(src, 'base64');
+		var prefix = 'url("data:image/' + require('path').extname(src).substring(1) + ';base64,';
+		return prefix + fs.readFileSync(src, 'base64') + '")';
 	}
 	
 	injectLink('apple-touch-icon', 'apps/' + app + '/www/images/icon@114x114.png');
