@@ -27,11 +27,15 @@
 		<string>api.foursquare.com</string>
 		<string>*.googleapis.com</string>
 		<string>*.gstatic.com</string>
+		<string>*.google.com</string>
+		<string>*.apple.com</string>
 	</array>
 	<key>Plugins</key>
 	<dict>
 		<key>com.flow5.navigationbar</key>
 		<string>F5NavigationBar</string>
+		<key>com.flow5.mapview</key>
+		<string>F5MapView</string>
 		<key>com.phonegap.accelerometer</key>
 		<string>PGAccelerometer</string>
 		<key>com.phonegap.camera</key>

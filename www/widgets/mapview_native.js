@@ -24,51 +24,40 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
+/*global F5, PhoneGap*/
 
-exports.scripts = [
-	'f5.js',
-	'utils.js',
-	'domutils.js',
-	'animation.js',
-	'defaultviewdelegates.js', // TODO: move this to debugScripts?
-	'flow.js',
-	'flowcontroller.js',
-	'3p/Iuppiter.js',
-	'templates.js',
-	'viewcontroller.js',
-	'services.js',
-	'ui.js',
-	'widgets/button.js',
-	'widgets/tabset.js'
-];
+(function () {
 
-exports.elements = [
-	'default.css',
-];
-
-exports.webScripts = [
-	'widgets/navigationcontroller.js',
-	'widgets/mapview.js'
-];
-
-exports.nativeScripts = [
-	'widgets/navigationcontroller_native.js',
-	'widgets/mapview_native.js'
-];
-
-exports.debugScripts = [
-//	'debug/timers.js'
-	'debug/flow_diags.js',
-	'debug/flowcontroller_diags.js',
-	'debug/json.js'
-];
-
-exports.debugDesktopScripts = [
-	'debug/webharness.js',
-];
-
-exports.debugElements = [
-	'debug/json.css',
-	'debug/webharness.css',
-	'debug/webharness.html'
-];
+	function MapView() {
+		
+		this.setup = function (el) {
+			PhoneGap.exec(
+				function (result) { // success
+				console.log(result);
+			}, function (result) { // failure
+				console.log(result);
+			}, "com.flow5.mapview", "create", []);							
+		};
+		
+		this.hide = function () {
+			PhoneGap.exec(
+				function (result) { // success
+				console.log(result);
+			}, function (result) { // failure
+				console.log(result);
+			}, "com.flow5.mapview", "hideMap", []);										
+		};
+		
+		this.show = function () {
+			PhoneGap.exec(
+				function (result) { // success
+				console.log(result);
+			}, function (result) { // failure
+				console.log(result);
+			}, "com.flow5.mapview", "showMap", []);										
+		};
+		
+	}	
+	
+	F5.Prototypes.mapView = new MapView();	
+}());

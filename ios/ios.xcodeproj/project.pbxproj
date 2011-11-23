@@ -34,6 +34,8 @@
 		BE29F61F14686984009B0CB6 /* PhoneGap.plist in Resources */ = {isa = PBXBuildFile; fileRef = BE29F61E14686984009B0CB6 /* PhoneGap.plist */; };
 		BE29F62314686984009B0CB6 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BE29F62214686984009B0CB6 /* AppDelegate.m */; };
 		BE29F64714686F7C009B0CB6 /* F5NavigationBar.m in Sources */ = {isa = PBXBuildFile; fileRef = BE29F64614686F7C009B0CB6 /* F5NavigationBar.m */; };
+		BE9A4B6D147C6029004FF748 /* F5MapView.m in Sources */ = {isa = PBXBuildFile; fileRef = BE9A4B6C147C6029004FF748 /* F5MapView.m */; };
+		BE9A4B6F147C70E6004FF748 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE9A4B6E147C70E6004FF748 /* MapKit.framework */; };
 		BEBBAE041470731F009945CF /* Debug.m in Sources */ = {isa = PBXBuildFile; fileRef = BEBBAE031470731F009945CF /* Debug.m */; };
 		BEC4988814686FF1008281AB /* Flow5.plist in Resources */ = {isa = PBXBuildFile; fileRef = BEC4988714686FF1008281AB /* Flow5.plist */; };
 		BEE8904514724360009BD2FC /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = BEE8904414724360009BD2FC /* Settings.bundle */; };
@@ -72,6 +74,9 @@
 		BE29F62214686984009B0CB6 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = Classes/AppDelegate.m; sourceTree = "<group>"; };
 		BE29F64514686F7C009B0CB6 /* F5NavigationBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = F5NavigationBar.h; path = Plugins/F5NavigationBar.h; sourceTree = "<group>"; };
 		BE29F64614686F7C009B0CB6 /* F5NavigationBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = F5NavigationBar.m; path = Plugins/F5NavigationBar.m; sourceTree = "<group>"; };
+		BE9A4B6B147C6029004FF748 /* F5MapView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = F5MapView.h; path = Plugins/F5MapView.h; sourceTree = "<group>"; };
+		BE9A4B6C147C6029004FF748 /* F5MapView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = F5MapView.m; path = Plugins/F5MapView.m; sourceTree = "<group>"; };
+		BE9A4B6E147C70E6004FF748 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		BEBBAE021470731F009945CF /* Debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Debug.h; path = Classes/Debug.h; sourceTree = "<group>"; };
 		BEBBAE031470731F009945CF /* Debug.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Debug.m; path = Classes/Debug.m; sourceTree = "<group>"; };
 		BEC4988714686FF1008281AB /* Flow5.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Flow5.plist; sourceTree = "<group>"; };
@@ -97,6 +102,7 @@
 				BE29F5F914686984009B0CB6 /* MobileCoreServices.framework in Frameworks */,
 				BE29F5FB14686984009B0CB6 /* CoreMedia.framework in Frameworks */,
 				BE29F60614686984009B0CB6 /* PhoneGap.framework in Frameworks */,
+				BE9A4B6F147C70E6004FF748 /* MapKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -130,6 +136,7 @@
 		BE29F5E114686984009B0CB6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BE9A4B6E147C70E6004FF748 /* MapKit.framework */,
 				BE29F5E214686984009B0CB6 /* Foundation.framework */,
 				BE29F5E414686984009B0CB6 /* UIKit.framework */,
 				BE29F5E614686984009B0CB6 /* CoreGraphics.framework */,
@@ -236,6 +243,8 @@
 			children = (
 				BE29F64514686F7C009B0CB6 /* F5NavigationBar.h */,
 				BE29F64614686F7C009B0CB6 /* F5NavigationBar.m */,
+				BE9A4B6B147C6029004FF748 /* F5MapView.h */,
+				BE9A4B6C147C6029004FF748 /* F5MapView.m */,
 			);
 			name = Plugins;
 			sourceTree = "<group>";
@@ -351,6 +360,7 @@
 				BE29F62314686984009B0CB6 /* AppDelegate.m in Sources */,
 				BE29F64714686F7C009B0CB6 /* F5NavigationBar.m in Sources */,
 				BEBBAE041470731F009945CF /* Debug.m in Sources */,
+				BE9A4B6D147C6029004FF748 /* F5MapView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
