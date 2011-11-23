@@ -26,11 +26,7 @@
 ***********************************************************************************************************************/
 
 
-#ifdef PHONEGAP_FRAMEWORK
-#import <PhoneGap/PGPlugin.h>
-#else
 #import "PGPlugin.h"
-#endif
 
 #import <MapKit/MapKit.h>
 

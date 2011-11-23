@@ -25,24 +25,21 @@
  
 ***********************************************************************************************************************/
 
-#ifdef PHONEGAP_FRAMEWORK
-#import <PhoneGap/PGPlugin.h>
-#else
-#import "PGPlugin.h"
-#endif
 
-@interface F5NavigationBar : PGPlugin {
+#import <UIKit/UIKit.h>
+#import "PhoneGapDelegate.h"
 
-    NSString* callbackID; 
-    UINavigationBar *navigationBar;
-    NSMutableDictionary *itemCache;
+@interface AppDelegate : PhoneGapDelegate {
+
+	NSString* invokeString;
 }
 
-@property (nonatomic, copy) NSString* callbackID;
-@property (nonatomic, retain) UINavigationBar* navigationBar;
-@property (nonatomic, retain) NSMutableDictionary *itemCache;
+// invoke string is passed to your app on launch, this is only valid if you 
+// edit ios.plist to add a protocol
+// a simple tutorial can be found here : 
+// http://iphonedevelopertips.com/cocoa/launching-your-own-application-via-a-custom-url-scheme.html
 
-- (void) create:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void) configure:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+@property (copy)  NSString* invokeString;
 
 @end
+

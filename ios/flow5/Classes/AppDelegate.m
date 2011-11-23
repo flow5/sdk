@@ -26,14 +26,21 @@
 ***********************************************************************************************************************/
 
 #import "AppDelegate.h"
-#ifdef PHONEGAP_FRAMEWORK
-	#import <PhoneGap/PhoneGapViewController.h>
-    #import <PhoneGap/PGWhitelist.h>
-#else
-	#import "PhoneGapViewController.h"
-#endif
+#import "PhoneGapViewController.h"
+#import "PGWhitelist.h"
 
 #import "Debug.h"
+
+@interface MyURLCache : NSURLCache
+@end
+
+@implementation MyURLCache
+- (NSCachedURLResponse *)cachedResponseForRequest:(NSURLRequest *)request {
+    NSLog(@"%@", request);
+    return [super cachedResponseForRequest:request];
+}
+@end
+
 
 @implementation AppDelegate
 
@@ -105,6 +112,18 @@
     
     self.viewController.webView.dataDetectorTypes = UIDataDetectorTypeNone;
     
+    // make webview transparent
+    self.viewController.webView.opaque = NO;
+    self.viewController.webView.backgroundColor = UIColor.clearColor;
+    for (UIView* view in self.viewController.webView.subviews) {
+        view.backgroundColor = UIColor.clearColor;
+    }
+    
+    // attempt at NSURLCache override
+     
+    NSURLCache *myCache = [[MyURLCache alloc] initWithMemoryCapacity:1024 * 1024 diskCapacity:1024 * 1024 * 10 diskPath:@"Cache"];
+    [NSURLCache setSharedURLCache:myCache];
+                
     return result;
 }
 

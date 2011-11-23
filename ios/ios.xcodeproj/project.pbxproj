@@ -20,25 +20,43 @@
 		BE29F5F714686984009B0CB6 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE29F5F614686984009B0CB6 /* SystemConfiguration.framework */; };
 		BE29F5F914686984009B0CB6 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE29F5F814686984009B0CB6 /* MobileCoreServices.framework */; };
 		BE29F5FB14686984009B0CB6 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE29F5FA14686984009B0CB6 /* CoreMedia.framework */; };
-		BE29F60114686984009B0CB6 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = BE29F5FF14686984009B0CB6 /* InfoPlist.strings */; };
-		BE29F60314686984009B0CB6 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = BE29F60214686984009B0CB6 /* main.m */; };
-		BE29F60614686984009B0CB6 /* PhoneGap.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE29F60514686984009B0CB6 /* PhoneGap.framework */; };
-		BE29F60B14686984009B0CB6 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = BE29F60914686984009B0CB6 /* Localizable.strings */; };
-		BE29F60F14686984009B0CB6 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = BE29F60D14686984009B0CB6 /* Localizable.strings */; };
-		BE29F61214686984009B0CB6 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = BE29F61114686984009B0CB6 /* icon.png */; };
-		BE29F61414686984009B0CB6 /* icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE29F61314686984009B0CB6 /* icon@2x.png */; };
-		BE29F61614686984009B0CB6 /* icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = BE29F61514686984009B0CB6 /* icon-72.png */; };
-		BE29F61914686984009B0CB6 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = BE29F61814686984009B0CB6 /* Default.png */; };
-		BE29F61B14686984009B0CB6 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE29F61A14686984009B0CB6 /* Default@2x.png */; };
-		BE29F61D14686984009B0CB6 /* Capture.bundle in Resources */ = {isa = PBXBuildFile; fileRef = BE29F61C14686984009B0CB6 /* Capture.bundle */; };
-		BE29F61F14686984009B0CB6 /* PhoneGap.plist in Resources */ = {isa = PBXBuildFile; fileRef = BE29F61E14686984009B0CB6 /* PhoneGap.plist */; };
-		BE29F62314686984009B0CB6 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BE29F62214686984009B0CB6 /* AppDelegate.m */; };
-		BE29F64714686F7C009B0CB6 /* F5NavigationBar.m in Sources */ = {isa = PBXBuildFile; fileRef = BE29F64614686F7C009B0CB6 /* F5NavigationBar.m */; };
-		BE9A4B6D147C6029004FF748 /* F5MapView.m in Sources */ = {isa = PBXBuildFile; fileRef = BE9A4B6C147C6029004FF748 /* F5MapView.m */; };
+		BE8C5C76147DB6F400C26A4D /* NSObject+SBJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8C5C5C147DB6F400C26A4D /* NSObject+SBJSON.m */; };
+		BE8C5C77147DB6F400C26A4D /* NSString+SBJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8C5C5E147DB6F400C26A4D /* NSString+SBJSON.m */; };
+		BE8C5C78147DB6F400C26A4D /* SBJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8C5C60147DB6F400C26A4D /* SBJSON.m */; };
+		BE8C5C79147DB6F400C26A4D /* SBJsonBase.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8C5C62147DB6F400C26A4D /* SBJsonBase.m */; };
+		BE8C5C7A147DB6F400C26A4D /* SBJsonParser.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8C5C64147DB6F400C26A4D /* SBJsonParser.m */; };
+		BE8C5C7B147DB6F400C26A4D /* SBJsonWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8C5C66147DB6F400C26A4D /* SBJsonWriter.m */; };
+		BE8C5C7C147DB6F400C26A4D /* PGPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8C5C69147DB6F400C26A4D /* PGPlugin.m */; };
+		BE8C5C7D147DB6F400C26A4D /* PGSplashScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8C5C6B147DB6F400C26A4D /* PGSplashScreen.m */; };
+		BE8C5C7E147DB6F400C26A4D /* PGURLProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8C5C6D147DB6F400C26A4D /* PGURLProtocol.m */; };
+		BE8C5C7F147DB6F400C26A4D /* PGWhitelist.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8C5C6F147DB6F400C26A4D /* PGWhitelist.m */; };
+		BE8C5C80147DB6F400C26A4D /* PhoneGapDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8C5C71147DB6F400C26A4D /* PhoneGapDelegate.m */; };
+		BE8C5C81147DB6F400C26A4D /* PhoneGapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8C5C73147DB6F400C26A4D /* PhoneGapViewController.m */; };
+		BE8C5C82147DB6F400C26A4D /* PluginResult.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8C5C75147DB6F400C26A4D /* PluginResult.m */; };
+		BE8C5C85147DB70B00C26A4D /* NSMutableArray+QueueAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8C5C83147DB70B00C26A4D /* NSMutableArray+QueueAdditions.m */; };
+		BE8C5C88147DB72E00C26A4D /* Location.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8C5C86147DB72E00C26A4D /* Location.m */; };
+		BE8C5C8B147DB74200C26A4D /* DebugConsole.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8C5C89147DB74200C26A4D /* DebugConsole.m */; };
+		BE8C5C91147DB77F00C26A4D /* Connection.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8C5C8C147DB77F00C26A4D /* Connection.m */; };
+		BE8C5C92147DB77F00C26A4D /* InvokedUrlCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8C5C8E147DB77F00C26A4D /* InvokedUrlCommand.m */; };
+		BE8C5C94147DB79900C26A4D /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8C5C93147DB79900C26A4D /* Reachability.m */; };
+		BE8C5CB7147DBA2000C26A4D /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8C5C9B147DBA2000C26A4D /* AppDelegate.m */; };
+		BE8C5CB8147DBA2000C26A4D /* Debug.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8C5C9D147DBA2000C26A4D /* Debug.m */; };
+		BE8C5CB9147DBA2000C26A4D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = BE8C5C9E147DBA2000C26A4D /* InfoPlist.strings */; };
+		BE8C5CBA147DBA2000C26A4D /* Flow5.plist in Resources */ = {isa = PBXBuildFile; fileRef = BE8C5CA0147DBA2000C26A4D /* Flow5.plist */; };
+		BE8C5CBB147DBA2000C26A4D /* ios-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BE8C5CA1147DBA2000C26A4D /* ios-Info.plist */; };
+		BE8C5CBC147DBA2000C26A4D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8C5CA3147DBA2000C26A4D /* main.m */; };
+		BE8C5CBD147DBA2000C26A4D /* PhoneGap.plist in Resources */ = {isa = PBXBuildFile; fileRef = BE8C5CA4147DBA2000C26A4D /* PhoneGap.plist */; };
+		BE8C5CBE147DBA2000C26A4D /* F5MapView.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8C5CA7147DBA2000C26A4D /* F5MapView.m */; };
+		BE8C5CBF147DBA2000C26A4D /* F5NavigationBar.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8C5CA9147DBA2000C26A4D /* F5NavigationBar.m */; };
+		BE8C5CC0147DBA2000C26A4D /* Capture.bundle in Resources */ = {isa = PBXBuildFile; fileRef = BE8C5CAB147DBA2000C26A4D /* Capture.bundle */; };
+		BE8C5CC1147DBA2000C26A4D /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = BE8C5CAC147DBA2000C26A4D /* Localizable.strings */; };
+		BE8C5CC2147DBA2000C26A4D /* icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = BE8C5CB0147DBA2000C26A4D /* icon-72.png */; };
+		BE8C5CC3147DBA2000C26A4D /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = BE8C5CB1147DBA2000C26A4D /* icon.png */; };
+		BE8C5CC4147DBA2000C26A4D /* icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE8C5CB2147DBA2000C26A4D /* icon@2x.png */; };
+		BE8C5CC5147DBA2000C26A4D /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = BE8C5CB4147DBA2000C26A4D /* Default.png */; };
+		BE8C5CC6147DBA2000C26A4D /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE8C5CB5147DBA2000C26A4D /* Default@2x.png */; };
+		BE8C5CC7147DBA2000C26A4D /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = BE8C5CB6147DBA2000C26A4D /* Settings.bundle */; };
 		BE9A4B6F147C70E6004FF748 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE9A4B6E147C70E6004FF748 /* MapKit.framework */; };
-		BEBBAE041470731F009945CF /* Debug.m in Sources */ = {isa = PBXBuildFile; fileRef = BEBBAE031470731F009945CF /* Debug.m */; };
-		BEC4988814686FF1008281AB /* Flow5.plist in Resources */ = {isa = PBXBuildFile; fileRef = BEC4988714686FF1008281AB /* Flow5.plist */; };
-		BEE8904514724360009BD2FC /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = BEE8904414724360009BD2FC /* Settings.bundle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -56,31 +74,70 @@
 		BE29F5F614686984009B0CB6 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		BE29F5F814686984009B0CB6 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		BE29F5FA14686984009B0CB6 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
-		BE29F5FE14686984009B0CB6 /* ios-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ios-Info.plist"; sourceTree = "<group>"; };
-		BE29F60014686984009B0CB6 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		BE29F60214686984009B0CB6 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		BE29F60414686984009B0CB6 /* ios-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ios-Prefix.pch"; sourceTree = "<group>"; };
-		BE29F60514686984009B0CB6 /* PhoneGap.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PhoneGap.framework; path = /Users/Shared/PhoneGap/Frameworks/PhoneGap.framework; sourceTree = "<absolute>"; };
-		BE29F60A14686984009B0CB6 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = Resources/en.lproj/Localizable.strings; sourceTree = "<group>"; };
-		BE29F60E14686984009B0CB6 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = Resources/es.lproj/Localizable.strings; sourceTree = "<group>"; };
-		BE29F61114686984009B0CB6 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = icon.png; path = Resources/icons/icon.png; sourceTree = "<group>"; };
-		BE29F61314686984009B0CB6 /* icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "icon@2x.png"; path = "Resources/icons/icon@2x.png"; sourceTree = "<group>"; };
-		BE29F61514686984009B0CB6 /* icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "icon-72.png"; path = "Resources/icons/icon-72.png"; sourceTree = "<group>"; };
-		BE29F61814686984009B0CB6 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Default.png; path = Resources/splash/Default.png; sourceTree = "<group>"; };
-		BE29F61A14686984009B0CB6 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default@2x.png"; path = "Resources/splash/Default@2x.png"; sourceTree = "<group>"; };
-		BE29F61C14686984009B0CB6 /* Capture.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = Capture.bundle; path = Resources/Capture.bundle; sourceTree = "<group>"; };
-		BE29F61E14686984009B0CB6 /* PhoneGap.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = PhoneGap.plist; sourceTree = "<group>"; };
-		BE29F62114686984009B0CB6 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = Classes/AppDelegate.h; sourceTree = "<group>"; };
-		BE29F62214686984009B0CB6 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = Classes/AppDelegate.m; sourceTree = "<group>"; };
-		BE29F64514686F7C009B0CB6 /* F5NavigationBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = F5NavigationBar.h; path = Plugins/F5NavigationBar.h; sourceTree = "<group>"; };
-		BE29F64614686F7C009B0CB6 /* F5NavigationBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = F5NavigationBar.m; path = Plugins/F5NavigationBar.m; sourceTree = "<group>"; };
-		BE9A4B6B147C6029004FF748 /* F5MapView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = F5MapView.h; path = Plugins/F5MapView.h; sourceTree = "<group>"; };
-		BE9A4B6C147C6029004FF748 /* F5MapView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = F5MapView.m; path = Plugins/F5MapView.m; sourceTree = "<group>"; };
+		BE8C5C5A147DB6F400C26A4D /* JSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSON.h; sourceTree = "<group>"; };
+		BE8C5C5B147DB6F400C26A4D /* NSObject+SBJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+SBJSON.h"; sourceTree = "<group>"; };
+		BE8C5C5C147DB6F400C26A4D /* NSObject+SBJSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+SBJSON.m"; sourceTree = "<group>"; };
+		BE8C5C5D147DB6F400C26A4D /* NSString+SBJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+SBJSON.h"; sourceTree = "<group>"; };
+		BE8C5C5E147DB6F400C26A4D /* NSString+SBJSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+SBJSON.m"; sourceTree = "<group>"; };
+		BE8C5C5F147DB6F400C26A4D /* SBJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJSON.h; sourceTree = "<group>"; };
+		BE8C5C60147DB6F400C26A4D /* SBJSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJSON.m; sourceTree = "<group>"; };
+		BE8C5C61147DB6F400C26A4D /* SBJsonBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJsonBase.h; sourceTree = "<group>"; };
+		BE8C5C62147DB6F400C26A4D /* SBJsonBase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonBase.m; sourceTree = "<group>"; };
+		BE8C5C63147DB6F400C26A4D /* SBJsonParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJsonParser.h; sourceTree = "<group>"; };
+		BE8C5C64147DB6F400C26A4D /* SBJsonParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonParser.m; sourceTree = "<group>"; };
+		BE8C5C65147DB6F400C26A4D /* SBJsonWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJsonWriter.h; sourceTree = "<group>"; };
+		BE8C5C66147DB6F400C26A4D /* SBJsonWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonWriter.m; sourceTree = "<group>"; };
+		BE8C5C67147DB6F400C26A4D /* PGDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGDebug.h; sourceTree = "<group>"; };
+		BE8C5C68147DB6F400C26A4D /* PGPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPlugin.h; sourceTree = "<group>"; };
+		BE8C5C69147DB6F400C26A4D /* PGPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPlugin.m; sourceTree = "<group>"; };
+		BE8C5C6A147DB6F400C26A4D /* PGSplashScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGSplashScreen.h; sourceTree = "<group>"; };
+		BE8C5C6B147DB6F400C26A4D /* PGSplashScreen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGSplashScreen.m; sourceTree = "<group>"; };
+		BE8C5C6C147DB6F400C26A4D /* PGURLProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGURLProtocol.h; sourceTree = "<group>"; };
+		BE8C5C6D147DB6F400C26A4D /* PGURLProtocol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGURLProtocol.m; sourceTree = "<group>"; };
+		BE8C5C6E147DB6F400C26A4D /* PGWhitelist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGWhitelist.h; sourceTree = "<group>"; };
+		BE8C5C6F147DB6F400C26A4D /* PGWhitelist.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGWhitelist.m; sourceTree = "<group>"; };
+		BE8C5C70147DB6F400C26A4D /* PhoneGapDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhoneGapDelegate.h; sourceTree = "<group>"; };
+		BE8C5C71147DB6F400C26A4D /* PhoneGapDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhoneGapDelegate.m; sourceTree = "<group>"; };
+		BE8C5C72147DB6F400C26A4D /* PhoneGapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhoneGapViewController.h; sourceTree = "<group>"; };
+		BE8C5C73147DB6F400C26A4D /* PhoneGapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhoneGapViewController.m; sourceTree = "<group>"; };
+		BE8C5C74147DB6F400C26A4D /* PluginResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginResult.h; sourceTree = "<group>"; };
+		BE8C5C75147DB6F400C26A4D /* PluginResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PluginResult.m; sourceTree = "<group>"; };
+		BE8C5C83147DB70B00C26A4D /* NSMutableArray+QueueAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableArray+QueueAdditions.m"; sourceTree = "<group>"; };
+		BE8C5C84147DB70B00C26A4D /* NSMutableArray+QueueAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableArray+QueueAdditions.h"; sourceTree = "<group>"; };
+		BE8C5C86147DB72E00C26A4D /* Location.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Location.m; sourceTree = "<group>"; };
+		BE8C5C87147DB72E00C26A4D /* Location.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Location.h; sourceTree = "<group>"; };
+		BE8C5C89147DB74200C26A4D /* DebugConsole.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DebugConsole.m; sourceTree = "<group>"; };
+		BE8C5C8A147DB74200C26A4D /* DebugConsole.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebugConsole.h; sourceTree = "<group>"; };
+		BE8C5C8C147DB77F00C26A4D /* Connection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Connection.m; sourceTree = "<group>"; };
+		BE8C5C8D147DB77F00C26A4D /* Connection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Connection.h; sourceTree = "<group>"; };
+		BE8C5C8E147DB77F00C26A4D /* InvokedUrlCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InvokedUrlCommand.m; sourceTree = "<group>"; };
+		BE8C5C8F147DB77F00C26A4D /* InvokedUrlCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InvokedUrlCommand.h; sourceTree = "<group>"; };
+		BE8C5C90147DB77F00C26A4D /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
+		BE8C5C93147DB79900C26A4D /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
+		BE8C5C9A147DBA2000C26A4D /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		BE8C5C9B147DBA2000C26A4D /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		BE8C5C9C147DBA2000C26A4D /* Debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Debug.h; sourceTree = "<group>"; };
+		BE8C5C9D147DBA2000C26A4D /* Debug.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Debug.m; sourceTree = "<group>"; };
+		BE8C5C9F147DBA2000C26A4D /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		BE8C5CA0147DBA2000C26A4D /* Flow5.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Flow5.plist; sourceTree = "<group>"; };
+		BE8C5CA1147DBA2000C26A4D /* ios-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "ios-Info.plist"; sourceTree = "<group>"; };
+		BE8C5CA2147DBA2000C26A4D /* ios-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ios-Prefix.pch"; sourceTree = "<group>"; };
+		BE8C5CA3147DBA2000C26A4D /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		BE8C5CA4147DBA2000C26A4D /* PhoneGap.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = PhoneGap.plist; sourceTree = "<group>"; };
+		BE8C5CA6147DBA2000C26A4D /* F5MapView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = F5MapView.h; sourceTree = "<group>"; };
+		BE8C5CA7147DBA2000C26A4D /* F5MapView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = F5MapView.m; sourceTree = "<group>"; };
+		BE8C5CA8147DBA2000C26A4D /* F5NavigationBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = F5NavigationBar.h; sourceTree = "<group>"; };
+		BE8C5CA9147DBA2000C26A4D /* F5NavigationBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = F5NavigationBar.m; sourceTree = "<group>"; };
+		BE8C5CAB147DBA2000C26A4D /* Capture.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Capture.bundle; sourceTree = "<group>"; };
+		BE8C5CAD147DBA2000C26A4D /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		BE8C5CAE147DBA2000C26A4D /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
+		BE8C5CB0147DBA2000C26A4D /* icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-72.png"; sourceTree = "<group>"; };
+		BE8C5CB1147DBA2000C26A4D /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
+		BE8C5CB2147DBA2000C26A4D /* icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon@2x.png"; sourceTree = "<group>"; };
+		BE8C5CB4147DBA2000C26A4D /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
+		BE8C5CB5147DBA2000C26A4D /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
+		BE8C5CB6147DBA2000C26A4D /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		BE9A4B6E147C70E6004FF748 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
-		BEBBAE021470731F009945CF /* Debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Debug.h; path = Classes/Debug.h; sourceTree = "<group>"; };
-		BEBBAE031470731F009945CF /* Debug.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Debug.m; path = Classes/Debug.m; sourceTree = "<group>"; };
-		BEC4988714686FF1008281AB /* Flow5.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Flow5.plist; sourceTree = "<group>"; };
-		BEE8904414724360009BD2FC /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,7 +158,6 @@
 				BE29F5F714686984009B0CB6 /* SystemConfiguration.framework in Frameworks */,
 				BE29F5F914686984009B0CB6 /* MobileCoreServices.framework in Frameworks */,
 				BE29F5FB14686984009B0CB6 /* CoreMedia.framework in Frameworks */,
-				BE29F60614686984009B0CB6 /* PhoneGap.framework in Frameworks */,
 				BE9A4B6F147C70E6004FF748 /* MapKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -119,7 +175,8 @@
 		BE29F5D014686984009B0CB6 = {
 			isa = PBXGroup;
 			children = (
-				BE29F5FC14686984009B0CB6 /* ios */,
+				BE8C5C98147DBA2000C26A4D /* flow5 */,
+				BE8C5C58147DB6F400C26A4D /* phonegaplib */,
 				BE29F5E114686984009B0CB6 /* Frameworks */,
 				BE29F5DF14686984009B0CB6 /* Products */,
 			);
@@ -154,99 +211,128 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		BE29F5FC14686984009B0CB6 /* ios */ = {
+		BE8C5C58147DB6F400C26A4D /* phonegaplib */ = {
 			isa = PBXGroup;
 			children = (
-				BE29F60514686984009B0CB6 /* PhoneGap.framework */,
-				BE29F60714686984009B0CB6 /* Resources */,
-				BE29F62014686984009B0CB6 /* Classes */,
-				BE29F62414686984009B0CB6 /* Plugins */,
-				BE29F5FD14686984009B0CB6 /* Supporting Files */,
+				BE8C5C93147DB79900C26A4D /* Reachability.m */,
+				BE8C5C8C147DB77F00C26A4D /* Connection.m */,
+				BE8C5C8D147DB77F00C26A4D /* Connection.h */,
+				BE8C5C8E147DB77F00C26A4D /* InvokedUrlCommand.m */,
+				BE8C5C8F147DB77F00C26A4D /* InvokedUrlCommand.h */,
+				BE8C5C90147DB77F00C26A4D /* Reachability.h */,
+				BE8C5C89147DB74200C26A4D /* DebugConsole.m */,
+				BE8C5C8A147DB74200C26A4D /* DebugConsole.h */,
+				BE8C5C86147DB72E00C26A4D /* Location.m */,
+				BE8C5C87147DB72E00C26A4D /* Location.h */,
+				BE8C5C83147DB70B00C26A4D /* NSMutableArray+QueueAdditions.m */,
+				BE8C5C84147DB70B00C26A4D /* NSMutableArray+QueueAdditions.h */,
+				BE8C5C59147DB6F400C26A4D /* JSON */,
+				BE8C5C67147DB6F400C26A4D /* PGDebug.h */,
+				BE8C5C68147DB6F400C26A4D /* PGPlugin.h */,
+				BE8C5C69147DB6F400C26A4D /* PGPlugin.m */,
+				BE8C5C6A147DB6F400C26A4D /* PGSplashScreen.h */,
+				BE8C5C6B147DB6F400C26A4D /* PGSplashScreen.m */,
+				BE8C5C6C147DB6F400C26A4D /* PGURLProtocol.h */,
+				BE8C5C6D147DB6F400C26A4D /* PGURLProtocol.m */,
+				BE8C5C6E147DB6F400C26A4D /* PGWhitelist.h */,
+				BE8C5C6F147DB6F400C26A4D /* PGWhitelist.m */,
+				BE8C5C70147DB6F400C26A4D /* PhoneGapDelegate.h */,
+				BE8C5C71147DB6F400C26A4D /* PhoneGapDelegate.m */,
+				BE8C5C72147DB6F400C26A4D /* PhoneGapViewController.h */,
+				BE8C5C73147DB6F400C26A4D /* PhoneGapViewController.m */,
+				BE8C5C74147DB6F400C26A4D /* PluginResult.h */,
+				BE8C5C75147DB6F400C26A4D /* PluginResult.m */,
 			);
-			path = ios;
+			path = phonegaplib;
 			sourceTree = "<group>";
 		};
-		BE29F5FD14686984009B0CB6 /* Supporting Files */ = {
+		BE8C5C59147DB6F400C26A4D /* JSON */ = {
 			isa = PBXGroup;
 			children = (
-				BE29F5FE14686984009B0CB6 /* ios-Info.plist */,
-				BE29F5FF14686984009B0CB6 /* InfoPlist.strings */,
-				BE29F60214686984009B0CB6 /* main.m */,
-				BE29F60414686984009B0CB6 /* ios-Prefix.pch */,
-				BE29F61E14686984009B0CB6 /* PhoneGap.plist */,
-				BEC4988714686FF1008281AB /* Flow5.plist */,
+				BE8C5C5A147DB6F400C26A4D /* JSON.h */,
+				BE8C5C5B147DB6F400C26A4D /* NSObject+SBJSON.h */,
+				BE8C5C5C147DB6F400C26A4D /* NSObject+SBJSON.m */,
+				BE8C5C5D147DB6F400C26A4D /* NSString+SBJSON.h */,
+				BE8C5C5E147DB6F400C26A4D /* NSString+SBJSON.m */,
+				BE8C5C5F147DB6F400C26A4D /* SBJSON.h */,
+				BE8C5C60147DB6F400C26A4D /* SBJSON.m */,
+				BE8C5C61147DB6F400C26A4D /* SBJsonBase.h */,
+				BE8C5C62147DB6F400C26A4D /* SBJsonBase.m */,
+				BE8C5C63147DB6F400C26A4D /* SBJsonParser.h */,
+				BE8C5C64147DB6F400C26A4D /* SBJsonParser.m */,
+				BE8C5C65147DB6F400C26A4D /* SBJsonWriter.h */,
+				BE8C5C66147DB6F400C26A4D /* SBJsonWriter.m */,
 			);
-			name = "Supporting Files";
+			path = JSON;
 			sourceTree = "<group>";
 		};
-		BE29F60714686984009B0CB6 /* Resources */ = {
+		BE8C5C98147DBA2000C26A4D /* flow5 */ = {
 			isa = PBXGroup;
 			children = (
-				BEE8904414724360009BD2FC /* Settings.bundle */,
-				BE29F61C14686984009B0CB6 /* Capture.bundle */,
-				BE29F60814686984009B0CB6 /* en.lproj */,
-				BE29F60C14686984009B0CB6 /* es.lproj */,
-				BE29F61014686984009B0CB6 /* icons */,
-				BE29F61714686984009B0CB6 /* splash */,
+				BE8C5C99147DBA2000C26A4D /* Classes */,
+				BE8C5C9E147DBA2000C26A4D /* InfoPlist.strings */,
+				BE8C5CA0147DBA2000C26A4D /* Flow5.plist */,
+				BE8C5CA1147DBA2000C26A4D /* ios-Info.plist */,
+				BE8C5CA2147DBA2000C26A4D /* ios-Prefix.pch */,
+				BE8C5CA3147DBA2000C26A4D /* main.m */,
+				BE8C5CA4147DBA2000C26A4D /* PhoneGap.plist */,
+				BE8C5CA5147DBA2000C26A4D /* Plugins */,
+				BE8C5CAA147DBA2000C26A4D /* Resources */,
+				BE8C5CB6147DBA2000C26A4D /* Settings.bundle */,
 			);
-			name = Resources;
+			path = flow5;
 			sourceTree = "<group>";
 		};
-		BE29F60814686984009B0CB6 /* en.lproj */ = {
+		BE8C5C99147DBA2000C26A4D /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				BE29F60914686984009B0CB6 /* Localizable.strings */,
+				BE8C5C9A147DBA2000C26A4D /* AppDelegate.h */,
+				BE8C5C9B147DBA2000C26A4D /* AppDelegate.m */,
+				BE8C5C9C147DBA2000C26A4D /* Debug.h */,
+				BE8C5C9D147DBA2000C26A4D /* Debug.m */,
 			);
-			name = en.lproj;
+			path = Classes;
 			sourceTree = "<group>";
 		};
-		BE29F60C14686984009B0CB6 /* es.lproj */ = {
+		BE8C5CA5147DBA2000C26A4D /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
-				BE29F60D14686984009B0CB6 /* Localizable.strings */,
+				BE8C5CA6147DBA2000C26A4D /* F5MapView.h */,
+				BE8C5CA7147DBA2000C26A4D /* F5MapView.m */,
+				BE8C5CA8147DBA2000C26A4D /* F5NavigationBar.h */,
+				BE8C5CA9147DBA2000C26A4D /* F5NavigationBar.m */,
 			);
-			name = es.lproj;
+			path = Plugins;
 			sourceTree = "<group>";
 		};
-		BE29F61014686984009B0CB6 /* icons */ = {
+		BE8C5CAA147DBA2000C26A4D /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				BE29F61114686984009B0CB6 /* icon.png */,
-				BE29F61314686984009B0CB6 /* icon@2x.png */,
-				BE29F61514686984009B0CB6 /* icon-72.png */,
+				BE8C5CAB147DBA2000C26A4D /* Capture.bundle */,
+				BE8C5CAC147DBA2000C26A4D /* Localizable.strings */,
+				BE8C5CAF147DBA2000C26A4D /* icons */,
+				BE8C5CB3147DBA2000C26A4D /* splash */,
 			);
-			name = icons;
+			path = Resources;
 			sourceTree = "<group>";
 		};
-		BE29F61714686984009B0CB6 /* splash */ = {
+		BE8C5CAF147DBA2000C26A4D /* icons */ = {
 			isa = PBXGroup;
 			children = (
-				BE29F61814686984009B0CB6 /* Default.png */,
-				BE29F61A14686984009B0CB6 /* Default@2x.png */,
+				BE8C5CB0147DBA2000C26A4D /* icon-72.png */,
+				BE8C5CB1147DBA2000C26A4D /* icon.png */,
+				BE8C5CB2147DBA2000C26A4D /* icon@2x.png */,
 			);
-			name = splash;
+			path = icons;
 			sourceTree = "<group>";
 		};
-		BE29F62014686984009B0CB6 /* Classes */ = {
+		BE8C5CB3147DBA2000C26A4D /* splash */ = {
 			isa = PBXGroup;
 			children = (
-				BE29F62114686984009B0CB6 /* AppDelegate.h */,
-				BE29F62214686984009B0CB6 /* AppDelegate.m */,
-				BEBBAE021470731F009945CF /* Debug.h */,
-				BEBBAE031470731F009945CF /* Debug.m */,
+				BE8C5CB4147DBA2000C26A4D /* Default.png */,
+				BE8C5CB5147DBA2000C26A4D /* Default@2x.png */,
 			);
-			name = Classes;
-			sourceTree = "<group>";
-		};
-		BE29F62414686984009B0CB6 /* Plugins */ = {
-			isa = PBXGroup;
-			children = (
-				BE29F64514686F7C009B0CB6 /* F5NavigationBar.h */,
-				BE29F64614686F7C009B0CB6 /* F5NavigationBar.m */,
-				BE9A4B6B147C6029004FF748 /* F5MapView.h */,
-				BE9A4B6C147C6029004FF748 /* F5MapView.m */,
-			);
-			name = Plugins;
+			path = splash;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -304,18 +390,18 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BE29F60114686984009B0CB6 /* InfoPlist.strings in Resources */,
-				BE29F60B14686984009B0CB6 /* Localizable.strings in Resources */,
-				BE29F60F14686984009B0CB6 /* Localizable.strings in Resources */,
-				BE29F61214686984009B0CB6 /* icon.png in Resources */,
-				BE29F61414686984009B0CB6 /* icon@2x.png in Resources */,
-				BE29F61614686984009B0CB6 /* icon-72.png in Resources */,
-				BE29F61914686984009B0CB6 /* Default.png in Resources */,
-				BE29F61B14686984009B0CB6 /* Default@2x.png in Resources */,
-				BE29F61D14686984009B0CB6 /* Capture.bundle in Resources */,
-				BE29F61F14686984009B0CB6 /* PhoneGap.plist in Resources */,
-				BEC4988814686FF1008281AB /* Flow5.plist in Resources */,
-				BEE8904514724360009BD2FC /* Settings.bundle in Resources */,
+				BE8C5CB9147DBA2000C26A4D /* InfoPlist.strings in Resources */,
+				BE8C5CBA147DBA2000C26A4D /* Flow5.plist in Resources */,
+				BE8C5CBB147DBA2000C26A4D /* ios-Info.plist in Resources */,
+				BE8C5CBD147DBA2000C26A4D /* PhoneGap.plist in Resources */,
+				BE8C5CC0147DBA2000C26A4D /* Capture.bundle in Resources */,
+				BE8C5CC1147DBA2000C26A4D /* Localizable.strings in Resources */,
+				BE8C5CC2147DBA2000C26A4D /* icon-72.png in Resources */,
+				BE8C5CC3147DBA2000C26A4D /* icon.png in Resources */,
+				BE8C5CC4147DBA2000C26A4D /* icon@2x.png in Resources */,
+				BE8C5CC5147DBA2000C26A4D /* Default.png in Resources */,
+				BE8C5CC6147DBA2000C26A4D /* Default@2x.png in Resources */,
+				BE8C5CC7147DBA2000C26A4D /* Settings.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -347,7 +433,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#write the current hostname into the Flow5.plist so the app can use it to find the devserv\ndefaults write ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Flow5 devservhost -string $HOSTNAME\n\n#get the app name from the Flow5 plist (may be a command line option at some point)\nAPP=`defaults read /Users/paulgreyson/Dev/flow5/ios/ios/Flow5 appname`\nCOMPANY=`defaults read /Users/paulgreyson/Dev/flow5/ios/ios/Flow5 company`\n\n#set the bundle display name\ndefaults write ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Info CFBundleDisplayName -string $APP\ndefaults write ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Info CFBundleName -string $APP\n#defaults write ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Info CFBundleExecutable -string $APP\ndefaults write ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Info CFBundleIdentifier -string \"com.$COMPANY.$APP\"\n\n#get the icon resources\n\n/usr/local/bin/wget http://\"$HOSTNAME\":8008/apps/\"$APP\"/www/images/splash@320x480.png -O ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Default.png\n/usr/local/bin/wget http://\"$HOSTNAME\":8008/apps/\"$APP\"/www/images/splash@640x960.png -O ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Default@2x.png\n/usr/local/bin/wget http://\"$HOSTNAME\":8008/apps/\"$APP\"/www/images/icon@114x114.png -O ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/icon@2x.png\n/usr/local/bin/wget http://\"$HOSTNAME\":8008/apps/\"$APP\"/www/images/icon@57x57.png -O ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/icon.png\n/usr/local/bin/wget http://\"$HOSTNAME\":8008/apps/\"$APP\"/www/images/icon@72x72.png -O ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/icon-72.png\n\nif [ $CONFIGURATION = \"Debug\" ]\nthen\nPARAMETERS=\"app=$APP&native=true&inline=true&debug=true\"\nelse\nPARAMETERS=\"app=$APP&native=true&inline=true&debug=false\"\nfi\n\necho $PARAMETERS\n\n#get the webapp\nmkdir -p ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/www\n/usr/local/bin/wget --user-agent=iPhone \"http://$HOSTNAME:8008/generate?$PARAMETERS\" -O ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/www/index.html\n\n\n";
+			shellScript = "#write the current hostname into the Flow5.plist so the app can use it to find the devserv\ndefaults write ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Flow5 devservhost -string $HOSTNAME\n\n#get the app name from the Flow5 plist (may be a command line option at some point)\nAPP=`defaults read /Users/paulgreyson/Dev/flow5/ios/flow5/Flow5 appname`\nCOMPANY=`defaults read /Users/paulgreyson/Dev/flow5/ios/flow5/Flow5 company`\n\n#set the bundle display name\ndefaults write ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Info CFBundleDisplayName -string $APP\ndefaults write ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Info CFBundleName -string $APP\n#defaults write ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Info CFBundleExecutable -string $APP\ndefaults write ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Info CFBundleIdentifier -string \"com.$COMPANY.$APP\"\n\n#get the icon resources\n\n/usr/local/bin/wget http://\"$HOSTNAME\":8008/apps/\"$APP\"/www/images/splash@320x480.png -O ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Default.png\n/usr/local/bin/wget http://\"$HOSTNAME\":8008/apps/\"$APP\"/www/images/splash@640x960.png -O ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Default@2x.png\n/usr/local/bin/wget http://\"$HOSTNAME\":8008/apps/\"$APP\"/www/images/icon@114x114.png -O ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/icon@2x.png\n/usr/local/bin/wget http://\"$HOSTNAME\":8008/apps/\"$APP\"/www/images/icon@57x57.png -O ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/icon.png\n/usr/local/bin/wget http://\"$HOSTNAME\":8008/apps/\"$APP\"/www/images/icon@72x72.png -O ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/icon-72.png\n\nif [ $CONFIGURATION = \"Debug\" ]\nthen\nPARAMETERS=\"app=$APP&native=true&inline=true&debug=true\"\nelse\nPARAMETERS=\"app=$APP&native=true&inline=true&debug=false\"\nfi\n\necho $PARAMETERS\n\n#get the webapp\nmkdir -p ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/www\n/usr/local/bin/wget --user-agent=iPhone \"http://$HOSTNAME:8008/generate?$PARAMETERS\" -O ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/www/index.html\n\n\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -356,11 +442,30 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BE29F60314686984009B0CB6 /* main.m in Sources */,
-				BE29F62314686984009B0CB6 /* AppDelegate.m in Sources */,
-				BE29F64714686F7C009B0CB6 /* F5NavigationBar.m in Sources */,
-				BEBBAE041470731F009945CF /* Debug.m in Sources */,
-				BE9A4B6D147C6029004FF748 /* F5MapView.m in Sources */,
+				BE8C5C76147DB6F400C26A4D /* NSObject+SBJSON.m in Sources */,
+				BE8C5C77147DB6F400C26A4D /* NSString+SBJSON.m in Sources */,
+				BE8C5C78147DB6F400C26A4D /* SBJSON.m in Sources */,
+				BE8C5C79147DB6F400C26A4D /* SBJsonBase.m in Sources */,
+				BE8C5C7A147DB6F400C26A4D /* SBJsonParser.m in Sources */,
+				BE8C5C7B147DB6F400C26A4D /* SBJsonWriter.m in Sources */,
+				BE8C5C7C147DB6F400C26A4D /* PGPlugin.m in Sources */,
+				BE8C5C7D147DB6F400C26A4D /* PGSplashScreen.m in Sources */,
+				BE8C5C7E147DB6F400C26A4D /* PGURLProtocol.m in Sources */,
+				BE8C5C7F147DB6F400C26A4D /* PGWhitelist.m in Sources */,
+				BE8C5C80147DB6F400C26A4D /* PhoneGapDelegate.m in Sources */,
+				BE8C5C81147DB6F400C26A4D /* PhoneGapViewController.m in Sources */,
+				BE8C5C82147DB6F400C26A4D /* PluginResult.m in Sources */,
+				BE8C5C85147DB70B00C26A4D /* NSMutableArray+QueueAdditions.m in Sources */,
+				BE8C5C88147DB72E00C26A4D /* Location.m in Sources */,
+				BE8C5C8B147DB74200C26A4D /* DebugConsole.m in Sources */,
+				BE8C5C91147DB77F00C26A4D /* Connection.m in Sources */,
+				BE8C5C92147DB77F00C26A4D /* InvokedUrlCommand.m in Sources */,
+				BE8C5C94147DB79900C26A4D /* Reachability.m in Sources */,
+				BE8C5CB7147DBA2000C26A4D /* AppDelegate.m in Sources */,
+				BE8C5CB8147DBA2000C26A4D /* Debug.m in Sources */,
+				BE8C5CBC147DBA2000C26A4D /* main.m in Sources */,
+				BE8C5CBE147DBA2000C26A4D /* F5MapView.m in Sources */,
+				BE8C5CBF147DBA2000C26A4D /* F5NavigationBar.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -374,26 +479,19 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		BE29F5FF14686984009B0CB6 /* InfoPlist.strings */ = {
+		BE8C5C9E147DBA2000C26A4D /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
-				BE29F60014686984009B0CB6 /* en */,
+				BE8C5C9F147DBA2000C26A4D /* en */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
-		BE29F60914686984009B0CB6 /* Localizable.strings */ = {
+		BE8C5CAC147DBA2000C26A4D /* Localizable.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
-				BE29F60A14686984009B0CB6 /* en */,
-			);
-			name = Localizable.strings;
-			sourceTree = "<group>";
-		};
-		BE29F60D14686984009B0CB6 /* Localizable.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				BE29F60E14686984009B0CB6 /* es */,
+				BE8C5CAD147DBA2000C26A4D /* en */,
+				BE8C5CAE147DBA2000C26A4D /* es */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -459,10 +557,10 @@
 				FRAMEWORK_SEARCH_PATHS = /Users/Shared/PhoneGap/Frameworks;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "ios/ios-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = "PHONEGAP_FRAMEWORK=YES";
+				GCC_PREFIX_HEADER = "flow5/ios-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				INFOPLIST_FILE = "ios/ios-Info.plist";
+				INFOPLIST_FILE = "flow5/ios-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				OTHER_LDFLAGS = (
 					"-weak_framework",
@@ -491,10 +589,10 @@
 				EXCLUDED_SOURCE_FILE_NAMES = Debug.m;
 				FRAMEWORK_SEARCH_PATHS = /Users/Shared/PhoneGap/Frameworks;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "ios/ios-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = "PHONEGAP_FRAMEWORK=YES";
+				GCC_PREFIX_HEADER = "flow5/ios-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				INFOPLIST_FILE = "ios/ios-Info.plist";
+				INFOPLIST_FILE = "flow5/ios-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				OTHER_LDFLAGS = (
 					"-weak_framework",

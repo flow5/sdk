@@ -30,7 +30,11 @@
 body {
 	margin: 0px;
 	background-color: darkslategray;
-	display: -webkit-box;	
+	display: -webkit-box;		
+}
+
+body.mobile {
+	background-color: transparent;
 }
 
 #screen {
@@ -92,7 +96,7 @@ body {
 	-webkit-box-orient: vertical;
 	-webkit-box-pack: center;
 	-webkit-box-align: center;		
-	background-color: white;		
+//	background-color: white;		
 }
 
 .subflow {

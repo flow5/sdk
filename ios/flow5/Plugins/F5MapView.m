@@ -53,7 +53,8 @@
         UIView *mainView = [appDelegate.viewController view];
         
         [mainView addSubview:self.mapView];        
-        [mainView sendSubviewToBack: [appDelegate.viewController webView]];     
+//        [mainView sendSubviewToBack: [appDelegate.viewController webView]];  
+        [mainView sendSubviewToBack:self.mapView];
         
         CGRect mapBounds = CGRectMake(0, 44, 320, 376);
         [self.mapView setFrame:mapBounds];
