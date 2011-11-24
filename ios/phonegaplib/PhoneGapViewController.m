@@ -8,6 +8,56 @@
 
 #import "PhoneGapViewController.h"
 #import "PhoneGapDelegate.h" 
+#import <objc/message.h>
+
+
+@interface F5ViewContainer : UIView
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event;
+@end
+
+
+@implementation F5ViewContainer
+
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
+    // test the webview last
+    // will enhance by allowing the js layer to provide a mask structure allowing for webview overlay of the native views
+
+    UIView *hit = nil;
+    UIView *webView = nil;
+    for (UIView* view in self.subviews) {
+        BOOL masked = NO;
+        if ([view class] != [UIWebView class]) {
+            CGPoint pointLocal = [view convertPoint:point fromView:self];
+            if (!hit && !masked) {
+                if ([view respondsToSelector:@selector(maskRegions)]) {
+                    NSArray *maskRegions = objc_msgSend(view, sel_getUid("maskRegions"));                                        
+                    NSEnumerator *enumerator = [maskRegions objectEnumerator];
+                    id region;
+                    while ((region = [enumerator nextObject])) {
+                        if (CGRectContainsPoint([region CGRectValue], pointLocal)) {
+                            masked = YES;
+                        }
+                    }
+                }
+                if (!masked) {
+                    hit = [view hitTest:pointLocal withEvent:event];                                    
+                }
+            }
+        } else {
+            webView = view;
+        }
+    }
+    if (!hit && webView) {
+        hit = [webView hitTest:[webView convertPoint:point fromView:self] withEvent:event];
+    }
+    
+    return hit;
+//    return [super hitTest:point withEvent:event];
+}
+
+@end
+
+
 
 @implementation PhoneGapViewController
 
@@ -67,6 +117,11 @@
 	// default return value is NO! -jm
 	
 	return NO;
+}
+
+// F5
+- (void)loadView {
+    self.view = [[[F5ViewContainer alloc] initWithFrame:CGRectMake(0, 20, 320, 460)] autorelease];
 }
 
 /**

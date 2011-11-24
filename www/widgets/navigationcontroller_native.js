@@ -34,7 +34,7 @@
 			F5.addClass(navbarEl, 'navbar');
 			// FIX: should just be visibility: hidden to let underlying layer come throug
 			// part of the fullscreen content view change
-			navbarEl.style['background-color'] = 'white';
+//			navbarEl.style['background-color'] = 'white';
 			container.insertBefore(navbarEl, container.firstChild);	
 			
 			PhoneGap.exec(

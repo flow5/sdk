@@ -27,6 +27,26 @@
 
 #import "F5MapView.h"
 #import "AppDelegate.h"
+#include <objc/runtime.h>
+
+@interface F5MKMapView : MKMapView {
+    NSMutableArray *maskRegions;
+}
+@property (nonatomic, retain) NSMutableArray* maskRegions;
+
+@end
+
+@implementation F5MKMapView
+@synthesize maskRegions;
+
+- (id)init {
+    self = [super init];
+    if (self != nil) {
+        self.maskRegions = [[[NSMutableArray alloc] init] autorelease];
+    }
+    return self;
+}
+@end
 
 @implementation F5MapView
 
@@ -37,8 +57,8 @@
     
     if (self.mapView) {
         NSLog(@"mapView already created. Was location.reload() called?");
-    } else {        
-        self.mapView = [[MKMapView alloc] init];
+    } else {                    
+        self.mapView = [[F5MKMapView alloc] init];
         
         [mapView sizeToFit]; // ??
         
@@ -53,13 +73,18 @@
         UIView *mainView = [appDelegate.viewController view];
         
         [mainView addSubview:self.mapView];        
-//        [mainView sendSubviewToBack: [appDelegate.viewController webView]];  
         [mainView sendSubviewToBack:self.mapView];
         
-        CGRect mapBounds = CGRectMake(0, 44, 320, 376);
+        // TODO: get bounds from js layer
+        // 20 + 44 + 48
+        CGRect mapBounds = CGRectMake(0, 44, 320, 368);
         [self.mapView setFrame:mapBounds];
-
-        //        mapView.hidden = YES;   
+        
+        // TODO: get mask regions from js layer
+        CGRect mask = CGRectMake(10, 10, 16, 16);
+        [self.mapView.maskRegions addObject:[NSValue valueWithCGRect:mask]];
+                
+        //        mapView.hidden = YES;           
     }
 }
 

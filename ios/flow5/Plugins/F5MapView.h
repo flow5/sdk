@@ -30,13 +30,15 @@
 
 #import <MapKit/MapKit.h>
 
+@class F5MKMapView;
+
 @interface F5MapView : PGPlugin <MKMapViewDelegate> {
     NSString* callbackID;     
-    MKMapView* mapView;
+    F5MKMapView* mapView;
 }
 
 @property (nonatomic, copy) NSString* callbackID;
-@property (nonatomic, retain) MKMapView* mapView;
+@property (nonatomic, retain) F5MKMapView* mapView;
 
 - (void)create:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void)showMap:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;

@@ -209,7 +209,7 @@ body.mobile {
 	height: 44px;
 	-webkit-box-align: center;
 	-webkit-box-pack: center;	
-	background-color:grey;
+//	background-color:grey;
 	-webkit-box-sizing: border-box;
 	position: relative;
 }

@@ -31,6 +31,46 @@
 	function MapView() {
 		
 		this.setup = function (el) {
+			
+			var that = this;
+			
+			/*global google*/
+			
+			this.streetViewEl = document.createElement('div');
+			this.streetViewEl.style.width = '100%';
+			this.streetViewEl.style.height = '100%';
+			el.appendChild(this.streetViewEl);			
+			this.streetViewEl.visibility = 'hidden';
+			
+			var button = document.createElement('div');
+			button.style.height = '16px';
+			button.style.width = '16px';
+			button.style.position = 'absolute';
+			button.style.top = '10px';
+			button.style.left = '10px';
+			button.style['background-color'] = 'blue';
+			
+			F5.addTapListener(button, function () {
+				
+				if (!that.streetView) {
+					var options = {
+						position: new google.maps.LatLng(F5.fakeLocation.lat, F5.fakeLocation.lng)
+					};
+					that.streetView = new google.maps.StreetViewPanorama(that.streetViewEl, options);					
+				}				
+				
+				console.log('tapped')
+				
+				if (that.streetViewEl.style.visibility === 'hidden') {
+					that.streetViewEl.style.visibility = '';
+				} else {
+					that.streetViewEl.style.visibility = 'hidden';
+				}
+			});
+			
+			el.appendChild(button);
+			
+			
 			PhoneGap.exec(
 				function (result) { // success
 				console.log(result);

@@ -57,7 +57,7 @@
         UIView *mainView = [appDelegate.viewController view];
         
         [mainView addSubview:self.navigationBar];
-        [mainView sendSubviewToBack: [appDelegate.viewController webView]];     
+        [mainView sendSubviewToBack:self.navigationBar];     
         
         self.itemCache = [[NSMutableDictionary alloc] init];
     }
