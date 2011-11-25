@@ -34,7 +34,7 @@
 
 @interface F5MapView : PGPlugin <MKMapViewDelegate> {
     NSString* callbackID;     
-    F5MKMapView* mapView;
+    F5MKMapView* mapView;    
 }
 
 @property (nonatomic, copy) NSString* callbackID;
@@ -43,5 +43,13 @@
 - (void)create:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void)showMap:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void)hideMap:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+
+- (void)setMaskRegion:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void)clearMaskRegion:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+
+- (void)pushMap:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void)popMap:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+
+- (void)dropPins:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
 @end

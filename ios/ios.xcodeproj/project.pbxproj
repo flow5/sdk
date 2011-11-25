@@ -56,6 +56,7 @@
 		BE8C5CC5147DBA2000C26A4D /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = BE8C5CB4147DBA2000C26A4D /* Default.png */; };
 		BE8C5CC6147DBA2000C26A4D /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE8C5CB5147DBA2000C26A4D /* Default@2x.png */; };
 		BE8C5CC7147DBA2000C26A4D /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = BE8C5CB6147DBA2000C26A4D /* Settings.bundle */; };
+		BE8C5CCF1480229000C26A4D /* streetview.png in Resources */ = {isa = PBXBuildFile; fileRef = BE8C5CCE1480229000C26A4D /* streetview.png */; };
 		BE9A4B6F147C70E6004FF748 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE9A4B6E147C70E6004FF748 /* MapKit.framework */; };
 /* End PBXBuildFile section */
 
@@ -137,6 +138,7 @@
 		BE8C5CB4147DBA2000C26A4D /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		BE8C5CB5147DBA2000C26A4D /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
 		BE8C5CB6147DBA2000C26A4D /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
+		BE8C5CCE1480229000C26A4D /* streetview.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = streetview.png; sourceTree = "<group>"; };
 		BE9A4B6E147C70E6004FF748 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -319,6 +321,7 @@
 		BE8C5CAF147DBA2000C26A4D /* icons */ = {
 			isa = PBXGroup;
 			children = (
+				BE8C5CCE1480229000C26A4D /* streetview.png */,
 				BE8C5CB0147DBA2000C26A4D /* icon-72.png */,
 				BE8C5CB1147DBA2000C26A4D /* icon.png */,
 				BE8C5CB2147DBA2000C26A4D /* icon@2x.png */,
@@ -402,6 +405,7 @@
 				BE8C5CC5147DBA2000C26A4D /* Default.png in Resources */,
 				BE8C5CC6147DBA2000C26A4D /* Default@2x.png in Resources */,
 				BE8C5CC7147DBA2000C26A4D /* Settings.bundle in Resources */,
+				BE8C5CCF1480229000C26A4D /* streetview.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

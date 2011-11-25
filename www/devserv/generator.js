@@ -141,7 +141,8 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative) {
 	var document = jsdom.jsdom();
 	
 	// manifest
-	document.documentElement.setAttribute('manifest', 'cache.manifest?app=' + app + '&debug=' + isDebug);
+	var manifestString = 'cache.manifest?app=' + app + '&debug=' + isDebug + '&native=' + isNative;
+	document.documentElement.setAttribute('manifest', manifestString);
 	
 	function injectMeta(properties) {
 		var meta = document.createElement('meta');
@@ -170,8 +171,8 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative) {
 	}
 	
 	function inlineImage(src) {
-		var prefix = 'url("data:image/' + require('path').extname(src).substring(1) + ';base64,';
-		return prefix + fs.readFileSync(src, 'base64') + '")';
+		var prefix = 'data:image/' + require('path').extname(src).substring(1) + ';base64,';
+		return prefix + fs.readFileSync(src, 'base64');
 	}
 	
 	injectLink('apple-touch-icon', 'apps/' + app + '/www/images/icon@114x114.png');
@@ -269,8 +270,8 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative) {
 		} else {
 			/*global F5: true*/
 			try {
-				handleImageResourcesRecursive(F5.Resources, function (obj, id, src) {
-					obj[id] = inlineImage(src);										
+				handleImageResourcesRecursive(F5.Resources, function (obj, id, src) {						
+					obj[id] = 'url("' + inlineImage(src) + '")';										
 				});
 				var script = document.createElement('script');	
 				script.id = 'resources.js';	
@@ -292,6 +293,7 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative) {
 	
 	// TODO: probably not right
 	var splashEl = document.createElement('img');
+	splashEl.id = 'splash';
 	splashEl.className = 'splash';
 	var splashSrc = 'apps/' + app + '/www/images/splash@640x960.png';
 	if (doInline) {
@@ -299,7 +301,7 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative) {
 	} else {
 		splashEl.src = splashSrc;		
 	}
-	screenframeEl.appendChild(splashEl);	
+	screenframeEl.appendChild(splashEl);
 	
 	appframeEl.appendChild(screenframeEl);
 	document.body.appendChild(appframeEl);

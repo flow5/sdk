@@ -48,6 +48,27 @@
 		this.hide = function () {
 			
 		};
+		
+		this.dropPins = function (pins) {
+			var that = this;
+			pins.forEach(function (pin) {
+				var position = new google.maps.LatLng(pin.lat, pin.lng);
+				var marker = new google.maps.Marker({
+								      position: position,
+								      map: that.map,
+									  optimized: false,
+								      animation: google.maps.Animation.DROP
+								    });					
+			});			
+		};
+		
+		this.setCalloutActions = function () {
+			
+		};
+		
+		this.showStreetView = function (location) {		
+			
+		};
 	}	
 	
 	F5.Prototypes.mapView = new MapView();
@@ -56,14 +77,6 @@
 }());
 
 /*
-var position = new google.maps.LatLng(venue.location.lat, venue.location.lng);
-var marker = new google.maps.Marker({
-				      position: position,
-				      map: that.map,
-					  optimized: false,
-				      animation: google.maps.Animation.DROP
-				    });	
-
 var content = document.createElement('div');
 content.innerText = venue.name;
 content.className = 'map-callout';

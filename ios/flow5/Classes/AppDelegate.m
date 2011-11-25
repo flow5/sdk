@@ -28,6 +28,9 @@
 #import "AppDelegate.h"
 #import "PhoneGapViewController.h"
 #import "PGWhitelist.h"
+#import "InvokedUrlCommand.h"
+
+#import <QuartzCore/QuartzCore.h>
 
 #import "Debug.h"
 
@@ -36,8 +39,36 @@
 
 @implementation MyURLCache
 - (NSCachedURLResponse *)cachedResponseForRequest:(NSURLRequest *)request {
-    NSLog(@"%@", request);
-    return [super cachedResponseForRequest:request];
+    
+    NSURL *url = [request URL];
+    if ([[url lastPathComponent] isEqualToString:@"sync"]) {
+        NSLog(@"%@", request);
+
+        NSArray *components = [[url query] componentsSeparatedByString:@"&"];
+        NSMutableDictionary *parameters = [[NSMutableDictionary alloc] init];
+        for (NSString *component in components) {
+            [parameters setObject:[[component componentsSeparatedByString:@"="] objectAtIndex:1] forKey:[[component componentsSeparatedByString:@"="] objectAtIndex:0]];
+        }        
+        
+        AppDelegate *appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];        
+        [appDelegate execute: [InvokedUrlCommand commandFromObject:parameters]];
+        
+        // TODO: generate the cached response
+        // TODO: create a second layer that returns a value and writes back to Javascript in the async (normal) case
+        return [super cachedResponseForRequest:request];                    
+/*        
+        PG_SBJsonParser* jsonParser = [[[PG_SBJsonParser alloc] init] autorelease];
+        
+        // Iterate over and execute all of the commands.
+        for (NSString* commandJson in queuedCommands) {
+            [self execute:
+             [InvokedUrlCommand commandFromObject:
+              [jsonParser objectWithString:commandJson]]];
+        } 
+*/        
+    } else {
+       return [super cachedResponseForRequest:request]; 
+    }                        
 }
 @end
 
@@ -118,9 +149,8 @@
     for (UIView* view in self.viewController.webView.subviews) {
         view.backgroundColor = UIColor.clearColor;
     }
-    
-    // attempt at NSURLCache override
-     
+            
+    // attempt at NSURLCache override     
     NSURLCache *myCache = [[MyURLCache alloc] initWithMemoryCapacity:1024 * 1024 diskCapacity:1024 * 1024 * 10 diskPath:@"Cache"];
     [NSURLCache setSharedURLCache:myCache];
                 

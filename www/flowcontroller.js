@@ -113,16 +113,16 @@
 				};
 			}
 			
-			if (F5.Global.viewController) {
-				F5.Global.viewController.start();
-			}
 			// TODO: this is redundant if there's a final onactive step, right?
 			cb();
 
 			nodeWillBecomeActive(flow.root, function () {
 				that.observer();			
 				nodeDidBecomeActive(flow.root, function () {
-					that.observer();			
+					that.observer();
+					if (F5.Global.viewController) {
+						F5.Global.viewController.start();
+					}								
 				});
 			});									
 		};

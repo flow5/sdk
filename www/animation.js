@@ -47,14 +47,14 @@
 		}			
 		F5.addTransitionEndListener(oldEl, completePushLeft);		
 		
-		setTimeout(function () {
+		return function () {
 			var transition = '-webkit-transform ease-in .3s';
 			oldEl.style['-webkit-transition'] = transition;
 			newEl.style['-webkit-transition'] = transition;
 			
 			oldEl.style['-webkit-transform'] = 'translate3d(' + -distance + 'px, 0px, 0px)';
 			newEl.style['-webkit-transform'] = 'translate3d(0px, 0px, 0px)';							
-		}, 0);			
+		};			
 	}
 	
 	F5.Animation = {
@@ -84,18 +84,18 @@
 						
 			F5.addTransitionEndListener(newEl, completeFadeIn);
 			
-			setTimeout(function () {
+			return function () {
 				newEl.style['-webkit-transition'] = 'opacity .15s';				
 				newEl.style.opacity = 1;
-			}, 0);		
+			};		
 		},
 		
 		pushLeft: function (container, oldEl, newEl, cb) {
-			pushHorizontal(container, oldEl, newEl, container.offsetWidth, cb);			
+			return pushHorizontal(container, oldEl, newEl, container.offsetWidth, cb);			
 		},
 		
 		pushRight: function (container, oldEl, newEl, cb) {
-			pushHorizontal(container, oldEl, newEl, -container.offsetWidth, cb);						
+			return pushHorizontal(container, oldEl, newEl, -container.offsetWidth, cb);						
 		}
 	};
 }());

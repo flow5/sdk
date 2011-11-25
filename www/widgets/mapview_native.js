@@ -39,53 +39,78 @@
 			this.streetViewEl = document.createElement('div');
 			this.streetViewEl.style.width = '100%';
 			this.streetViewEl.style.height = '100%';
-			el.appendChild(this.streetViewEl);			
-			this.streetViewEl.visibility = 'hidden';
+			that.streetViewEl.style.visibility = 'hidden';
+			el.appendChild(this.streetViewEl);	
 			
-			var button = document.createElement('div');
-			button.style.height = '16px';
-			button.style.width = '16px';
-			button.style.position = 'absolute';
-			button.style.top = '10px';
-			button.style.left = '10px';
-			button.style['background-color'] = 'blue';
-			
-			F5.addTapListener(button, function () {
-				
-				if (!that.streetView) {
-					var options = {
-						position: new google.maps.LatLng(F5.fakeLocation.lat, F5.fakeLocation.lng)
-					};
-					that.streetView = new google.maps.StreetViewPanorama(that.streetViewEl, options);					
-				}				
-				
-				console.log('tapped')
-				
-				if (that.streetViewEl.style.visibility === 'hidden') {
-					that.streetViewEl.style.visibility = '';
-				} else {
-					that.streetViewEl.style.visibility = 'hidden';
-				}
-			});
-			
-			el.appendChild(button);
-			
-			
+			// TODO: use template?
+			var closeButton = document.createElement('div');
+			closeButton.style.width = '10px';
+			closeButton.style.height = '10px';
+			closeButton.style.position = 'absolute';
+			closeButton.style.right = '6px';
+			closeButton.style.top = '6px';
+			closeButton.style['background-color'] = 'red';
+			closeButton.style.border = '1px solid black';
+			closeButton.style['z-index'] = 1000;
+			this.streetViewEl.appendChild(closeButton);
+
+			F5.addTapListener(closeButton, function () {
+				that.streetViewEl.style.visibility = 'hidden';
+				PhoneGap.exec(
+					function (result) { // success
+					console.log(result);
+				}, function (result) { // failure
+					console.log(result);
+				}, "com.flow5.mapview", "clearMaskRegion", []);									
+			});								
+						
 			PhoneGap.exec(
 				function (result) { // success
 				console.log(result);
 			}, function (result) { // failure
 				console.log(result);
-			}, "com.flow5.mapview", "create", []);							
+			}, "com.flow5.mapview", "create", [{top:10, left:10, width: 16, height: 16}]);							
+		};
+		
+		this.showStreetView = function (location) {
+			var that = this;
+						
+			that.streetViewEl.style.visibility = '';
+						
+			var position = new google.maps.LatLng(location.lat, location.lng);
+			if (!this.streetView) {
+				var options = {
+					position: position
+				};
+				this.streetView = new google.maps.StreetViewPanorama(this.streetViewEl, options);				
+			} else {
+				this.streetView.setPosition(position);
+				console.log('setting position')
+			}	
+			console.log(location);
+									
+			var maskRegion = {top: 0, left: 0, width: this.streetViewEl.offsetWidth, 
+									height: this.streetViewEl.offsetHeight};
+			PhoneGap.exec(
+				function (result) { // success
+				console.log(result);
+			}, function (result) { // failure
+				console.log(result);
+			}, "com.flow5.mapview", "setMaskRegion", [maskRegion]);													
 		};
 		
 		this.hide = function () {
+			// TODO: move the idea of transitions of native views up to animation layer
+			// FIX: this is not sync
+			F5.get('http://flow5.local/sync?className=com.flow5.mapview&methodName=hideMap');							
+/*			
 			PhoneGap.exec(
 				function (result) { // success
 				console.log(result);
 			}, function (result) { // failure
 				console.log(result);
 			}, "com.flow5.mapview", "hideMap", []);										
+*/
 		};
 		
 		this.show = function () {
@@ -97,6 +122,20 @@
 			}, "com.flow5.mapview", "showMap", []);										
 		};
 		
+		this.dropPins = function (pins) {
+			var that = this;
+			PhoneGap.exec(
+				function (result) { // success
+					that.calloutActions[result.button](result.pin);
+				console.log(result);
+			}, function (result) { // failure
+				console.log(result);
+			}, "com.flow5.mapview", "dropPins", [JSON.stringify(pins)]);
+		};	
+		
+		this.setCalloutActions = function (calloutActions) {
+			this.calloutActions = calloutActions;
+		};			
 	}	
 	
 	F5.Prototypes.mapView = new MapView();	

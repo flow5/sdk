@@ -187,10 +187,7 @@
 		};				
 		
 		this.start = function () {	
-			buildViewForNode(F5.Global.flow.root);
-			
-			screenFrame.appendChild(F5.Global.flow.root.view.el);
-			
+			// NOTE: the root node was already built by nodeWillBecomeActive
 			if (F5.Global.navigationController) {
 				F5.Global.navigationController.start();
 			}					
@@ -209,12 +206,15 @@
 			var newEl = document.getElementById(node.children[id].path);
 			
 			// TODO: get animation name from the node		
-			F5.Animation.fadeIn(node.view.el, oldEl, newEl, function () {
+			var animationFunction = F5.Animation.fadeIn(node.view.el, oldEl, newEl, function () {
 				cb();
-			});			
+			});
+			setTimeout(animationFunction, 0);
 		};
 						
-		this.doTransition = function (container, id, to, animation, cb) {						
+		this.doTransition = function (container, id, to, animation, cb) {
+			var that = this;
+									
 			var containerElement = container.view.el.querySelector('[class=container]');
 			var oldNode = container.selection;
 			
@@ -248,12 +248,8 @@
 			if (id !== 'back') {
 				to.animation = animation;
 			}
-			
-			if (F5.Global.navigationController) {
-				F5.Global.navigationController.doTransition(container, animation, to);
-			}																			
-						
-			F5.Animation[animation](containerElement, oldEl, newEl, function () {
+																												
+			var transitionFunction = F5.Animation[animation](containerElement, oldEl, newEl, function () {
 				cb();
 				
 				function deleteViewsRecursive(node) {
@@ -273,14 +269,48 @@
 					containerElement.removeChild(oldEl);
 				}				
 			});	
+						
+			that.animationFunction = function () {				
+				// TODO: navigationController should also queue it's transition function
+				if (F5.Global.navigationController) {
+					F5.Global.navigationController.doTransition(container, animation, to);
+				}				
+				transitionFunction();
+			};
+			
+			// TODO: setup a native queuing function 
+			// then instead of setTimeout, trigger the webkit side animation from the native
+			// so there's minimum delay in animation starts
+			// move nav config into here as well to sync the nav bar
+			// make a transition function on widgets that allows functions to be queued
+			// from widgets
+			setTimeout(function () {
+				
+				if (typeof PhoneGap !== 'undefined') {
+					function doSync(which) {
+						PhoneGap.exec(
+							function (result) { // success
+							console.log(result);
+						}, function (result) { // failure
+							console.log(result);
+						}, "com.flow5.mapview", which, []);										
+					}				
+
+					if (to.id === 'categories') {
+						doSync('pushMap');
+					} else if (to.id === 'merchantListing') {
+						doSync('popMap');
+					} else {
+						that.animationFunction();
+					}					
+				} else {
+					that.animationFunction();
+				}
+			}, 0);
 		};		
 		
 		// called in a willBecomeActive context to conditionally pick a starting view
 		this.syncSet = function (node) {
-//			if (F5.Global.navigationController) {
-//				F5.Global.navigationController.syncSet(node);
-//			}
-						
 			F5.forEach(node.children, function (id, child) {
 				child.view.el.style.visibility = 'hidden';
 			});

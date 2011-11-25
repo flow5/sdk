@@ -28,11 +28,45 @@
 #import "F5MapView.h"
 #import "AppDelegate.h"
 #include <objc/runtime.h>
+#import "SBJsonParser.h"
+#import "SBJSON.h"
+
+@interface F5Annotation : NSObject <MKAnnotation> {
+@private
+    CLLocationCoordinate2D coordinate;
+    NSString *title;
+	NSString *subTitle;
+    NSNumber *index;
+}
+
+@property (nonatomic, copy) NSString *title;
+@property (nonatomic, copy) NSString *subTitle;
+@property (nonatomic, copy) NSNumber *index;
+@property (nonatomic, assign) CLLocationCoordinate2D coordinate;
+
+@end
+
+@implementation F5Annotation
+@synthesize title;
+@synthesize subTitle;
+@synthesize index;
+@synthesize	coordinate;
+@end
+
+@interface F5AnnotationView : MKAnnotationView
+
+@end
+
+@implementation F5AnnotationView
+@end
+
 
 @interface F5MKMapView : MKMapView {
     NSMutableArray *maskRegions;
 }
 @property (nonatomic, retain) NSMutableArray* maskRegions;
+
+- (void)zoomToFitMapAnnotations;
 
 @end
 
@@ -46,6 +80,26 @@
     }
     return self;
 }
+
+- (void)zoomToFitMapAnnotations { 
+    
+    if ([self.annotations count] == 0) {
+        return;
+    }
+    
+    int i = 0;
+    MKMapPoint points[[self.annotations count]];
+    
+    //build array of annotation points
+    for (id<MKAnnotation> annotation in [self annotations]) {
+        points[i++] = MKMapPointForCoordinate(annotation.coordinate);        
+    }
+    
+    MKPolygon *poly = [MKPolygon polygonWithPoints:points count:i];
+    
+    [self setRegion:MKCoordinateRegionForMapRect([poly boundingMapRect]) animated:YES]; 
+}
+
 @end
 
 @implementation F5MapView
@@ -53,7 +107,9 @@
 @synthesize mapView;
 @synthesize callbackID;
 
-- (void)create:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
+- (void)create:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)mask {
+    
+    NSString *callbackID = [arguments pop];
     
     if (self.mapView) {
         NSLog(@"mapView already created. Was location.reload() called?");
@@ -80,17 +136,40 @@
         CGRect mapBounds = CGRectMake(0, 44, 320, 368);
         [self.mapView setFrame:mapBounds];
         
+        int top = [[mask valueForKey:@"top"] intValue];
+        int left = [[mask valueForKey:@"left"] intValue];
+        int height = [[mask valueForKey:@"height"] intValue];
+        int width = [[mask valueForKey:@"width"] intValue];
+        
         // TODO: get mask regions from js layer
-        CGRect mask = CGRectMake(10, 10, 16, 16);
-        [self.mapView.maskRegions addObject:[NSValue valueWithCGRect:mask]];
+        [self.mapView.maskRegions addObject:[NSValue valueWithCGRect:CGRectMake(top, left, height, width)]];
                 
         //        mapView.hidden = YES;           
     }
 }
 
+- (void)setMaskRegion:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)mask {
+
+    NSString *callbackID = [arguments pop];
+    
+    int top = [[mask valueForKey:@"top"] intValue];
+    int left = [[mask valueForKey:@"left"] intValue];
+    int height = [[mask valueForKey:@"height"] intValue];
+    int width = [[mask valueForKey:@"width"] intValue];
+    
+    // TODO: get mask regions from js layer
+    [self.mapView.maskRegions removeAllObjects];
+    [self.mapView.maskRegions addObject:[NSValue valueWithCGRect:CGRectMake(top, left, height, width)]];        
+}
+
+- (void)clearMaskRegion:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)mask {    
+    [self.mapView.maskRegions removeAllObjects];
+}
+
+
 - (void)showMap:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
 
-    self.callbackID = [arguments pop];
+    NSString *callbackID = [arguments pop];
 
     if (self.mapView) {
         self.mapView.hidden = NO;       
@@ -98,13 +177,13 @@
         NSLog(@"Trying to use showMap without calling create first");
         
         PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_INVALID_ACTION];   
-        [self writeJavascript: [pluginResult toSuccessCallbackString:self.callbackID]];                
+        [self writeJavascript: [pluginResult toSuccessCallbackString:callbackID]];                
     }
 }
 
 - (void)hideMap:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
     
-    self.callbackID = [arguments pop];
+    NSString *callbackID = [arguments pop];
     
     if (self.mapView) {
         self.mapView.hidden = YES;       
@@ -112,8 +191,103 @@
         NSLog(@"Trying to use showMap without calling create first");
         
         PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_INVALID_ACTION];                
-        [self writeJavascript: [pluginResult toSuccessCallbackString:self.callbackID]];                
+        [self writeJavascript: [pluginResult toSuccessCallbackString:callbackID]];                
     }
+}
+
+- (void)pushMap:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
+    animateWithDuration:delay:options:animations:completion:
+    
+    [UIView animateWithDuration:0.3 delay:0.0
+                     options: UIViewAnimationOptionCurveEaseIn
+                     animations:^{
+                         CGPoint center = self.mapView.center;
+                         center.x += 320;
+                         self.mapView.center = center;
+                     }
+                     completion:nil];
+    [self writeJavascript:@"F5.Global.viewController.animationFunction();"];
+    NSLog(@"native did it");
+}
+
+- (void)popMap:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
+    [UIView animateWithDuration:0.3 delay:0.0
+                        options: UIViewAnimationOptionCurveEaseIn
+                     animations:^{
+                         CGPoint center = self.mapView.center;
+                         center.x -= 320;
+                         self.mapView.center = center;
+                     }
+                     completion:nil];
+    [self writeJavascript:@"F5.Global.viewController.animationFunction();"];    
+    NSLog(@"native did it");    
+}
+
+
+- (void)dropPins:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
+    self.callbackID = [arguments pop];
+
+    PG_SBJSON *parser=[[[PG_SBJSON alloc] init] autorelease];
+    NSArray *pins = [parser objectWithString:[arguments pop]];
+    
+    NSEnumerator * enumerator = [pins objectEnumerator];
+    id pin;
+    while (pin = [enumerator nextObject]) {                        
+        F5Annotation *annotation = [[[F5Annotation alloc] init] autorelease];
+
+		CLLocationCoordinate2D pinCoord = { [[pin objectForKey:@"lat"] floatValue] , [[pin objectForKey:@"lng"] floatValue] };
+        annotation.coordinate = pinCoord;
+        annotation.title = [pin objectForKey:@"name"];        
+        annotation.subTitle = @"";
+        annotation.index = [pin objectForKey:@"index"];
+                
+		[self.mapView addAnnotation:annotation];
+    }      
+    
+    [self.mapView zoomToFitMapAnnotations];
+}
+
+- (void)mapView:(MKMapView *)mapView annotationView:(MKAnnotationView *)view calloutAccessoryControlTapped:(UIControl *)control {
+    F5Annotation *annotation = [view annotation];
+    if (control == [view leftCalloutAccessoryView]) {
+        NSDictionary *message = [NSDictionary dictionaryWithObjectsAndKeys:@"left", @"button", annotation.index, @"pin", nil];                
+        PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsDictionary:message];   
+        [pluginResult setKeepCallbackAsBool:YES];
+        [self writeJavascript: [pluginResult toSuccessCallbackString:self.callbackID]];
+    } else if (control == [view rightCalloutAccessoryView]) {
+        NSDictionary *message = [NSDictionary dictionaryWithObjectsAndKeys:@"right", @"button", annotation.index, @"pin", nil];                        
+        PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsDictionary:message];   
+        [pluginResult setKeepCallbackAsBool:YES];
+        [self writeJavascript: [pluginResult toSuccessCallbackString:self.callbackID]];
+    } else {
+        NSLog(@"wtf?");
+    }
+}
+
+- (MKAnnotationView *) mapView:(MKMapView *)mapView viewForAnnotation:(id <MKAnnotation>) annotation{
+    
+    NSString *identifier = [NSString stringWithFormat:@"%f%f", annotation.coordinate.latitude, annotation.coordinate.longitude];
+    
+    MKPinAnnotationView *view = (MKPinAnnotationView *)[self.mapView dequeueReusableAnnotationViewWithIdentifier:identifier];    
+    if (!view) {
+        view = [[[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:identifier] autorelease];
+    }
+    
+    if (![annotation isKindOfClass:[F5Annotation class]]) {
+        return nil;
+    }
+    
+    UIButton* rightButton = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
+    view.rightCalloutAccessoryView = rightButton;
+        
+    UIImage *streetViewIcon = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"streetview" ofType:@"png"]];        
+    UIButton *leftButton = [[[UIButton alloc] init] autorelease];       
+    [leftButton setImage:streetViewIcon forState:UIControlStateNormal];
+    leftButton.frame = CGRectMake(0, 0, 31, 31);
+    view.leftCalloutAccessoryView = leftButton;
+        
+    view.canShowCallout = YES;
+    return view;
 }
 
 
