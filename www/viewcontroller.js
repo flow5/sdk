@@ -157,10 +157,10 @@
 		F5.Global.flowController.addFlowObserver(this);						
 		
 		function doLifecycleEventRecursive(node, event) {			
-			node.view[event]();
+			node.view['view' + event]();
 			while (node.selection) {				
 				node = node.selection;				
-				node.view[event]();
+				node.view['view' + event]();
 			}
 			
 			// TODO: this only handles widgets in leaf nodes
@@ -168,22 +168,22 @@
 			// figure out which widgets are actually contained in the node but not
 			// in unselected children of the node
 			F5.forEach(node.view.el.querySelectorAll('[f5_widget]'), function (el) {
-				if (el.widget[event]) {
-					el.widget[event]();
+				if (el.widget['widget' + event]) {
+					el.widget['widget' + event]();
 				}
 			});
 		}
 				
 		this.nodeDidBecomeActive = function (node) {
-			doLifecycleEventRecursive(node, 'viewDidBecomeActive');
+			doLifecycleEventRecursive(node, 'DidBecomeActive');
 		};				
 
 		this.nodeDidBecomeInactive = function (node) {
-			doLifecycleEventRecursive(node, 'viewDidBecomeInactive');
+			doLifecycleEventRecursive(node, 'DidBecomeInactive');
 		};		
 		
 		this.nodeWillBecomeInactive = function (node) {
-			doLifecycleEventRecursive(node, 'viewWillBecomeInactive');
+			doLifecycleEventRecursive(node, 'WillBecomeInactive');
 		};				
 
 		this.nodeWillBecomeActive = function (node) {
@@ -196,7 +196,7 @@
 				}
 			}
 			
-			doLifecycleEventRecursive(node, 'viewWillBecomeActive');		
+			doLifecycleEventRecursive(node, 'WillBecomeActive');		
 		};				
 		
 		this.start = function () {	

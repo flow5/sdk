@@ -134,7 +134,7 @@
 			};
 		};
 		
-		this.viewWillBecomeActive = function () {
+		this.widgetWillBecomeActive = function () {
 			this.shown = true;
 			
 			PhoneGap.exec(
@@ -145,7 +145,7 @@
 			}, "com.flow5.mapview", "showMap", []);			
 		};
 		
-		this.viewDidBecomeInactive = function () {
+		this.widgetDidBecomeInactive = function () {
 			this.shown = false;
 			PhoneGap.exec(
 				function (result) { // success
