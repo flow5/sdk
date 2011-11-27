@@ -91,13 +91,21 @@
 		};
 	
 		this.doSelection = function (node, id) {
-			this.updateConfiguration(node.children[id]);
-			configure(false);			
+			this.updateConfiguration(node.children[id]);						
+			
+			return function (cb) {
+				configure(false);
+				cb();
+			};			
 		};
 	
-		this.doTransition = function (container, animation, to) {
-			this.updateConfiguration(to);		
-			configure(animation === 'pushLeft' || animation === 'pushRight');							
+		this.doTransition = function (container, id, to, animation) {
+			this.updateConfiguration(to);				
+			
+			return function (cb) {
+				configure(animation === 'pushLeft' || animation === 'pushRight');
+				cb();
+			};									
 		};
 	
 		this.startSubflow = function () {

@@ -206,7 +206,7 @@
                          self.mapView.center = center;
                      }
                      completion:nil];
-    [self writeJavascript:@"F5.Global.viewController.animationFunction();"];
+//    [self writeJavascript:@"F5.Global.viewController.animationFunction();"];
     NSLog(@"native did it");
 }
 
@@ -219,7 +219,7 @@
                          self.mapView.center = center;
                      }
                      completion:nil];
-    [self writeJavascript:@"F5.Global.viewController.animationFunction();"];    
+//    [self writeJavascript:@"F5.Global.viewController.animationFunction();"];    
     NSLog(@"native did it");    
 }
 

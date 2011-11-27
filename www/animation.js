@@ -28,26 +28,26 @@
 
 (function () {
 		
-	function pushHorizontal(container, oldEl, newEl, distance, cb) {			
+	function pushHorizontal(container, oldEl, newEl, distance) {			
 		oldEl.style['-webkit-transform'] = 'translate3d(0px, 0px, 0px)';			
 		newEl.style['-webkit-transform'] = 'translate3d(' + distance + 'px, 0px, 0px)';
 		newEl.style.visibility = '';
-					
-		function completePushLeft() {
-			oldEl.style.visibility = 'hidden';
-			oldEl.style['-webkit-transform'] = '';
-			oldEl.style['-webkit-transition'] = '';
+							
+		return function (cb) {
+			function complete() {
+				oldEl.style.visibility = 'hidden';
+				oldEl.style['-webkit-transform'] = '';
+				oldEl.style['-webkit-transition'] = '';
 
-			newEl.style['-webkit-transform'] = '';
-			newEl.style['-webkit-transition'] = '';
+				newEl.style['-webkit-transform'] = '';
+				newEl.style['-webkit-transition'] = '';
+
+				F5.removeTransitionEndListener(oldEl);			
+
+				cb();
+			}			
+			F5.addTransitionEndListener(oldEl, complete);		
 			
-			F5.removeTransitionEndListener(oldEl);			
-
-			cb();
-		}			
-		F5.addTransitionEndListener(oldEl, completePushLeft);		
-		
-		return function () {
 			var transition = '-webkit-transform ease-in .3s';
 			oldEl.style['-webkit-transition'] = transition;
 			newEl.style['-webkit-transition'] = transition;
@@ -60,42 +60,41 @@
 	F5.Animation = {
 		
 		// oldElement sits on top, fades out to reveal newEl
-		fadeIn: function (container, oldEl, newEl, cb) {
+		fadeIn: function (container, oldEl, newEl) {
 			
 			oldEl.style['z-index'] = 0;
 
 			newEl.style['z-index'] = 1;
 			newEl.style.visibility = '';	
 			newEl.style.opacity = 0;
-															
-			function completeFadeIn() {
-				
-				oldEl.style['z-index'] = '';
-				newEl.style['z-index'] = '';
-				newEl.style['-webkit-transition'] = '';
-				
-				oldEl.style.opacity = '';
-				oldEl.style.visibility = 'hidden';
-				
-				F5.removeTransitionEndListener(newEl);
-				
-				cb();
-			}
-						
-			F5.addTransitionEndListener(newEl, completeFadeIn);
-			
-			return function () {
+																		
+			return function (cb) {
+				function completeFadeIn() {
+
+					oldEl.style['z-index'] = '';
+					newEl.style['z-index'] = '';
+					newEl.style['-webkit-transition'] = '';
+
+					oldEl.style.opacity = '';
+					oldEl.style.visibility = 'hidden';
+
+					F5.removeTransitionEndListener(newEl);
+
+					cb();
+				}
+
+				F5.addTransitionEndListener(newEl, completeFadeIn);				
 				newEl.style['-webkit-transition'] = 'opacity .15s';				
 				newEl.style.opacity = 1;
 			};		
 		},
 		
-		pushLeft: function (container, oldEl, newEl, cb) {
-			return pushHorizontal(container, oldEl, newEl, container.offsetWidth, cb);			
+		pushLeft: function (container, oldEl, newEl) {
+			return pushHorizontal(container, oldEl, newEl, container.offsetWidth);			
 		},
 		
-		pushRight: function (container, oldEl, newEl, cb) {
-			return pushHorizontal(container, oldEl, newEl, -container.offsetWidth, cb);						
+		pushRight: function (container, oldEl, newEl) {
+			return pushHorizontal(container, oldEl, newEl, -container.offsetWidth);						
 		}
 	};
 }());

@@ -34,6 +34,8 @@
 			
 			var that = this;
 			
+			F5.Global.flowController.addFlowObserver(this);
+			
 			/*global google*/
 			
 			this.streetViewEl = document.createElement('div');
@@ -69,7 +71,13 @@
 				console.log(result);
 			}, function (result) { // failure
 				console.log(result);
-			}, "com.flow5.mapview", "create", [{top:10, left:10, width: 16, height: 16}]);							
+			}, "com.flow5.mapview", "create", [{top:10, left:10, width: 16, height: 16}]);	
+			
+			this.shown = true;						
+		};
+		
+		this.release = function () {
+			F5.Global.flowController.removeFlowObserver(this);
 		};
 		
 		this.showStreetView = function (location) {
@@ -77,17 +85,10 @@
 						
 			that.streetViewEl.style.visibility = '';
 						
-			var position = new google.maps.LatLng(location.lat, location.lng);
-			if (!this.streetView) {
-				var options = {
-					position: position
-				};
-				this.streetView = new google.maps.StreetViewPanorama(this.streetViewEl, options);				
-			} else {
-				this.streetView.setPosition(position);
-				console.log('setting position')
-			}	
-			console.log(location);
+			var options = {
+				position: new google.maps.LatLng(location.lat, location.lng)
+			};
+			this.streetView = new google.maps.StreetViewPanorama(this.streetViewEl, options);				
 									
 			var maskRegion = {top: 0, left: 0, width: this.streetViewEl.offsetWidth, 
 									height: this.streetViewEl.offsetHeight};
@@ -100,6 +101,7 @@
 		};
 		
 		this.hide = function () {
+			this.shown = false;
 			// TODO: move the idea of transitions of native views up to animation layer
 			// FIX: this is not sync
 			F5.get('http://flow5.local/sync?className=com.flow5.mapview&methodName=hideMap');							
@@ -114,6 +116,8 @@
 		};
 		
 		this.show = function () {
+			this.shown = true;
+			
 			PhoneGap.exec(
 				function (result) { // success
 				console.log(result);
@@ -135,7 +139,28 @@
 		
 		this.setCalloutActions = function (calloutActions) {
 			this.calloutActions = calloutActions;
-		};			
+		};		
+		
+		// flow observer
+		this.doTransition = function (container, id, to, animation) {
+			var that = this;
+			
+			return function (cb) {				
+				if (that.shown) {
+					var which = animation === 'pushLeft' ? 'popMap' : 'pushMap';			
+					console.log(which)
+					// TODO: queue this and then exec at correct time
+					PhoneGap.exec(
+						function (result) { // success
+						console.log(result);
+					}, function (result) { // failure
+						console.log(result);
+					}, "com.flow5.mapview", which, []);					
+				}
+				
+				cb();
+			};
+		};
 	}	
 	
 	F5.Prototypes.mapView = new MapView();	

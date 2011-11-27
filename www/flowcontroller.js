@@ -32,11 +32,22 @@
 
 		var that = this;
 		
-		that.observer = function () {};
+		var flowObservers = [];
 		
-		that.setObserver = function (observer) {
-			that.observer = observer;
+		that.addFlowObserver = function (observer) {
+			flowObservers.push(observer);
 		};
+		
+		that.removeFlowObserver = function (observer) {
+			flowObservers.splice(flowObservers.indexOf(observer), 1);
+		};
+		
+		
+that.observer = function () {};
+
+that.setObserver = function (observer) {
+	that.observer = observer;
+};
 				
 		flow.controller = this;
 		
@@ -61,9 +72,13 @@
 		
 		function nodeDidBecomeActive(node, cb) {								
 			node.active = true;
-			if (F5.Global.viewController) {
-				F5.Global.viewController.nodeDidBecomeActive(node);
-			}
+			
+			flowObservers.forEach(function (observer) {
+				if (observer.nodeDidBecomeActive) {
+					observer.nodeDidBecomeActive(node);
+				}
+			});
+
 			doLifecycleSubflowRecursive('didBecomeActive', node, function () {
 				cb();
 			});
@@ -71,27 +86,39 @@
 
 		function nodeDidBecomeInactive(node, cb) {								
 			node.active = false;
-			if (F5.Global.viewController) {
-				F5.Global.viewController.nodeDidBecomeInactive(node);
-			}
+
+			flowObservers.forEach(function (observer) {
+				if (observer.nodeDidBecomeInactive) {
+					observer.nodeDidBecomeInactive(node);
+				}
+			});
+
 			doLifecycleSubflowRecursive('didBecomeInactive', node, function () {
 				cb();
 			});
 		}									
 
-		function nodeWillBecomeActive(node, cb) {								
-			if (F5.Global.viewController) {
-				F5.Global.viewController.nodeWillBecomeActive(node);
-			}
+		function nodeWillBecomeActive(node, cb) {
+
+			flowObservers.forEach(function (observer) {
+				if (observer.nodeWillBecomeActive) {
+					observer.nodeWillBecomeActive(node);
+				}
+			});
+											
 			doLifecycleSubflowRecursive('willBecomeActive', node, function () {
 				cb();
 			});
 		}									
 
 		function nodeWillBecomeInactive(node, cb) {								
-			if (F5.Global.viewController) {
-				F5.Global.viewController.nodeWillBecomeInactive(node);
-			}
+
+			flowObservers.forEach(function (observer) {
+				if (observer.nodeWillBecomeInactive) {
+					observer.nodeWillBecomeInactive(node);
+				}
+			});
+			
 			doLifecycleSubflowRecursive('willBecomeInactive', node, function () {
 				cb();
 			});
@@ -117,12 +144,14 @@
 			cb();
 
 			nodeWillBecomeActive(flow.root, function () {
-				that.observer();			
+that.observer();			
 				nodeDidBecomeActive(flow.root, function () {
-					that.observer();
-					if (F5.Global.viewController) {
-						F5.Global.viewController.start();
-					}								
+that.observer();
+					flowObservers.forEach(function (observer) {
+						if (observer.start) {
+							observer.start();
+						}
+					});
 				});
 			});									
 		};
@@ -137,8 +166,12 @@
 		// needs to run again
 		// TODO: this has an effect at the widget layer
 		function cancelSubflowRecursive(node) {
-			if (F5.Global.viewController && node.activeSubflow && node.activeSubflow.userInput) {
-				F5.Global.viewController.completeSubflow(node.activeSubflow);					
+			if (node.activeSubflow && node.activeSubflow.userInput) {
+				flowObservers.forEach(function (observer) {
+					if (observer.completeSubflow) {
+						observer.completeSubflow(node.activeSubflow);
+					}
+				});				
 			}
 			delete node.activeSubflow;
 			if (node.children) {
@@ -164,7 +197,7 @@
 			
 			var oldSelection = node.selection;				
 			
-			function completeSelection() {				
+			function complete() {				
 				node.selection.active = false;
 				node.selection = node.children[id];
 				
@@ -180,7 +213,7 @@
 
 				lockout = false;	
 
-				that.observer();
+that.observer();
 							
 				cb();			
 			}					
@@ -195,11 +228,17 @@
 				
 				nodeWillBecomeInactive(oldSelection, function () {
 					nodeWillBecomeActive(node.children[id], function () {
-						if (F5.Global.viewController) {
-							F5.Global.viewController.doSelection(node, id, completeSelection);
-						} else {
-							completeSelection();
-						}												
+						
+						var tasks = [];
+						flowObservers.forEach(function (observer) {
+							if (observer.doSelection) {
+								tasks.push(observer.doSelection(node, id));
+							}
+						});		
+						
+						setTimeout(function () {
+							F5.parallelizeTasks(tasks, complete);							
+						}, 0);								
 					});									
 				});
 			} else {
@@ -280,7 +319,7 @@
 				
 				lockout = false;				
 					
-				that.observer();	
+that.observer();	
 								
 				cb();
 			}
@@ -289,7 +328,7 @@
 			
 			var target = id === 'back' ? backNode.back : node.transitions[id].to;
 			var animation = node.transitions && node.transitions[id] ? node.transitions[id].animation : null;
-			
+									
 			if (parameters) {
 				if (id === 'back') {
 					if (!target.data) {
@@ -300,15 +339,47 @@
 					target.data = parameters;
 				}
 			}
+			
+			// TODO: move to Animation module
+			function inverseAnimation(animation) {
+				var inverse;
+				switch (animation) {
+				case 'fadeIn':
+					inverse = 'fadeIn';
+					break;
+				case 'pushRight':
+					inverse = 'pushLeft';
+					break;
+				case 'pushLeft':
+					inverse = 'pushRight';
+					break;
+				}
+				
+				return inverse;
+			}
+			if (id === 'back') {
+				animation = inverseAnimation(container.selection.animation);
+			}			
+			if (!animation)  {
+				animation = 'pushLeft';
+			}
+			if (id !== 'back') {
+				target.animation = animation;
+			}			
 			 
 			// TODO: call nodeWillBecomeInactive
 			nodeWillBecomeInactive(node, function () {
-				nodeWillBecomeActive(target, function () {			
-					if (F5.Global.viewController) {
-						F5.Global.viewController.doTransition(container, id, target, animation, complete);										
-					} else {
-						complete();
-					}			
+				nodeWillBecomeActive(target, function () {		
+					
+					var tasks = [];
+					flowObservers.forEach(function (observer) {
+						if (observer.doTransition) {
+							tasks.push(observer.doTransition(container, id, target, animation));
+						}
+					});				
+					setTimeout(function () {
+						F5.parallelizeTasks(tasks, complete);												
+					}, 0);
 				});				
 			});
 		};	
@@ -343,7 +414,7 @@
 			oldSubflow.active = false;
 			
 			function completeChoice() {
-				that.observer();
+that.observer();
 
 				if (node.activeSubflow) {
 					if (node.activeSubflow.userInput && F5.Global.viewController) {
@@ -352,8 +423,12 @@
 						doSubflowPrompt(node);												
 					}
 				} else {
-					if (oldSubflow.userInput && F5.Global.viewController) {
-						F5.Global.viewController.completeSubflow(oldSubflow);
+					if (oldSubflow.userInput) {
+						flowObservers.forEach(function (observer) {
+							if (observer.completeSubflow) {
+								observer.completeSubflow(oldSubflow);
+							}
+						});				
 					}
 					if (completionCb) {
 						completionCb();
@@ -436,7 +511,11 @@
 					subflow.userInput = true;						
 				}
 				if (F5.Global.viewController) {
-					F5.Global.viewController.startSubflow(node.activeSubflow);
+					flowObservers.forEach(function (observer) {
+						if (observer.startSubflow) {
+							observer.startSubflow(node.activeSubflow);
+						}
+					});
 				} else {
 					// TODO: need to sort out for headless testing
 					doSubflowPrompt(node);												
@@ -450,7 +529,7 @@
 
 //			console.log(node.path + '.' + id + ' started');
 
-			that.observer();					
+that.observer();					
 		};
 				
 		that.hasBack = function () {

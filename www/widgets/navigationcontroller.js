@@ -98,11 +98,15 @@
 		this.doSelection = function (node, id) {
 			this.updateConfiguration(node.children[id]);
 			configure();
+			
+			return function (cb) {cb();};
 		};
 	
-		this.doTransition = function (container, animation, to) {
+		this.doTransition = function (container, id, to, animation) {
 			this.updateConfiguration(to);		
 			configure();
+			
+			return function (cb) {cb();};
 		};
 	
 		this.startSubflow = function () {

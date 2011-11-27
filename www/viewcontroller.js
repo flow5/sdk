@@ -152,7 +152,9 @@
 	};
 
 			
-	function ViewController(flow, screenFrame) {						
+	function ViewController(flow, screenFrame) {
+		
+		F5.Global.flowController.addFlowObserver(this);						
 		
 		function doLifecycleEventRecursive(node, event) {
 			while (node) {
@@ -188,12 +190,9 @@
 		
 		this.start = function () {	
 			// NOTE: the root node was already built by nodeWillBecomeActive
-			if (F5.Global.navigationController) {
-				F5.Global.navigationController.start();
-			}					
 		};
 		
-		this.doSelection = function (node, id, cb) {
+		this.doSelection = function (node, id) {
 			if (F5.Global.navigationController) {
 				F5.Global.navigationController.doSelection(node, id);
 			}				
@@ -206,108 +205,48 @@
 			var newEl = document.getElementById(node.children[id].path);
 			
 			// TODO: get animation name from the node		
-			var animationFunction = F5.Animation.fadeIn(node.view.el, oldEl, newEl, function () {
-				cb();
-			});
-			setTimeout(animationFunction, 0);
+			return F5.Animation.fadeIn(node.view.el, oldEl, newEl);
 		};
 						
-		this.doTransition = function (container, id, to, animation, cb) {
+		this.doTransition = function (container, id, to, animation) {
 			var that = this;
 									
 			var containerElement = container.view.el.querySelector('[class=container]');
 			var oldNode = container.selection;
 			
 			var oldEl = oldNode.view.el;
-			var newEl = to.view.el;
+			var newEl = to.view.el;						
 			
-			
-			// TODO: move to Animation module
-			function inverseAnimation(animation) {
-				var inverse;
-				switch (animation) {
-				case 'fadeIn':
-					inverse = 'fadeIn';
-					break;
-				case 'pushRight':
-					inverse = 'pushLeft';
-					break;
-				case 'pushLeft':
-					inverse = 'pushRight';
-					break;
-				}
-				
-				return inverse;
-			}
-			if (id === 'back') {
-				animation = inverseAnimation(oldNode.animation);
-			}			
-			if (!animation)  {
-				animation = 'pushLeft';
-			}
-			if (id !== 'back') {
-				to.animation = animation;
-			}
-																												
-			var transitionFunction = F5.Animation[animation](containerElement, oldEl, newEl, function () {
-				cb();
-				
-				function deleteViewsRecursive(node) {
-					delete node.view;
-					delete node.animation;
-					if (node.children) {
-						F5.forEach(node.children, function (id, child) {
-							deleteViewsRecursive(child);
-						});
+			var animationFunction = F5.Animation[animation](containerElement, oldEl, newEl);
+			return function (cb) {
+				animationFunction(function () {
+					cb();
+
+					function deleteViewsRecursive(node) {
+						delete node.view;
+						delete node.animation;
+						if (node.children) {
+							F5.forEach(node.children, function (id, child) {
+								deleteViewsRecursive(child);
+							});
+						}
 					}
-				}
-				if (id === 'back') {
-					// TODO: call viewRelease?
-					deleteViewsRecursive(oldNode);
-
-					F5.removeTouchEventListenersRecursive(oldEl);
-					containerElement.removeChild(oldEl);
-				}				
-			});	
+					if (id === 'back') {
+						// TODO: call viewRelease?
+						deleteViewsRecursive(oldNode);
 						
-			that.animationFunction = function () {				
-				// TODO: navigationController should also queue it's transition function
-				if (F5.Global.navigationController) {
-					F5.Global.navigationController.doTransition(container, animation, to);
-				}				
-				transitionFunction();
-			};
-			
-			// TODO: setup a native queuing function 
-			// then instead of setTimeout, trigger the webkit side animation from the native
-			// so there's minimum delay in animation starts
-			// move nav config into here as well to sync the nav bar
-			// make a transition function on widgets that allows functions to be queued
-			// from widgets
-			setTimeout(function () {
-				
-				if (typeof PhoneGap !== 'undefined') {
-					function doSync(which) {
-						PhoneGap.exec(
-							function (result) { // success
-							console.log(result);
-						}, function (result) { // failure
-							console.log(result);
-						}, "com.flow5.mapview", which, []);										
-					}				
+						F5.forEach(oldEl.querySelectorAll('[f5_widget]'), function (el) {
+							if (el.widget.release) {
+								el.widget.release();
+							}
+						});
 
-					if (to.id === 'categories') {
-						doSync('pushMap');
-					} else if (to.id === 'merchantListing') {
-						doSync('popMap');
-					} else {
-						that.animationFunction();
-					}					
-				} else {
-					that.animationFunction();
-				}
-			}, 0);
-		};		
+						F5.removeTouchEventListenersRecursive(oldEl);
+						containerElement.removeChild(oldEl);
+					}
+				});
+			};
+		};	
 		
 		// called in a willBecomeActive context to conditionally pick a starting view
 		this.syncSet = function (node) {
@@ -318,20 +257,12 @@
 		};			
 		
 		this.startSubflow = function (subflow) {
-			if (F5.Global.navigationController) {
-				F5.Global.navigationController.startSubflow(subflow);
-			}																			
-			
 			subflow.view.el.style.visibility = '';
 			subflow.view.el.style.opacity = 1;
 			subflow.view.el.style['pointer-events'] = 'auto';
 		};
 
 		this.completeSubflow = function (subflow) {
-			if (F5.Global.navigationController) {
-				F5.Global.navigationController.completeSubflow(subflow);
-			}																			
-			
 			function fadeComplete() {
 				subflow.view.el.style.visibility = 'hidden';
 				F5.removeTransitionEndListener(subflow.view.el);

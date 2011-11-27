@@ -116,10 +116,11 @@
 		}
 	};	
 	
-	// TODO: there can only be one nav bar. move this to a framework only location
-	function attachNavbar(container) {
-		F5.Global.navigationController = F5.objectFromPrototype(F5.Prototypes.navigationController);
-		F5.Global.navigationController.setup(container);																
+	// TODO: make this a regular widget and declare in the HTML
+	function attachNavbar(container) {		
+		var navController = F5.objectFromPrototype(F5.Prototypes.navigationController);
+		navController.setup(container);	
+		F5.Global.flowController.addFlowObserver(navController);															
 	}		
 	
 	

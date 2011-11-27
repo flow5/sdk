@@ -32,13 +32,13 @@
 		
 		/*global google*/
 		
-		this.setup = function (el) {
+		this.setup = function (el) {			
 			var options = {
 				zoom: 8,
 				center: new google.maps.LatLng(F5.fakeLocation.lat, F5.fakeLocation.lng),
 				mapTypeId: google.maps.MapTypeId.ROADMAP
 			};
-			this.map = new google.maps.Map(el, options);				
+			this.map = new google.maps.Map(el, options);										
 		};
 		
 		this.show = function () {
@@ -68,7 +68,7 @@
 		
 		this.showStreetView = function (location) {		
 			
-		};
+		};		
 	}	
 	
 	F5.Prototypes.mapView = new MapView();

@@ -205,6 +205,28 @@
 		return url.replace('url("', '').replace('")', '');		
 	};
 		
+	F5.chainTasks = function(tasks, cb) {
+        if (tasks.length) {
+            tasks.shift()(function() {
+				F5.chainTasks(tasks, cb);
+            });
+        } else {
+			cb();
+        }
+    };
+
+	F5.parallelizeTasks = function (tasks, cb) {
+		var count = tasks.length;
+		function complete() {
+			count -= 1;
+			if (!count) {
+				cb();
+			}
+		}
+		tasks.forEach(function (task) {
+			task(complete);
+		});
+	};
 	
 }());
 
