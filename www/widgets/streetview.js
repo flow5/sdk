@@ -27,15 +27,38 @@
 /*global F5, google*/
 
 (function () {
+	
+	var service;	
 			
 	function StreetView() {
 		
 		this.construct = function () {
-			this.streetView = new google.maps.StreetViewPanorama(this.el, {});							
+			if (!service) {
+				service = new google.maps.StreetViewService();					
+			}
+			this.streetView = new google.maps.StreetViewPanorama(this.el, {
+				enableCloseButton: true
+			});							
 		};	
 		
+		this.setCloseAction = function (action) {
+			google.maps.event.addListener(this.streetView, 'closeclick', function() {
+				action();
+			});						
+		};
+		
 		this.setLocation = function (location) {
-			this.streetView.setPosition(new google.maps.LatLng(location.lat, location.lng));
+			var that = this;
+			var position = new google.maps.LatLng(location.lat, location.lng);
+			service.getPanoramaByLocation(position, 200, function(data, status) {
+				if (status === 'OK') {
+					that.streetView.setPano(data.location.pano);		
+					console.log(data);			
+				} else {
+					console.log('no street view for this location');
+				}
+				google.maps.event.trigger(that.streetView, 'resize');
+			});
 		};
 	}
 	
