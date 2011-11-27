@@ -24,54 +24,51 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
+/*global F5*/
 
-exports.scripts = [
-	'f5.js',
-	'utils.js',
-	'domutils.js',
-	'animation.js',
-	'defaultviewdelegates.js', // TODO: move this to debugScripts?
-	'flow.js',
-	'flowcontroller.js',
-	'3p/Iuppiter.js',
-	'templates.js',
-	'viewcontroller.js',
-	'services.js',
-	'ui.js',
-	'location.js',
-	'widgets/button.js',
-	'widgets/tabset.js',
-	'widgets/navbar.js',
-	'widgets/streetview.js'
-];
+// OPTION: break the phonegap dependency out. doesn't seem worth it since the APIs are so close. . .
 
-exports.elements = [
-	'default.css',
-];
-
-exports.webScripts = [
-	'widgets/navbar_web.js',
-	'widgets/mapview_web.js'
-];
-
-exports.nativeScripts = [
-	'widgets/navbar_native.js',
-	'widgets/mapview_native.js'
-];
-
-exports.debugScripts = [
-//	'debug/timers.js'
-	'debug/flow_diags.js',
-	'debug/flowcontroller_diags.js',
-	'debug/json.js'
-];
-
-exports.debugDesktopScripts = [
-	'debug/webharness.js',
-];
-
-exports.debugElements = [
-	'debug/json.css',
-	'debug/webharness.css',
-	'debug/webharness.html'
-];
+(function () {
+	
+	function Location() {
+		
+		var currentLocation;
+		
+		this.getCurrentLocation = function () {
+			if (currentLocation) {
+				return currentLocation;
+			} else {
+				// TODO: allow client to specify default location
+				return {lat:37.774484, lng:-122.420091};
+			}
+		};
+		
+		this.start = function () {	
+			var that = this;
+					
+			var options = {
+			    enableHighAccuracy: false,
+			    timeout: Infinity,
+			    maximumAge: 0
+			  };
+		   
+			this.watchId = navigator.geolocation.watchPosition(
+				function (position) {
+					currentLocation = {lat: position.coords.latitude, lng: position.coords.longitude};
+				},
+				function (error) {
+					console.log(error);
+				},
+				options);
+		};							
+		
+		this.stop = function () {
+			if (this.watchId) {
+				navigator.geolocation.clearWatch(this.watchId);				
+			}
+		};
+	}
+	
+	F5.locationService = new Location();
+	
+}());

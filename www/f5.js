@@ -34,9 +34,7 @@ if (typeof F5 === 'undefined') {
 		F5.Global = {};
 		F5.Resources = {};
 		F5.FlowDelegates = {};	
-		
-		F5.fakeLocation = {lat:37.774484, lng:-122.420091};	
-		
+				
 		if (typeof document !== 'undefined') {
 			F5.WidgetPrototypes = {};
 			F5.ViewDelegates = {};

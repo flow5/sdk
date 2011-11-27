@@ -33,9 +33,10 @@
 		/*global google*/
 		
 		this.construct = function () {			
+			var currentLocation = F5.locationService.getCurrentLocation();
 			var options = {
 				zoom: 8,
-				center: new google.maps.LatLng(F5.fakeLocation.lat, F5.fakeLocation.lng),
+				center: new google.maps.LatLng(currentLocation.lat, currentLocation.lng),
 				mapTypeId: google.maps.MapTypeId.ROADMAP,
 				streetViewControl: false,
 				mapTypeControl: false
@@ -95,69 +96,3 @@
 	
 	F5.WidgetPrototypes.MapView = new MapView();			
 }());
-
-
-/*			
-function CanvasProjectionOverlay() {}
-CanvasProjectionOverlay.prototype = new google.maps.OverlayView();
-CanvasProjectionOverlay.prototype.constructor = CanvasProjectionOverlay;
-CanvasProjectionOverlay.prototype.onAdd = function(){};
-CanvasProjectionOverlay.prototype.draw = function(){};
-CanvasProjectionOverlay.prototype.onRemove = function(){};
-
-
-
-			
-var that = this;
-if (!this.map) {
-	var myOptions = {
-		zoom: 8,
-		center: new google.maps.LatLng(F5.fakeLocation.lat, F5.fakeLocation.lng),
-		mapTypeId: google.maps.MapTypeId.ROADMAP
-	};
-	this.map = new google.maps.Map(this.mapEl, myOptions);	
-	
-	
-	var fakeMarker = document.createElement('div');
-	fakeMarker.style.width = '25px';
-	fakeMarker.style.height = '25px';
-	fakeMarker.style.border = '1px solid black';
-	fakeMarker.style.position = 'absolute';
-	fakeMarker.style.top = '0px';
-	fakeMarker.style.left = '0px';
-	fakeMarker.style['z-index'] = 10000;
-	this.mapEl.appendChild(fakeMarker);
-	
-
-	this.canvasProjectionOverlay = new CanvasProjectionOverlay();
-	this.canvasProjectionOverlay.setMap(this.map);				
-	
-					function findTransform(el) {
-						if (!el) {
-							return null;
-						}
-						if (el.style['-webkitTransform'] && el.style['-webkitTransform'].match('matrix')) {
-							return el.style['-webkitTransform'];
-						} else {
-							return findTransform(el.parentElement);
-						}
-					}			google.maps.event.addListener(this.map, 'drag', function() {
-
-		var webkitTransform = findTransform(that.canvasProjectionOverlay.getPanes().overlayLayer);
-		
-		console.log(webkitTransform);
-		
-		that.canvasProjectionOverlay.getPanes().overlayLayer.id = 'overlayLayer';
-							
-		var transformMatrix = new WebKitCSSMatrix(webkitTransform);
-		var offset = {x: transformMatrix.m41, y: transformMatrix.m42};
-		var transform = 'translate3d(' + offset.x + 'px, ' + offset.y + 'px, 0px)';
-		fakeMarker.style['-webkit-transform'] = transform;
-	});
-	
-	setInterval(function () {
-		var webkitTransform = findTransform(that.canvasProjectionOverlay.getPanes().overlayLayer);
-		
-		console.log(webkitTransform);					
-	}, 30);
-*/
