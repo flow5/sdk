@@ -30,7 +30,7 @@
 
 	function MapView() {
 		
-		this.setup = function (el) {
+		this.construct = function () {
 			
 			var that = this;
 			
@@ -42,7 +42,7 @@
 			this.streetViewEl.style.width = '100%';
 			this.streetViewEl.style.height = '100%';
 			that.streetViewEl.style.visibility = 'hidden';
-			el.appendChild(this.streetViewEl);	
+			this.el.appendChild(this.streetViewEl);	
 			
 			// TODO: use template?
 			var closeButton = document.createElement('div');
@@ -99,33 +99,7 @@
 				console.log(result);
 			}, "com.flow5.mapview", "setMaskRegion", [maskRegion]);													
 		};
-		
-		this.hide = function () {
-			this.shown = false;
-			// TODO: move the idea of transitions of native views up to animation layer
-			// FIX: this is not sync
-			F5.get('http://flow5.local/sync?className=com.flow5.mapview&methodName=hideMap');							
-/*			
-			PhoneGap.exec(
-				function (result) { // success
-				console.log(result);
-			}, function (result) { // failure
-				console.log(result);
-			}, "com.flow5.mapview", "hideMap", []);										
-*/
-		};
-		
-		this.show = function () {
-			this.shown = true;
-			
-			PhoneGap.exec(
-				function (result) { // success
-				console.log(result);
-			}, function (result) { // failure
-				console.log(result);
-			}, "com.flow5.mapview", "showMap", []);										
-		};
-		
+						
 		this.dropPins = function (pins) {
 			var that = this;
 			PhoneGap.exec(
@@ -147,21 +121,40 @@
 			
 			return function (cb) {				
 				if (that.shown) {
-					var which = animation === 'pushLeft' ? 'popMap' : 'pushMap';			
-					console.log(which)
-					// TODO: queue this and then exec at correct time
+					// queue the transition. will be processed before js level transitions are executed
 					PhoneGap.exec(
 						function (result) { // success
 						console.log(result);
 					}, function (result) { // failure
 						console.log(result);
-					}, "com.flow5.mapview", which, []);					
+					}, "com.flow5.mapview", animation, []);					
 				}
 				
 				cb();
 			};
 		};
+		
+		this.viewWillBecomeActive = function () {
+			this.shown = true;
+			
+			PhoneGap.exec(
+				function (result) { // success
+				console.log(result);
+			}, function (result) { // failure
+				console.log(result);
+			}, "com.flow5.mapview", "showMap", []);			
+		};
+		
+		this.viewDidBecomeInactive = function () {
+			this.shown = false;
+			PhoneGap.exec(
+				function (result) { // success
+				console.log(result);
+			}, function (result) { // failure
+				console.log(result);
+			}, "com.flow5.mapview", "hideMap", []);										
+		};		
 	}	
 	
-	F5.Prototypes.mapView = new MapView();	
+	F5.WidgetPrototypes.MapView = new MapView();	
 }());

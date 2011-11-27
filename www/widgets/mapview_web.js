@@ -32,22 +32,14 @@
 		
 		/*global google*/
 		
-		this.setup = function (el) {			
+		this.construct = function () {			
 			var options = {
 				zoom: 8,
 				center: new google.maps.LatLng(F5.fakeLocation.lat, F5.fakeLocation.lng),
 				mapTypeId: google.maps.MapTypeId.ROADMAP
 			};
-			this.map = new google.maps.Map(el, options);										
-		};
-		
-		this.show = function () {
-			
-		};
-		
-		this.hide = function () {
-			
-		};
+			this.map = new google.maps.Map(this.el, options);										
+		};		
 		
 		this.dropPins = function (pins) {
 			var that = this;
@@ -68,12 +60,10 @@
 		
 		this.showStreetView = function (location) {		
 			
-		};		
+		};			
 	}	
 	
-	F5.Prototypes.mapView = new MapView();
-		
-	
+	F5.WidgetPrototypes.MapView = new MapView();			
 }());
 
 /*

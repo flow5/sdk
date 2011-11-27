@@ -124,6 +124,7 @@
         mapView.userInteractionEnabled = YES;
         mapView.showsUserLocation = YES;
         mapView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        mapView.hidden = YES;                   
 
         AppDelegate *appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];                
         UIView *mainView = [appDelegate.viewController view];
@@ -142,9 +143,7 @@
         int width = [[mask valueForKey:@"width"] intValue];
         
         // TODO: get mask regions from js layer
-        [self.mapView.maskRegions addObject:[NSValue valueWithCGRect:CGRectMake(top, left, height, width)]];
-                
-        //        mapView.hidden = YES;           
+        [self.mapView.maskRegions addObject:[NSValue valueWithCGRect:CGRectMake(top, left, height, width)]];                
     }
 }
 
@@ -195,7 +194,7 @@
     }
 }
 
-- (void)pushMap:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
+- (void)pushRight:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
     animateWithDuration:delay:options:animations:completion:
     
     [UIView animateWithDuration:0.3 delay:0.0
@@ -206,11 +205,9 @@
                          self.mapView.center = center;
                      }
                      completion:nil];
-//    [self writeJavascript:@"F5.Global.viewController.animationFunction();"];
-    NSLog(@"native did it");
 }
 
-- (void)popMap:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
+- (void)pushLeft:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
     [UIView animateWithDuration:0.3 delay:0.0
                         options: UIViewAnimationOptionCurveEaseIn
                      animations:^{
@@ -219,8 +216,6 @@
                          self.mapView.center = center;
                      }
                      completion:nil];
-//    [self writeJavascript:@"F5.Global.viewController.animationFunction();"];    
-    NSLog(@"native did it");    
 }
 
 

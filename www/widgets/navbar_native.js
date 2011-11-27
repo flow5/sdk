@@ -27,22 +27,26 @@
 /*global F5, PhoneGap*/
 
 (function () {
-	function NavigationController() {
+	function NavBar() {
 		
-		this.setup = function (container) {
+		this.construct = function () {
 			var navbarEl = document.createElement('div');
 			F5.addClass(navbarEl, 'navbar');
 			// FIX: should just be visibility: hidden to let underlying layer come throug
 			// part of the fullscreen content view change
 			navbarEl.style['background-color'] = 'transparent';
-			container.insertBefore(navbarEl, container.firstChild);	
+			this.el.insertBefore(navbarEl, this.el.firstChild);	
 			
+			// TODO: setup a persistent callback instead of relying on the sucess callback
+			var that = this;
 			PhoneGap.exec(
-				function (result) { // success
-				console.log(result);
+				function (which) { // success
+					that.configuration[which].action();
 			}, function (result) { // failure
 				console.log(result);
-			}, "com.flow5.navigationbar", "create", []);							
+			}, "com.flow5.navigationbar", "create", []);
+			
+			F5.Global.flowController.addFlowObserver(this);													
 		};
 	
 		function gapify(configuration) {
@@ -81,20 +85,21 @@
 				}, 
 				'com.flow5.navigationbar', // the plugin name
 				'configure', // the method
-				[animate, gapify(F5.Global.navigationControllerConfiguration)]
+				[animate, gapify(this.configuration)]
 			);								
 		}
 	
 		this.start = function () {
 			this.updateConfiguration(F5.Global.flow.root);
-			configure(false);
+			configure.apply(this, [false]);			
 		};
 	
 		this.doSelection = function (node, id) {
 			this.updateConfiguration(node.children[id]);						
 			
+			var that = this;
 			return function (cb) {
-				configure(false);
+				configure.apply(that, [false]);
 				cb();
 			};			
 		};
@@ -102,29 +107,30 @@
 		this.doTransition = function (container, id, to, animation) {
 			this.updateConfiguration(to);				
 			
+			var that = this;
 			return function (cb) {
-				configure(animation === 'pushLeft' || animation === 'pushRight');
+				configure.apply(that, [animation === 'pushLeft' || animation === 'pushRight']);
 				cb();
 			};									
 		};
 	
 		this.startSubflow = function () {
-			configure(false);					
+			configure.apply(this, [false]);					
 		};
 	
 		this.syncSet = function (node) {
 			this.updateConfiguration(node);
-			configure(false);				
+			configure.apply(this, [false]);				
 		};
 	
 		this.completeSubflow = function () {
 			this.updateConfiguration(F5.Global.flow.root);
-			configure(false);				
+			configure.apply(this, [false]);				
 		};		
 	}
-	NavigationController.prototype = F5.Prototypes.navigationConfigurator;
+	NavBar.prototype = F5.WidgetPrototypes.NavBarBase;
 	
-	F5.Prototypes.navigationController = new NavigationController();
+	F5.WidgetPrototypes.NavBar = new NavBar();
 	
 }());
 	

@@ -32,7 +32,6 @@ if (typeof F5 === 'undefined') {
 	(function () {
 
 		F5.Global = {};
-		F5.Prototypes = {};
 		F5.Resources = {};
 		F5.FlowDelegates = {};	
 		

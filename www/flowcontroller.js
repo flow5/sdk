@@ -129,6 +129,23 @@ that.setObserver = function (observer) {
 			F5.forEach(node.activeSubflow.choices, function (id, choice) {
 				console.log('* ' + id);
 			});
+		}
+		
+		function completeFlow(tasks, complete) {
+			// TODO: move to native/web scripts F5.completeFlow
+			if (typeof PhoneGap !== 'undefined') {
+				PhoneGap.exec(
+					function (result) { // success
+					F5.parallelizeTasks(tasks, complete);
+				}, function (result) { // failure
+					console.log(result);
+				}, "com.flow5.yield", "yield", []);	
+				
+			} else {
+				setTimeout(function () {
+					F5.parallelizeTasks(tasks, complete);							
+				}, 0);															
+			}
 		}	
 			
 		// TODO: cb doesn't execute until didBecomeActive subflows complete
@@ -236,9 +253,7 @@ that.observer();
 							}
 						});		
 						
-						setTimeout(function () {
-							F5.parallelizeTasks(tasks, complete);							
-						}, 0);								
+						completeFlow(tasks, complete);
 					});									
 				});
 			} else {
@@ -377,9 +392,7 @@ that.observer();
 							tasks.push(observer.doTransition(container, id, target, animation));
 						}
 					});				
-					setTimeout(function () {
-						F5.parallelizeTasks(tasks, complete);												
-					}, 0);
+					completeFlow(tasks, complete);
 				});				
 			});
 		};	

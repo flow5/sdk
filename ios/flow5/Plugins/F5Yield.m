@@ -26,30 +26,13 @@
 ***********************************************************************************************************************/
 
 
-#import "PGPlugin.h"
+#import "F5Yield.h"
 
-#import <MapKit/MapKit.h>
+@implementation F5Yield
 
-@class F5MKMapView;
-
-@interface F5MapView : PGPlugin <MKMapViewDelegate> {
-    NSString* callbackID;     
-    F5MKMapView* mapView;    
+- (void)yield:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
+    PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];        
+    [self writeJavascript: [pluginResult toSuccessCallbackString:[arguments pop]]];      
 }
-
-@property (nonatomic, copy) NSString* callbackID;
-@property (nonatomic, retain) F5MKMapView* mapView;
-
-- (void)create:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void)showMap:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void)hideMap:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-
-- (void)setMaskRegion:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void)clearMaskRegion:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-
-- (void)pushLeft:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void)pushRight:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-
-- (void)dropPins:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
 @end

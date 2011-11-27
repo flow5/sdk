@@ -67,62 +67,7 @@
 			tracking = false;
 			el.style['-webkit-transition'] = '';
 		});
-	}
-	
-	F5.Prototypes.navigationConfigurator = {
-		updateConfiguration: function (node) {
-			// find the leaf node
-			while (node.selection) {
-				node = node.selection;
-			}
-						
-			var configuration = {title: node.id, node: node};
-			while (node && (!configuration.left || !configuration.right)) {
-				var nodeConfiguration = node.view.getNavConfig();
-				if (nodeConfiguration) {
-					if (!configuration.left && nodeConfiguration.left) {
-						configuration.left = nodeConfiguration.left;
-						configuration.left.node = node;
-					}
-					if (!configuration.right && nodeConfiguration.right) {
-						configuration.right = nodeConfiguration.right;
-						configuration.right.node = node;
-					}	
-					if (nodeConfiguration.hide) {
-						configuration.hide = nodeConfiguration.hide;									
-					}
-				}
-				
-				node = node.parent;
-			}
-			
-			if (configuration.left) {
-				configuration.left.action = function () {
-					var transition = F5.Global.navigationControllerConfiguration.left.transition;
-					var node = F5.Global.navigationControllerConfiguration.left.node;
-					F5.Global.flowController.doTransition(node, transition, {});				
-				};
-			}
-			
-			if (configuration.right) {
-				configuration.right.action = function () {
-					var transition = F5.Global.navigationControllerConfiguration.right.transition;
-					var node = F5.Global.navigationControllerConfiguration.right.node;
-					F5.Global.flowController.doTransition(node, transition, {});				
-				};			
-			}
-			
-			F5.Global.navigationControllerConfiguration = configuration;
-		}
-	};	
-	
-	// TODO: make this a regular widget and declare in the HTML
-	function attachNavbar(container) {		
-		var navController = F5.objectFromPrototype(F5.Prototypes.navigationController);
-		navController.setup(container);	
-		F5.Global.flowController.addFlowObserver(navController);															
-	}		
-	
+	}			
 	
 	function StaticText() {
 		this.construct = function (data) {
@@ -167,7 +112,6 @@
 		
 	F5.UI = {
 		attachWidget: attachWidget,
-		attachNavbar: attachNavbar,
 		attachTracker: attachTracker
 	};
 }());

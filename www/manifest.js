@@ -39,7 +39,8 @@ exports.scripts = [
 	'services.js',
 	'ui.js',
 	'widgets/button.js',
-	'widgets/tabset.js'
+	'widgets/tabset.js',
+	'widgets/navbar.js'
 ];
 
 exports.elements = [
@@ -47,12 +48,12 @@ exports.elements = [
 ];
 
 exports.webScripts = [
-	'widgets/navigationcontroller.js',
-	'widgets/mapview.js'
+	'widgets/navbar_web.js',
+	'widgets/mapview_web.js'
 ];
 
 exports.nativeScripts = [
-	'widgets/navigationcontroller_native.js',
+	'widgets/navbar_native.js',
 	'widgets/mapview_native.js'
 ];
 

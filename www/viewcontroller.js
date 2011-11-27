@@ -156,11 +156,22 @@
 		
 		F5.Global.flowController.addFlowObserver(this);						
 		
-		function doLifecycleEventRecursive(node, event) {
-			while (node) {
-				node.view[event]();
+		function doLifecycleEventRecursive(node, event) {			
+			node.view[event]();
+			while (node.selection) {				
 				node = node.selection;				
-			}			
+				node.view[event]();
+			}
+			
+			// TODO: this only handles widgets in leaf nodes
+			// to handle widgets in containers is harder because we have to 
+			// figure out which widgets are actually contained in the node but not
+			// in unselected children of the node
+			F5.forEach(node.view.el.querySelectorAll('[f5_widget]'), function (el) {
+				if (el.widget[event]) {
+					el.widget[event]();
+				}
+			});
 		}
 				
 		this.nodeDidBecomeActive = function (node) {

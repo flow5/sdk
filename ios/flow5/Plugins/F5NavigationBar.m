@@ -36,7 +36,9 @@
 
 
 -(BOOL)navigationBar:(UINavigationBar *)navigationBar shouldPopItem:(UINavigationItem *)item {
-    [self writeJavascript: @"F5.Global.navigationControllerConfiguration.left.action()"]; 
+    PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsString:@"left"];  
+    [pluginResult setKeepCallbackAsBool:YES];
+    [self writeJavascript: [pluginResult toSuccessCallbackString:self.callbackID]];      
     
     return NO;
 }
@@ -44,6 +46,8 @@
 
 -(void)create:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
 
+    self.callbackID = [arguments pop];
+    
     if (self.navigationBar) {
         NSLog(@"NavigationBar already created. Was location.reload() called?");
     } else {
@@ -60,14 +64,11 @@
         [mainView sendSubviewToBack:self.navigationBar];     
         
         self.itemCache = [[NSMutableDictionary alloc] init];
-    }
-    
-    PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];        
-    [self writeJavascript: [pluginResult toSuccessCallbackString:self.callbackID]];      
+    }    
 }
 
 -(void)configure:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)configuration {
-    self.callbackID = [arguments pop];
+    NSString *callbackID = [arguments pop];
     BOOL animated = [[arguments pop] boolValue];
     
     if (self.navigationBar) {          
@@ -100,12 +101,12 @@
         }
                         
         PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];        
-        [self writeJavascript: [pluginResult toSuccessCallbackString:self.callbackID]];        
+        [self writeJavascript: [pluginResult toSuccessCallbackString:callbackID]];        
     } else {
         NSLog(@"Trying to use configure NavigationBar without calling create first");
         
         PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_INVALID_ACTION];        
-        [self writeJavascript: [pluginResult toSuccessCallbackString:self.callbackID]];        
+        [self writeJavascript: [pluginResult toSuccessCallbackString:callbackID]];        
     }  
 
 }
