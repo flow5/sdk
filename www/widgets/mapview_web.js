@@ -36,7 +36,9 @@
 			var options = {
 				zoom: 8,
 				center: new google.maps.LatLng(F5.fakeLocation.lat, F5.fakeLocation.lng),
-				mapTypeId: google.maps.MapTypeId.ROADMAP
+				mapTypeId: google.maps.MapTypeId.ROADMAP,
+				streetViewControl: false,
+				mapTypeControl: false
 			};
 			this.map = new google.maps.Map(this.el, options);										
 		};		
@@ -52,11 +54,23 @@
 								      animation: google.maps.Animation.DROP
 								    });	
 								
+				// TODO: use a template
 				var content = document.createElement('div');
-				content.innerText = pin.name;
 				content.className = 'map-callout';
 
-				F5.addTapListener(content, function () {
+				var name = document.createElement('div');
+				name.innerText = pin.name;
+				content.appendChild(name);
+				
+				var streetView = document.createElement('div');
+				streetView.innerText = 'Street View';
+				content.appendChild(streetView);
+
+				F5.addTapListener(name, function () {
+					that.calloutActions['detailView'](pin.index);
+				});						
+
+				F5.addTapListener(streetView, function () {
 					that.calloutActions['streetView'](pin.index);
 				});						
 
