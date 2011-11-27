@@ -24,53 +24,20 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
+/*global F5, google*/
 
-exports.scripts = [
-	'f5.js',
-	'utils.js',
-	'domutils.js',
-	'animation.js',
-	'defaultviewdelegates.js', // TODO: move this to debugScripts?
-	'flow.js',
-	'flowcontroller.js',
-	'3p/Iuppiter.js',
-	'templates.js',
-	'viewcontroller.js',
-	'services.js',
-	'ui.js',
-	'widgets/button.js',
-	'widgets/tabset.js',
-	'widgets/navbar.js',
-	'widgets/streetview.js'
-];
-
-exports.elements = [
-	'default.css',
-];
-
-exports.webScripts = [
-	'widgets/navbar_web.js',
-	'widgets/mapview_web.js'
-];
-
-exports.nativeScripts = [
-	'widgets/navbar_native.js',
-	'widgets/mapview_native.js'
-];
-
-exports.debugScripts = [
-//	'debug/timers.js'
-	'debug/flow_diags.js',
-	'debug/flowcontroller_diags.js',
-	'debug/json.js'
-];
-
-exports.debugDesktopScripts = [
-	'debug/webharness.js',
-];
-
-exports.debugElements = [
-	'debug/json.css',
-	'debug/webharness.css',
-	'debug/webharness.html'
-];
+(function () {
+			
+	function StreetView() {
+		
+		this.construct = function () {
+			this.streetView = new google.maps.StreetViewPanorama(this.el, {});							
+		};	
+		
+		this.setLocation = function (location) {
+			this.streetView.setPosition(new google.maps.LatLng(location.lat, location.lng));
+		};
+	}
+	
+	F5.WidgetPrototypes.StreetView = new StreetView();		
+}());

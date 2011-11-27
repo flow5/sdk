@@ -50,45 +50,38 @@
 								      map: that.map,
 									  optimized: false,
 								      animation: google.maps.Animation.DROP
-								    });					
+								    });	
+								
+				var content = document.createElement('div');
+				content.innerText = pin.name;
+				content.className = 'map-callout';
+
+				F5.addTapListener(content, function () {
+					that.calloutActions['streetView'](pin.index);
+				});						
+
+				var infowindow = new google.maps.InfoWindow({
+					content: content
+				});						
+
+				google.maps.event.addListener(infowindow, 'click', function() {
+
+				});						
+
+				google.maps.event.addListener(marker, 'click', function() {
+					infowindow.open(that.map, marker);
+				});												
 			});			
 		};
 		
-		this.setCalloutActions = function () {
-			
-		};
-		
-		this.showStreetView = function (location) {		
-			
-		};			
+		this.setCalloutActions = function (calloutActions) {
+			this.calloutActions = calloutActions;			
+		};		
 	}	
 	
 	F5.WidgetPrototypes.MapView = new MapView();			
 }());
 
-/*
-var content = document.createElement('div');
-content.innerText = venue.name;
-content.className = 'map-callout';
-
-F5.addTapListener(content, function () {
-	node.flowDelegate.viewMerchantDetail(node, {venue: venue}, function () {
-
-	});
-});						
-
-var infowindow = new google.maps.InfoWindow({
-	content: content
-});						
-
-google.maps.event.addListener(infowindow, 'click', function() {
-	console.log(venue);
-});						
-
-google.maps.event.addListener(marker, 'click', function() {
-	infowindow.open(that.map, marker);
-});
-*/
 
 /*			
 function CanvasProjectionOverlay() {}

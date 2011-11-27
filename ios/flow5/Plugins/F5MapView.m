@@ -245,12 +245,12 @@
 - (void)mapView:(MKMapView *)mapView annotationView:(MKAnnotationView *)view calloutAccessoryControlTapped:(UIControl *)control {
     F5Annotation *annotation = [view annotation];
     if (control == [view leftCalloutAccessoryView]) {
-        NSDictionary *message = [NSDictionary dictionaryWithObjectsAndKeys:@"left", @"button", annotation.index, @"pin", nil];                
+        NSDictionary *message = [NSDictionary dictionaryWithObjectsAndKeys:@"streetView", @"button", annotation.index, @"index", nil];                
         PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsDictionary:message];   
         [pluginResult setKeepCallbackAsBool:YES];
         [self writeJavascript: [pluginResult toSuccessCallbackString:self.callbackID]];
     } else if (control == [view rightCalloutAccessoryView]) {
-        NSDictionary *message = [NSDictionary dictionaryWithObjectsAndKeys:@"right", @"button", annotation.index, @"pin", nil];                        
+        NSDictionary *message = [NSDictionary dictionaryWithObjectsAndKeys:@"detailView", @"button", annotation.index, @"index", nil];                        
         PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsDictionary:message];   
         [pluginResult setKeepCallbackAsBool:YES];
         [self writeJavascript: [pluginResult toSuccessCallbackString:self.callbackID]];

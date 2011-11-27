@@ -92,7 +92,7 @@
 
 				svgframeEl.innerHTML = response;
 
-				var svg = document.querySelector('svg');
+				var svg = svgframeEl.querySelector('svg');
 
 				var transform = svg.querySelector('g').getAttribute('transform');
 				transform = transform.replace('scale(1 1)', 'scale(0.4 0.4)');

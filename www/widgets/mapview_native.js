@@ -79,32 +79,12 @@
 		this.release = function () {
 			F5.Global.flowController.removeFlowObserver(this);
 		};
-		
-		this.showStreetView = function (location) {
-			var that = this;
-						
-			that.streetViewEl.style.visibility = '';
-						
-			var options = {
-				position: new google.maps.LatLng(location.lat, location.lng)
-			};
-			this.streetView = new google.maps.StreetViewPanorama(this.streetViewEl, options);				
-									
-			var maskRegion = {top: 0, left: 0, width: this.streetViewEl.offsetWidth, 
-									height: this.streetViewEl.offsetHeight};
-			PhoneGap.exec(
-				function (result) { // success
-				console.log(result);
-			}, function (result) { // failure
-				console.log(result);
-			}, "com.flow5.mapview", "setMaskRegion", [maskRegion]);													
-		};
-						
+								
 		this.dropPins = function (pins) {
 			var that = this;
 			PhoneGap.exec(
 				function (result) { // success
-					that.calloutActions[result.button](result.pin);
+					that.calloutActions[result.button](result.index);
 				console.log(result);
 			}, function (result) { // failure
 				console.log(result);
