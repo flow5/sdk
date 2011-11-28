@@ -222,7 +222,7 @@
 - (void)dropPins:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
     self.callbackID = [arguments pop];
 
-    PG_SBJSON *parser=[[[PG_SBJSON alloc] init] autorelease];
+    PG_SBJSON *parser = [[[PG_SBJSON alloc] init] autorelease];
     NSArray *pins = [parser objectWithString:[arguments pop]];
     
     NSEnumerator * enumerator = [pins objectEnumerator];

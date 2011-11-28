@@ -203,6 +203,8 @@ body.mobile {
 }
 
 .navbar {
+	position: absolute;
+	top: 0px;
 	display: -webkit-box;
 	width: 100%;
 	padding-left: 2px;
@@ -211,7 +213,6 @@ body.mobile {
 	-webkit-box-pack: center;	
 	background-color:grey;
 	-webkit-box-sizing: border-box;
-	position: relative;
 }
 
 .leftbutton, .rightbutton {

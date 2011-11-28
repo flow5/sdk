@@ -114,25 +114,22 @@
 			};
 		};
 		
+		// TODO: move to phonegap layer
+		function doSync(method) {
+			var xhr = new XMLHttpRequest();
+			var url = 'gap?className=com.flow5.mapview&methodName=' + method;
+			xhr.open(method, url, false);
+			xhr.send();			
+		}
+		
 		this.widgetWillBecomeActive = function () {
-			this.shown = true;
-			
-			PhoneGap.exec(
-				function (result) { // success
-				console.log(result);
-			}, function (result) { // failure
-				console.log(result);
-			}, "com.flow5.mapview", "showMap", []);			
+			this.shown = true;			
+			doSync('showMap');		
 		};
 		
 		this.widgetDidBecomeInactive = function () {
-			this.shown = false;
-			PhoneGap.exec(
-				function (result) { // success
-				console.log(result);
-			}, function (result) { // failure
-				console.log(result);
-			}, "com.flow5.mapview", "hideMap", []);										
+			this.shown = false;			
+			doSync('hideMap');			
 		};		
 	}	
 	

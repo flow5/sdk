@@ -38,6 +38,8 @@
 		<string>F5MapView</string>
 		<key>com.flow5.yield</key>
 		<string>F5Yield</string>
+		<key>com.flow5.locationreminder</key>
+		<string>F5LocationReminder</string>
 		<key>com.phonegap.accelerometer</key>
 		<string>PGAccelerometer</string>
 		<key>com.phonegap.camera</key>

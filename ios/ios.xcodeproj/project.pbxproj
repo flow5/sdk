@@ -58,6 +58,7 @@
 		BE8C5CC7147DBA2000C26A4D /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = BE8C5CB6147DBA2000C26A4D /* Settings.bundle */; };
 		BE8C5CCF1480229000C26A4D /* streetview.png in Resources */ = {isa = PBXBuildFile; fileRef = BE8C5CCE1480229000C26A4D /* streetview.png */; };
 		BE8C5CD51482A01200C26A4D /* F5Yield.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8C5CD41482A01200C26A4D /* F5Yield.m */; };
+		BE8C5CD81482F33F00C26A4D /* F5LocationReminder.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8C5CD71482F33E00C26A4D /* F5LocationReminder.m */; };
 		BE9A4B6F147C70E6004FF748 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE9A4B6E147C70E6004FF748 /* MapKit.framework */; };
 /* End PBXBuildFile section */
 
@@ -142,6 +143,8 @@
 		BE8C5CCE1480229000C26A4D /* streetview.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = streetview.png; sourceTree = "<group>"; };
 		BE8C5CD31482A01200C26A4D /* F5Yield.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = F5Yield.h; sourceTree = "<group>"; };
 		BE8C5CD41482A01200C26A4D /* F5Yield.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = F5Yield.m; sourceTree = "<group>"; };
+		BE8C5CD61482F33E00C26A4D /* F5LocationReminder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = F5LocationReminder.h; sourceTree = "<group>"; };
+		BE8C5CD71482F33E00C26A4D /* F5LocationReminder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = F5LocationReminder.m; sourceTree = "<group>"; };
 		BE9A4B6E147C70E6004FF748 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -308,6 +311,8 @@
 				BE8C5CA9147DBA2000C26A4D /* F5NavigationBar.m */,
 				BE8C5CD31482A01200C26A4D /* F5Yield.h */,
 				BE8C5CD41482A01200C26A4D /* F5Yield.m */,
+				BE8C5CD61482F33E00C26A4D /* F5LocationReminder.h */,
+				BE8C5CD71482F33E00C26A4D /* F5LocationReminder.m */,
 			);
 			path = Plugins;
 			sourceTree = "<group>";
@@ -476,6 +481,7 @@
 				BE8C5CBE147DBA2000C26A4D /* F5MapView.m in Sources */,
 				BE8C5CBF147DBA2000C26A4D /* F5NavigationBar.m in Sources */,
 				BE8C5CD51482A01200C26A4D /* F5Yield.m in Sources */,
+				BE8C5CD81482F33F00C26A4D /* F5LocationReminder.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

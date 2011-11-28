@@ -35,7 +35,8 @@
 		this.construct = function () {
 			navbarEl = document.createElement('div');
 			F5.addClass(navbarEl, 'navbar');
-			this.el.insertBefore(navbarEl, this.el.firstChild);	
+			this.el.appendChild(navbarEl);
+//			this.el.insertBefore(navbarEl, this.el.firstChild);	
 
 			leftButtonEl = document.createElement('div');
 			F5.addClass(leftButtonEl, 'leftbutton');
