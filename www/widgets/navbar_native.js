@@ -84,7 +84,7 @@
 					console.log(result);
 				}, 
 				'com.flow5.navigationbar', // the plugin name
-				'configure', // the method
+				'queue_configure', // the method
 				[animate, gapify(this.configuration)]
 			);								
 		}
@@ -106,10 +106,8 @@
 	
 		this.doTransition = function (container, id, to, animation) {
 			this.updateConfiguration(to);				
-			
-			var that = this;
+			configure.apply(this, [animation === 'pushLeft' || animation === 'pushRight']);
 			return function (cb) {
-				configure.apply(that, [animation === 'pushLeft' || animation === 'pushRight']);
 				cb();
 			};									
 		};

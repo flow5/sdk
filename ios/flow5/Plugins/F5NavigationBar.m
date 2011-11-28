@@ -27,6 +27,7 @@
 
 #import "F5NavigationBar.h"
 #import "AppDelegate.h"
+#import "F5CommandQueue.h"
 
 @implementation F5NavigationBar
 
@@ -66,7 +67,9 @@
     }    
 }
 
--(void)configure:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)configuration {
+-(void)queue_configure:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)configuration {
+    NSLog(@"F5NavigationBar.configure");
+    
     NSString *callbackID = [arguments pop];
     BOOL animated = [[arguments pop] boolValue];
     
@@ -96,7 +99,11 @@
                 items = [NSArray arrayWithObject:currentItem];
             }
             
-            [self.navigationBar setItems:items animated:animated];                                        
+            [items retain];
+            [[F5CommandQueue instance] queueCommand:^{                
+                [self.navigationBar setItems:items animated:animated];  
+                [items release];
+            }];            
         }
                         
         PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];        

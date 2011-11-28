@@ -26,13 +26,58 @@
 ***********************************************************************************************************************/
 
 
-#import "F5Yield.h"
+#import "F5CommandQueue.h"
+#import "AppDelegate.h"
 
-@implementation F5Yield
+typedef void (^CommandBlock)();
 
-- (void)yield:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
+@interface F5Command : NSObject {
+    CommandBlock block;
+}
+@property (nonatomic, assign) CommandBlock block;
+@end
+
+@implementation F5Command
+@synthesize block;
+@end
+
+@implementation F5CommandQueue
+
+@synthesize queue;
+
+- (id)initWithWebView:(UIWebView*)webview {
+    self = [super initWithWebView:webview];
+    if (self) {
+        self.queue = [[NSMutableArray alloc] init];
+    }
+    return self;
+}
+
+
++ (F5CommandQueue*)instance {
+    return [(AppDelegate*)[[UIApplication sharedApplication] delegate] getCommandInstance:@"com.flow5.commandqueue"];
+}
+
+- (void)queueCommand:(void (^)(void))block {
+    F5Command *command = [[[F5Command alloc] init] autorelease];
+    command.block = Block_copy(block);
+    [self.queue addObject:command];
+}
+
+- (void)flush:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
+    
+    NSEnumerator *enumerator = [self.queue objectEnumerator];
+    F5Command *command;
+    while (command = [enumerator nextObject]) {
+        command.block();
+        Block_release(command.block);
+    }  
+    [self.queue removeAllObjects];
+    
+    NSLog(@"F5CommandQueue.flush");
     PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];        
     [self writeJavascript: [pluginResult toSuccessCallbackString:[arguments pop]]];      
+    
 }
 
 @end

@@ -132,15 +132,20 @@ that.setObserver = function (observer) {
 		}
 		
 		function completeFlow(tasks, complete) {
+			/*global PhoneGap*/
 			// TODO: move to native/web scripts F5.completeFlow
 			if (typeof PhoneGap !== 'undefined') {
-				PhoneGap.exec(
-					function (result) { // success
-					F5.parallelizeTasks(tasks, complete);
-				}, function (result) { // failure
-					console.log(result);
-				}, "com.flow5.yield", "yield", []);	
-				
+				// yield back to the event loop to reflow
+				// then flush any native commands that have been queued (native animations)
+				// then execute the web animations
+				setTimeout(function () {
+					PhoneGap.exec(
+						function (result) { // success
+						F5.parallelizeTasks(tasks, complete);
+					}, function (result) { // failure
+						console.log(result);
+					}, "com.flow5.commandqueue", "flush", []);						
+				});				
 			} else {
 				setTimeout(function () {
 					F5.parallelizeTasks(tasks, complete);							

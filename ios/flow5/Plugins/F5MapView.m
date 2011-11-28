@@ -30,6 +30,7 @@
 #include <objc/runtime.h>
 #import "SBJsonParser.h"
 #import "SBJSON.h"
+#import "F5CommandQueue.h"
 
 @interface F5Annotation : NSObject <MKAnnotation> {
 @private
@@ -194,28 +195,36 @@
     }
 }
 
-- (void)pushRight:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
+- (void)queue_pushRight:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
+    NSLog(@"F5MapView.pushRight");
+    
     animateWithDuration:delay:options:animations:completion:
     
-    [UIView animateWithDuration:0.3 delay:0.0
-                     options: UIViewAnimationOptionCurveEaseIn
-                     animations:^{
-                         CGPoint center = self.mapView.center;
-                         center.x += 320;
-                         self.mapView.center = center;
-                     }
-                     completion:nil];
+    [[F5CommandQueue instance] queueCommand:^{                
+        [UIView animateWithDuration:0.3 delay:0.0
+                            options: UIViewAnimationOptionCurveEaseIn
+                         animations:^{
+                             CGPoint center = self.mapView.center;
+                             center.x += 320;
+                             self.mapView.center = center;
+                         }
+                         completion:nil];                                       
+    }];                
 }
 
-- (void)pushLeft:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
-    [UIView animateWithDuration:0.3 delay:0.0
-                        options: UIViewAnimationOptionCurveEaseIn
-                     animations:^{
-                         CGPoint center = self.mapView.center;
-                         center.x -= 320;
-                         self.mapView.center = center;
-                     }
-                     completion:nil];
+- (void)queue_pushLeft:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
+    NSLog(@"F5MapView.pushLeft");
+    
+    [[F5CommandQueue instance] queueCommand:^{                    
+        [UIView animateWithDuration:0.3 delay:0.0
+                            options: UIViewAnimationOptionCurveEaseIn
+                         animations:^{
+                             CGPoint center = self.mapView.center;
+                             center.x -= 320;
+                             self.mapView.center = center;
+                         }
+                         completion:nil];
+    }];
 }
 
 

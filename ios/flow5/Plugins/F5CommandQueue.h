@@ -28,8 +28,16 @@
 
 #import "PGPlugin.h"
 
-@interface F5Yield : PGPlugin
+@interface F5CommandQueue : PGPlugin {
+    NSMutableArray *queue;
+}
 
-- (void)yield:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+@property (nonatomic, assign) NSMutableArray* queue;
+
++ (F5CommandQueue*)instance;
+
+- (void)queueCommand:(void (^)(void))block;
+
+- (void)flush:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
 @end

@@ -39,6 +39,6 @@
 @property (nonatomic, retain) NSMutableDictionary *itemCache;
 
 - (void) create:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void) configure:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) queue_configure:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
 @end

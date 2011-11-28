@@ -47,8 +47,8 @@
 - (void)setMaskRegion:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void)clearMaskRegion:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
-- (void)pushLeft:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void)pushRight:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void)queue_pushLeft:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void)queue_pushRight:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
 - (void)dropPins:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 

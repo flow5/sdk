@@ -20,6 +20,7 @@
 		BE29F5F714686984009B0CB6 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE29F5F614686984009B0CB6 /* SystemConfiguration.framework */; };
 		BE29F5F914686984009B0CB6 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE29F5F814686984009B0CB6 /* MobileCoreServices.framework */; };
 		BE29F5FB14686984009B0CB6 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE29F5FA14686984009B0CB6 /* CoreMedia.framework */; };
+		BE56F19514841574007B265F /* F5CommandQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = BE56F19414841574007B265F /* F5CommandQueue.m */; };
 		BE8C5C76147DB6F400C26A4D /* NSObject+SBJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8C5C5C147DB6F400C26A4D /* NSObject+SBJSON.m */; };
 		BE8C5C77147DB6F400C26A4D /* NSString+SBJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8C5C5E147DB6F400C26A4D /* NSString+SBJSON.m */; };
 		BE8C5C78147DB6F400C26A4D /* SBJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8C5C60147DB6F400C26A4D /* SBJSON.m */; };
@@ -57,7 +58,6 @@
 		BE8C5CC6147DBA2000C26A4D /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE8C5CB5147DBA2000C26A4D /* Default@2x.png */; };
 		BE8C5CC7147DBA2000C26A4D /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = BE8C5CB6147DBA2000C26A4D /* Settings.bundle */; };
 		BE8C5CCF1480229000C26A4D /* streetview.png in Resources */ = {isa = PBXBuildFile; fileRef = BE8C5CCE1480229000C26A4D /* streetview.png */; };
-		BE8C5CD51482A01200C26A4D /* F5Yield.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8C5CD41482A01200C26A4D /* F5Yield.m */; };
 		BE8C5CD81482F33F00C26A4D /* F5LocationReminder.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8C5CD71482F33E00C26A4D /* F5LocationReminder.m */; };
 		BE9A4B6F147C70E6004FF748 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE9A4B6E147C70E6004FF748 /* MapKit.framework */; };
 /* End PBXBuildFile section */
@@ -77,6 +77,8 @@
 		BE29F5F614686984009B0CB6 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		BE29F5F814686984009B0CB6 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		BE29F5FA14686984009B0CB6 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
+		BE56F19314841574007B265F /* F5CommandQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = F5CommandQueue.h; sourceTree = "<group>"; };
+		BE56F19414841574007B265F /* F5CommandQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = F5CommandQueue.m; sourceTree = "<group>"; };
 		BE8C5C5A147DB6F400C26A4D /* JSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSON.h; sourceTree = "<group>"; };
 		BE8C5C5B147DB6F400C26A4D /* NSObject+SBJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+SBJSON.h"; sourceTree = "<group>"; };
 		BE8C5C5C147DB6F400C26A4D /* NSObject+SBJSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+SBJSON.m"; sourceTree = "<group>"; };
@@ -141,8 +143,6 @@
 		BE8C5CB5147DBA2000C26A4D /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
 		BE8C5CB6147DBA2000C26A4D /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		BE8C5CCE1480229000C26A4D /* streetview.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = streetview.png; sourceTree = "<group>"; };
-		BE8C5CD31482A01200C26A4D /* F5Yield.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = F5Yield.h; sourceTree = "<group>"; };
-		BE8C5CD41482A01200C26A4D /* F5Yield.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = F5Yield.m; sourceTree = "<group>"; };
 		BE8C5CD61482F33E00C26A4D /* F5LocationReminder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = F5LocationReminder.h; sourceTree = "<group>"; };
 		BE8C5CD71482F33E00C26A4D /* F5LocationReminder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = F5LocationReminder.m; sourceTree = "<group>"; };
 		BE9A4B6E147C70E6004FF748 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
@@ -309,10 +309,10 @@
 				BE8C5CA7147DBA2000C26A4D /* F5MapView.m */,
 				BE8C5CA8147DBA2000C26A4D /* F5NavigationBar.h */,
 				BE8C5CA9147DBA2000C26A4D /* F5NavigationBar.m */,
-				BE8C5CD31482A01200C26A4D /* F5Yield.h */,
-				BE8C5CD41482A01200C26A4D /* F5Yield.m */,
 				BE8C5CD61482F33E00C26A4D /* F5LocationReminder.h */,
 				BE8C5CD71482F33E00C26A4D /* F5LocationReminder.m */,
+				BE56F19314841574007B265F /* F5CommandQueue.h */,
+				BE56F19414841574007B265F /* F5CommandQueue.m */,
 			);
 			path = Plugins;
 			sourceTree = "<group>";
@@ -480,8 +480,8 @@
 				BE8C5CBC147DBA2000C26A4D /* main.m in Sources */,
 				BE8C5CBE147DBA2000C26A4D /* F5MapView.m in Sources */,
 				BE8C5CBF147DBA2000C26A4D /* F5NavigationBar.m in Sources */,
-				BE8C5CD51482A01200C26A4D /* F5Yield.m in Sources */,
 				BE8C5CD81482F33F00C26A4D /* F5LocationReminder.m in Sources */,
+				BE56F19514841574007B265F /* F5CommandQueue.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -36,8 +36,8 @@
 		<string>F5NavigationBar</string>
 		<key>com.flow5.mapview</key>
 		<string>F5MapView</string>
-		<key>com.flow5.yield</key>
-		<string>F5Yield</string>
+		<key>com.flow5.commandqueue</key>
+		<string>F5CommandQueue</string>
 		<key>com.flow5.locationreminder</key>
 		<string>F5LocationReminder</string>
 		<key>com.phonegap.accelerometer</key>

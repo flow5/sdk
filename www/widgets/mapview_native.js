@@ -97,19 +97,17 @@
 		
 		// flow observer
 		this.doTransition = function (container, id, to, animation) {
-			var that = this;
+			if (this.shown) {
+				// queue the transition. will be processed before js level transitions are executed
+				PhoneGap.exec(
+					function (result) { // success
+					console.log(result);
+				}, function (result) { // failure
+					console.log(result);
+				}, "com.flow5.mapview", 'queue_' + animation, []);					
+			}
 			
-			return function (cb) {				
-				if (that.shown) {
-					// queue the transition. will be processed before js level transitions are executed
-					PhoneGap.exec(
-						function (result) { // success
-						console.log(result);
-					}, function (result) { // failure
-						console.log(result);
-					}, "com.flow5.mapview", animation, []);					
-				}
-				
+			return function (cb) {								
 				cb();
 			};
 		};
