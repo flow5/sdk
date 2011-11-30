@@ -177,34 +177,32 @@
     }
 }
 
-/*
-- (void)showMap:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
-
-    NSString *callbackID = [arguments pop];
-
-    if (self.mapView) {
-        self.mapView.hidden = NO;       
-    } else {
-        NSLog(@"Trying to use showMap without calling create first");
-        
-        PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_INVALID_ACTION];   
-        [self writeJavascript: [pluginResult toSuccessCallbackString:callbackID]];                
-    }
-}
-*/
-
-- (void)hideMap:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
-    
-    NSString *callbackId = [arguments pop];
+- (PluginResult*)hideMap:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
     
     if (self.mapView) {
         self.mapView.hidden = YES;       
+        return [PluginResult resultWithStatus:PGCommandStatus_OK];                
     } else {
-        NSLog(@"Trying to use showMap without calling create first");
-        
-        PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_INVALID_ACTION];                
-        [self writeJavascript: [pluginResult toSuccessCallbackString:callbackId]];                
+        NSLog(@"Trying to use showMap without calling create first");        
+        return [PluginResult resultWithStatus:PGCommandStatus_INVALID_ACTION];                
     }
+}
+
+- (PluginResult*)getMapCenter:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
+    if (self.mapView) {
+        CLLocationCoordinate2D center = self.mapView.centerCoordinate;
+                
+//        NSString *response = [NSString stringWithFormat:@"{lat:%@, lng:%@}", 
+  //                            self.mapView.centerCoordinate.latitude, self.mapView.centerCoordinate.longitude];
+        
+        NSDictionary *latLng = [NSDictionary dictionaryWithObjectsAndKeys:
+                                    [NSNumber numberWithFloat:center.latitude], @"lat", 
+                                    [NSNumber numberWithFloat:center.longitude], @"lng", nil];
+        return [PluginResult resultWithStatus:PGCommandStatus_OK messageAsDictionary:latLng];                
+    } else {
+        NSLog(@"Trying to use showMap without calling create first");        
+        return [PluginResult resultWithStatus:PGCommandStatus_INVALID_ACTION];                
+    }    
 }
 
 - (void)queue_pushRight:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
@@ -241,6 +239,9 @@
 
 
 - (void)dropPins:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
+    
+    [self.mapView removeAnnotations:self.mapView.annotations];
+    
     self.callbackID = [arguments pop];
 
     PG_SBJSON *parser = [[[PG_SBJSON alloc] init] autorelease];

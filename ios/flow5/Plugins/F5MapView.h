@@ -40,9 +40,12 @@
 @property (nonatomic, copy) NSString* callbackID;
 @property (nonatomic, retain) F5MKMapView* mapView;
 
-- (void)create:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+// synchronous methods
 - (PluginResult*)showMap:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void)hideMap:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (PluginResult*)hideMap:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (PluginResult*)getMapCenter:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+
+- (void)create:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
 - (void)setMaskRegion:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void)clearMaskRegion:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;

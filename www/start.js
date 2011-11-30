@@ -55,18 +55,6 @@
 	// prevent scrolling
 	document.body.addEventListener('touchmove', function (e) {
 		e.preventDefault();
-		var loc = F5.eventLocation(e);
-		F5.get('http://flow5.local/touchmove' + '?x=' + loc.x + '&y=' + loc.y);
-	});
-
-	document.body.addEventListener('touchstart', function (e) {
-		var loc = F5.eventLocation(e);
-		F5.get('http://flow5.local/touchstart' + '?x=' + loc.x + '&y=' + loc.y);
-	});
-
-	document.body.addEventListener('touchend', function (e) {
-		var loc = F5.eventLocation(e);
-		F5.get('http://flow5.local/touchend' + '?x=' + loc.x + '&y=' + loc.y);
 	});
 	
 	// prevent the webview from doing click stuff

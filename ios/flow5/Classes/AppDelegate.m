@@ -52,22 +52,14 @@
             [parameters setObject:[[component componentsSeparatedByString:@"="] objectAtIndex:1] forKey:[[component componentsSeparatedByString:@"="] objectAtIndex:0]];
         }        
         
-        AppDelegate *appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];        
-        [appDelegate executeSynchronous: [InvokedUrlCommand commandFromObject:parameters]];
+        AppDelegate *appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];  
+        NSString *jsonResult = [[appDelegate executeSynchronous: [InvokedUrlCommand commandFromObject:parameters]] toJSONString];
+        NSData *data = [jsonResult dataUsingEncoding:NSUTF8StringEncoding];
         
-        // TODO: generate the cached response
-        // TODO: create a second layer that returns a value and writes back to Javascript in the async (normal) case
-        return [super cachedResponseForRequest:request];                    
-/*        
-        PG_SBJsonParser* jsonParser = [[[PG_SBJsonParser alloc] init] autorelease];
+        NSURLResponse *response = [[[NSURLResponse alloc] initWithURL:[request URL] MIMEType:@"application/json" 
+                                                expectedContentLength:[data length] textEncodingName:@"utf-8"] autorelease];  
         
-        // Iterate over and execute all of the commands.
-        for (NSString* commandJson in queuedCommands) {
-            [self execute:
-             [InvokedUrlCommand commandFromObject:
-              [jsonParser objectWithString:commandJson]]];
-        } 
-*/        
+        return [[[NSCachedURLResponse alloc] initWithResponse:response data:data] autorelease];        
     } else {
        return [super cachedResponseForRequest:request]; 
     }                        

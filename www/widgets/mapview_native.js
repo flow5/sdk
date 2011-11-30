@@ -74,8 +74,8 @@
 		
 		this.setCalloutActions = function (calloutActions) {
 			this.calloutActions = calloutActions;
-		};		
-		
+		};	
+				
 		// flow observer
 		this.doTransition = function (container, id, to, animation) {
 			if (this.shown) {
@@ -96,9 +96,11 @@
 		// TODO: move to phonegap layer
 		function doSync(method) {
 			var xhr = new XMLHttpRequest();
-			var url = 'gap?className=com.flow5.mapview&methodName=' + method;
-			xhr.open(method, url, false);
-			xhr.send();			
+			// NOTE: XHR requires a full resolvable URL. This one gets caught by the NSURLCache though.
+			var url = 'http://www.flow5.com/gap?className=com.flow5.mapview&methodName=' + method;
+			xhr.open('GET', url, false);
+			xhr.send(null);	
+			return JSON.parse(xhr.responseText).message;
 		}
 		
 		this.widgetWillBecomeActive = function () {
@@ -109,7 +111,11 @@
 		this.widgetDidBecomeInactive = function () {
 			this.shown = false;			
 			doSync('hideMap');			
-		};		
+		};	
+		
+		this.getMapCenter = function () {
+			return doSync('getMapCenter');
+		};
 	}	
 	
 	F5.WidgetPrototypes.MapView = new MapView();	
