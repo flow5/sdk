@@ -110,7 +110,7 @@
 
 - (void)create:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)mask {
     
-    NSString *callbackID = [arguments pop];
+    NSString *callbackID __attribute__((unused)) = [arguments pop];
     
     if (self.mapView) {
         NSLog(@"mapView already created. Was location.reload() called?");
@@ -149,8 +149,8 @@
 }
 
 - (void)setMaskRegion:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)mask {
-
-    NSString *callbackID = [arguments pop];
+    
+    NSString *callbackID __attribute__((unused)) = [arguments pop];
     
     int top = [[mask valueForKey:@"top"] intValue];
     int left = [[mask valueForKey:@"left"] intValue];
@@ -159,14 +159,25 @@
     
     // TODO: get mask regions from js layer
     [self.mapView.maskRegions removeAllObjects];
-    [self.mapView.maskRegions addObject:[NSValue valueWithCGRect:CGRectMake(top, left, height, width)]];        
+    [self.mapView.maskRegions addObject:[NSValue valueWithCGRect:CGRectMake(left, top, width, height)]];        
 }
 
 - (void)clearMaskRegion:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)mask {    
     [self.mapView.maskRegions removeAllObjects];
 }
 
+- (PluginResult*)showMap:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
+    
+    if (self.mapView) {
+        self.mapView.hidden = NO;       
+        return [PluginResult resultWithStatus:PGCommandStatus_OK]; 
+    } else {
+        NSLog(@"Trying to use showMap without calling create first");        
+        return [PluginResult resultWithStatus:PGCommandStatus_INVALID_ACTION];   
+    }
+}
 
+/*
 - (void)showMap:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
 
     NSString *callbackID = [arguments pop];
@@ -180,10 +191,11 @@
         [self writeJavascript: [pluginResult toSuccessCallbackString:callbackID]];                
     }
 }
+*/
 
 - (void)hideMap:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
     
-    NSString *callbackID = [arguments pop];
+    NSString *callbackId = [arguments pop];
     
     if (self.mapView) {
         self.mapView.hidden = YES;       
@@ -191,7 +203,7 @@
         NSLog(@"Trying to use showMap without calling create first");
         
         PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_INVALID_ACTION];                
-        [self writeJavascript: [pluginResult toSuccessCallbackString:callbackID]];                
+        [self writeJavascript: [pluginResult toSuccessCallbackString:callbackId]];                
     }
 }
 

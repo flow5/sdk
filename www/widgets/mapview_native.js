@@ -36,44 +36,25 @@
 			
 			F5.Global.flowController.addFlowObserver(this);
 			
-			/*global google*/
-			
-			this.streetViewEl = document.createElement('div');
-			this.streetViewEl.style.width = '100%';
-			this.streetViewEl.style.height = '100%';
-			that.streetViewEl.style.visibility = 'hidden';
-			this.el.appendChild(this.streetViewEl);	
-			
-			// TODO: use template?
-			var closeButton = document.createElement('div');
-			closeButton.style.width = '10px';
-			closeButton.style.height = '10px';
-			closeButton.style.position = 'absolute';
-			closeButton.style.right = '6px';
-			closeButton.style.top = '6px';
-			closeButton.style['background-color'] = 'red';
-			closeButton.style.border = '1px solid black';
-			closeButton.style['z-index'] = 1000;
-			this.streetViewEl.appendChild(closeButton);
-
-			F5.addTapListener(closeButton, function () {
-				that.streetViewEl.style.visibility = 'hidden';
-				PhoneGap.exec(
-					function (result) { // success
-					console.log(result);
-				}, function (result) { // failure
-					console.log(result);
-				}, "com.flow5.mapview", "clearMaskRegion", []);									
-			});								
+			/*global google*/								
 						
 			PhoneGap.exec(
 				function (result) { // success
 				console.log(result);
 			}, function (result) { // failure
 				console.log(result);
-			}, "com.flow5.mapview", "create", [{top:10, left:10, width: 16, height: 16}]);	
+			}, "com.flow5.mapview", "create", []);	
 			
 			this.shown = true;						
+		};
+		
+		this.setMaskRegion = function (region) {
+			PhoneGap.exec(
+				function (result) { // success
+				console.log(result);
+			}, function (result) { // failure
+				console.log(result);
+			}, "com.flow5.mapview", "setMaskRegion", [region]);			
 		};
 		
 		this.release = function () {

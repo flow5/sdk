@@ -96,10 +96,9 @@
 	
 		this.doSelection = function (node, id) {
 			this.updateConfiguration(node.children[id]);						
+			configure.apply(this, [false]);
 			
-			var that = this;
 			return function (cb) {
-				configure.apply(that, [false]);
 				cb();
 			};			
 		};

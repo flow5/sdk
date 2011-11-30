@@ -29,6 +29,8 @@
 #import "PhoneGapViewController.h"
 #import "PGWhitelist.h"
 #import "InvokedUrlCommand.h"
+#import "PluginResult.h"
+#import "PGPlugin.h"
 
 #import <QuartzCore/QuartzCore.h>
 
@@ -51,7 +53,7 @@
         }        
         
         AppDelegate *appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];        
-        [appDelegate execute: [InvokedUrlCommand commandFromObject:parameters]];
+        [appDelegate executeSynchronous: [InvokedUrlCommand commandFromObject:parameters]];
         
         // TODO: generate the cached response
         // TODO: create a second layer that returns a value and writes back to Javascript in the async (normal) case
@@ -222,6 +224,30 @@
 - (BOOL) execute:(InvokedUrlCommand*)command
 {
 	return [ super execute:command];
+}
+
+- (PluginResult*) executeSynchronous:(InvokedUrlCommand*)command {
+    if (command.className == nil || command.methodName == nil) {
+        return NO;
+    }
+    
+    // Fetch an instance of this class
+    PGPlugin* obj = [self getCommandInstance:command.className];
+    
+    if (!([obj isKindOfClass:[PGPlugin class]])) { // still allow deprecated class, until 1.0 release
+        NSLog(@"ERROR: Plugin '%@' not found, or is not a PGPlugin. Check your plugin mapping in PhoneGap.plist.", command.className);
+        return [PluginResult resultWithStatus:PGCommandStatus_CLASS_NOT_FOUND_EXCEPTION];
+    } else {
+        // construct the fill method name to ammend the second argument.
+        NSString* fullMethodName = [[[NSString alloc] initWithFormat:@"%@:withDict:", command.methodName] autorelease];
+        if ([obj respondsToSelector:NSSelectorFromString(fullMethodName)]) {
+            return [obj performSelector:NSSelectorFromString(fullMethodName) withObject:command.arguments withObject:command.options];
+        } else {
+            // There's no method to call, so throw an error.
+            NSLog(@"ERROR: Method '%@' not defined in Plugin '%@'", fullMethodName, command.className);
+            return [PluginResult resultWithStatus:PGCommandStatus_INVALID_ACTION];
+        }
+    }        
 }
 
 - (void)dealloc

@@ -29,6 +29,8 @@
 #import <UIKit/UIKit.h>
 #import "PhoneGapDelegate.h"
 
+@class PluginResult;
+
 @interface AppDelegate : PhoneGapDelegate {
 
 	NSString* invokeString;
@@ -40,6 +42,8 @@
 // http://iphonedevelopertips.com/cocoa/launching-your-own-application-via-a-custom-url-scheme.html
 
 @property (copy)  NSString* invokeString;
+
+- (PluginResult*) executeSynchronous:(InvokedUrlCommand*)command;
 
 @end
 

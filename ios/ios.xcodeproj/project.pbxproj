@@ -44,7 +44,6 @@
 		BE8C5CB8147DBA2000C26A4D /* Debug.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8C5C9D147DBA2000C26A4D /* Debug.m */; };
 		BE8C5CB9147DBA2000C26A4D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = BE8C5C9E147DBA2000C26A4D /* InfoPlist.strings */; };
 		BE8C5CBA147DBA2000C26A4D /* Flow5.plist in Resources */ = {isa = PBXBuildFile; fileRef = BE8C5CA0147DBA2000C26A4D /* Flow5.plist */; };
-		BE8C5CBB147DBA2000C26A4D /* ios-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BE8C5CA1147DBA2000C26A4D /* ios-Info.plist */; };
 		BE8C5CBC147DBA2000C26A4D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8C5CA3147DBA2000C26A4D /* main.m */; };
 		BE8C5CBD147DBA2000C26A4D /* PhoneGap.plist in Resources */ = {isa = PBXBuildFile; fileRef = BE8C5CA4147DBA2000C26A4D /* PhoneGap.plist */; };
 		BE8C5CBE147DBA2000C26A4D /* F5MapView.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8C5CA7147DBA2000C26A4D /* F5MapView.m */; };
@@ -361,7 +360,6 @@
 				BE29F638146869BF009B0CB6 /* Flow5 Setup */,
 				BE29F5DA14686984009B0CB6 /* Sources */,
 				BE29F5DB14686984009B0CB6 /* Frameworks */,
-				BE29F5DC14686984009B0CB6 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -405,7 +403,6 @@
 			files = (
 				BE8C5CB9147DBA2000C26A4D /* InfoPlist.strings in Resources */,
 				BE8C5CBA147DBA2000C26A4D /* Flow5.plist in Resources */,
-				BE8C5CBB147DBA2000C26A4D /* ios-Info.plist in Resources */,
 				BE8C5CBD147DBA2000C26A4D /* PhoneGap.plist in Resources */,
 				BE8C5CC0147DBA2000C26A4D /* Capture.bundle in Resources */,
 				BE8C5CC1147DBA2000C26A4D /* Localizable.strings in Resources */,
@@ -422,19 +419,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		BE29F5DC14686984009B0CB6 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/bash;
-			shellScript = "\n\t\t\t\t\t\t\t\tif [ ! -d \"$PROJECT_DIR/www\" ] ; then\n\t\t\t\t\t\t\t\t\tcp -R /Users/Shared/PhoneGap/Frameworks/PhoneGap.framework/www \"$PROJECT_DIR\"\n\t\t\t\t\t\t\t\tfi\n\t\t\t\t\t\t\t\t# detect www folder reference in project, if missing, print warning\n\t\t\t\t\t\t\t\tgrep \"{isa = PBXFileReference; lastKnownFileType = folder; path = www; sourceTree = \\\"<group>\\\"; };\" \"$PROJECT_DIR/$PROJECT_NAME.xcodeproj/project.pbxproj\"\n\t\t\t\t\t\t\t\trc=$? \n\t\t\t\t\t\t\t\tif [ $rc != 0 ] ; then\n\t\t\t\t\t\t\t\techo -e \"warning: Missing - Add $PROJECT_DIR/www as a folder reference in your project. Just drag and drop the folder into your project, into the Project Navigator of Xcode 4. Make sure you select the second radio-button: 'Create folder references for any added folders' (which will create a blue folder)\" 1>&2\n\t\t\t\t\t\t\t\tfi\t\t\t\t\t\t\t";
-		};
 		BE29F638146869BF009B0CB6 /* Flow5 Setup */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -575,6 +559,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "flow5/ios-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = "";
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "flow5/ios-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
@@ -607,6 +592,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "flow5/ios-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = "";
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "flow5/ios-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;

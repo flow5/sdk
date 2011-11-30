@@ -41,7 +41,7 @@
 @property (nonatomic, retain) F5MKMapView* mapView;
 
 - (void)create:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void)showMap:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (PluginResult*)showMap:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void)hideMap:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
 - (void)setMaskRegion:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;

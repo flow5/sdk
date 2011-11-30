@@ -89,6 +89,10 @@
 			});			
 		};
 		
+		this.setMaskRegion = function (region) {
+			
+		};
+		
 		this.setCalloutActions = function (calloutActions) {
 			this.calloutActions = calloutActions;			
 		};		

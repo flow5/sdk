@@ -227,6 +227,17 @@
 		}
 	};
 	
+	F5.elementAbsolutePosition = function(el) {
+		var x = 0, y = 0;
+		while (el) {
+			x += el.offsetLeft;
+			y += el.offsetTop;
+
+			el = el.offsetParent;			
+		}
+		return {x: x, y: y};
+	};
+	
 	F5.hasClass = function (el, className) {
 		F5.assert(!className.match(' '), 'className should not have a space: ' + className);
 				
@@ -313,19 +324,5 @@ function pointInElement(el, point) {
 	return point.x >= pos.x && point.x < pos.x + el.offsetWidth &&
 			point.y >= pos.y && point.y < pos.y + el.offsetHeight;
 }
-
-function elementAbsolutePosition(el) {
-	var x = 0;
-	var y = 0;
-	while (el) {
-		x += el.offsetLeft;
-		y += el.offsetTop;
-
-		el = el.offsetParent;			
-	}
-	return {x: x, y: y};
-}
-
-
 
 */

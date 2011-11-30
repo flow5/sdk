@@ -70,7 +70,7 @@
 -(void)queue_configure:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)configuration {
     NSLog(@"F5NavigationBar.configure");
     
-    NSString *callbackID = [arguments pop];
+    NSString *callbackId = [arguments pop];
     BOOL animated = [[arguments pop] boolValue];
     
     if (self.navigationBar) {          
@@ -107,12 +107,12 @@
         }
                         
         PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];        
-        [self writeJavascript: [pluginResult toSuccessCallbackString:callbackID]];        
+        [self writeJavascript: [pluginResult toSuccessCallbackString:callbackId]];        
     } else {
         NSLog(@"Trying to use configure NavigationBar without calling create first");
         
         PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_INVALID_ACTION];        
-        [self writeJavascript: [pluginResult toSuccessCallbackString:callbackID]];        
+        [self writeJavascript: [pluginResult toSuccessCallbackString:callbackId]];        
     }  
 
 }
