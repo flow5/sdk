@@ -35,8 +35,15 @@
 @synthesize navigationBar;
 @synthesize itemCache;
 
+- (void)rightButton:(id)target {
+    PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsString:@"right"];  
+    [pluginResult setKeepCallbackAsBool:YES];
+    [self writeJavascript: [pluginResult toSuccessCallbackString:self.callbackID]];          
+}
 
--(BOOL)navigationBar:(UINavigationBar *)navigationBar shouldPopItem:(UINavigationItem *)item {
+
+
+- (BOOL)navigationBar:(UINavigationBar *)navigationBar shouldPopItem:(UINavigationItem *)item {
     PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsString:@"left"];  
     [pluginResult setKeepCallbackAsBool:YES];
     [self writeJavascript: [pluginResult toSuccessCallbackString:self.callbackID]];      
@@ -97,6 +104,13 @@
                 items = [NSArray arrayWithObjects:backItem, currentItem, nil];            
             } else {
                 items = [NSArray arrayWithObject:currentItem];
+            }
+            
+            NSDictionary *right = [configuration valueForKey:@"right"];
+            if (right) {                        
+                UIBarButtonItem *rightButton = [[[UIBarButtonItem alloc] initWithTitle:[right valueForKey:@"label"] 
+                                                    style:UIBarButtonItemStylePlain target:self action:@selector(rightButton:)] autorelease];   
+                currentItem.rightBarButtonItem = rightButton;
             }
             
             [items retain];

@@ -69,6 +69,11 @@
 					gapConfig.left.id = configuration.left.node.transitions[configuration.left.transition].to.path;
 				}
 			}
+			if (configuration.right) {
+				gapConfig.right = {
+					label: configuration.right.label,
+				};
+			}
 		
 			console.log(gapConfig);
 								
