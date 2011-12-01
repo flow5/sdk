@@ -47,6 +47,8 @@
 
 - (void)create:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
+- (void)animateToRegion:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+
 - (void)setMaskRegion:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void)clearMaskRegion:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 

@@ -35,17 +35,23 @@
 		this.construct = function () {			
 			var currentLocation = F5.locationService.getCurrentLocation();
 			var options = {
-				zoom: 8,
+				zoom: 13,
 				center: new google.maps.LatLng(currentLocation.lat, currentLocation.lng),
 				mapTypeId: google.maps.MapTypeId.ROADMAP,
 				streetViewControl: false,
 				mapTypeControl: false
 			};
-			this.map = new google.maps.Map(this.el, options);										
+			this.map = new google.maps.Map(this.el, options);		
+			this.markers = [];								
 		};		
 		
 		this.dropPins = function (pins) {
 			var that = this;
+			
+			this.markers.forEach(function (marker) {
+				marker.setMap(null);
+			});
+			
 			pins.forEach(function (pin) {
 				var position = new google.maps.LatLng(pin.lat, pin.lng);
 				var marker = new google.maps.Marker({
@@ -55,35 +61,34 @@
 								      animation: google.maps.Animation.DROP
 								    });	
 								
-				// TODO: use a template
-				var content = document.createElement('div');
-				content.className = 'map-callout';
-
-				var name = document.createElement('div');
-				name.innerText = pin.name;
-				content.appendChild(name);
-				
-				var streetView = document.createElement('div');
-				streetView.innerText = 'Street View';
-				content.appendChild(streetView);
-
-				F5.addTapListener(name, function () {
-					that.calloutActions['detailView'](pin.index);
-				});						
-
-				F5.addTapListener(streetView, function () {
-					that.calloutActions['streetView'](pin.index);
-				});						
-
-				var infowindow = new google.maps.InfoWindow({
-					content: content
-				});						
-
-				google.maps.event.addListener(infowindow, 'click', function() {
-
-				});						
+				that.markers.push(marker);													
 
 				google.maps.event.addListener(marker, 'click', function() {
+					
+					// TODO: use a template
+					var content = document.createElement('div');
+					content.className = 'map-callout';
+
+					var name = document.createElement('div');
+					name.innerText = pin.name;
+					content.appendChild(name);
+
+					var streetView = document.createElement('div');
+					streetView.innerText = 'Street View';
+					content.appendChild(streetView);
+
+					F5.addTapListener(name, function () {
+						that.calloutActions['detailView'](pin.index);
+					});						
+
+					F5.addTapListener(streetView, function () {
+						that.calloutActions['streetView'](pin.index);
+					});						
+
+					var infowindow = new google.maps.InfoWindow({
+						content: content
+					});
+										
 					infowindow.open(that.map, marker);
 				});												
 			});			
@@ -91,6 +96,21 @@
 		
 		this.setMaskRegion = function (region) {
 			
+		};
+				
+		this.getMapCenter = function () {
+			var center = this.map.getCenter();
+			return {lat: center.lat(), lng: center.lng()};
+		};
+		
+		this.getMapBounds = function () {
+			var bounds = this.map.getBounds();
+			return {sw: {lat: bounds.getSouthWest().lat(), lng: bounds.getSouthWest().lng()}, 
+					ne: {lat: bounds.getNorthEast().lat(), lng: bounds.getNorthEast().lng()}};
+		};
+		
+		this.animateToRegion = function (cb) {
+			cb();
 		};
 		
 		this.setCalloutActions = function (calloutActions) {

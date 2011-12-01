@@ -36,14 +36,14 @@
 			
 			F5.Global.flowController.addFlowObserver(this);
 			
-			/*global google*/								
-						
+			/*global google*/	
+			
 			PhoneGap.exec(
 				function (result) { // success
 				console.log(result);
 			}, function (result) { // failure
 				console.log(result);
-			}, "com.flow5.mapview", "create", []);	
+			}, "com.flow5.mapview", "create", []);							
 			
 			this.shown = true;						
 		};
@@ -112,9 +112,24 @@
 			this.shown = false;			
 			doSync('hideMap');			
 		};	
-		
+				
 		this.getMapCenter = function () {
 			return doSync('getMapCenter');
+		};
+
+		this.getMapBounds = function () {
+			return doSync('getMapBounds');
+		};
+		
+		this.animateToRegion = function (cb) {
+			PhoneGap.exec(
+				function (result) { // success
+				console.log(result);
+				cb();
+			}, function (result) { // failure
+				console.log(result);
+				cb();
+			}, "com.flow5.mapview", "animateToRegion", [F5.locationService.getCurrentLocation()]);										
 		};
 	}	
 	

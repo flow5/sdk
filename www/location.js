@@ -54,6 +54,7 @@
 		   
 			this.watchId = navigator.geolocation.watchPosition(
 				function (position) {
+					console.log(position.coords);
 					currentLocation = {lat: position.coords.latitude, lng: position.coords.longitude};
 				},
 				function (error) {

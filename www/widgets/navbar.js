@@ -59,7 +59,7 @@ F5.WidgetPrototypes.NavBarBase = {
 			configuration.left.action = function () {
 				var transition = that.configuration.left.transition;
 				var node = that.configuration.left.node;
-				F5.Global.flowController.doTransition(node, transition, {});				
+				F5.Global.flowController.doTransition(node, transition, node.data);				
 			};
 		}
 		
@@ -67,7 +67,7 @@ F5.WidgetPrototypes.NavBarBase = {
 			configuration.right.action = function () {
 				var transition = that.configuration.right.transition;
 				var node = that.configuration.right.node;
-				F5.Global.flowController.doTransition(node, transition, {});				
+				F5.Global.flowController.doTransition(node, transition, node.data);				
 			};			
 		}
 		

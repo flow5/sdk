@@ -108,7 +108,7 @@
 @synthesize mapView;
 @synthesize callbackID;
 
-- (void)create:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)mask {
+- (void)create:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
     
     NSString *callbackID __attribute__((unused)) = [arguments pop];
     
@@ -125,8 +125,8 @@
         mapView.userInteractionEnabled = YES;
         mapView.showsUserLocation = YES;
         mapView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        mapView.hidden = YES;                   
-
+        mapView.hidden = YES;         
+        
         AppDelegate *appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];                
         UIView *mainView = [appDelegate.viewController view];
         
@@ -136,15 +136,7 @@
         // TODO: get bounds from js layer
         // 20 + 44 + 48
         CGRect mapBounds = CGRectMake(0, 44, 320, 368);
-        [self.mapView setFrame:mapBounds];
-        
-        int top = [[mask valueForKey:@"top"] intValue];
-        int left = [[mask valueForKey:@"left"] intValue];
-        int height = [[mask valueForKey:@"height"] intValue];
-        int width = [[mask valueForKey:@"width"] intValue];
-        
-        // TODO: get mask regions from js layer
-        [self.mapView.maskRegions addObject:[NSValue valueWithCGRect:CGRectMake(top, left, height, width)]];                
+        [self.mapView setFrame:mapBounds];        
     }
 }
 
@@ -188,17 +180,51 @@
     }
 }
 
+- (void)animateToRegion:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)location {
+    
+    NSString *callbackId = [arguments pop];
+    
+    CLLocationCoordinate2D coordinate = {[[location valueForKey:@"lat"] floatValue], [[location valueForKey:@"lng"] floatValue]};
+    
+    [self.mapView setRegion:MKCoordinateRegionMakeWithDistance(coordinate, 3000, 3000) animated:YES];  
+    
+    PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];    
+    [self writeJavascript: [pluginResult toSuccessCallbackString:callbackId]];            
+}
+
 - (PluginResult*)getMapCenter:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
     if (self.mapView) {
         CLLocationCoordinate2D center = self.mapView.centerCoordinate;
-                
-//        NSString *response = [NSString stringWithFormat:@"{lat:%@, lng:%@}", 
-  //                            self.mapView.centerCoordinate.latitude, self.mapView.centerCoordinate.longitude];
-        
+                        
         NSDictionary *latLng = [NSDictionary dictionaryWithObjectsAndKeys:
                                     [NSNumber numberWithFloat:center.latitude], @"lat", 
                                     [NSNumber numberWithFloat:center.longitude], @"lng", nil];
         return [PluginResult resultWithStatus:PGCommandStatus_OK messageAsDictionary:latLng];                
+    } else {
+        NSLog(@"Trying to use showMap without calling create first");        
+        return [PluginResult resultWithStatus:PGCommandStatus_INVALID_ACTION];                
+    }    
+}
+
+- (PluginResult*)getMapBounds:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
+    if (self.mapView) {
+        MKMapRect rect = self.mapView.visibleMapRect;
+        MKMapPoint neMapPoint = MKMapPointMake(rect.origin.x + rect.size.width, rect.origin.y);
+        MKMapPoint swMapPoint = MKMapPointMake(rect.origin.x, rect.origin.y + rect.size.height);
+        CLLocationCoordinate2D neCoord = MKCoordinateForMapPoint(neMapPoint);
+        CLLocationCoordinate2D swCoord = MKCoordinateForMapPoint(swMapPoint);
+        
+        NSDictionary *ne = [NSDictionary dictionaryWithObjectsAndKeys:
+                                 [NSNumber numberWithFloat:neCoord.latitude], @"lat", 
+                            [NSNumber numberWithFloat:neCoord.longitude], @"lng", nil];
+
+        NSDictionary *sw = [NSDictionary dictionaryWithObjectsAndKeys:
+                            [NSNumber numberWithFloat:swCoord.latitude], @"lat", 
+                            [NSNumber numberWithFloat:swCoord.longitude], @"lng", nil];
+
+        
+        NSDictionary *bounds = [NSDictionary dictionaryWithObjectsAndKeys:ne, @"ne", sw, @"sw", nil];
+        return [PluginResult resultWithStatus:PGCommandStatus_OK messageAsDictionary:bounds];                
     } else {
         NSLog(@"Trying to use showMap without calling create first");        
         return [PluginResult resultWithStatus:PGCommandStatus_INVALID_ACTION];                
