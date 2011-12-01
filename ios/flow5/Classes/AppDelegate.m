@@ -39,12 +39,13 @@
 @interface MyURLCache : NSURLCache
 @end
 
+// TODO: switch to URLencoded JSON
 @implementation MyURLCache
 - (NSCachedURLResponse *)cachedResponseForRequest:(NSURLRequest *)request {
     
     NSURL *url = [request URL];
     if ([[url lastPathComponent] isEqualToString:@"gap"]) {
-        NSLog(@"%@", request);
+//        NSLog(@"%@", request);
 
         NSArray *components = [[url query] componentsSeparatedByString:@"&"];
         NSMutableDictionary *parameters = [[NSMutableDictionary alloc] init];
@@ -53,7 +54,9 @@
         }        
         
         AppDelegate *appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];  
+        
         NSString *jsonResult = [[appDelegate executeSynchronous: [InvokedUrlCommand commandFromObject:parameters]] toJSONString];
+        
         NSData *data = [jsonResult dataUsingEncoding:NSUTF8StringEncoding];
         
         NSURLResponse *response = [[[NSURLResponse alloc] initWithURL:[request URL] MIMEType:@"application/json" 
