@@ -56,7 +56,17 @@
 				postprocess: function (response) {
 					return response.response.venue;
 				}				
-			}					
+			},
+			categories: {
+				protocol: 'https',
+				method: 'GET',
+				baseUrl: 'api.foursquare.com/v2/venues/categories',
+				parameterSchema: {},
+				responseSchema: {},	
+				postprocess: function (response) {
+					return response.response.categories;
+				}								
+			}				
 		}
 	};		
 	
