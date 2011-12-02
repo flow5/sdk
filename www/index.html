@@ -13,7 +13,7 @@ body {
 	background-color: #666
 }
 
-.panel {
+#panel {
 	display: -webkit-box;
 	position: relative;
 	border-radius:50px;
@@ -25,11 +25,7 @@ body {
 	height: 280px;
 }
 
-.gradient {
-	background-image: -webkit-linear-gradient(90deg, #555 0%, #FFF 50%, #555 100%);
-}
-
-.text {
+#text {
 	-webkit-background-clip: text;
 	font-family: 'Geo', sans-serif;
 	color: transparent;
@@ -38,7 +34,7 @@ body {
 	-webkit-text-stroke: .5px black;
 }
 
-.badge {
+#badge {
 	height: 256px;
 	width:256px;
 	-webkit-mask-repeat: no-repeat;	
@@ -47,14 +43,25 @@ body {
 	-webkit-mask-image: url('http://www.w3.org/html/logo/downloads/HTML5_1Color_Black.png');
 }
 
+#badge:before {
+	content: url('http://www.w3.org/html/logo/downloads/HTML5_1Color_Black.png');
+	width:0;
+	height:0;
+	visibility:hidden;
+}
+
+.gradient {
+	background-image: -webkit-linear-gradient(90deg, #555 0%, #FFF 50%, #555 100%);
+}
+
 </style>
 </head>
 
 <body>
 	
-<div class='panel'>
-	<div class='text gradient'>FLOW</div>
-	<div class='badge gradient'></div>
+<div id='panel'>
+	<div id='text' class='gradient'>FLOW</div>
+	<div id='badge' class='gradient'></div>
 </div>
 	
 </body>
