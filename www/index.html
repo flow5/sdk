@@ -6,21 +6,65 @@ body {
 	display: -webkit-box;
 	-webkit-box-pack: center;
 	-webkit-box-align: center;
-	background-color: #FAFAFA
+	background-color: #AAAAAA
 }
 
 .panel {
-	border-radius:5px;
-	padding:38px 34px 34px 38px;
-	-webkit-box-shadow: 0 0 10px 5px #888;
-	background-color: white;
+	display: -webkit-box;
+	position: relative;
+	border-radius:10px;
+	-webkit-box-shadow: 0 0 20px 0px #000;
+	background-color: #DDDDDD;
+	padding: 16px;
+}
+
+.gradient {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	-webkit-background-clip: text;
+	background-image: -webkit-linear-gradient(90deg, #666666 0%, #FFFFFF 100%);
+}
+
+.text {
+	font-family: Consolas;
+	font-size: 256px;
+	color: transparent;
+}
+
+.shadow .text {
+	text-shadow: 0px 0px 20px #000;
+}
+
+.gradient .text {
+	-webkit-text-stroke: .5px black;
+}
+
+.flow {
+	position: relative;
+	height: 256px;
+}
+
+.badge {
+	height: 256px;
+	margin-left: 16px;
 }
 
 </style>
 
 <body>
 	
-<div class='panel'><img src='flow5.png'/></div>
+<div class='panel'>
+	<div class='flow'>
+		<div class='shadow'>
+			<div class='text'>Flow</div>
+		</div>
+		<div class='gradient'>
+			<div class='text'>Flow</div>
+		</div>
+	</div>
+	<img class='badge' src='http://www.w3.org/html/logo/downloads/HTML5_Badge_512.png'/>
+</div>
 	
 </body>
 
