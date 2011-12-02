@@ -1,69 +1,57 @@
 <html>
 
+<head>
+	
+<link href='http://fonts.googleapis.com/css?family=Geo' rel='stylesheet' type='text/css'>
+
 <style>
 
 body {
 	display: -webkit-box;
 	-webkit-box-pack: center;
 	-webkit-box-align: center;
-	background-color: #AAAAAA
+	background-color: #666
 }
 
 .panel {
 	display: -webkit-box;
 	position: relative;
-	border-radius:10px;
+	border-radius:50px;
 	-webkit-box-shadow: 0 0 20px 0px #000;
-	background-color: #DDDDDD;
-	padding: 16px;
+	background-image: -webkit-linear-gradient(90deg, #FFF 0%, #000 50%, #FFF 100%);
+	padding: 12px;
 }
 
 .gradient {
-	position: absolute;
-	top: 0px;
-	left: 0px;
-	-webkit-background-clip: text;
-	background-image: -webkit-linear-gradient(90deg, #666666 0%, #FFFFFF 100%);
+	background-image: -webkit-linear-gradient(90deg, #555 0%, #FFF 50%, #555 100%);
 }
 
 .text {
-	font-family: Consolas;
-	font-size: 256px;
+	-webkit-background-clip: text;
+	font-family: 'Geo', sans-serif;
 	color: transparent;
-}
-
-.shadow .text {
-	text-shadow: 0px 0px 20px #000;
-}
-
-.gradient .text {
-	-webkit-text-stroke: .5px black;
-}
-
-.flow {
-	position: relative;
+	font-size: 256px;
 	height: 256px;
+	-webkit-text-stroke: .5px black;
 }
 
 .badge {
 	height: 256px;
-	margin-left: 16px;
+	width:256px;
+	-webkit-mask-repeat: no-repeat;	
+	-webkit-mask-position: center -56px;
+	-webkit-mask-size: 326px auto;
+	-webkit-mask-image: url('http://www.w3.org/html/logo/downloads/HTML5_1Color_Black.png');
 }
 
 </style>
+</head>
 
 <body>
 	
 <div class='panel'>
-	<div class='flow'>
-		<div class='shadow'>
-			<div class='text'>Flow</div>
-		</div>
-		<div class='gradient'>
-			<div class='text'>Flow</div>
-		</div>
-	</div>
-	<img class='badge' src='http://www.w3.org/html/logo/downloads/HTML5_Badge_512.png'/>
+	<div class='text gradient'>FLOW</div>
+	<div class='badge gradient'></div>
 </div>
 	
 </body>
