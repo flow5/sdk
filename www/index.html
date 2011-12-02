@@ -10,15 +10,15 @@ body {
 	display: -webkit-box;
 	-webkit-box-pack: center;
 	-webkit-box-align: center;
-	background-color: #666
+	background-color: #444
 }
 
 #panel {
 	display: -webkit-box;
 	position: relative;
-	border-radius:50px;
-	-webkit-box-shadow: 0 0 20px 0px #000;
-	background-image: -webkit-linear-gradient(90deg, #FFF 0%, #000 50%, #FFF 100%);
+	border-radius:10px;
+	-webkit-box-shadow: 0 0 50px 0px #000;
+	background-image: -webkit-linear-gradient(90deg, #AAA 0%, #444 50%, #AAA 100%);
 	-webkit-box-sizing: border-box;
 	padding: 12px;
 	width: 820px;
@@ -36,22 +36,15 @@ body {
 
 #badge {
 	height: 256px;
-	width:256px;
+	width: 256px;
 	-webkit-mask-repeat: no-repeat;	
 	-webkit-mask-position: center -56px;
 	-webkit-mask-size: 326px 326px;
 	-webkit-mask-image: url('http://www.w3.org/html/logo/downloads/HTML5_1Color_Black.png');
 }
 
-#badge:before {
-	content: url('http://www.w3.org/html/logo/downloads/HTML5_1Color_Black.png');
-	width:0;
-	height:0;
-	visibility:hidden;
-}
-
 .gradient {
-	background-image: -webkit-linear-gradient(90deg, #555 0%, #FFF 50%, #555 100%);
+	background-image: -webkit-linear-gradient(90deg, #000 0%, #FFF 50%, #000 100%);
 }
 
 </style>
