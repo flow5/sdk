@@ -286,8 +286,9 @@
                 
 		[self.mapView addAnnotation:annotation];
     }      
-    
-    [self.mapView zoomToFitMapAnnotations];
+  
+    // not required if map bounds are used to do search
+//    [self.mapView zoomToFitMapAnnotations];
 }
 
 - (void)mapView:(MKMapView *)mapView annotationView:(MKAnnotationView *)view calloutAccessoryControlTapped:(UIControl *)control {

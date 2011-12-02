@@ -46,15 +46,9 @@
 
 		F5.UI.attachTracker(svgframeEl);
 
-		function setStyles(el, styles) {
-			F5.forEach(styles, function (id, value) {
-				el.style[id] = value;
-			});
-		}		
-
 		var sequenceNumber = 0;
 		function observer() {	
-			setStyles(backbuttonEl, {
+			F5.setStyles(backbuttonEl, {
 				'background-color': F5.Global.flowController.hasBack() ? 'lightblue' : 'grey',
 				'border': '2px solid ' + (F5.Global.flowController.hasBack() ? 'white' : 'black'),
 			});				
@@ -157,7 +151,7 @@
 					console.log('Exception: ' + e.message);
 				}	
 			}
-			setStyles(jsonbuttonEl, {
+			F5.setStyles(jsonbuttonEl, {
 				'background-color': jsonDiv ? 'lightblue' : 'grey',
 				'border': '2px solid ' + (jsonDiv ? 'white' : 'black')								
 			});							
@@ -171,7 +165,7 @@
 			} else {
 				F5.addClass(appframeEl, 'frames');
 			}
-			setStyles(framesbuttonEl, {
+			F5.setStyles(framesbuttonEl, {
 				'background-color': selected ? 'lightblue' : 'grey',
 				'border': '2px solid ' + (selected ? 'white' : 'black')								
 			});										
@@ -190,7 +184,7 @@
 		}
 		function updateViewerButton() {
 			var showViewer  = JSON.parse(localStorage.showViewer);
-			setStyles(viewerbuttonEl, {
+			F5.setStyles(viewerbuttonEl, {
 				'background-color': showViewer ? 'lightblue' : 'grey',
 				'border': '2px solid ' + (showViewer ? 'white' : 'black')								
 			});																

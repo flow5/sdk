@@ -28,37 +28,32 @@
 
 (function () {
 	
-	var service;	
-			
 	function StreetView() {
 		
-		this.construct = function () {
-			if (!service) {
-				service = new google.maps.StreetViewService();					
-			}
-			this.streetView = new google.maps.StreetViewPanorama(this.el, {
-				enableCloseButton: true
-			});							
+		this.construct = function (data) {
+			this.streetView = new google.maps.StreetViewPanorama(this.el, {pano:data.pano});
+			
+			this.closeButton = document.createElement('div');	
+			this.closeButton.className = 'f5closebutton';
+			this.closeButton.setAttribute('f5_id', 'closeButton');
+			this.closeButton.setAttribute('f5_widget', 'ImageButton');
+			F5.UI.attachWidget(this.closeButton, data);
+			F5.setStyles(this.closeButton, {
+				position: 'absolute',
+				top: '3px',
+				right: '3px',
+			});			
+			this.el.appendChild(this.closeButton);															
 		};	
 		
 		this.setCloseAction = function (action) {
-			google.maps.event.addListener(this.streetView, 'closeclick', function() {
+			F5.addTouchStartListener(this.closeButton, function() {
 				action();
 			});						
 		};
 		
-		this.setLocation = function (location) {
-			var that = this;
-			var position = new google.maps.LatLng(location.lat, location.lng);
-			service.getPanoramaByLocation(position, 200, function(data, status) {
-				if (status === 'OK') {
-					that.streetView.setPano(data.location.pano);		
-					console.log(data);			
-				} else {
-					console.log('no street view for this location');
-				}
-				google.maps.event.trigger(that.streetView, 'resize');
-			});
+		this.widgetWillBecomeActive = function () {
+			google.maps.event.trigger(this.streetView, 'resize');
 		};
 	}
 	

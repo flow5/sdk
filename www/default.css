@@ -262,6 +262,23 @@ body.mobile {
 	width: 100%;
 }
 
+.f5closebutton {
+	height: 15px;
+	width: 15px;
+	background-color: darkgrey;
+	z-index: 1000;
+}
+
+.f5closebutton img {
+	height: 15px;
+	width: 15px;	
+}
+
+.standardbutton img {
+	height: 30px;
+}
+
+
 .tab .f5mask, .tab .f5mask-shadow {
 	position: absolute;
 	-webkit-mask-origin: border-box;

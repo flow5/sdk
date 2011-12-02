@@ -128,7 +128,7 @@
 						var img = document.createElement('img');
 						img.src = F5.sourceFromResourceUrl(value[which][position]);
 						// TODO: need to adjust based on pixel density						
-						img.style.height = '30px';
+//						img.style.height = '30px';
 						that[which].appendChild(img);
 						
 						if (position === 'middle') {
@@ -154,7 +154,7 @@
 					var img = document.createElement('img');
 					img.src = F5.sourceFromResourceUrl(value[which]);
 					// TODO: need to adjust based on pixel density											
-					img.style.height = '30px';
+//					img.style.height = '30px';
 					that[which].appendChild(img);
 				}
 				

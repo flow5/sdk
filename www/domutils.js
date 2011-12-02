@@ -314,6 +314,12 @@
 		// otherwise should get the dimensions from the url parameters		
 	};	
 	
+	F5.setStyles = function(el, styles) {
+		F5.forEach(styles, function (id, value) {
+			el.style[id] = value;
+		});
+	};		
+		
 }());
 
 
