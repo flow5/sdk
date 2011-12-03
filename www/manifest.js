@@ -42,11 +42,15 @@ exports.scripts = [
 	'widgets/button.js',
 	'widgets/tabset.js',
 	'widgets/navbar.js',
-	'widgets/streetview.js'
+	'widgets/streetview.js',
+	'widgets/distance.js'
 ];
 
 exports.elements = [
+	'core.css',
 	'default.css',
+	// TODO: create debug elements section
+	'debug.css'
 ];
 
 exports.webScripts = [

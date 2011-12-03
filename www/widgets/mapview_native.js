@@ -51,6 +51,8 @@
 		this.setMaskRegion = function (region) {
 			PhoneGap.exec(
 				function (result) { // success
+					console.log('setMaskRegion');
+					
 				console.log(result);
 			}, function (result) { // failure
 				console.log(result);
@@ -65,6 +67,8 @@
 			var that = this;
 			PhoneGap.exec(
 				function (result) { // success
+					console.log('dropPins');
+					
 					that.calloutActions[result.button](result.index);
 				console.log(result);
 			}, function (result) { // failure
@@ -82,6 +86,8 @@
 				// queue the transition. will be processed before js level transitions are executed
 				PhoneGap.exec(
 					function (result) { // success
+						console.log('queue_');
+						
 					console.log(result);
 				}, function (result) { // failure
 					console.log(result);
@@ -100,7 +106,16 @@
 			var url = 'http://www.flow5.com/gap?className=com.flow5.mapview&methodName=' + method;
 			xhr.open('GET', url, false);
 			xhr.send(null);	
-			return JSON.parse(xhr.responseText).message;
+			console.log('doSync: ' + method);
+			
+			var result;
+			try {
+				result = JSON.parse(xhr.responseText).message;
+			} catch (e) {
+				console.log('exception parsing: ' + JSON.stringify(xhr) + ' url: ' + url);
+			}
+			
+			return result;
 		}
 		
 		this.widgetWillBecomeActive = function () {
@@ -124,6 +139,7 @@
 		this.animateToRegion = function (cb) {
 			PhoneGap.exec(
 				function (result) { // success
+					console.log('animateToRegion');
 				console.log(result);
 				cb();
 			}, function (result) { // failure

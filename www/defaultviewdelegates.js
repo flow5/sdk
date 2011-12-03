@@ -67,7 +67,7 @@
 			
 			if (node.transitions) {
 				var transitionsEl = document.createElement('div');
-				F5.addClass(transitionsEl, 'transitions');
+				F5.addClass(transitionsEl, 'f5transitions');
 				el.insertBefore(transitionsEl, el.firstChild);
 
 				F5.forEach(node.transitions, function (id, transition) {
@@ -86,7 +86,7 @@
 			
 			var div = document.createElement('div');
 			div.innerHTML = node.id;
-			F5.addClass(div, 'nodelabel');
+			F5.addClass(div, 'f5nodelabel');
 			el.insertBefore(div, el.firstChild);				
 		};
 	}
@@ -107,7 +107,7 @@
 			el.widget.select(node.selection.id);
 			
 			var div = document.createElement('div');
-			F5.addClass(div, 'nodelabel');
+			F5.addClass(div, 'f5nodelabel');
 			div.innerHTML = node.id;
 			el.insertBefore(div, el.firstChild);				
 		};
@@ -120,7 +120,7 @@
 	function SetViewDelegate() {
 		this.initialize = function (el, node) {
 			var div = document.createElement('div');
-			F5.addClass(div, 'nodelabel');
+			F5.addClass(div, 'f5nodelabel');
 			div.innerHTML = node.id;
 			el.insertBefore(div, el.firstChild);				
 		};

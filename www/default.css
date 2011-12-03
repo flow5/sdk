@@ -25,184 +25,13 @@
 
 ***********************************************************************************************************************/
 
-/* core styles. these are probably needed in every application */
+/* default.css contains styles that are required for the f5 widget set but may be overridden by the application */
 
-body {
-	margin: 0px;
-	background-color: darkslategray;
-	display: -webkit-box;	
-}
+/***************************************/
+/*              Nav Bar                */
+/***************************************/
 
-body.mobile {
-	background-color: transparent;
-}
-
-#screen {
-	margin-left:30px;
-	margin-right:30px;
-	overflow: hidden;
-	position: relative;
-	zoom: 2;
-	width:320px;
-	height:460px;
-}
-
-#appframe {
-	display: -webkit-box;
-	-webkit-box-align: center;
-	-webkit-box-pack: center;
-	position: relative;
-}
-
-#appframe {
-	/* for browser dev. keeps images from getting drag events and screwing up swipes */
-	-webkit-user-drag: none;
-
-	/* prevent text selection */
-	-webkit-user-select:none;
-}
-
-
-.mobile #screen {
-	zoom: 1;
-	margin-left:0px;
-	margin-right:0px;
-}
-
-.splash {
-	position: absolute;
-	top: -20px;
-	width: 320px;
-	height: 480px;
-}
-
-.container {
-	display: -webkit-box;
-	-webkit-box-flex: 1;
-	width: 100%;
-	height: 100%;
-	position: relative;
-}
-
-.flow, .switcher, .set {
-	display: -webkit-box;
-	position: absolute;
-	top: 0px;
-	left: 0px;
-	width: 100%;
-	height: 100%;
-	overflow: hidden;
-	-webkit-box-sizing: border-box;	
-	-webkit-box-orient: vertical;
-	-webkit-box-pack: center;
-	-webkit-box-align: center;		
-//	background-color: white;		
-}
-
-.subflow {
-	position: absolute;
-	z-index: 1;
-	opacity: 0;
-	pointer-events: none;
-	-webkit-box-sizing: border-box;		
-}
-
-.frames .flow, .frames .switcher, .frames .set {
-	padding: 4px;
-	border: 1px solid grey;
-}
-
-.frames .nodelabel {
-	font-size:8px;
-	opacity: .5;
-	display: block;
-}
-
-.frames .flow {
-	padding: 4px;
-}
-
-.nodelabel {
-	display: none;
-}		
-
-
-.subflow {
-	display: -webkit-box;
-	-webkit-box-pack: center;
-	-webkit-box-align: center;
-	top: 25%;
-	left: 25%;
-	width: 50%;
-	height: 50%;
-	-webkit-transition: opacity .5s;
-	background-color: grey;
-	-webkit-box-orient: vertical;
-	padding:10px;
-}
-
-.choices, .transitions, .subflows {
-	border: 1px solid black;
-	width: 75%;
-	-webkit-box-align: center;
-	margin-top: 10px;
-	margin-bottom: 10px;
-}
-
-.do-choice, .do-transition, .do-subflow {
-	border-bottom: 1px solid black;	
-	padding:4px;
-	width: 100%;
-	-webkit-box-sizing: border-box;
-}
-
-.do-choice:last-child, .do-transition:last-child, .do-subflow:last-child  {
-	border-bottom: none;
-}
-
-.transitions {
-	background-color: lightgrey;
-}
-
-.do-subflow {
-	background-color: darkslategrey;
-}
-
-.tabset {
-	height: 48px;
-	width: 100%;
-	display: -webkit-box;
-	-webkit-box-sizing: border-box;
-}
-
-.tabset .f5button {
-	height: 48px;
-}
-
-.tabset .f5button-imagecontainer, .tabset .f5button-imagecontainer .up, .tabset .f5button-imagecontainer .down {
-	height: 100%;
-}
-
-.tab {
-	display: -webkit-box;
-	-webkit-box-flex: 1.0;
-	width: 100%;
-	-webkit-box-align: center;
-	-webkit-box-pack: center;
-	-webkit-box-sizing: border-box;
-	font-family: arial;
-	font-size: 10px;
-}
-
-.tab:last-child {
-	border-right: none;
-}
-
-.f5button.up .down, .f5button.down .up {
-	visibility: hidden;
-}
-
-.navbar {
+.f5navbar {
 	position: absolute;
 	top: 0px;
 	display: -webkit-box;
@@ -215,7 +44,7 @@ body.mobile {
 	-webkit-box-sizing: border-box;
 }
 
-.leftbutton, .rightbutton {
+.f5navbar .f5leftbutton, .f5navbar .f5rightbutton {
 	position: absolute;
 	top: 7px;
 	height: 30px;
@@ -231,19 +60,26 @@ body.mobile {
 	-webkit-box-sizing: border-box;
 }
 
-.leftbutton {
+.f5navbar .f5leftbutton {
 	left: 3px;
 }
 
-.rightbutton {
+.f5navbar .f5rightbutton {
 	right: 3px;
 }
 
-.title {
+.f5navbar .f5title {
 	font-size: 16px;
 	padding:2px;
 }
 
+/***************************************/
+/*              Buttons                */
+/***************************************/
+
+.f5button.up .down, .f5button.down .up {
+	visibility: hidden;
+}
 
 .f5button {
 	position: relative;
@@ -262,6 +98,69 @@ body.mobile {
 	width: 100%;
 }
 
+.f5button-label {
+	white-space: nowrap;
+	position: relative;
+	color: white;
+	padding:5px;
+}
+
+.f5button-imagecontainer {
+	width:100%;
+}
+
+.standardbutton img {
+	height: 30px;
+}
+
+
+/***************************************/
+/*              Tab Set                */
+/***************************************/
+
+.tabset {
+	width: 100%;
+	display: -webkit-box;	
+}
+
+.tab {
+	display: -webkit-box;
+	-webkit-box-flex: 1.0;
+	width: 100%;	
+}
+
+.tabset .f5button {
+	height: 48px;
+}
+
+.tabset .f5button.down .f5button-label {
+	color: white;
+}
+
+.tabset .f5button.up .f5button-label {
+	color: grey;
+}
+
+.tab {
+	-webkit-box-align: center;
+	-webkit-box-pack: center;
+	font-family: arial;
+	font-size: 10px;
+}
+
+/*
+.tabset {
+	height: 48px;
+	-webkit-box-sizing: border-box;
+}
+
+
+*/
+
+/***************************************/
+/*             Miscellany              */
+/***************************************/
+
 .f5closebutton {
 	height: 15px;
 	width: 15px;
@@ -274,60 +173,9 @@ body.mobile {
 	width: 15px;	
 }
 
-.standardbutton img {
-	height: 30px;
-}
-
-
-.tab .f5mask, .tab .f5mask-shadow {
-	position: absolute;
-	-webkit-mask-origin: border-box;
-	-webkit-mask-repeat: no-repeat;
-	-webkit-mask-size: 30px 30px;
-	-webkit-mask-position: center 1px;
-	width: 100%;
-	height: 100%;
-}
-.tab .f5mask-shadow {
-	top: 1px;
-	left: 1px;
-	
-}
-
-.switcher .tabset .f5button-label {
-	font-family: Arial;
-	font-size: 9px;
-	font-weight:800;
-	padding: 0px;
-}
-
-.switcher .tabset .f5button {
-	-webkit-box-align: end;	
-}
-
-
-.f5button-imagecontainer {
-	width:100%;
-}
-
 /* only for the auto generated links. move to optional include */
-.subflow .f5button-label, .transitions .f5button-label {
+.subflow .f5button-label, .f5transitions .f5button-label {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	width: 100%;
-}
-
-.f5button-label {
-	white-space: nowrap;
-	position: relative;
-	color: white;
-	padding:5px;
-}
-
-.switcher .tabset .f5button.down .f5button-label {
-	color: white;
-}
-
-.switcher .tabset .f5button.up .f5button-label {
-	color: grey;
 }

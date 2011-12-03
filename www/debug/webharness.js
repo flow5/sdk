@@ -159,11 +159,11 @@
 
 		F5.addTapListener(framesbuttonEl, function () {
 			var selected = true;
-			if (F5.hasClass(appframeEl, 'frames')) {
-				F5.removeClass(appframeEl, 'frames');
+			if (F5.hasClass(appframeEl, 'f5frames')) {
+				F5.removeClass(appframeEl, 'f5frames');
 				selected = false;				
 			} else {
-				F5.addClass(appframeEl, 'frames');
+				F5.addClass(appframeEl, 'f5frames');
 			}
 			F5.setStyles(framesbuttonEl, {
 				'background-color': selected ? 'lightblue' : 'grey',

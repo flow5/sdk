@@ -34,7 +34,7 @@
 			var that = this;
 																
 			var div = document.createElement('div');
-			F5.addClass(div, node.type);
+			F5.addClass(div, 'f5' + node.type);
 			div.id = node.path;
 						
 			that.el = div;			
@@ -51,7 +51,7 @@
 						
 			if (node.children) {
 				var container = document.createElement('div');
-				F5.addClass(container, 'container');
+				F5.addClass(container, 'f5container');
 				that.el.appendChild(container);	
 
 				if (node.type === 'switcher' || node.type === 'set') {
@@ -192,7 +192,7 @@
 				if (node === F5.Global.flow.root) {
 					screenFrame.appendChild(node.view.el);
 				} else {
-					node.parent.view.el.querySelector('[class=container]').appendChild(node.view.el);												
+					node.parent.view.el.querySelector('[class=f5container]').appendChild(node.view.el);												
 				}
 			}
 			
@@ -222,7 +222,7 @@
 		this.doTransition = function (container, id, to, animation) {
 			var that = this;
 									
-			var containerElement = container.view.el.querySelector('[class=container]');
+			var containerElement = container.view.el.querySelector('[class=f5container]');
 			var oldNode = container.selection;
 			
 			var oldEl = oldNode.view.el;

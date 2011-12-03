@@ -247,31 +247,31 @@
 			this.el.appendChild(this.label);	
 			
 			function applyValue(value) {
-				if (value) {
-					F5.assert(typeof value === 'object', 'MaskButton requires label and mask image specification');
-					if (value.label) {
-						that.label.innerText = value.label;
-					}
-					if (value.image) {
-						that.makeContainer();	
-						
-						var div;
-						
-						div = document.createElement('div');
-						F5.addClass(div, 'f5mask');
-						div.style['-webkit-mask-image'] = value.image;
-						that.up.appendChild(div);
+				if (value && typeof value === 'object') {
+					F5.assert(value.label && value.image, 'MaskButton requires label and mask image specification');
+					
+					that.label.innerText = value.label;
 
-						div = document.createElement('div');
-						F5.addClass(div, 'f5mask-shadow');
-						div.style['-webkit-mask-image'] = value.image;						
-						that.down.appendChild(div);
+					that.makeContainer();	
+					
+					var div;
+					
+					div = document.createElement('div');
+					F5.addClass(div, 'f5mask');
+					div.style['-webkit-mask-image'] = value.image;
+					that.up.appendChild(div);
 
-						div = document.createElement('div');
-						F5.addClass(div, 'f5mask');
-						div.style['-webkit-mask-image'] = value.image;						
-						that.down.appendChild(div);
-					}					
+					div = document.createElement('div');
+					F5.addClass(div, 'f5mask-shadow');
+					div.style['-webkit-mask-image'] = value.image;						
+					that.down.appendChild(div);
+
+					div = document.createElement('div');
+					F5.addClass(div, 'f5mask');
+					div.style['-webkit-mask-image'] = value.image;						
+					that.down.appendChild(div);
+				} else {
+					that.label.innerText = value;
 				}
 			}
 

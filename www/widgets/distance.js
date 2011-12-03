@@ -26,57 +26,56 @@
 ***********************************************************************************************************************/
 /*global F5*/
 
-// OPTION: break the phonegap dependency out. doesn't seem worth it since the APIs are so close. . .
-
 (function () {
 	
-	function Location() {
+	function distance(loc1, loc2) {
 		
-		var currentLocation;
+		//degrees to radians
+		function toRad(degree) {
+		    return degree* Math.PI/ 180;
+		}
+				
+		var lat1 = loc1.lat,
+			lat2 = loc2.lat,
+			lon1 = loc1.lng,
+			lon2 = loc2.lng;
 		
-		this.getCurrentLocation = function () {
-			if (currentLocation) {
-				return currentLocation;
-			} else {
-				// TODO: allow client to specify default location
-				return {lat:37.774484, lng:-122.420091};
-			}
-		};				
+		var R = 6371; // km
+		R /= 1.609; // m
+		var dLat = toRad(lat2-lat1);
+		var dLon = toRad(lon2-lon1);
+		lat1 = toRad(lat1);
+		lat2 = toRad(lat2);
+
+		var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+		        Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
+		var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+		var d = R * c;	
 		
-		this.start = function () {	
-			var that = this;
-					
-			var options = {
-			    enableHighAccuracy: false,
-			    timeout: Infinity,
-			    maximumAge: 0
-			  };
-		   
-			this.watchId = navigator.geolocation.watchPosition(
-				function (position) {
-//					console.log(position.coords);
-					var newLocation = {lat: position.coords.latitude, lng: position.coords.longitude};
-					if (newLocation !== currentLocation) {
-						currentLocation = newLocation;
-						// TODO: is there a standard event for this?
-			            var e = document.createEvent('Events'); 
-			            e.initEvent('locationchanged');
-			            document.dispatchEvent(e);						
-					}
-				},
-				function (error) {
-					console.log(error);
-				},
-				options);
-		};							
-		
-		this.stop = function () {
-			if (this.watchId) {
-				navigator.geolocation.clearWatch(this.watchId);				
-			}
-		};
+		return d.toFixed(1);	
 	}
 	
-	F5.locationService = new Location();
 	
+	function Distance() {
+		
+		function updateLocation(el, location) {
+			var currentLocation = F5.locationService.getCurrentLocation();
+			if (currentLocation) {
+				// from http://www.movable-type.co.uk/scripts/latlong.html
+				el.innerText = distance(currentLocation, location) + 'mi';				
+			}			
+		}
+		
+		this.construct = function (data) {
+			updateLocation(this.el, data.location);			
+			// TODO: setup a callback to update location when it changes
+			var that = this;
+			document.addEventListener('locationchanged', function () {
+				updateLocation(that.el, data.location);
+			});
+		};
+	}
+		
+	F5.WidgetPrototypes.Distance = new Distance();
+		
 }());

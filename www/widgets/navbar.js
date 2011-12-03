@@ -33,10 +33,14 @@ F5.WidgetPrototypes.NavBarBase = {
 			node = node.selection;
 		}
 					
-		var configuration = {title: node.id, node: node};
+		var defaultTitle = node.id;
+		var configuration = {node: node};
 		while (node && (!configuration.left || !configuration.right)) {
 			var nodeConfiguration = node.view.getNavConfig();
 			if (nodeConfiguration) {
+				if (!configuration.title && nodeConfiguration.title) {
+					configuration.title = nodeConfiguration.title;
+				}
 				if (!configuration.left && nodeConfiguration.left) {
 					configuration.left = nodeConfiguration.left;
 					configuration.left.node = node;
@@ -51,6 +55,9 @@ F5.WidgetPrototypes.NavBarBase = {
 			}
 			
 			node = node.parent;
+		}
+		if (!configuration.title) {
+			configuration.title = defaultTitle;
 		}
 		
 		var that = this;

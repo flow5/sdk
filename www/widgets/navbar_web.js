@@ -34,21 +34,21 @@
 	
 		this.construct = function () {
 			navbarEl = document.createElement('div');
-			F5.addClass(navbarEl, 'navbar');
+			F5.addClass(navbarEl, 'f5navbar');
 			this.el.appendChild(navbarEl);
 //			this.el.insertBefore(navbarEl, this.el.firstChild);	
 
 			leftButtonEl = document.createElement('div');
-			F5.addClass(leftButtonEl, 'leftbutton');
+			F5.addClass(leftButtonEl, 'f5leftbutton');
 			leftButtonEl.style.visibility = 'hidden';
 			navbarEl.appendChild(leftButtonEl);
 
 			titleEl = document.createElement('div');
-			F5.addClass(titleEl, 'title');
+			F5.addClass(titleEl, 'f5title');
 			navbarEl.appendChild(titleEl);
 
 			rightButtonEl = document.createElement('div');
-			F5.addClass(rightButtonEl, 'rightbutton');
+			F5.addClass(rightButtonEl, 'f5rightbutton');
 			rightButtonEl.style.visibility = 'hidden';
 			navbarEl.appendChild(rightButtonEl);
 

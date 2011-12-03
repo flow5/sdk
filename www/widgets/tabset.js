@@ -32,17 +32,46 @@
 	// TODO: customize with images or alternate text
 	// TODO: can't really go querySelectorAll since there might be nested tab sets
 	function Tabset() {
+		
+		// NOTE: all tabs have to be at the same level of hierarchy
+		function findTabs(el) {
+			var tabs = [];
+			F5.forEach(el.childNodes, function (child) {
+				if (child.getAttribute('f5_tab')) {
+					tabs.push(child);
+				}
+			});
+			if (tabs.length) {
+				return tabs;
+			} else {
+				var i;
+				for (i = 0; i < el.childNodes.length; i += 1) {
+					tabs = findTabs(el.childNodes[i]);
+					if (tabs.length) {
+						return tabs;
+					}
+				}
+			}
+			return tabs;
+		}
+		
 	
 		this.construct = function (data) {
 			var that = this;
 		
 			var tabset = document.createElement('div');
 			F5.addClass(tabset, 'tabset');
-			that.el.insertBefore(tabset);
-		
+			
+			var position = that.el.getAttribute('f5_tabset_position');
+			if (position && position === 'top') {
+				that.el.insertBefore(tabset, that.el.childNodes[0]);
+			} else {
+				that.el.appendChild(tabset);				
+			}
+					
 			that.tabs = {};
 		
-			F5.forEach(that.el.querySelectorAll('[f5_tab]'), function (el) {
+			F5.forEach(findTabs(this.el), function (el) {
 				var id = el.getAttribute('f5_tab');
 			
 				var tab = document.createElement('div');

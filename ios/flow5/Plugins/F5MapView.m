@@ -110,7 +110,7 @@
 
 - (void)create:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
     
-    NSString *callbackID __attribute__((unused)) = [arguments pop];
+    self.callbackID = [arguments pop];
     
     if (self.mapView) {
         NSLog(@"mapView already created. Was location.reload() called?");
@@ -159,7 +159,7 @@
 }
 
 - (PluginResult*)showMap:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
-    
+    NSLog(@"showMap");
     if (self.mapView) {
         self.mapView.hidden = NO;       
         return [PluginResult resultWithStatus:PGCommandStatus_OK]; 
@@ -268,8 +268,8 @@
     
     [self.mapView removeAnnotations:self.mapView.annotations];
     
-    self.callbackID = [arguments pop];
-
+    NSString *callbackID __attribute__((unused)) = [arguments pop];
+    
     PG_SBJSON *parser = [[[PG_SBJSON alloc] init] autorelease];
     NSArray *pins = [parser objectWithString:[arguments pop]];
     

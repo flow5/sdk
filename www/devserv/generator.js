@@ -132,11 +132,13 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative) {
 
 	var jsdom = require('jsdom');
 	jsdom.defaultDocumentFeatures = {
-		FetchExternalResources: false,
-		ProcessExternalResources: false,
+		FetchExternalResources: [],
+		ProcessExternalResources: [],
 		MutationEvents: false,
 		QuerySelector: false
 	};
+	
+	var styleWorkaround = '';
 	
 	var document = jsdom.jsdom();
 	
@@ -231,15 +233,16 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative) {
 				elements.forEach(function (file) {
 					var elementsDiv;
 					if (file.match('.css')) {
-						elementsDiv = document.createElement('style');
+						// NOTE: JSDOM doesn't fully support style nodes yet. so do it manually below
+//						elementsDiv = document.createElement('style');
+						styleWorkaround += fs.readFileSync(path + file).toString();
 					} else {
 						elementsDiv = document.createElement('div');
+						elementsDiv.innerHTML = fs.readFileSync(path + file).toString();
+						elementsDiv.id = file;				
+
+						templates.appendChild(elementsDiv);
 					}
-
-					elementsDiv.innerHTML = fs.readFileSync(path + file).toString();
-					elementsDiv.id = file;				
-
-					templates.appendChild(elementsDiv);
 				});
 			}					
 		}		
@@ -321,8 +324,9 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative) {
 	deleteCaches();	
 	
 //	console.log('Size: ' + document.outerHTML.length);
-			
-	return document.outerHTML;
+	
+//	return document.outerHTML;
+	return document.outerHTML.replace('<head>', '<head><style>' + styleWorkaround + '</style>');			
 }
 
 exports.generateHtml = generateHtml;

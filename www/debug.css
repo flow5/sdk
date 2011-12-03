@@ -24,59 +24,25 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global F5*/
 
-// OPTION: break the phonegap dependency out. doesn't seem worth it since the APIs are so close. . .
+/* debug.css contains styles that are used for debug views and are not included in release targets */
 
-(function () {
-	
-	function Location() {
-		
-		var currentLocation;
-		
-		this.getCurrentLocation = function () {
-			if (currentLocation) {
-				return currentLocation;
-			} else {
-				// TODO: allow client to specify default location
-				return {lat:37.774484, lng:-122.420091};
-			}
-		};				
-		
-		this.start = function () {	
-			var that = this;
-					
-			var options = {
-			    enableHighAccuracy: false,
-			    timeout: Infinity,
-			    maximumAge: 0
-			  };
-		   
-			this.watchId = navigator.geolocation.watchPosition(
-				function (position) {
-//					console.log(position.coords);
-					var newLocation = {lat: position.coords.latitude, lng: position.coords.longitude};
-					if (newLocation !== currentLocation) {
-						currentLocation = newLocation;
-						// TODO: is there a standard event for this?
-			            var e = document.createEvent('Events'); 
-			            e.initEvent('locationchanged');
-			            document.dispatchEvent(e);						
-					}
-				},
-				function (error) {
-					console.log(error);
-				},
-				options);
-		};							
-		
-		this.stop = function () {
-			if (this.watchId) {
-				navigator.geolocation.clearWatch(this.watchId);				
-			}
-		};
-	}
-	
-	F5.locationService = new Location();
-	
-}());
+
+.f5frames .f5flow, .f5frames .f5switcher, .f5frames .f5set {
+	padding: 4px;
+	border: 1px solid grey;
+}
+
+.f5nodelabel {
+	display: none;
+}
+
+.f5frames .f5nodelabel {
+	font-size:8px;
+	opacity: .5;
+	display: block;
+}
+
+.f5frames .f5flow {
+	padding: 4px;
+}
