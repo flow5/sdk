@@ -21,6 +21,8 @@ body {
 	width: 756px;
 	height: 266px;
 	background-image: -webkit-linear-gradient(90deg, #AAA 0%, #333 25%, #111 50%, #333 75%, #AAA 100%);	
+	-webkit-transition: opacity .15s;
+	overflow: hidden;
 }
 
 #text {
@@ -52,11 +54,18 @@ body {
 
 <body>
 	
-<div id='panel'>
+<div id='panel' style='opacity:0;'>
 	<div id='text' class='gradient'>Flow</div>
 	<div id='badge' class='gradient'></div>
 </div>
 	
+<script>
+var img = new Image();
+img.onload = function () {
+	document.getElementById('panel').style.opacity = 1;
+};
+img.src = 'http://www.w3.org/html/logo/downloads/HTML5_1Color_Black.png';
+</script>	
 </body>
 
 </html>
