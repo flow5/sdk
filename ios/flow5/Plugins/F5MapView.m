@@ -36,12 +36,12 @@
 @private
     CLLocationCoordinate2D coordinate;
     NSString *title;
-	NSString *subTitle;
+	NSString *subtitle;
     NSNumber *index;
 }
 
 @property (nonatomic, copy) NSString *title;
-@property (nonatomic, copy) NSString *subTitle;
+@property (nonatomic, copy) NSString *subtitle;
 @property (nonatomic, copy) NSNumber *index;
 @property (nonatomic, assign) CLLocationCoordinate2D coordinate;
 
@@ -49,7 +49,7 @@
 
 @implementation F5Annotation
 @synthesize title;
-@synthesize subTitle;
+@synthesize subtitle;
 @synthesize index;
 @synthesize	coordinate;
 @end
@@ -281,7 +281,7 @@
 		CLLocationCoordinate2D pinCoord = { [[pin objectForKey:@"lat"] floatValue] , [[pin objectForKey:@"lng"] floatValue] };
         annotation.coordinate = pinCoord;
         annotation.title = [pin objectForKey:@"name"];        
-        annotation.subTitle = @"";
+        annotation.subtitle = [pin objectForKey:@"reward"];
         annotation.index = [pin objectForKey:@"index"];
                 
 		[self.mapView addAnnotation:annotation];
@@ -329,6 +329,10 @@
     [leftButton setImage:streetViewIcon forState:UIControlStateNormal];
     leftButton.frame = CGRectMake(0, 0, 31, 31);
     view.leftCalloutAccessoryView = leftButton;
+    
+    if ([annotation.subtitle length]) {
+        view.pinColor = MKPinAnnotationColorPurple;
+    }
         
     view.canShowCallout = YES;
     return view;

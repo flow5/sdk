@@ -36,6 +36,11 @@
 			var div = document.createElement('div');
 			F5.addClass(div, 'f5' + node.type);
 			div.id = node.path;
+
+			// TODO: node.id should always exist after subflow reworkd is done
+			if (node.id) {
+				F5.addClass(div, node.id);				
+			}
 						
 			that.el = div;			
 			that.node = node;
