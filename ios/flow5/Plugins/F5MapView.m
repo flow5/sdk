@@ -266,10 +266,10 @@
 
 - (void)dropPins:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
     
+    self.callbackID = [arguments pop];
+
     [self.mapView removeAnnotations:self.mapView.annotations];
-    
-    NSString *callbackID __attribute__((unused)) = [arguments pop];
-    
+        
     PG_SBJSON *parser = [[[PG_SBJSON alloc] init] autorelease];
     NSArray *pins = [parser objectWithString:[arguments pop]];
     
