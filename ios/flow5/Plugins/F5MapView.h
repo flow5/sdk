@@ -54,6 +54,7 @@
 
 - (void)queue_pushLeft:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void)queue_pushRight:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void)queue_fadeIn:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
 - (void)dropPins:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 

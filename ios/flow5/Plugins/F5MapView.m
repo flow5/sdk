@@ -108,7 +108,7 @@
 @synthesize mapView;
 @synthesize callbackID;
 
-- (void)create:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
+- (void)create:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)bounds {
     
     self.callbackID = [arguments pop];
     
@@ -125,7 +125,6 @@
         mapView.userInteractionEnabled = YES;
         mapView.showsUserLocation = YES;
         mapView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        mapView.hidden = YES;         
         
         AppDelegate *appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];                
         UIView *mainView = [appDelegate.viewController view];
@@ -133,9 +132,11 @@
         [mainView addSubview:self.mapView];        
         [mainView sendSubviewToBack:self.mapView];
         
-        // TODO: get bounds from js layer
-        // 20 + 44 + 48
-        CGRect mapBounds = CGRectMake(0, 44, 320, 368);
+        CGRect mapBounds = CGRectMake([[bounds objectForKey:@"left"] floatValue],
+                                      [[bounds objectForKey:@"top"] floatValue],
+                                      [[bounds objectForKey:@"width"] floatValue],
+                                      [[bounds objectForKey:@"height"] floatValue]);
+                                      
         [self.mapView setFrame:mapBounds];        
     }
 }
@@ -241,7 +242,7 @@
                             options: UIViewAnimationOptionCurveEaseIn
                          animations:^{
                              CGPoint center = self.mapView.center;
-                             center.x += 320;
+                             center.x += self.mapView.bounds.size.width;
                              self.mapView.center = center;
                          }
                          completion:nil];                                       
@@ -256,8 +257,23 @@
                             options: UIViewAnimationOptionCurveEaseIn
                          animations:^{
                              CGPoint center = self.mapView.center;
-                             center.x -= 320;
+                             center.x -= self.mapView.bounds.size.width;
                              self.mapView.center = center;
+                         }
+                         completion:nil];
+    }];
+}
+
+- (void)queue_fadeIn:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
+    NSLog(@"F5MapView.pushLeft");
+    
+    self.mapView.alpha = 0;
+    
+    [[F5CommandQueue instance] queueCommand:^{                    
+        [UIView animateWithDuration:0.15 delay:0.0
+                            options: UIViewAnimationOptionCurveEaseIn
+                         animations:^{
+                             self.mapView.alpha = 1;
                          }
                          completion:nil];
     }];

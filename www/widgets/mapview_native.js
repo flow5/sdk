@@ -35,16 +35,7 @@
 			var that = this;
 			
 			F5.Global.flowController.addFlowObserver(this);
-			
-			/*global google*/	
-			
-			PhoneGap.exec(
-				function (result) { // success
-				console.log(result);
-			}, function (result) { // failure
-				console.log(result);
-			}, "com.flow5.mapview", "create", []);							
-			
+						
 			this.shown = true;						
 		};
 		
@@ -119,6 +110,20 @@
 		}
 		
 		this.widgetWillBecomeActive = function () {
+			if (!this.created) {
+				var pos = F5.elementAbsolutePosition(this.el);
+				var bounds = {top: pos.y, left: pos.x, width: this.el.offsetWidth, height: this.el.offsetHeight};
+				
+				PhoneGap.exec(
+					function (result) { // success
+					console.log(result);
+				}, function (result) { // failure
+					console.log(result);
+				}, "com.flow5.mapview", "create", [bounds]);	
+				
+				this.created = true;						
+			}
+			
 			this.shown = true;			
 			doSync('showMap');		
 		};
