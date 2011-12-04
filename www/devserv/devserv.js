@@ -119,7 +119,7 @@ cli.main(function (args, options) {
 	options.port = options.port || 8008;
 
 	http.createServer(function (req, res) {
-	//	showRequest(req, false);
+		showRequest(req, true);
 		
 		switch (req.method) {
 		case 'POST':
@@ -143,7 +143,7 @@ cli.main(function (args, options) {
 			var doInline = (parsed.query['inline'] === 'true');
 			
 			var agent = req.headers['user-agent'];
-			var isMobile = agent.match(/iPhone/) || agent.match(/Android/);
+			var isMobile = agent.match(/iPhone/) || agent.match(/iPad/) || agent.match(/Android/);
 			
 			var app = parsed.query.app;
 

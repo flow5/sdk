@@ -31,7 +31,7 @@
 	
 	// detect mobile browser
 	var isMobile = false;
-	if (navigator.userAgent.match(/iPhone/) || navigator.userAgent.match(/Android/)) {
+	if (navigator.userAgent.match(/iPhone/) || navigator.userAgent.match(/iPad/) ||navigator.userAgent.match(/Android/)) {
 		isMobile = true;
 		F5.addClass(document.body, 'f5mobile');
 	}
@@ -51,6 +51,7 @@
 	} else {
 		F5.imageServerHost = '';
 	}
+	isMobile = true;
 	
 	// prevent scrolling
 	document.body.addEventListener('touchmove', function (e) {

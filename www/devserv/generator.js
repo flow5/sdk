@@ -292,7 +292,7 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative) {
 	appframeEl.id = 'appframe';
 	var screenframeEl = document.createElement('div');
 	screenframeEl.id = 'screen';
-	screenframeEl.className = 'portrait';
+//	screenframeEl.className = 'portrait';
 	
 	// TODO: probably not right
 	var splashEl = document.createElement('img');

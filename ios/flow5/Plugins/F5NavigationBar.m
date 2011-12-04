@@ -59,9 +59,10 @@
     if (self.navigationBar) {
         NSLog(@"NavigationBar already created. Was location.reload() called?");
     } else {
-        AppDelegate *appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];        
+        AppDelegate *appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];   
         
-        self.navigationBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, 0, 320, 44)];        
+        CGRect windowRect = [appDelegate window].bounds;        
+        self.navigationBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, 0, windowRect.size.width, 44)];        
         self.navigationBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
                                  
         [self.navigationBar setDelegate:self];

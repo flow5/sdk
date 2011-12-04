@@ -121,7 +121,11 @@
 
 // F5
 - (void)loadView {
-    self.view = [[[F5ViewContainer alloc] initWithFrame:CGRectMake(0, 20, 320, 460)] autorelease];
+    CGRect windowRect = [[[UIApplication sharedApplication] delegate] window].bounds;
+    // for status bar
+    windowRect.origin.y = 20;
+    windowRect.size.height -= 20;
+    self.view = [[[F5ViewContainer alloc] initWithFrame:windowRect] autorelease];
 }
 
 /**

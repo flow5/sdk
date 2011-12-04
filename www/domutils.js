@@ -29,7 +29,7 @@
 (function () {
 		
 	function startEventName() {
-		if (navigator.userAgent.match(/(iPhone)|(Android)/i)) {
+		if (navigator.userAgent.match(/(iPhone)|(iPad)|(Android)/i)) {
 			return 'touchstart';		
 		}
 		else {
@@ -38,7 +38,7 @@
 	}
 
 	function stopEventName() {
-		if (navigator.userAgent.match(/(iPhone)|(Android)/i)) {
+		if (navigator.userAgent.match(/(iPhone)|(iPad)|(Android)/i)) {
 			return 'touchend';		
 		}
 		else {
@@ -47,7 +47,7 @@
 	}
 
 	function moveEventName() {
-		if (navigator.userAgent.match(/(iPhone)|(Android)/i)) {
+		if (navigator.userAgent.match(/(iPhone)|(iPad)|(Android)/i)) {
 			return 'touchmove';		
 		}
 		else {
@@ -177,7 +177,7 @@
 	
 	F5.eventLocation = function(event) {
 		var x, y;
-		if (navigator.userAgent.match(/(iPhone)|(Android)/i)) {
+		if (navigator.userAgent.match(/(iPhone)|(iPad)|(Android)/i)) {
 			if (event.touches[0]) {
 				x = event.touches[0].screenX;
 				y = event.touches[0].screenY;					
@@ -289,19 +289,19 @@
 				}
 			}
 			var style = document.createElement('style');
-			style.innerHTML = '@media screen and (orientation: portrait)							\
-								{																	\
-									.mobile #screen {												\
-										width:' + screen.width + 'px;								\
-										height:' + (screen.height - portraitToolbarDelta) + 'px;	\
-									}																\
-								}																	\
-								@media screen and (orientation: landscape)							\
-								{																	\
-									.mobile #screen {												\
-										width:' + screen.height + 'px;								\
-										height:' + (screen.width - landscapeToolbarDelta) + 'px;	\
-									}																\
+			style.innerHTML = '@media screen and (orientation: portrait)\n\
+								{\n\
+									.f5mobile #screen {\n\
+										width:' + screen.width + 'px;\n\
+										height:' + (screen.height - portraitToolbarDelta) + 'px;\n\
+									}\n\
+								}\n\
+								@media screen and (orientation: landscape)\n\
+								{\n\
+									.f5mobile #screen {\n\
+										width:' + screen.height + 'px;\n\
+										height:' + (screen.width - landscapeToolbarDelta) + 'px;\n\
+									}\n\
 								}';
 			document.head.appendChild(style);
 
