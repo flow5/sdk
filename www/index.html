@@ -61,11 +61,22 @@ body {
 </div>
 	
 <script>
-var img = new Image();
-img.onload = function () {
-	document.getElementById('panel').style.opacity = 1;
-};
-img.src = 'http://www.w3.org/html/logo/downloads/HTML5_1Color_Black.png';
+if (navigator.userAgent.match(/iPhone/) || 
+	navigator.userAgent.match(/iPad/) ||
+	navigator.userAgent.match(/Android/) || 
+	navigator.userAgent.match(/WebKit/)) {
+		var img = new Image();
+		img.onload = function () {
+			document.getElementById('panel').style.opacity = 1;
+		};
+		img.src = 'http://www.w3.org/html/logo/downloads/HTML5_1Color_Black.png';
+} else {
+	var a = document.createElement('a');
+	a.href = 'http://www.webkit.org/'
+	a.innerHTML = 'flow5 <3 webkit';
+	document.body.innerHTML = '';
+	document.body.appendChild(a);
+}
 </script>	
 </body>
 
