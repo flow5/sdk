@@ -153,13 +153,14 @@ cli.main(function (args, options) {
 					if (isDebug && !isMobile) {
 						res.writeHead(200, {'Content-Type': 'text/html'});
 						res.write(html);
+						res.end();					
 					} else {
 						compress(html, res);					
 					}					
 				} catch (e1) {
 					console.log(e1);
+					res.end();					
 				}
-				res.end();					
 			} else if (req.url.match('cache.manifest')) {
 //				res.writeHead(404);
 				res.writeHead(200, {'Content-Type': 'text/cache-manifest'});

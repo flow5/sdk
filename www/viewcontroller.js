@@ -220,8 +220,9 @@
 			var oldEl = document.getElementById(node.selection.path);
 			var newEl = document.getElementById(node.children[id].path);
 			
-			// TODO: get animation name from the node		
-			return F5.Animation.fadeIn(node.view.el, oldEl, newEl);
+			// TODO: get animation name from the node
+					
+			return F5.Animation.cut(node.view.el, oldEl, newEl);
 		};
 						
 		this.doTransition = function (container, id, to, animation) {

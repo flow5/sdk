@@ -31,6 +31,44 @@
 #import "SBJsonParser.h"
 #import "SBJSON.h"
 #import "F5CommandQueue.h"
+#import <QuartzCore/QuartzCore.h>
+
+@implementation NSData (DataUtils)
+
+static char base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+- (NSString *)newStringInBase64FromData
+{
+    NSMutableString *dest = [[NSMutableString alloc] initWithString:@""];
+    unsigned char * working = (unsigned char *)[self bytes];
+    int srcLen = [self length];
+    
+    // tackle the source in 3's as conveniently 4 Base64 nibbles fit into 3 bytes
+    for (int i=0; i<srcLen; i += 3)
+    {
+        // for each output nibble
+        for (int nib=0; nib<4; nib++)
+        {
+            // nibble:nib from char:byt
+            int byt = (nib == 0)?0:nib-1;
+            int ix = (nib+1)*2;
+            
+            if (i+byt >= srcLen) break;
+            
+            // extract the top bits of the nibble, if valid
+            unsigned char curr = ((working[i+byt] << (8-ix)) & 0x3F);
+            
+            // extract the bottom bits of the nibble, if valid
+            if (i+nib < srcLen) curr |= ((working[i+nib] >> ix) & 0x3F);
+            
+            [dest appendFormat:@"%c", base64[curr]];
+        }
+    }
+    
+    return dest;
+}
+
+@end
 
 @interface F5Annotation : NSObject <MKAnnotation> {
 @private
@@ -162,7 +200,8 @@
 - (PluginResult*)showMap:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
     NSLog(@"showMap");
     if (self.mapView) {
-        self.mapView.hidden = NO;       
+        self.mapView.hidden = NO;  
+        self.mapView.alpha = 1;
         return [PluginResult resultWithStatus:PGCommandStatus_OK]; 
     } else {
         NSLog(@"Trying to use showMap without calling create first");        
@@ -175,6 +214,24 @@
     if (self.mapView) {
         self.mapView.hidden = YES;       
         return [PluginResult resultWithStatus:PGCommandStatus_OK];                
+    } else {
+        NSLog(@"Trying to use showMap without calling create first");        
+        return [PluginResult resultWithStatus:PGCommandStatus_INVALID_ACTION];                
+    }
+}
+
+- (PluginResult*)getSnapshot:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
+    
+    if (self.mapView) {
+        CGSize size = [self.mapView bounds].size;
+        UIGraphicsBeginImageContext(size);
+        [[self.mapView layer] renderInContext:UIGraphicsGetCurrentContext()];
+        UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        NSData *data = UIImageJPEGRepresentation(newImage, .5);
+        // have to b64 encode here as well
+        NSString *jpegData = [data newStringInBase64FromData];
+        return [PluginResult resultWithStatus:PGCommandStatus_OK messageAsString:jpegData];                
     } else {
         NSLog(@"Trying to use showMap without calling create first");        
         return [PluginResult resultWithStatus:PGCommandStatus_INVALID_ACTION];                
@@ -274,6 +331,21 @@
                             options: UIViewAnimationOptionCurveEaseIn
                          animations:^{
                              self.mapView.alpha = 1;
+                         }
+                         completion:nil];
+    }];
+}
+
+- (void)queue_fadeOut:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
+    NSLog(@"F5MapView.pushLeft");
+    
+    self.mapView.alpha = 1;
+    
+    [[F5CommandQueue instance] queueCommand:^{                    
+        [UIView animateWithDuration:0.15 delay:0.0
+                            options: UIViewAnimationOptionCurveEaseIn
+                         animations:^{
+                             self.mapView.alpha = 0;
                          }
                          completion:nil];
     }];

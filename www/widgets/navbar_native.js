@@ -28,7 +28,7 @@
 
 (function () {
 	function NavBar() {
-		
+				
 		this.construct = function () {
 			var navbarEl = document.createElement('div');
 			F5.addClass(navbarEl, 'navbar');

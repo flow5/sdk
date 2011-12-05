@@ -44,6 +44,7 @@
 - (PluginResult*)showMap:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (PluginResult*)hideMap:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (PluginResult*)getMapCenter:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (PluginResult*)getSnapshot:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
 - (void)create:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
@@ -55,6 +56,7 @@
 - (void)queue_pushLeft:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void)queue_pushRight:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void)queue_fadeIn:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void)queue_fadeOut:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
 - (void)dropPins:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 

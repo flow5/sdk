@@ -44,7 +44,7 @@
 - (NSCachedURLResponse *)cachedResponseForRequest:(NSURLRequest *)request {
     
     NSURL *url = [request URL];
-    NSLog(@"%@", request);
+//    NSLog(@"%@", request);
     if ([[url lastPathComponent] isEqualToString:@"gap"]) {
 
         NSArray *components = [[url query] componentsSeparatedByString:@"&"];

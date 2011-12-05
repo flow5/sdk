@@ -59,6 +59,14 @@
 	
 	F5.Animation = {
 		
+		cut: function (container, oldEl, newEl) {
+			return function (cb) {
+				newEl.style.visibility = '';
+				oldEl.style.visibility = 'hidden';				
+				cb();
+			};
+		},
+		
 		// oldElement sits on top, fades out to reveal newEl
 		fadeIn: function (container, oldEl, newEl) {
 			
@@ -89,6 +97,35 @@
 			};		
 		},
 		
+		fadeOut: function (container, oldEl, newEl) {
+			
+			oldEl.style['z-index'] = 1;
+
+			newEl.style['z-index'] = 0;
+			newEl.style.visibility = '';	
+			newEl.style.opacity = 1;
+																		
+			return function (cb) {
+				function completeFadeOut() {
+
+					oldEl.style['z-index'] = '';
+					newEl.style['z-index'] = '';
+					newEl.style['-webkit-transition'] = '';
+
+					oldEl.style.opacity = '';
+					oldEl.style.visibility = 'hidden';
+
+					F5.removeTransitionEndListener(oldEl);
+
+					cb();
+				}
+				
+				F5.addTransitionEndListener(oldEl, completeFadeOut);				
+				oldEl.style['-webkit-transition'] = 'opacity .15s';				
+				oldEl.style.opacity = 0;
+			};		
+		},
+				
 		pushLeft: function (container, oldEl, newEl) {
 			return pushHorizontal(container, oldEl, newEl, container.offsetWidth);			
 		},

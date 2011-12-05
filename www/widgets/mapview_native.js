@@ -29,7 +29,7 @@
 (function () {
 
 	function MapView() {
-		
+				
 		this.construct = function () {
 			
 			var that = this;
@@ -128,9 +128,16 @@
 			doSync('showMap');		
 		};
 		
+		this.widgetWillBecomeInactive = function () {
+//			var snapshot = doSync('getSnapshot');
+//			console.log('snapshot: ' + snapshot.substring(0, 255));			
+		};
+
 		this.widgetDidBecomeInactive = function () {
-			this.shown = false;			
-			doSync('hideMap');			
+			this.shown = false;	
+			setTimeout(function () {
+				doSync('hideMap');							
+			}, 0);
 		};	
 				
 		this.getMapCenter = function () {
