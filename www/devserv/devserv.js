@@ -119,7 +119,7 @@ cli.main(function (args, options) {
 	options.port = options.port || 8008;
 
 	http.createServer(function (req, res) {
-		showRequest(req, true);
+//		showRequest(req, true);
 		
 		switch (req.method) {
 		case 'POST':
@@ -148,18 +148,26 @@ cli.main(function (args, options) {
 			var app = parsed.query.app;
 
 			if (req.url.match('generate')) {
-				var html = generator.generateHtml(app, isDebug, doInline, isMobile, isNative);
-				if (isDebug && !isMobile) {
-					res.writeHead(200, {'Content-Type': 'text/html'});
-					res.write(html);
-					res.end();					
-				} else {
-					compress(html, res);					
+				try {
+					var html = generator.generateHtml(app, isDebug, doInline, isMobile, isNative);
+					if (isDebug && !isMobile) {
+						res.writeHead(200, {'Content-Type': 'text/html'});
+						res.write(html);
+					} else {
+						compress(html, res);					
+					}					
+				} catch (e1) {
+					console.log(e1);
 				}
+				res.end();					
 			} else if (req.url.match('cache.manifest')) {
 //				res.writeHead(404);
 				res.writeHead(200, {'Content-Type': 'text/cache-manifest'});
-				res.write(generator.generateCacheManifest(app, isDebug, isMobile, isNative));
+				try {
+					res.write(generator.generateCacheManifest(app, isDebug, isMobile, isNative));					
+				} catch (e2) {
+					console.log(e2);
+				}
 				res.end();				
 			} else {
 				paperboy
