@@ -89,7 +89,9 @@
 
             NSArray *items;
             UINavigationItem *currentItem = [self.itemCache valueForKey:[configuration valueForKey:@"id"]];
-            if (!currentItem) {
+            if (currentItem) {
+                currentItem.title = [configuration valueForKey:@"title"];
+            } else {
                 currentItem = [[UINavigationItem alloc] initWithTitle:[configuration valueForKey:@"title"]];
                 [self.itemCache setValue:currentItem forKey:[configuration valueForKey:@"id"]];
             }

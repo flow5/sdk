@@ -34,6 +34,7 @@ exports.scripts = [
 	'flow.js',
 	'flowcontroller.js',
 	'3p/Iuppiter.js',
+	'3p/bezier.js',
 	'templates.js',
 	'viewcontroller.js',
 	'services.js',
@@ -43,7 +44,8 @@ exports.scripts = [
 	'widgets/tabset.js',
 	'widgets/navbar.js',
 	'widgets/streetview.js',
-	'widgets/distance.js'
+	'widgets/distance.js',
+	'widgets/scroller.js'
 ];
 
 exports.elements = [

@@ -319,6 +319,13 @@
 			el.style[id] = value;
 		});
 	};		
+	
+	F5.elementOffsetGeometry = function (el) {
+		return {top: el.offsetTop,
+				left: el.offsetLeft,
+				width: el.offsetWidth,
+				height: el.offsetHeight};
+	};
 		
 }());
 

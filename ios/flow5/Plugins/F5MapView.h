@@ -59,5 +59,6 @@
 - (void)queue_fadeOut:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
 - (void)dropPins:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void)removePins:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
 @end

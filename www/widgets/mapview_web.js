@@ -43,7 +43,13 @@
 			};
 			this.map = new google.maps.Map(this.el, options);		
 			this.markers = [];								
-		};		
+		};	
+		
+		this.removePins = function () {
+			this.markers.forEach(function (marker) {
+				marker.setMap(null);
+			});			
+		};	
 		
 		this.dropPins = function (pins) {
 			var that = this;

@@ -351,6 +351,30 @@ static char base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123
     }];
 }
 
+- (void)removePins:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
+    
+    [self.mapView removeAnnotations:self.mapView.annotations];
+}
+
+
+- (void)mapView:(MKMapView *)mapView didAddAnnotationViews:(NSArray *)views { 
+    MKAnnotationView *annotationView; 
+    for (annotationView in views) {
+        CGRect endFrame = annotationView.frame;
+        
+        annotationView.frame = CGRectMake(annotationView.frame.origin.x, 
+                                          annotationView.frame.origin.y - self.mapView.bounds.size.height, 
+                                          annotationView.frame.size.width, 
+                                          annotationView.frame.size.height);
+        
+        [UIView beginAnimations:nil context:NULL];
+        [UIView setAnimationDuration:0.45];
+        [UIView setAnimationCurve:UIViewAnimationCurveEaseIn];
+        [annotationView setFrame:endFrame];
+        [UIView commitAnimations];
+        
+    }
+}
 
 - (void)dropPins:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
     

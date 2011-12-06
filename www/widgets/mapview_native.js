@@ -53,7 +53,18 @@
 		this.release = function () {
 			F5.Global.flowController.removeFlowObserver(this);
 		};
-								
+
+
+		this.removePins = function (pins) {
+			var that = this;
+			PhoneGap.exec(
+				function (result) { // success
+				console.log(result);
+			}, function (result) { // failure
+				console.log(result);
+			}, "com.flow5.mapview", "removePins", []);
+		};
+																
 		this.dropPins = function (pins) {
 			var that = this;
 			PhoneGap.exec(

@@ -228,6 +228,12 @@
 		});
 	};
 	
+	F5.noop = function () {};
+	
+	F5.sign = function (x) {
+		return x/Math.abs(x);
+	};
+	
 }());
 
 

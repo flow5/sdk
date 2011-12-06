@@ -100,7 +100,18 @@
 		            e.initEvent('f5ready');
 		            document.dispatchEvent(e);		            
 					//console.log('application started');
-					document.getElementById('splash').style.display = 'none';																
+					document.getElementById('splash').style.display = 'none';	
+					
+					if (typeof PhoneGap !== 'undefined') {
+						PhoneGap.exec(
+							function (result) { // success
+							console.log(result);
+						}, function (result) { // failure
+							console.log(result);
+						}, "com.phonegap.splashscreen", "hide", []);	
+						
+					}
+																				
 				});
 			} catch (exception) {
 				document.body.className = 'errorframe';
