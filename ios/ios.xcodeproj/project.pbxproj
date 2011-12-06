@@ -354,10 +354,10 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = BE29F62814686984009B0CB6 /* Build configuration list for PBXNativeTarget "ios" */;
 			buildPhases = (
+				BE29F638146869BF009B0CB6 /* Flow5 Setup */,
 				BE29F5D714686984009B0CB6 /* Sources */,
 				BE29F5D814686984009B0CB6 /* Frameworks */,
 				BE29F5D914686984009B0CB6 /* Resources */,
-				BE29F638146869BF009B0CB6 /* Flow5 Setup */,
 				BE29F5DA14686984009B0CB6 /* Sources */,
 				BE29F5DB14686984009B0CB6 /* Frameworks */,
 			);
