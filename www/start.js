@@ -85,6 +85,12 @@
 		startEvent = 'load';
 		listener = window;
 	}
+	
+	/*global shouldRotateToOrientation: true*/
+	// TODO: phonegap doesn't implement this. . .??
+	shouldRotateToOrientation = function () {
+
+	};
 
 	listener.addEventListener(startEvent, function (e) {	
 		function start() {
@@ -102,6 +108,8 @@
 					//console.log('application started');
 					document.getElementById('splash').style.display = 'none';	
 					
+					// TODO: extract
+					/*global PhoneGap*/
 					if (typeof PhoneGap !== 'undefined') {
 						PhoneGap.exec(
 							function (result) { // success

@@ -266,6 +266,10 @@
 //			this.touchTime;
 //			this.lastVelocity;
 			
+			this.refreshFunction = function () {
+				that.refresh();
+			};
+			
 			F5.addTouchStartListener(this.el, function (e) {
 				startHandler(that, e);
 			});
@@ -280,10 +284,16 @@
 			
 			transform(this, this.staticOffset);
 		};
-		
+				
+		this.widgetWillBecomeActive = function () {
+			window.addEventListener('orientationchange', this.refreshFunction);
+			this.refresh();
+		};
+						
 		this.widgetWillBecomeInactive = function () {
 			this.tracking = false;
 			finishScrolling(this);
+			window.removeEventListener('orientationchange', this.refreshFunction);			
 		};
 				
 		// TODO: may run into the large div problem again in which case the content size

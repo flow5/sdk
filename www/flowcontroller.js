@@ -485,7 +485,9 @@ that.observer();
 						if (F5.Global.viewController) {
 							F5.Global.viewController.syncSet(node);
 						}
-						completeChoice();						
+						nodeWillBecomeActive(node.selection, function () {
+							completeChoice();													
+						});
 					}					
 				} else {
 					completeChoice();					
