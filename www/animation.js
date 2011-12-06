@@ -62,8 +62,8 @@
 		cut: function (container, oldEl, newEl) {
 			return function (cb) {
 				newEl.style.visibility = '';
-				oldEl.style.visibility = 'hidden';				
-				cb();
+				oldEl.style.visibility = 'hidden';
+				setTimeout(cb, 0);				
 			};
 		},
 		

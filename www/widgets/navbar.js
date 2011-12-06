@@ -35,7 +35,7 @@ F5.WidgetPrototypes.NavBarBase = {
 					
 		var defaultTitle = node.id;
 		var configuration = {node: node};
-		while (node && (!configuration.left || !configuration.right)) {
+		while (node && (!configuration.left || !configuration.right || !configuration.title)) {
 			var nodeConfiguration = node.view.getNavConfig();
 			if (nodeConfiguration) {
 				if (!configuration.title && nodeConfiguration.title) {

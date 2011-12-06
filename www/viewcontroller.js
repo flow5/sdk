@@ -238,32 +238,32 @@
 			return function (cb) {
 				animationFunction(function () {
 					cb();
-
-					function deleteViewsRecursive(node) {
-						delete node.view;
-						delete node.animation;
-						if (node.children) {
-							F5.forEach(node.children, function (id, child) {
-								deleteViewsRecursive(child);
-							});
-						}
-					}
-					if (id === 'back') {
-						// TODO: call viewRelease?
-						deleteViewsRecursive(oldNode);
-						
-						F5.forEach(oldEl.querySelectorAll('[f5_widget]'), function (el) {
-							if (el.widget.release) {
-								el.widget.release();
-							}
-						});
-
-						F5.removeTouchEventListenersRecursive(oldEl);
-						containerElement.removeChild(oldEl);
-					}
 				});
 			};
 		};	
+		
+		this.release = function (node) {
+			F5.forEach(node.view.el.querySelectorAll('[f5_widget]'), function (el) {
+				if (el.widget.release) {
+					el.widget.release();
+				}
+			});
+
+			F5.removeTouchEventListenersRecursive(node.view.el);
+			node.view.el.parentElement.removeChild(node.view.el);
+			
+			function deleteViewsRecursive(node) {
+				delete node.view;
+				delete node.animation;
+				if (node.children) {
+					F5.forEach(node.children, function (id, child) {
+						deleteViewsRecursive(child);
+					});
+				}
+			}
+			// TODO: call viewRelease?
+			deleteViewsRecursive(node);			
+		};
 		
 		// called in a willBecomeActive context to conditionally pick a starting view
 		this.syncSet = function (node) {

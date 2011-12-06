@@ -320,19 +320,20 @@ that.observer();
 			function complete() {
 				var oldSelection = container.selection;
 				
-				if (id === 'back') {
-					container.selection = backNode.back;
-					delete backNode.back;
-				} else {
-					container.selection = node.transitions[id].to;
-				}		
-				
-				// TODO: should these delay the callback?
-
 				nodeDidBecomeInactive(oldSelection, function () {
 
 				});						
-								
+				
+				if (id === 'back') {
+					container.selection = backNode.back;
+					delete backNode.back;
+					if (F5.Global.viewController) {
+						F5.Global.viewController.release(backNode);
+					}
+				} else {
+					container.selection = node.transitions[id].to;
+				}		
+												
 				nodeDidBecomeActive(container.selection, function () {
 
 				});		
@@ -364,6 +365,9 @@ that.observer();
 			function inverseAnimation(animation) {
 				var inverse;
 				switch (animation) {
+				case 'cut':
+					inverse = 'cut';
+					break;
 				case 'fadeIn':
 					inverse = 'fadeIn';
 					break;

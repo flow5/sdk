@@ -162,15 +162,15 @@
 /***************************************/
 
 .f5closebutton {
-	height: 15px;
-	width: 15px;
+	height: 20px;
+	width: 20px;
 	background-color: darkgrey;
 	z-index: 1000;
 }
 
 .f5closebutton img {
-	height: 15px;
-	width: 15px;	
+	height: 20px;
+	width: 20px;	
 }
 
 /* only for the auto generated links. move to optional include */
