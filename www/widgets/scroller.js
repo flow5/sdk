@@ -28,13 +28,13 @@
 
 (function () {
 	
-	var maxVelocity = 2.0;
 	var standardBounceDistance = 40;		
 	var flickVelocityThreshold = 0.05;		
 	var bounceBackDuration = 500;
 			
-	function transform(scroller, offset, duration, bezier) {
+	function transform(scroller, offset, duration, bezierValues) {				
 		if (duration) {
+			var bezier = 'cubic-bezier(' + bezierValues.join(',') + ')';
 			scroller.el.style['-webkit-transition'] = '-webkit-transform ' + duration + 's ' + bezier;				
 		} else {
 			scroller.el.style['-webkit-transition'] = '';
@@ -55,8 +55,8 @@
 	}	
 	
 	function pinVelocity(velocity) {
-		if (Math.abs(velocity) > maxVelocity) {
-			velocity = F5.sign(velocity)*maxVelocity;
+		if (Math.abs(velocity) > this.maxVelocity) {
+			velocity = F5.sign(velocity)*this.maxVelocity;
 		}		
 		return velocity;	
 	}
@@ -151,7 +151,7 @@
 			var scrollDuration = -velocity / acceleration;
 			
 			var maxFlickDistance = standardBounceDistance;
-			var pinnedOffset = pinOffset(scroller, scroller.staticOffset + momentumDistance, maxFlickDistance);										
+			var pinnedOffset = pinOffset(scroller, scroller.staticOffset + momentumDistance, maxFlickDistance);
 			var scrollDistance = pinnedOffset - scroller.staticOffset;
 
 			// Note quite right because of decelleration
@@ -228,7 +228,8 @@
 
 		updateVelocity(scroller, e);	
 
-		var delta = scroller.horizontal ? eventPosition(scroller, e).x - scroller.startLoc.x : eventPosition(scroller, e).y - scroller.startLoc.y;
+		var delta = scroller.horizontal ? eventPosition(scroller, e).x - scroller.startLoc.x : 
+											eventPosition(scroller, e).y - scroller.startLoc.y;
 
 		scroller.currentOffset = constrainDrag(scroller.staticOffset, delta);
 
@@ -239,11 +240,14 @@
 
 		// prototype functions
 		this.curves = {
-			easeOut: 'cubic-bezier(0, 0, 0.58, 1.0)',
-			flick: 'cubic-bezier(0.33, 0.66, 0.66, 1)', // http://code.google.com/mobile/articles/webapp_fixed_ui.html
-			hardSnap: 'cubic-bezier(0, .75, 0.55, 1.0)',
-			softSnap: 'cubic-bezier(.10, .45, 0.55, 1.0)'
+			easeOut: [0, 0, 0.58, 1.0],
+			flick: [0.33, 0.66, 0.76, 1],
+			hardSnap: [0, 0.75, 0.55, 1.0],
+			softSnap: [0.25, 0.25, 0.55, 1.0]
 		};
+
+		this.maxVelocity = 5.0;
+		
 		
 		this.construct = function () {
 			var that = this;
