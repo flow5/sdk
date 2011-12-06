@@ -118,7 +118,7 @@
 		scroller.touchTime = e.timeStamp;
 		scroller.lastVelocity = 0;
 
-		var transformMatrix = new WebKitCSSMatrix(scroller.el.style.webkitTransform);
+		var transformMatrix = new WebKitCSSMatrix(window.getComputedStyle(scroller.el)['-webkitTransform']);
 		stopScrollingAt(scroller, scroller.horizontal ? transformMatrix.m41 : transformMatrix.m42);					
 	}	
 	
