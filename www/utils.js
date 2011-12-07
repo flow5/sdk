@@ -118,10 +118,11 @@
 			});
 			url += '?' + query.join('&');
 
-			console.log(url);		
+//			console.log(url);		
 			F5.get(url, 
 				function success(response) {
 					try {
+//						console.log(response);
 						var obj = JSON.parse(response);
 						if (service.postprocess) {
 							obj = service.postprocess(obj);

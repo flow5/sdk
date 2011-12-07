@@ -1,4 +1,4 @@
-/***********************************************************************************************************************
+    /***********************************************************************************************************************
  
      Copyright (c) 2011 Paul Greyson
      
@@ -322,7 +322,7 @@ static char base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123
 }
 
 - (void)queue_fadeIn:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
-    NSLog(@"F5MapView.pushLeft");
+    NSLog(@"F5MapView.fadeIn");
     
     self.mapView.alpha = 0;
     
@@ -337,7 +337,7 @@ static char base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123
 }
 
 - (void)queue_fadeOut:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
-    NSLog(@"F5MapView.pushLeft");
+    NSLog(@"F5MapView.fadeOut");
     
     self.mapView.alpha = 1;
     

@@ -369,6 +369,9 @@ that.observer();
 					inverse = 'cut';
 					break;
 				case 'fadeIn':
+					inverse = 'fadeOut';
+					break;
+				case 'fadeOut':
 					inverse = 'fadeIn';
 					break;
 				case 'pushRight':

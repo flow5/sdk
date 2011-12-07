@@ -84,14 +84,13 @@
 				
 		// flow observer
 		this.doTransition = function (container, id, to, animation) {
-			if (this.shown) {
+			if (this.shown && animation.match('push')) {
 				// queue the transition. will be processed before js level transitions are executed
 				PhoneGap.exec(
-					function (result) { // success
-						console.log('queue_');
-						
+				function (result) { // success						
 					console.log(result);
-				}, function (result) { // failure
+				}, 
+				function (result) { // failure
 					console.log(result);
 				}, "com.flow5.mapview", 'queue_' + animation, []);					
 			}
@@ -99,26 +98,7 @@
 			return function (cb) {								
 				cb();
 			};
-		};
-		
-		// TODO: move to phonegap layer
-		function doSync(method) {
-			var xhr = new XMLHttpRequest();
-			// NOTE: XHR requires a full resolvable URL. This one gets caught by the NSURLCache though.
-			var url = 'http://www.flow5.com/gap?className=com.flow5.mapview&methodName=' + method;
-			xhr.open('GET', url, false);
-			xhr.send(null);	
-			console.log('doSync: ' + method);
-			
-			var result;
-			try {
-				result = JSON.parse(xhr.responseText).message;
-			} catch (e) {
-				console.log('exception parsing: ' + JSON.stringify(xhr) + ' url: ' + url);
-			}
-			
-			return result;
-		}
+		};		
 		
 		this.widgetWillBecomeActive = function () {
 			if (!this.created) {
@@ -135,28 +115,26 @@
 				this.created = true;						
 			}
 			
-			this.shown = true;			
-			doSync('showMap');		
+			this.shown = true;	
+			F5.callBridgeSynchronous('com.flow5.mapview', 'showMap');		
 		};
 		
 		this.widgetWillBecomeInactive = function () {
-//			var snapshot = doSync('getSnapshot');
+//			F5.callBridgeSynchronous('com.flow5.mapview', 'getSnapshot');		
 //			console.log('snapshot: ' + snapshot.substring(0, 255));			
 		};
 
 		this.widgetDidBecomeInactive = function () {
 			this.shown = false;	
-			setTimeout(function () {
-				doSync('hideMap');							
-			}, 0);
+			F5.callBridgeSynchronous('com.flow5.mapview', 'hideMap');		
 		};	
 				
 		this.getMapCenter = function () {
-			return doSync('getMapCenter');
+			return F5.callBridgeSynchronous('com.flow5.mapview', 'getMapCenter');
 		};
 
 		this.getMapBounds = function () {
-			return doSync('getMapBounds');
+			return F5.callBridgeSynchronous('com.flow5.mapview', 'getMapBounds');
 		};
 		
 		this.animateToRegion = function (cb) {

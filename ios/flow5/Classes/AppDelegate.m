@@ -41,8 +41,20 @@
 
 // TODO: switch to URLencoded JSON
 @implementation MyURLCache
-- (NSCachedURLResponse *)cachedResponseForRequest:(NSURLRequest *)request {
+
+- (NSCachedURLResponse*)makeResponse:(NSString*)responseText forRequest:(NSURLRequest*)request {
+    NSData *data = [responseText dataUsingEncoding:NSUTF8StringEncoding];
     
+    NSURLResponse *response = [[[NSURLResponse alloc] initWithURL:[request URL] MIMEType:@"application/json" 
+                                            expectedContentLength:[data length] textEncodingName:@"utf-8"] autorelease];  
+    
+    return [[[NSCachedURLResponse alloc] initWithResponse:response data:data] autorelease];            
+}
+
+- (NSCachedURLResponse *)cachedResponseForRequest:(NSURLRequest *)request {
+
+    AppDelegate *appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];  
+
     NSURL *url = [request URL];
 //    NSLog(@"%@", request);
     if ([[url lastPathComponent] isEqualToString:@"gap"]) {
@@ -52,17 +64,13 @@
         for (NSString *component in components) {
             [parameters setObject:[[component componentsSeparatedByString:@"="] objectAtIndex:1] forKey:[[component componentsSeparatedByString:@"="] objectAtIndex:0]];
         }        
-        
-        AppDelegate *appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];  
-        
+                
         NSString *jsonResult = [[appDelegate executeSynchronous: [InvokedUrlCommand commandFromObject:parameters]] toJSONString];
         
-        NSData *data = [jsonResult dataUsingEncoding:NSUTF8StringEncoding];
-        
-        NSURLResponse *response = [[[NSURLResponse alloc] initWithURL:[request URL] MIMEType:@"application/json" 
-                                                expectedContentLength:[data length] textEncodingName:@"utf-8"] autorelease];  
-        
-        return [[[NSCachedURLResponse alloc] initWithResponse:response data:data] autorelease];        
+        return [self makeResponse:jsonResult forRequest:request];      
+    } else if ([[url lastPathComponent] isEqualToString:@"gapready"]) {        
+        [appDelegate performSelectorOnMainThread:@selector(flushCommandQueue) withObject:nil waitUntilDone:NO]; 
+        return [self makeResponse:[[PluginResult resultWithStatus:PGCommandStatus_OK] toJSONString] forRequest:request];        
     } else {
        return [super cachedResponseForRequest:request]; 
     }                        

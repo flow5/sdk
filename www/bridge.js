@@ -26,58 +26,40 @@
 ***********************************************************************************************************************/
 /*global F5*/
 
-// OPTION: break the phonegap dependency out. doesn't seem worth it since the APIs are so close. . .
-
 (function () {
 	
-	function Location() {
-		
-		var currentLocation;
-		
-		this.getCurrentLocation = function () {
-			if (currentLocation) {
-				return currentLocation;
-			} else {
-				// TODO: allow client to specify default location
-				return {lat:37.774484, lng:-122.420091};
-			}
-		};				
-		
-		this.start = function () {	
-			var that = this;
-					
-			var options = {
-			    enableHighAccuracy: false,
-//			    timeout: Infinity,
-			    timeout: 10000,
-			    maximumAge: 0
-			  };
-		   
-			this.watchId = navigator.geolocation.watchPosition(
-				function (position) {
-//					console.log(position.coords);
-					var newLocation = {lat: position.coords.latitude, lng: position.coords.longitude};
-					if (newLocation !== currentLocation) {
-						currentLocation = newLocation;
-						// TODO: is there a standard event for this?
-			            var e = document.createEvent('Events'); 
-			            e.initEvent('locationchanged');
-			            document.dispatchEvent(e);						
-					}
-				},
-				function (error) {
-					console.log(error);
-				},
-				options);
-		};							
-		
-		this.stop = function () {
-			if (this.watchId) {
-				navigator.geolocation.clearWatch(this.watchId);				
-			}
-		};
+	function generateToken() {
+		return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+			var r = Math.random() * 16 | 0;
+			var v = c === 'x' ? r : (r & 0x3 | 0x8);
+			return v.toString(16);
+		}).toUpperCase();
 	}
 	
-	F5.locationService = new Location();
+	function doSync(url) {
+		// NOTE: XHR requires a full resolvable URL. This one gets caught by the NSURLCache though.
+		url = 'http://www.flow5.com/' +  generateToken() + '/' + url;
+		var xhr = new XMLHttpRequest();
+		xhr.open('GET', url, false);
+		xhr.send(null);	
+		
+		var result;
+		try {
+			result = JSON.parse(xhr.responseText).message;
+		} catch (e) {
+			console.log(xhr.responseText);
+//			console.log('exception parsing: ' + JSON.stringify(xhr) + ' url: ' + url);
+		}
+		return result;
+	}
+	
+	F5.flushBridgeAsyncCommands = function () {
+		doSync('gapready');
+	};
+	
+	F5.callBridgeSynchronous = function (className, methodName, parameters) {		
+		return doSync('gap' + '?className=' + className + '&methodName=' + methodName);
+	};
+	
 	
 }());

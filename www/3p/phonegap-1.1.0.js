@@ -245,11 +245,14 @@ PhoneGap.exec = function() {
     // commands to execute, unless the queue is currently being flushed, in
     // which case the command will be picked up without notification.
     if (PhoneGap.commandQueue.length == 1 && !PhoneGap.commandQueueFlushing) {
-        if (!PhoneGap.gapBridge) {
-            PhoneGap.gapBridge = PhoneGap.createGapBridge();
-        }
+	
+//        if (!PhoneGap.gapBridge) {
+//            PhoneGap.gapBridge = PhoneGap.createGapBridge();
+//        }
+//
+//        PhoneGap.gapBridge.src = "gap://ready";
 
-        PhoneGap.gapBridge.src = "gap://ready";
+		F5.flushBridgeAsyncCommands();
     }
 }
 

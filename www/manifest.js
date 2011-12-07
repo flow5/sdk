@@ -38,6 +38,7 @@ exports.scripts = [
 	'templates.js',
 	'viewcontroller.js',
 	'services.js',
+	'bridge.js',
 	'ui.js',
 	'location.js',
 	'widgets/button.js',
