@@ -110,16 +110,17 @@
 					
 					// TODO: extract
 					/*global PhoneGap*/
-					if (typeof PhoneGap !== 'undefined') {
-						PhoneGap.exec(
-							function (result) { // success
-							console.log(result);
-						}, function (result) { // failure
-							console.log(result);
-						}, "com.phonegap.splashscreen", "hide", []);	
-						
-					}
-																				
+					setTimeout(function () {
+						if (typeof PhoneGap !== 'undefined') {
+							PhoneGap.exec(
+								function (result) { // success
+								console.log(result);
+							}, function (result) { // failure
+								console.log(result);
+							}, "com.phonegap.splashscreen", "hide", []);	
+
+						}						
+					}, 0);																				
 				});
 			} catch (exception) {
 				document.body.className = 'errorframe';

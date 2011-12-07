@@ -162,8 +162,6 @@ that.setObserver = function (observer) {
 				};
 			}
 			
-			// TODO: this is redundant if there's a final onactive step, right?
-			cb();
 
 			nodeWillBecomeActive(flow.root, function () {
 that.observer();			
@@ -174,6 +172,8 @@ that.observer();
 							observer.start();
 						}
 					});
+					
+					completeFlow([], cb);
 				});
 			});									
 		};

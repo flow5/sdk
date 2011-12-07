@@ -216,8 +216,12 @@
         }
     };
 
-	F5.parallelizeTasks = function (tasks, cb) {
+	F5.parallelizeTasks = function (tasks, cb) {				
 		var count = tasks.length;
+		if (!count) {
+			cb();
+			return;
+		}
 		function complete() {
 			count -= 1;
 			if (!count) {
