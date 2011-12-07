@@ -99,7 +99,7 @@
 {
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"use_devserv"]) {        
         // TODO: debug setting, use devserv setting        
-        return [NSString stringWithFormat:@"http://%@:8008/generate?app=%@&native=true&inline=true&debug=true", [AppDelegate devservhost], [AppDelegate appname]];
+        return [NSString stringWithFormat:@"http://%@:8008/generate?app=%@&native=true&inline=false&debug=true", [AppDelegate devservhost], [AppDelegate appname]];
     } else {
         return [super startPage];        
     }
@@ -143,6 +143,7 @@
     [defaults synchronize];  
     
 #if DEBUG
+    NSLog(@"instrumenting webview");
     [Debug instrumentWebView:self.viewController.webView];
 #endif
     

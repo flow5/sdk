@@ -37,8 +37,14 @@
 	}
 	
 	function doSync(url) {
-		// NOTE: XHR requires a full resolvable URL. This one gets caught by the NSURLCache though.
-		url = 'http://www.flow5.com/' +  generateToken() + '/' + url;
+		var origin;
+		if (window.location.protocol === 'file:') {
+			// NOTE: XHR requires a full resolvable URL
+			origin = 'http://www.flow5.com';
+		} else {
+			origin = window.location.origin;			
+		}
+		url = origin + '/' +  generateToken() + '/' + url;
 		var xhr = new XMLHttpRequest();
 		xhr.open('GET', url, false);
 		xhr.send(null);	

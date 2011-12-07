@@ -75,6 +75,7 @@
 @end
 
 @interface WebView : WAKView
++ (void)_enableRemoteInspector;
 - (void)_setAllowsMessaging:(BOOL)fp8;
 - (void)setUIDelegate:(id)fp8;
 - (id)UIDelegate;
@@ -103,7 +104,8 @@
 + (void)instrumentWebView:(UIWebView *)uiWebView {        
     WebView *webView = [[uiWebView _documentView] webView];
     [webView _setAllowsMessaging:YES];
-    [webView setUIDelegate:[[WebViewShim alloc] initWithObject:[webView UIDelegate]]];    
+    [webView setUIDelegate:[[WebViewShim alloc] initWithObject:[webView UIDelegate]]];  
+    [NSClassFromString(@"WebView") _enableRemoteInspector];    
 }
 
 @end

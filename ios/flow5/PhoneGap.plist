@@ -29,6 +29,8 @@
 		<string>*.gstatic.com</string>
 		<string>*.google.com</string>
 		<string>*.apple.com</string>
+		<string>localhost</string>
+		<string></string>
 	</array>
 	<key>Plugins</key>
 	<dict>

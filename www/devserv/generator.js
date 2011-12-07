@@ -315,11 +315,11 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative) {
 		document.body.appendChild(makeScript('3p/phonegap-1.1.0.js'));				
 	}
 	
-	if (isMobile && isDebug) {
-		var weinre = document.createElement('script');
-		weinre.src = 'http://' + require('os').hostname() + ':8081/target/target-script-min.js#anonymous';
-		document.head.appendChild(weinre);			
-	}
+//	if (isMobile && isDebug) {
+//		var weinre = document.createElement('script');
+//		weinre.src = 'http://' + require('os').hostname() + ':8081/target/target-script-min.js#anonymous';
+//		document.head.appendChild(weinre);			
+//	}
 			
 	deleteCaches();	
 	
