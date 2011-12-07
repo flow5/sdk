@@ -34,12 +34,7 @@
 			var url = F5.valueFromId(data, id);
 			if (url) {
 				var img = document.createElement('img');
-				var src = F5.sourceFromResourceUrl(url);
-				if (url.match('data:image')) {
-					img.src = src;
-				} else {
-					img.src = F5.imageServerHost + src;				
-				}
+				img.src = F5.sourceFromResourceUrl(url);
 				this.el.appendChild(img);				
 			}			
 		};
