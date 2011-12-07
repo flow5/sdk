@@ -68,33 +68,8 @@
 			el.style['-webkit-transition'] = '';
 		});
 	}			
-	
-	function StaticText() {
-		this.construct = function (data) {
-			var id = this.el.getAttribute('f5_id');
-			this.el.innerText = data[id];
-		};
-	}
-	
-	function Picture() {
-		this.construct = function (data) {
-			var id = this.el.getAttribute('f5_id');
-
-			var img = document.createElement('img');
-			var src = F5.sourceFromResourceUrl(data[id]);
-			if (data[id].match('data:image')) {
-				img.src = src;
-			} else {
-				img.src = F5.imageServerHost + src;				
-			}
-			this.el.appendChild(img);
-		};
-	}
-	
-	F5.WidgetPrototypes.Picture = new Picture();	
-	F5.WidgetPrototypes.StaticText = new StaticText();	
-		
-	function attachWidget(el, data) {
+					
+	F5.attachWidget = function(el, data) {
 		var type = el.getAttribute('f5_widget');
 		F5.assert(F5.WidgetPrototypes[type], 'No widget: ' + type);
 		var widget = F5.objectFromPrototype(F5.WidgetPrototypes[type]);
@@ -106,12 +81,10 @@
 			F5.addClass(el, className);
 		}
 		widget.construct(data);		
-	}
+	};
 	
-	// TODO: unify all of the widgets under the same API
-		
+	// TODO: replace tracker with x/y scroller
 	F5.UI = {
-		attachWidget: attachWidget,
 		attachTracker: attachTracker
 	};
 }());

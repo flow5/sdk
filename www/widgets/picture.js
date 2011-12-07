@@ -26,41 +26,25 @@
 ***********************************************************************************************************************/
 /*global F5*/
 
-(function () {	
-			
-	function loadTemplate(arg1, arg2) {
-		
-		var id;
-		var node;
-		if (typeof arg1 === 'string') {
-			id = arg1;
-		} else {
-			node = arg1;
-			id = node.id;
-		}
-				
-		var instance = document.getElementById(id).cloneNode(true);
-		instance.removeAttribute('id');
-		
-		var widgetEls = [];
-		
-		if (instance.hasAttribute('f5_widget')) {
-			widgetEls.push(instance);
-		}
-
-		F5.forEach(instance.querySelectorAll('[f5_widget]'), function (el) {
-			widgetEls.push(el);			
-		});
-		
-		var data = F5.getNodeData(node, arg2);							
-		
-		F5.forEach(widgetEls, function (el) {
-			F5.attachWidget(el, data);
-		});
-		
-		return instance;
+(function () {
+	
+	function Picture() {
+		this.construct = function (data) {
+			var id = this.el.getAttribute('f5_id');
+			var url = F5.valueFromId(data, id);
+			if (url) {
+				var img = document.createElement('img');
+				var src = F5.sourceFromResourceUrl(url);
+				if (url.match('data:image')) {
+					img.src = src;
+				} else {
+					img.src = F5.imageServerHost + src;				
+				}
+				this.el.appendChild(img);				
+			}			
+		};
 	}
 	
-	F5.Templates = {loadTemplate: loadTemplate};
-
+	F5.WidgetPrototypes.Picture = new Picture();
+		
 }());

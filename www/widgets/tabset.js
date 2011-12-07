@@ -82,7 +82,7 @@
 				that.tabs[id] = tab;
 				tabset.appendChild(tab);
 								
-				F5.UI.attachWidget(tab, data);				
+				F5.attachWidget(tab, data);				
 
 				tab.widget.setAction(function (e) {
 					// do the action first. if it errors out, the state of the

@@ -37,7 +37,7 @@
 			this.closeButton.className = 'f5closebutton';
 			this.closeButton.setAttribute('f5_id', 'closeButton');
 			this.closeButton.setAttribute('f5_widget', 'ImageButton');
-			F5.UI.attachWidget(this.closeButton, data);
+			F5.attachWidget(this.closeButton, data);
 			F5.setStyles(this.closeButton, {
 				position: 'absolute',
 				top: '3px',

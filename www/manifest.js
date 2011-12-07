@@ -42,6 +42,8 @@ exports.scripts = [
 	'ui.js',
 	'location.js',
 	'widgets/button.js',
+	'widgets/statictext.js',
+	'widgets/picture.js',
 	'widgets/tabset.js',
 	'widgets/navbar.js',
 	'widgets/streetview.js',

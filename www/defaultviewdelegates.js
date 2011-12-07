@@ -52,7 +52,7 @@
 						subflowEl.setAttribute('f5_id', 'id');
 						subflowsEl.appendChild(subflowEl);	
 						
-						F5.UI.attachWidget(subflowEl, {id: id});
+						F5.attachWidget(subflowEl, {id: id});
 
 						subflowEl.widget.setAction(function () {
 							F5.Global.flowController.doSubflow(node, id);
@@ -77,7 +77,7 @@
 					F5.addClass(transitionEl, 'do-transition');
 					transitionsEl.appendChild(transitionEl);	
 
-					F5.UI.attachWidget(transitionEl, {id: id});
+					F5.attachWidget(transitionEl, {id: id});
 					transitionEl.widget.setAction(function () {
 						F5.Global.flowController.doTransition(node, id, {});
 					});
@@ -98,7 +98,7 @@
 			});			
 			el.setAttribute('f5_widget', 'Tabset');
 			
-			F5.UI.attachWidget(el, F5.getNodeData(node));
+			F5.attachWidget(el, F5.getNodeData(node));
 			el.widget.setAction(function (id) {
 				F5.Global.flowController.doSelection(node, id, function () {
 
@@ -144,7 +144,7 @@
 				F5.addClass(choiceEl, 'do-choice');
 				choicesEl.appendChild(choiceEl);
 				
-				F5.UI.attachWidget(choiceEl, {choice: id});									
+				F5.attachWidget(choiceEl, {choice: id});									
 				choiceEl.widget.setAction(function () {
 					F5.Global.flowController.doSubflowChoice(subflow.node, id);
 				});							

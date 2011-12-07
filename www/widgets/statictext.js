@@ -26,41 +26,31 @@
 ***********************************************************************************************************************/
 /*global F5*/
 
-(function () {	
-			
-	function loadTemplate(arg1, arg2) {
-		
-		var id;
-		var node;
-		if (typeof arg1 === 'string') {
-			id = arg1;
-		} else {
-			node = arg1;
-			id = node.id;
-		}
-				
-		var instance = document.getElementById(id).cloneNode(true);
-		instance.removeAttribute('id');
-		
-		var widgetEls = [];
-		
-		if (instance.hasAttribute('f5_widget')) {
-			widgetEls.push(instance);
-		}
-
-		F5.forEach(instance.querySelectorAll('[f5_widget]'), function (el) {
-			widgetEls.push(el);			
-		});
-		
-		var data = F5.getNodeData(node, arg2);							
-		
-		F5.forEach(widgetEls, function (el) {
-			F5.attachWidget(el, data);
-		});
-		
-		return instance;
+(function () {
+	
+	function StaticText() {
+		this.construct = function (data) {
+			var id = this.el.getAttribute('f5_id');
+			var value = F5.valueFromId(data, id);
+			if (value) {
+				this.el.innerText = value;				
+			}
+		};
 	}
 	
-	F5.Templates = {loadTemplate: loadTemplate};
-
+	F5.WidgetPrototypes.StaticText = new StaticText();	
+	
+	
+	function Telephone() {
+		this.construct = function (data) {
+			var id = this.el.getAttribute('f5_id');
+			var value = F5.valueFromId(data, id);
+			if (value) {
+				this.el.innerText = value;
+			}
+		};
+	}
+	
+	F5.WidgetPrototypes.Telephone = new Telephone();		
+		
 }());

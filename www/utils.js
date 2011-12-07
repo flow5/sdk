@@ -235,6 +235,14 @@
 		return x/Math.abs(x);
 	};
 	
+	F5.valueFromId = function (obj, path) {
+		var pathComponents = path.split('.');
+		while (obj && typeof obj === 'object' && pathComponents.length) {
+			obj = obj[pathComponents.shift()];
+		}
+		return obj;
+	};
+	
 }());
 
 
