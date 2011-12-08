@@ -70,16 +70,32 @@
 		},
 		googlePlaces: {
 			parameters: {
-//				apiKey: <provided by client>
+//				key: <provided by client>
 			},				
 			search: {
 				protocol: 'https',
 				method: 'GET',
-				baseUrl: 'maps.googleapis.com/maps/api/place/search/json',
+				baseUrl: 'query.yahooapis.com/v1/public/yql',
+				parameters: {
+					tableHost: 'http://www.flow5.com',
+					tableName: 'table',
+					radius: 500
+				},
 				parameterSchema: {},
 				responseSchema: {},	
+				query: function (parameters) {
+					var query = 'use "';
+					query += parameters.tableHost + '/' + parameters.tableName + '.xml";';
+					query += 'select * from ' + parameters.tableName + ' where ';
+					query += 'location="' + parameters.location + '" and ';
+					query += 'key="' + parameters.key + '" and ';
+					query += 'radius="' + parameters.radius + '"\n';
+										
+					return 'q=' + encodeURIComponent(query) + '&format=json&diagnostics=true'; 
+				},
 				postprocess: function (response) {
-					return response.results;
+					// WTF?
+					return response.query.results.result.json.results;
 				}				
 			}
 		}

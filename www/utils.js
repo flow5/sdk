@@ -112,13 +112,19 @@
 
 		var url = service.protocol + '://' + service.baseUrl + option;
 		if (service.method === 'GET') {
-			var query = [];
-			F5.forEach(parameters, function (id, value) {
-				query.push(id + '=' + encodeURIComponent(value));
-			});
-			url += '?' + query.join('&');
+			if (service.query) {
+				url += '?' + service.query(parameters);
+			} else {
+				var query = [];
+				F5.forEach(parameters, function (id, value) {
+					query.push(id + '=' + encodeURIComponent(value));
+				});
+				url += '?' + query.join('&');				
+			}
 
-//			console.log(url);		
+//			console.log(url);	
+			console.log(url);
+			console.log(decodeURI(url));	
 			F5.get(url, 
 				function success(response) {
 					try {
