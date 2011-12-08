@@ -15,8 +15,8 @@
           // Your javascript goes here. We will run it on our servers 
           response.object = <item> 
                    <url>{request.url}</url> 
-                   <a>{[1,2,3]}</a> 
-                   <b>{[4,5,6]}</b> 
+                   <a>[1,2,3]</a> 
+                   <b>[4,5,6]</b> 
                 </item>; 
       ]]></execute>  
     </select>  
