@@ -10,7 +10,7 @@
       </inputs>  
       <execute><![CDATA[ 
           // Your javascript goes here. We will run it on our servers 
-		  y.rest("https://maps.googleapis.com/maps/api/place/search/json?location=37.774484%2C-122.42009100000001&apiKey=AIzaSyBoEhihE9NoNvExtbuWL98bIQZHTrzOqbg", function (result) {
+		  y.rest("https://maps.googleapis.com/maps/api/place/search/json?location=-33.8670522,151.1957362&radius=500&types=food&name=harbour&sensor=false&key=AIzaSyBoEhihE9NoNvExtbuWL98bIQZHTrzOqbg", function (result) {
           	response.object = {result: result.response}; 		
 		  }).get(); 
 		
