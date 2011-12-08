@@ -129,12 +129,8 @@
 			F5.callBridgeSynchronous('com.flow5.mapview', 'hideMap');		
 		};	
 				
-		this.getMapCenter = function () {
-			return F5.callBridgeSynchronous('com.flow5.mapview', 'getMapCenter');
-		};
-
-		this.getMapBounds = function () {
-			return F5.callBridgeSynchronous('com.flow5.mapview', 'getMapBounds');
+		this.getMapGeometry = function () {
+			return F5.callBridgeSynchronous('com.flow5.mapview', 'getMapGeometry');
 		};
 		
 		this.animateToRegion = function (cb) {

@@ -91,8 +91,6 @@
 					tableHost: 'http://www.flow5.com/yql/google/places',
 					tableName: 'search',
 					parameters: {
-						radius: 1000,
-						types: 'restaurant'
 					},
 					parameterSchema: {},
 					responseSchema: {},	

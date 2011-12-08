@@ -103,16 +103,20 @@
 		this.setMaskRegion = function (region) {
 			
 		};
-				
-		this.getMapCenter = function () {
-			var center = this.map.getCenter();
-			return {lat: center.lat(), lng: center.lng()};
-		};
-		
-		this.getMapBounds = function () {
+						
+		this.getMapGeometry = function () {
 			var bounds = this.map.getBounds();
-			return {sw: {lat: bounds.getSouthWest().lat(), lng: bounds.getSouthWest().lng()}, 
-					ne: {lat: bounds.getNorthEast().lat(), lng: bounds.getNorthEast().lng()}};
+			var center = this.map.getCenter();
+			return {
+				bounds: {
+					sw: {lat: bounds.getSouthWest().lat(), lng: bounds.getSouthWest().lng()}, 
+					ne: {lat: bounds.getNorthEast().lat(), lng: bounds.getNorthEast().lng()}
+				},
+				center: {lat: center.lat(), lng: center.lng()},
+				radius: 0.5 * google.maps.geometry.spherical.computeDistanceBetween(bounds.getSouthWest(), 
+										bounds.getNorthEast())
+				
+			};
 		};
 		
 		this.animateToRegion = function (cb) {

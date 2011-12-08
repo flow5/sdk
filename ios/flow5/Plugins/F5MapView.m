@@ -250,25 +250,15 @@ static char base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123
     [self writeJavascript: [pluginResult toSuccessCallbackString:callbackId]];            
 }
 
-- (PluginResult*)getMapCenter:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
-    if (self.mapView) {
-        CLLocationCoordinate2D center = self.mapView.centerCoordinate;
-                        
-        NSDictionary *latLng = [NSDictionary dictionaryWithObjectsAndKeys:
-                                    [NSNumber numberWithFloat:center.latitude], @"lat", 
-                                    [NSNumber numberWithFloat:center.longitude], @"lng", nil];
-        return [PluginResult resultWithStatus:PGCommandStatus_OK messageAsDictionary:latLng];                
-    } else {
-        NSLog(@"Trying to use showMap without calling create first");        
-        return [PluginResult resultWithStatus:PGCommandStatus_INVALID_ACTION];                
-    }    
-}
-
-- (PluginResult*)getMapBounds:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
+- (PluginResult*)getMapGeometry:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
     if (self.mapView) {
         MKMapRect rect = self.mapView.visibleMapRect;
         MKMapPoint neMapPoint = MKMapPointMake(rect.origin.x + rect.size.width, rect.origin.y);
         MKMapPoint swMapPoint = MKMapPointMake(rect.origin.x, rect.origin.y + rect.size.height);
+        
+        CLLocationDistance diagonalMeters = MKMetersBetweenMapPoints(neMapPoint, swMapPoint);
+
+        
         CLLocationCoordinate2D neCoord = MKCoordinateForMapPoint(neMapPoint);
         CLLocationCoordinate2D swCoord = MKCoordinateForMapPoint(swMapPoint);
         
@@ -281,8 +271,22 @@ static char base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123
                             [NSNumber numberWithFloat:swCoord.longitude], @"lng", nil];
 
         
-        NSDictionary *bounds = [NSDictionary dictionaryWithObjectsAndKeys:ne, @"ne", sw, @"sw", nil];
-        return [PluginResult resultWithStatus:PGCommandStatus_OK messageAsDictionary:bounds];                
+        NSDictionary *boundsDict = [NSDictionary dictionaryWithObjectsAndKeys:ne, @"ne", sw, @"sw", nil];
+        
+        CLLocationCoordinate2D center = self.mapView.centerCoordinate;
+        
+        NSDictionary *centerDict = [NSDictionary dictionaryWithObjectsAndKeys:
+                                [NSNumber numberWithFloat:center.latitude], @"lat", 
+                                [NSNumber numberWithFloat:center.longitude], @"lng", nil];
+
+        
+        NSDictionary *geometry = [NSDictionary dictionaryWithObjectsAndKeys:
+                                    boundsDict, @"bounds", 
+                                    centerDict, @"center", 
+                                    [NSNumber  numberWithFloat:diagonalMeters/2], @"radius", nil];
+                
+        
+        return [PluginResult resultWithStatus:PGCommandStatus_OK messageAsDictionary:geometry];                
     } else {
         NSLog(@"Trying to use showMap without calling create first");        
         return [PluginResult resultWithStatus:PGCommandStatus_INVALID_ACTION];                

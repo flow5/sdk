@@ -43,7 +43,7 @@
 // synchronous methods
 - (PluginResult*)showMap:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (PluginResult*)hideMap:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (PluginResult*)getMapCenter:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (PluginResult*)getMapGeometry:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (PluginResult*)getSnapshot:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
 - (void)create:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
