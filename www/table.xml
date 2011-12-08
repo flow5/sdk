@@ -1,11 +1,13 @@
 <table xmlns="http://query.yahooapis.com/v1/schema/table.xsd">  
   <meta>  
-    <sampleQuery>select * from {table} where location='37.774484,-122.42009100000001';</sampleQuery>  
+    <sampleQuery>select * from {table} where location='37.774484,-122.42009100000001' and key='mygoogleapikey' and radius='500';</sampleQuery>  
   </meta>  
   <bindings>  
     <select itemPath="" produces="XML">  
       <inputs>  
         <key id='location' type='xs:string' paramType='variable' required="true" />  
+        <key id='key' type='xs:string' paramType='variable' required="true" />  
+        <key id='radius' type='xs:string' paramType='variable' required="true" />  
       </inputs>  
       <execute><![CDATA[ 
 	
@@ -17,10 +19,10 @@
 				.path("place")
 				.path("search")
 				.path("json")
-				.query("sensor", false)
+				.query("sensor", true)
 				.query("location", location)
-				.query("radius", 500)
-				.query("key", "AIzaSyBoEhihE9NoNvExtbuWL98bIQZHTrzOqbg").get();		
+				.query("radius", radius)
+				.query("key", key).get();		
 		y.sync();		
       ]]></execute>  
     </select>  
