@@ -21,7 +21,7 @@
 				.query("location", location)
 				.query("radius", 500)
 				.query("key", "AIzaSyBoEhihE9NoNvExtbuWL98bIQZHTrzOqbg").get();		
-				
+		y.sync();		
       ]]></execute>  
     </select>  
   </bindings>  
