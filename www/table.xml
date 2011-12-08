@@ -26,7 +26,7 @@
 				.query("key", key);
 				
 		if (types) {
-			rest = rest.query("types", type);
+			rest = rest.query("types", types);
 		}		
 		
 		rest.get();				
