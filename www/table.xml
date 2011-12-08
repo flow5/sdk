@@ -13,11 +13,7 @@
       </inputs>  
       <execute><![CDATA[ 
           // Your javascript goes here. We will run it on our servers 
-          response.object = <item> 
-                   <url>{request.url}</url> 
-                   <a>[1,2,3]</a> 
-                   <b>[4,5,6]</b> 
-                </item>; 
+          response.object = [1,2,3]; 
       ]]></execute>  
     </select>  
   </bindings>  
