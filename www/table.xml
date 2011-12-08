@@ -13,6 +13,8 @@
 		  y.rest("http://www.yahoo.com", function (result) {
           	response.object = {result: result}; 		
 		  }).get(); 
+		
+		  y.sync();
       ]]></execute>  
     </select>  
   </bindings>  
