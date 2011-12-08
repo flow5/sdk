@@ -1,12 +1,11 @@
 <table xmlns="http://query.yahooapis.com/v1/schema/table.xsd">  
   <meta>  
-    <sampleQuery>select * from {table} where a='cat' and b='dog';</sampleQuery>  
+    <sampleQuery>select * from {table} where location='37.774484,-122.42009100000001';</sampleQuery>  
   </meta>  
   <bindings>  
     <select itemPath="" produces="XML">  
       <inputs>  
-        <key id='a' type='xs:string' paramType='path' required="true" />  
-        <key id='b' type='xs:string' paramType='variable' required="true" />  
+        <key id='location' type='xs:string' paramType='variable' required="true" />  
       </inputs>  
       <execute><![CDATA[ 
 	
@@ -18,7 +17,7 @@
 				.path("place")
 				.path("search")
 				.path("json")
-				.query("location", "37.774484%2C-122.42009100000001")
+				.query("location", location)
 				.query("radius", 500)
 				.query("key", "AIzaSyBoEhihE9NoNvExtbuWL98bIQZHTrzOqbg").get();
 		
