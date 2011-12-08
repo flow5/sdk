@@ -1,0 +1,24 @@
+<table xmlns="http://query.yahooapis.com/v1/schema/table.xsd">  
+  <meta>  
+    <sampleQuery>select * from {table} where a='cat' and b='dog';</sampleQuery>  
+  </meta>  
+  <bindings>  
+    <select itemPath="" produces="XML">  
+      <urls>  
+        <url>http://fake.url/{a}</url>  
+      </urls>  
+      <inputs>  
+        <key id='a' type='xs:string' paramType='path' required="true" />  
+        <key id='b' type='xs:string' paramType='variable' required="true" />  
+      </inputs>  
+      <execute><![CDATA[ 
+          // Your javascript goes here. We will run it on our servers 
+          response.object = <item> 
+                   <url>{request.url}</url> 
+                   <a>{a}</a> 
+                   <b>{b}</b> 
+                </item>; 
+      ]]></execute>  
+    </select>  
+  </bindings>  
+</table>

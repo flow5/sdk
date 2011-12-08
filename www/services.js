@@ -67,6 +67,21 @@
 					return response.response.categories;
 				}								
 			}				
+		},
+		googlePlaces: {
+			parameters: {
+//				apiKey: <provided by client>
+			},				
+			search: {
+				protocol: 'https',
+				method: 'GET',
+				baseUrl: 'maps.googleapis.com/maps/api/place/search/json',
+				parameterSchema: {},
+				responseSchema: {},	
+				postprocess: function (response) {
+					return response.results;
+				}				
+			}
 		}
 	};		
 	
