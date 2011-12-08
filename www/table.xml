@@ -1,12 +1,11 @@
 <table xmlns="http://query.yahooapis.com/v1/schema/table.xsd">  
   <meta>  
-    <sampleQuery>select * from {table} where lat='37.774484' and lng='-122.42009100000001';</sampleQuery>  
+    <sampleQuery>select * from {table} where location='37.774484,-122.42009100000001';</sampleQuery>  
   </meta>  
   <bindings>  
     <select itemPath="" produces="XML">  
       <inputs>  
-        <key id='lat' type='xs:string' paramType='variable' required="true" />  
-        <key id='lng' type='xs:string' paramType='variable' required="true" />  
+        <key id='location' type='xs:string' paramType='variable' required="true" />  
       </inputs>  
       <execute><![CDATA[ 
 	
@@ -19,7 +18,7 @@
 				.path("search")
 				.path("json")
 				.query("sensor", false)
-				.query("location", lat + ',' + lng)
+				.query("location", location)
 				.query("radius", 500)
 				.query("key", "AIzaSyBoEhihE9NoNvExtbuWL98bIQZHTrzOqbg").get();		
 		  y.sync();
