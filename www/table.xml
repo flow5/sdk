@@ -10,7 +10,7 @@
       <execute><![CDATA[ 
 	
 		y.rest("https://maps.googleapis.com", function (result) {
-					response.object = <result>{result}</result>; 		
+					response.object = <result>{result.response}</result>; 		
 				})
 				.path("maps")
 				.path("api")
