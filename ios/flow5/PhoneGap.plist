@@ -30,7 +30,7 @@
 		<string>*.google.com</string>
 		<string>*.apple.com</string>
 		<string>localhost</string>
-		<string></string>
+		<string>query.yahooapis.com</string>
 	</array>
 	<key>Plugins</key>
 	<dict>
