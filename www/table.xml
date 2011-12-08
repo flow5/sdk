@@ -9,9 +9,21 @@
       </inputs>  
       <execute><![CDATA[ 
 	
-		y.rest("https://maps.googleapis.com", function (result) {
-					response.object = {result: result.response}; 		
-				})
+//		y.rest("https://maps.googleapis.com", function (result) {
+//					response.object = {result: result.response}; 		
+//				})
+//				.path("maps")
+//				.path("api")
+//				.path("place")
+//				.path("search")
+//				.path("json")
+//				.query("sensor", false)
+//				.query("location", location)
+//				.query("radius", 500)
+//				.query("key", "AIzaSyBoEhihE9NoNvExtbuWL98bIQZHTrzOqbg").get();		
+//		  y.sync();
+		
+		var result = y.rest("https://maps.googleapis.com")
 				.path("maps")
 				.path("api")
 				.path("place")
@@ -20,9 +32,8 @@
 				.query("sensor", false)
 				.query("location", location)
 				.query("radius", 500)
-				.query("key", "AIzaSyBoEhihE9NoNvExtbuWL98bIQZHTrzOqbg").get();
-		
-		  y.sync();
+				.query("key", "AIzaSyBoEhihE9NoNvExtbuWL98bIQZHTrzOqbg").get();		
+		  response.object = {result: result.response};	
       ]]></execute>  
     </select>  
   </bindings>  
