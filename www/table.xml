@@ -9,22 +9,22 @@
       </inputs>  
       <execute><![CDATA[ 
 	
-//		y.rest("https://maps.googleapis.com", function (result) {
-//					response.object = {result: result.response}; 		
-//				})
-//				.path("maps")
-//				.path("api")
-//				.path("place")
-//				.path("search")
-//				.path("json")
-//				.query("sensor", false)
-//				.query("location", location)
-//				.query("radius", 500)
-//				.query("key", "AIzaSyBoEhihE9NoNvExtbuWL98bIQZHTrzOqbg").get();		
-		
-		y.rest("https://maps.googleapis.com/maps/api/place/search/json?sensor=false&location=37.774484%2c-122.42009100000001&radius=500&key=AIzaSyBoEhihE9NoNvExtbuWL98bIQZHTrzOqbg", function (result) {
+		y.rest("https://maps.googleapis.com", function (result) {
 					response.object = {result: result.response}; 		
-				}).get();
+				})
+				.path("maps")
+				.path("api")
+				.path("place")
+				.path("search")
+				.path("json")
+				.query("sensor", false)
+				.query("location", location)
+				.query("radius", 500)
+				.query("key", "AIzaSyBoEhihE9NoNvExtbuWL98bIQZHTrzOqbg").get();		
+		
+//		y.rest("https://maps.googleapis.com/maps/api/place/search/json?sensor=false&location=37.774484%2c-122.42009100000001&radius=500&key=AIzaSyBoEhihE9NoNvExtbuWL98bIQZHTrzOqbg", function (result) {
+//					response.object = {result: result.response}; 		
+//				}).get();
 			  y.sync();
 		
       ]]></execute>  
