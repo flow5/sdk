@@ -4,16 +4,13 @@
   </meta>  
   <bindings>  
     <select itemPath="" produces="XML">  
-      <urls>  
-        <url>http://fake.url/{a}</url>  
-      </urls>  
       <inputs>  
         <key id='a' type='xs:string' paramType='path' required="true" />  
         <key id='b' type='xs:string' paramType='variable' required="true" />  
       </inputs>  
       <execute><![CDATA[ 
           // Your javascript goes here. We will run it on our servers 
-          response.object = [1,2,3]; 
+          response.object = {result: [1,2,3]}; 
       ]]></execute>  
     </select>  
   </bindings>  
