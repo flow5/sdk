@@ -17,6 +17,7 @@
 				.path("place")
 				.path("search")
 				.path("json")
+				.query("sensor", false)
 				.query("location", location)
 				.query("radius", 500)
 				.query("key", "AIzaSyBoEhihE9NoNvExtbuWL98bIQZHTrzOqbg").get();
