@@ -10,8 +10,8 @@
       </inputs>  
       <execute><![CDATA[ 
           // Your javascript goes here. We will run it on our servers 
-		  y.rest("http://www.yahoo.com", function (result) {
-          	response.object = {result: result}; 		
+		  y.rest("https://maps.googleapis.com/maps/api/place/search/json?location=37.774484%2C-122.42009100000001&apiKey=AIzaSyBoEhihE9NoNvExtbuWL98bIQZHTrzOqbg", function (result) {
+          	response.object = {result: result.response}; 		
 		  }).get(); 
 		
 		  y.sync();
