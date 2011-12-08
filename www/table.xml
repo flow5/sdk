@@ -1,6 +1,6 @@
 <table xmlns="http://query.yahooapis.com/v1/schema/table.xsd">  
   <meta>  
-    <sampleQuery>select * from {table} where location='37.774484,-122.42009100000001' and key='mygoogleapikey' and radius='500' and type='cafe';</sampleQuery>  
+    <sampleQuery>select * from {table} where location='37.774484,-122.42009100000001' and key='mygoogleapikey' and radius='500' and types='cafe';</sampleQuery>  
   </meta>  
   <bindings>  
     <select itemPath="" produces="XML">  
@@ -8,7 +8,7 @@
         <key id='location' type='xs:string' paramType='variable' required="true" />  
         <key id='key' type='xs:string' paramType='variable' required="true" />  
         <key id='radius' type='xs:string' paramType='variable' required="true" />  
-        <key id='type' type='xs:string' paramType='variable' required="false" />  
+        <key id='types' type='xs:string' paramType='variable' required="false" />  
       </inputs>  
       <execute><![CDATA[ 
 	
@@ -25,8 +25,8 @@
 				.query("radius", radius)
 				.query("key", key);
 				
-		if (type) {
-			rest = rest.query("type", type);
+		if (types) {
+			rest = rest.query("types", type);
 		}		
 		
 		rest.get();				
