@@ -123,8 +123,6 @@
 			}
 
 //			console.log(url);	
-			console.log(url);
-			console.log(decodeURI(url));	
 			F5.get(url, 
 				function success(response) {
 					try {

@@ -79,7 +79,8 @@
 				parameters: {
 					tableHost: 'http://www.flow5.com',
 					tableName: 'table',
-					radius: 500
+					radius: 1000,
+					types: 'restaurant'
 				},
 				parameterSchema: {},
 				responseSchema: {},	
@@ -89,13 +90,18 @@
 					query += 'select * from ' + parameters.tableName + ' where ';
 					query += 'location="' + parameters.location + '" and ';
 					query += 'key="' + parameters.key + '" and ';
+//					query += 'types="' + parameters.types + '" and ';					
 					query += 'radius="' + parameters.radius + '"\n';
 										
 					return 'q=' + encodeURIComponent(query) + '&format=json&diagnostics=true'; 
 				},
 				postprocess: function (response) {
 					// WTF?
-					return response.query.results.result.json.results;
+					var results = response.query.results.result.json.results;
+					if (!Array.isArray(results)) {
+						results = [results];
+					}
+					return results;
 				}				
 			}
 		}
