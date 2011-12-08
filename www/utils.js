@@ -97,10 +97,16 @@
 	F5.execService = function (name, option, parameters, cb) {
 
 		var service = F5.Services;
+		var protocol, baseUrl, method;
 		F5.forEach(name.split('.'), function (component) {
 			if (service) {
 				service = service[component];				
 			}
+			
+			protocol = protocol || service.protocol;
+			baseUrl = baseUrl || service.baseUrl;
+			method = method || service.method;
+			
 			if (service.parameters) {
 				F5.extend(parameters, service.parameters);
 			}
@@ -110,8 +116,8 @@
 		// TODO
 		// validate(parameters, service.parameterSchema);
 
-		var url = service.protocol + '://' + service.baseUrl + option;
-		if (service.method === 'GET') {
+		var url = protocol + '://' + baseUrl + option;
+		if (method === 'GET') {
 			if (service.query) {
 				url += '?' + service.query(parameters);
 			} else {

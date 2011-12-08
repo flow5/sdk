@@ -27,19 +27,34 @@
 /*global F5*/
 
 
-(function () {		
+(function () {	
+	
+	function yqlStatement(tableHost, tableName, parameters) {
+		var statement = 'use "' + tableHost + '/' + tableName + '.xml";';
+
+		statement += 'select * from ' + tableName + ' where ';
+
+		var queryParameters = [];
+		F5.forEach(parameters, function (key, value) {
+			queryParameters.push(key + '="' + value + '"');
+		});
+		statement += queryParameters.join(' and ');
+		
+		return statement;
+	}
+		
 	
 	// TODO: validate service configs against schema
 	F5.Services = {
 		foursquare: {
+			protocol: 'https',
+			method: 'GET',
 			parameters: {
 				v: '20111111'
 //				client_id: <provided by client>
 //				client_secret: <provided by client>								
 			},
 			venueSearch: {
-				protocol: 'https',
-				method: 'GET',
 				baseUrl: 'api.foursquare.com/v2/venues/search',
 				parameterSchema: {},
 				responseSchema: {},	
@@ -48,8 +63,6 @@
 				}				
 			},
 			venue: {
-				protocol: 'https',
-				method: 'GET',
 				baseUrl: 'api.foursquare.com/v2/venues/',
 				parameterSchema: {},
 				responseSchema: {},	
@@ -58,8 +71,6 @@
 				}				
 			},
 			categories: {
-				protocol: 'https',
-				method: 'GET',
 				baseUrl: 'api.foursquare.com/v2/venues/categories',
 				parameterSchema: {},
 				responseSchema: {},	
@@ -68,41 +79,51 @@
 				}								
 			}				
 		},
-		googlePlaces: {
+		google: {
 			parameters: {
 //				key: <provided by client>
 			},				
-			search: {
+			places: {
 				protocol: 'https',
-				method: 'GET',
 				baseUrl: 'query.yahooapis.com/v1/public/yql',
-				parameters: {
-					tableHost: 'http://www.flow5.com',
-					tableName: 'table',
-					radius: 1000,
-					types: 'restaurant'
-				},
-				parameterSchema: {},
-				responseSchema: {},	
-				query: function (parameters) {
-					var query = 'use "';
-					query += parameters.tableHost + '/' + parameters.tableName + '.xml";';
-					query += 'select * from ' + parameters.tableName + ' where ';
-					query += 'location="' + parameters.location + '" and ';
-					query += 'key="' + parameters.key + '" and ';
-//					query += 'types="' + parameters.types + '" and ';					
-					query += 'radius="' + parameters.radius + '"\n';
-										
-					return 'q=' + encodeURIComponent(query) + '&format=json&diagnostics=true'; 
-				},
-				postprocess: function (response) {
-					// WTF?
-					var results = response.query.results.result.json.results;
-					if (!Array.isArray(results)) {
-						results = [results];
-					}
-					return results;
-				}				
+				method: 'GET',
+				search: {
+					tableHost: 'http://www.flow5.com/yql/google/places',
+					tableName: 'search',
+					parameters: {
+						radius: 1000,
+						types: 'restaurant'
+					},
+					parameterSchema: {},
+					responseSchema: {},	
+					query: function (parameters) {
+						var statement = yqlStatement(this.tableHost, this.tableName, parameters);
+						return 'q=' + encodeURIComponent(statement) + '&format=json&diagnostics=true';
+					},
+					postprocess: function (response) {
+						var results = response.query.results.response.json.results;
+						if (!Array.isArray(results)) {
+							results = [results];
+						}
+						return results;
+					}				
+				},			
+				details: {
+					tableHost: 'http://www.flow5.com/yql/google/places',
+					tableName: 'details',
+					parameters: {
+						// reference <provided by client>
+					},
+					parameterSchema: {},
+					responseSchema: {},	
+					query: function (parameters) {
+						var statement = yqlStatement(this.tableHost, this.tableName, parameters);
+						return 'q=' + encodeURIComponent(statement) + '&format=json&diagnostics=true';
+					},
+					postprocess: function (response) {
+						return response.query.results.response.json.result;
+					}				
+				}												
 			}
 		}
 	};		
