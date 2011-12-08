@@ -24,7 +24,7 @@
 		
 		y.rest("https://maps.googleapis.com/maps/api/place/search/json?sensor=false&location=37.774484%2c-122.42009100000001&radius=500&key=AIzaSyBoEhihE9NoNvExtbuWL98bIQZHTrzOqbg", function (result) {
 					response.object = {result: result.response}; 		
-				});
+				}).get();
 			  y.sync();
 		
       ]]></execute>  
