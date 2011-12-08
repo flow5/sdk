@@ -10,7 +10,9 @@
       </inputs>  
       <execute><![CDATA[ 
           // Your javascript goes here. We will run it on our servers 
-          response.object = {result: [1,2,3]}; 
+		  y.rest("http://www.yahoo.com", function (result) {
+          	response.object = {result: result}; 		
+		  }).get(); 
       ]]></execute>  
     </select>  
   </bindings>  
