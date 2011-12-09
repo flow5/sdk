@@ -131,7 +131,9 @@
 	// f5: add the devserv to the whitelist
 	if (result) {
 		NSMutableArray *whitelist = [NSMutableArray arrayWithArray:self.whitelist.whitelist];
+#if DEBUG
 		[whitelist addObject:[AppDelegate devservhost]];
+#endif
 		[self.whitelist initWithArray:whitelist];
 	}    
         
@@ -179,12 +181,20 @@
 - (void)webViewDidFinishLoad:(UIWebView *)theWebView 
 {
 	// only valid if ios.plist specifies a protocol to handle
+    NSString* jsString;
 	if(self.invokeString)
 	{
 		// this is passed before the deviceready event is fired, so you can access it in js when you receive deviceready
-		NSString* jsString = [NSString stringWithFormat:@"var invokeString = \"%@\";", self.invokeString];
+		jsString = [NSString stringWithFormat:@"var invokeString = \"%@\";", self.invokeString];
 		[theWebView stringByEvaluatingJavaScriptFromString:jsString];
 	}
+    
+#if DEBUG
+    jsString = [NSString stringWithFormat:@"F5.devservHost = '%@';", [AppDelegate devservhost]];
+    [theWebView stringByEvaluatingJavaScriptFromString:jsString];
+    
+#endif
+    
 	return [ super webViewDidFinishLoad:theWebView ];
 }
 
