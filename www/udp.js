@@ -24,64 +24,33 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
+/*global F5, PhoneGap*/
 
-exports.scripts = [
-	'f5.js',
-	'utils.js',
-	'domutils.js',
-	'animation.js',
-	'defaultviewdelegates.js', // TODO: move this to debugScripts?
-	'flow.js',
-	'flowcontroller.js',
-	'3p/Iuppiter.js',
-	'3p/bezier.js',
-	'templates.js',
-	'viewcontroller.js',
-	'services.js',
-	'bridge.js',
-	'ui.js',
-	'location.js',
-	'widgets/button.js',
-	'widgets/statictext.js',
-	'widgets/picture.js',
-	'widgets/tabset.js',
-	'widgets/navbar.js',
-	'widgets/streetview.js',
-	'widgets/distance.js',
-	'widgets/scroller.js'
-];
 
-exports.elements = [
-	'core.css',
-	'default.css',
-	// TODO: create debug elements section
-	'debug.css'
-];
-
-exports.webScripts = [
-	'widgets/navbar_web.js',
-	'widgets/mapview_web.js'
-];
-
-exports.nativeScripts = [
-	'widgets/navbar_native.js',
-	'widgets/mapview_native.js',
-	'udp.js'
-];
-
-exports.debugScripts = [
-//	'debug/timers.js'
-	'debug/flow_diags.js',
-	'debug/flowcontroller_diags.js',
-	'debug/json.js'
-];
-
-exports.debugDesktopScripts = [
-	'debug/webharness.js',
-];
-
-exports.debugElements = [
-	'debug/json.css',
-	'debug/webharness.css',
-	'debug/webharness.html'
-];
+(function() {
+	
+	function UDP() {
+				
+		this.sendDatagram = function (data) {
+			PhoneGap.exec(
+				function (result) { // success
+				console.log(result);
+			}, function (result) { // failure
+				console.log(result);
+			}, "com.flow5.udp", "sendDatagram", [data]);	
+		};	
+		
+		this.connectToHost = function (host, port) {
+			PhoneGap.exec(
+				function (result) { // success
+				console.log('webview received message: ' + result);
+				return 'got it';
+			}, function (result) { // failure
+				console.log(result);
+			}, "com.flow5.udp", "connectToHost", [{host: host, port: port}]);				
+		};
+	}
+	
+	F5.UDP = UDP;
+	
+}());

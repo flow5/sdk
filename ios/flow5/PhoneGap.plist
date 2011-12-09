@@ -42,6 +42,8 @@
 		<string>F5CommandQueue</string>
 		<key>com.flow5.locationreminder</key>
 		<string>F5LocationReminder</string>
+		<key>com.flow5.udp</key>
+		<string>F5udp</string>
 		<key>com.phonegap.accelerometer</key>
 		<string>PGAccelerometer</string>
 		<key>com.phonegap.camera</key>

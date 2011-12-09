@@ -164,16 +164,16 @@ that.setObserver = function (observer) {
 			
 
 			nodeWillBecomeActive(flow.root, function () {
-that.observer();			
+that.observer();	
+				
+				completeFlow([], cb);		
 				nodeDidBecomeActive(flow.root, function () {
 that.observer();
 					flowObservers.forEach(function (observer) {
 						if (observer.start) {
 							observer.start();
 						}
-					});
-					
-					completeFlow([], cb);
+					});					
 				});
 			});									
 		};
