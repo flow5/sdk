@@ -40,13 +40,12 @@
 			}, "com.flow5.udp", "sendDatagram", [data]);	
 		};	
 		
-		this.connectToHost = function (host, port) {
+		this.connectToHost = function (host, port, receive, error) {
 			PhoneGap.exec(
 				function (result) { // success
-				console.log('webview received message: ' + result);
-				return 'got it';
+					receive(result);
 			}, function (result) { // failure
-				console.log(result);
+					error(result);
 			}, "com.flow5.udp", "connectToHost", [{host: host, port: port}]);				
 		};
 	}

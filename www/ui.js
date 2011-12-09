@@ -28,44 +28,41 @@
 
 (function () {
 				
-	function attachTracker(el) {
+	function attachTracker(el, cb) {
 		var tracking;
 		var startLocation;
 		var startTransform;
-
-		F5.addTouchStartListener(el, function (e) {
-			tracking = true;
-			startLocation = F5.eventLocation(e);
-			var transformMatrix = new WebKitCSSMatrix(el.style.webkitTransform);
-			startTransform = {x: transformMatrix.m41, y: transformMatrix.m42};
-			el.style['-webkit-transition'] = 'opacity 1s';						
-		});
-
-/*
-		document.body.addEventListener('mousewheel', function (e) {
-			var transformMatrix = new WebKitCSSMatrix(el.style.webkitTransform);
-			startTransform = {x: transformMatrix.m41, y: transformMatrix.m42};																				
-
-			el.style['-webkit-transform'] = 'translate3d(' + (-e.wheelDeltaX/10 + startTransform.x) +
-					'px,' + (-e.wheelDeltaY/10 + startTransform.y) + 'px, 0px)';
-					
-			console.log(JSON.stringify({x: e.wheelDeltaX, y: e.wheelDeltaY}));
-		});
-*/
-
-		F5.addTouchMoveListener(document.body, function (e) {
+		
+		function moveHandler(e) {
 			var currentLocation = F5.eventLocation(e);
 			if (tracking) {
 				var deltaH = currentLocation.x - startLocation.x;
 				var deltaY = currentLocation.y - startLocation.y;
 				el.style['-webkit-transform'] = 'translate3d(' + (deltaH + startTransform.x) +
 						'px,' + (deltaY + startTransform.y) + 'px, 0px)';								
-			}			
-		});
-
-		F5.addTouchStopListener(document.body, function (e) {
+						
+				if (cb) {
+					cb({deltaH: deltaH, deltaY: deltaY});
+				}
+			}
+		}
+		
+		function stopHandler(e) {
 			tracking = false;
 			el.style['-webkit-transition'] = '';
+			F5.removeTouchMoveListener(document.body, moveHandler);			
+			F5.removeTouchStopListener(document.body, stopHandler);						
+		}
+
+		F5.addTouchStartListener(el, function (e) {
+			tracking = true;
+			startLocation = F5.eventLocation(e);
+			var transformMatrix = new WebKitCSSMatrix(el.style.webkitTransform);
+			startTransform = {x: transformMatrix.m41, y: transformMatrix.m42};
+			el.style['-webkit-transition'] = 'opacity 1s';	
+			
+			F5.addTouchMoveListener(document.body, moveHandler);	
+			F5.addTouchStopListener(document.body, stopHandler);										
 		});
 	}			
 					

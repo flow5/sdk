@@ -47,6 +47,7 @@ that.observer = function () {};
 
 that.setObserver = function (observer) {
 	that.observer = observer;
+	that.observer();
 };
 				
 		flow.controller = this;
