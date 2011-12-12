@@ -36,7 +36,9 @@
 
 		var queryParameters = [];
 		F5.forEach(parameters, function (key, value) {
-			queryParameters.push(key + '="' + value + '"');
+			if (key !== 'appid') {
+				queryParameters.push(key + '="' + value + '"');				
+			}
 		});
 		statement += queryParameters.join(' and ');
 		
@@ -96,10 +98,14 @@
 					responseSchema: {},	
 					query: function (parameters) {
 						var statement = yqlStatement(this.tableHost, this.tableName, parameters);
-						return 'q=' + encodeURIComponent(statement) + '&format=json&diagnostics=true';
+						var appid = '';
+						if (parameters.appid) {
+							appid = '&appid='+parameters.appid;
+						}
+						return 'q=' + encodeURIComponent(statement) + '&format=json' + appid;
 					},
 					postprocess: function (response) {
-						var results = response.query.results.response.json.results;
+						var results = JSON.parse(response.query.results.response);
 						if (!Array.isArray(results)) {
 							results = [results];
 						}
