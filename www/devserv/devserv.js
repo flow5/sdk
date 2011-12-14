@@ -146,6 +146,10 @@ cli.main(function (args, options) {
 			var isMobile = agent.match(/iPhone/) || agent.match(/iPad/) || agent.match(/Android/);
 			
 			var app = parsed.query.app;
+			if (app) {
+				// prevent directory climbing
+				app = app.replace('..', '');
+			}
 
 			if (req.url.indexOf('generate?') !== -1) {
 				try {
@@ -171,10 +175,9 @@ cli.main(function (args, options) {
 				}
 				res.end();				
 			} else if (req.url.indexOf('service?') !== -1) {
-				console.log('service match??')
-				console.log(req.url);
-				var name = parsed.query.name;
 				try {
+					// prevent directory climbing
+					var name = parsed.query.name.replace('..', '');
 					var service = require('../services/' + app + '/' + name + '.js');
 					res.write(service.exec(parsed.query));					
 				} catch (e3) {
