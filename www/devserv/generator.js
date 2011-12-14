@@ -114,7 +114,7 @@ function generateCacheManifest(app, isDebug, isMobile, isNative) {
 	}
 	
 	checkManifest('');
-	checkManifest('apps/' + app + '/www/');
+	checkManifest('apps/' + app + '/');
 	
 	cacheManifest += 'NETWORK:\n';
 	cacheManifest += '*\n';
@@ -177,8 +177,8 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative) {
 		return prefix + fs.readFileSync(src, 'base64');
 	}
 	
-	injectLink('apple-touch-icon', 'apps/' + app + '/www/images/icon@114x114.png');
-	injectLink('apple-touch-startup-image', 'apps/' + app + '/www/images/splash@320x460.png');
+	injectLink('apple-touch-icon', 'apps/' + app + '/images/icon@114x114.png');
+	injectLink('apple-touch-startup-image', 'apps/' + app + '/images/splash@320x460.png');
 	
 	var templates = document.createElement('div');
 	templates.id = 'f5_templates';
@@ -253,12 +253,12 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative) {
 	}
 			
 	injectManifest('');
-	injectManifest('apps/' + app + '/www/');
+	injectManifest('apps/' + app + '/');
 	
 	// resources
 	// TODO: allow F5 to also define strings/images	
 	try {
-		var resourceFile = '../apps/' + app + '/www/resources.js';
+		var resourceFile = '../apps/' + app + '/resources.js';
 		require(resourceFile);
 		if (!doInline) {
 			document.head.appendChild(makeScript(resourceFile));
@@ -298,7 +298,7 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative) {
 	var splashEl = document.createElement('img');
 	splashEl.id = 'splash';
 	splashEl.className = 'splash';
-	var splashSrc = 'apps/' + app + '/www/images/splash@640x960.png';
+	var splashSrc = 'apps/' + app + '/images/splash@640x960.png';
 	if (doInline) {
 		splashEl.src = inlineImage(splashSrc);		
 	} else {

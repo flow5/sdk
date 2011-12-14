@@ -170,6 +170,15 @@ cli.main(function (args, options) {
 					console.log(e2);
 				}
 				res.end();				
+			} else if (req.url.match('service')) {
+				var name = parsed.query.name;
+				try {
+					var service = require('../services/' + app + '/' + name + '.js');
+					res.write(service.exec(parsed.query));					
+				} catch (e3) {
+					console.log(e3);
+				}
+				res.end();
 			} else {
 				paperboy
 					.deliver(WEBROOT, req, res)
