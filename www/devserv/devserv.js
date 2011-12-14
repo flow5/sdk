@@ -121,23 +121,44 @@ cli.main(function (args, options) {
 	http.createServer(function (req, res) {
 //		showRequest(req, true);
 		
+		var parsed = url.parse(req.url, true);
+		var app = parsed.query.app;
+		if (app) {
+			// prevent directory climbing
+			app = app.replace('..', '');
+		}
+		
+		var name, service;
+				
 		switch (req.method) {
 		case 'POST':
-			switch (req.url) {
-			case '/dot2svg':
-				dot2svg(req, res);
-				break;
-			case '/shutupJSlint': // want to use case, but no other methods yet
+			if (req.url.indexOf('dot2svg') !== -1) {
+				dot2svg(req, res);	
+			} else if (req.url.indexOf('service?') !== -1) {
+				try {
+					// prevent directory climbing
+					name = parsed.query.name.replace('..', '');
+					service = require('../services/' + app + '/' + name + '.js');
+					
+					req.buffer = '';
+					req.on('data', function (chunk) {
+						req.buffer += chunk;
+					});	
+					req.on('end', function () {
+						var result = service.exec(parsed.query, req.buffer);
+						res.write(result);					
+						res.end();				
+					});										
+				} catch (e1) {
+					console.log(e1);
+					res.end();				
+				}
+			} else {
 				res.writeHead(404);
-				res.end();
-				break;
-			default:
-				res.writeHead(404);
-				res.end();
+				res.end();				
 			}
-			break;
+			break;		
 		case 'GET':
-			var parsed = url.parse(req.url, true);
 			var isDebug = (parsed.query.debug === 'true');
 			var isNative = (parsed.query['native'] === 'true');
 			var doInline = (parsed.query['inline'] === 'true');
@@ -145,12 +166,6 @@ cli.main(function (args, options) {
 			var agent = req.headers['user-agent'];
 			var isMobile = agent.match(/iPhone/) || agent.match(/iPad/) || agent.match(/Android/);
 			
-			var app = parsed.query.app;
-			if (app) {
-				// prevent directory climbing
-				app = app.replace('..', '');
-			}
-
 			if (req.url.indexOf('generate?') !== -1) {
 				try {
 					var html = generator.generateHtml(app, isDebug, doInline, isMobile, isNative);
@@ -161,8 +176,8 @@ cli.main(function (args, options) {
 					} else {
 						compress(html, res);					
 					}					
-				} catch (e1) {
-					console.log(e1);
+				} catch (e2) {
+					console.log(e2);
 					res.end();					
 				}
 			} else if (req.url.match('cache.manifest')) {
@@ -170,15 +185,15 @@ cli.main(function (args, options) {
 				res.writeHead(200, {'Content-Type': 'text/cache-manifest'});
 				try {
 					res.write(generator.generateCacheManifest(app, isDebug, isMobile, isNative));					
-				} catch (e2) {
-					console.log(e2);
+				} catch (e) {
+					console.log(e);
 				}
 				res.end();				
 			} else if (req.url.indexOf('service?') !== -1) {
 				try {
 					// prevent directory climbing
-					var name = parsed.query.name.replace('..', '');
-					var service = require('../services/' + app + '/' + name + '.js');
+					name = parsed.query.name.replace('..', '');
+					service = require('../services/' + app + '/' + name + '.js');
 					res.write(service.exec(parsed.query));					
 				} catch (e3) {
 					console.log(e3);
