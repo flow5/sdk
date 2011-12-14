@@ -29,8 +29,8 @@
 
 (function () {	
 	
-	function yqlStatement(tableHost, tableName, parameters) {
-		var statement = 'use "' + tableHost + '/' + tableName + '.xml";';
+	function yqlStatement(tableUrl, tableName, parameters) {
+		var statement = 'use "' + tableUrl + '" as ' + tableName + ';';
 
 		statement += 'select * from ' + tableName + ' where ';
 
@@ -90,14 +90,14 @@
 				baseUrl: 'query.yahooapis.com/v1/public/yql',
 				method: 'GET',
 				search: {
-					tableHost: 'http://www.flow5.com/yql/google/places',
+					tableUrl: 'http://www.flow5.com/service?app=jitc&name=yql&table=google.places.search',
 					tableName: 'search',
 					parameters: {
 					},
 					parameterSchema: {},
 					responseSchema: {},	
 					query: function (parameters) {
-						var statement = yqlStatement(this.tableHost, this.tableName, parameters);
+						var statement = yqlStatement(this.tableUrl, this.tableName, parameters);
 						var appid = '';
 						if (parameters.appid) {
 							appid = '&appid='+parameters.appid;
@@ -113,7 +113,7 @@
 					}				
 				},			
 				details: {
-					tableHost: 'http://www.flow5.com/yql/google/places',
+					tableUrl: 'http://www.flow5.com/service?app=jitc&name=yql&table=google.places.details',
 					tableName: 'details',
 					parameters: {
 						// reference <provided by client>
@@ -121,7 +121,7 @@
 					parameterSchema: {},
 					responseSchema: {},	
 					query: function (parameters) {
-						var statement = yqlStatement(this.tableHost, this.tableName, parameters);
+						var statement = yqlStatement(this.tableUrl, this.tableName, parameters);
 						return 'q=' + encodeURIComponent(statement) + '&format=json&diagnostics=true&debug=true';
 					},
 					postprocess: function (response) {

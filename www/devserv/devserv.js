@@ -147,7 +147,7 @@ cli.main(function (args, options) {
 			
 			var app = parsed.query.app;
 
-			if (req.url.match('generate')) {
+			if (req.url.indexOf('generate?') !== -1) {
 				try {
 					var html = generator.generateHtml(app, isDebug, doInline, isMobile, isNative);
 					if (isDebug && !isMobile) {
@@ -170,7 +170,9 @@ cli.main(function (args, options) {
 					console.log(e2);
 				}
 				res.end();				
-			} else if (req.url.match('service')) {
+			} else if (req.url.indexOf('service?') !== -1) {
+				console.log('service match??')
+				console.log(req.url);
 				var name = parsed.query.name;
 				try {
 					var service = require('../services/' + app + '/' + name + '.js');
