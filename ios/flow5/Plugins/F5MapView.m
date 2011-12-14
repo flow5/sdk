@@ -255,8 +255,10 @@ static char base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123
         MKMapRect rect = self.mapView.visibleMapRect;
         MKMapPoint neMapPoint = MKMapPointMake(rect.origin.x + rect.size.width, rect.origin.y);
         MKMapPoint swMapPoint = MKMapPointMake(rect.origin.x, rect.origin.y + rect.size.height);
+        MKMapPoint seMapPoint = MKMapPointMake(rect.origin.x + rect.size.width, rect.origin.y + rect.size.height);
         
-        CLLocationDistance diagonalMeters = MKMetersBetweenMapPoints(neMapPoint, swMapPoint);
+ //       CLLocationDistance diagonalMeters = MKMetersBetweenMapPoints(neMapPoint, swMapPoint);
+        CLLocationDistance widthMeters = MKMetersBetweenMapPoints(seMapPoint, swMapPoint);
 
         
         CLLocationCoordinate2D neCoord = MKCoordinateForMapPoint(neMapPoint);
@@ -283,7 +285,7 @@ static char base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123
         NSDictionary *geometry = [NSDictionary dictionaryWithObjectsAndKeys:
                                     boundsDict, @"bounds", 
                                     centerDict, @"center", 
-                                    [NSNumber  numberWithFloat:diagonalMeters/2], @"radius", nil];
+                                    [NSNumber  numberWithFloat:widthMeters/2], @"radius", nil];
                 
         
         return [PluginResult resultWithStatus:PGCommandStatus_OK messageAsDictionary:geometry];                

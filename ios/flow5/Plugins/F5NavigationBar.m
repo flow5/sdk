@@ -61,8 +61,9 @@
     } else {
         AppDelegate *appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];   
         
-        CGRect windowRect = [appDelegate window].bounds;        
-        self.navigationBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, 0, windowRect.size.width, 44)];        
+        self.navigationBar = [[UINavigationBar alloc] init];
+        [self.navigationBar sizeToFit];
+        
         self.navigationBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
                                  
         [self.navigationBar setDelegate:self];

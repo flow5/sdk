@@ -107,14 +107,18 @@
 		this.getMapGeometry = function () {
 			var bounds = this.map.getBounds();
 			var center = this.map.getCenter();
+			
+			var southEast = new google.maps.LatLng(bounds.getSouthWest().Qa, bounds.getNorthEast().Ra);
+			// TODO: pick larger? smaller? dimension?
+			var diameter = google.maps.geometry.spherical.computeDistanceBetween(bounds.getSouthWest(), southEast);
+			
 			return {
 				bounds: {
 					sw: {lat: bounds.getSouthWest().lat(), lng: bounds.getSouthWest().lng()}, 
 					ne: {lat: bounds.getNorthEast().lat(), lng: bounds.getNorthEast().lng()}
 				},
 				center: {lat: center.lat(), lng: center.lng()},
-				radius: 0.5 * google.maps.geometry.spherical.computeDistanceBetween(bounds.getSouthWest(), 
-										bounds.getNorthEast())
+				radius: 0.5 * diameter
 				
 			};
 		};

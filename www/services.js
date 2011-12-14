@@ -102,7 +102,7 @@
 						if (parameters.appid) {
 							appid = '&appid='+parameters.appid;
 						}
-						return 'q=' + encodeURIComponent(statement) + '&format=json' + appid;
+						return 'q=' + encodeURIComponent(statement) + '&format=json&diagnostics=true&debug=true' + appid;
 					},
 					postprocess: function (response) {
 						var results = JSON.parse(response.query.results.response);
@@ -122,7 +122,7 @@
 					responseSchema: {},	
 					query: function (parameters) {
 						var statement = yqlStatement(this.tableHost, this.tableName, parameters);
-						return 'q=' + encodeURIComponent(statement) + '&format=json&diagnostics=true';
+						return 'q=' + encodeURIComponent(statement) + '&format=json&diagnostics=true&debug=true';
 					},
 					postprocess: function (response) {
 						return response.query.results.response.json.result;
