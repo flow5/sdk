@@ -145,9 +145,14 @@ cli.main(function (args, options) {
 						req.buffer += chunk;
 					});	
 					req.on('end', function () {
-						var result = service.exec(parsed.query, req.buffer);
-						res.write(result);					
-						res.end();				
+						try {
+							var result = service.exec(parsed.query, req.buffer);
+							res.write(result);					
+							res.end();									
+						} catch (e2) {
+							console.log(e2);
+							res.end();											
+						}
 					});										
 				} catch (e1) {
 					console.log(e1);
