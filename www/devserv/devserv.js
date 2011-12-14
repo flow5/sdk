@@ -147,6 +147,7 @@ cli.main(function (args, options) {
 					req.on('end', function () {
 						try {
 							var result = service.exec(parsed.query, req.buffer);
+							res.writeHead(200, {'Content-Type': 'application/json'});
 							res.write(result);					
 							res.end();									
 						} catch (e2) {
