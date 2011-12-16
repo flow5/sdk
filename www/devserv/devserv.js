@@ -146,12 +146,14 @@ cli.main(function (args, options) {
 					});	
 					req.on('end', function () {
 						try {
-							var result = service.exec(parsed.query, req.buffer);
-							res.writeHead(200, {'Content-Type': 'application/json'});
-							res.write(result);					
-							res.end();									
+							service.exec(parsed.query, req.buffer, function (results) {
+								res.writeHead(200, {'Content-Type': 'application/json'});						
+								res.write(results);						
+								res.end();
+							});							
 						} catch (e2) {
 							console.log(e2);
+							res.writeHead(500);
 							res.end();											
 						}
 					});										
@@ -200,11 +202,17 @@ cli.main(function (args, options) {
 					// prevent directory climbing
 					name = parsed.query.name.replace('..', '');
 					service = require('../services/' + app + '/' + name + '.js');
-					res.write(service.exec(parsed.query));					
+
+					service.exec(parsed.query, function (results) {
+						res.writeHead(200, {'Content-Type': 'application/json'});						
+						res.write(results);						
+						res.end();
+					});
 				} catch (e3) {
 					console.log(e3);
+					res.writeHead(500);					
+					res.end();
 				}
-				res.end();
 			} else {
 				paperboy
 					.deliver(WEBROOT, req, res)
