@@ -67,6 +67,7 @@
 																
 		this.dropPins = function (pins) {
 			var that = this;
+			
 			PhoneGap.exec(
 				function (result) { // success
 					console.log('dropPins');

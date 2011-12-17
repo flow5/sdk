@@ -76,10 +76,12 @@ static char base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123
     NSString *title;
 	NSString *subtitle;
     NSNumber *index;
+    NSString *markerImage;
 }
 
 @property (nonatomic, copy) NSString *title;
 @property (nonatomic, copy) NSString *subtitle;
+@property (nonatomic, copy) NSString *markerImage;
 @property (nonatomic, copy) NSNumber *index;
 @property (nonatomic, assign) CLLocationCoordinate2D coordinate;
 
@@ -87,6 +89,7 @@ static char base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123
 
 @implementation F5Annotation
 @synthesize title;
+@synthesize markerImage;
 @synthesize subtitle;
 @synthesize index;
 @synthesize	coordinate;
@@ -401,6 +404,7 @@ static char base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123
         annotation.title = [pin objectForKey:@"name"];        
         annotation.subtitle = [pin objectForKey:@"reward"];
         annotation.index = [pin objectForKey:@"index"];
+        annotation.markerImage = [pin objectForKey:@"markerImage"];
                 
 		[self.mapView addAnnotation:annotation];
     }      
@@ -430,9 +434,14 @@ static char base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123
     
     NSString *identifier = [NSString stringWithFormat:@"%f%f", annotation.coordinate.latitude, annotation.coordinate.longitude];
     
-    MKPinAnnotationView *view = (MKPinAnnotationView *)[self.mapView dequeueReusableAnnotationViewWithIdentifier:identifier];    
+    MKAnnotationView *view = (MKAnnotationView *)[self.mapView dequeueReusableAnnotationViewWithIdentifier:identifier];    
     if (!view) {
-        view = [[[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:identifier] autorelease];
+        if ([annotation isKindOfClass:[F5Annotation class]] && [(F5Annotation*)annotation markerImage]) {
+            view = [[[MKAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:identifier] autorelease]; 
+            view.image = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"icon@2x" ofType:@"png"]];
+        } else {
+            view = [[[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:identifier] autorelease];            
+        }
     }
     
     if (![annotation isKindOfClass:[F5Annotation class]]) {
@@ -447,11 +456,7 @@ static char base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123
     [leftButton setImage:streetViewIcon forState:UIControlStateNormal];
     leftButton.frame = CGRectMake(0, 0, 31, 31);
     view.leftCalloutAccessoryView = leftButton;
-    
-    if ([annotation.subtitle length]) {
-        view.pinColor = MKPinAnnotationColorPurple;
-    }
-        
+            
     view.canShowCallout = YES;
     return view;
 }

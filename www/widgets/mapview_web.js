@@ -60,11 +60,16 @@
 			
 			pins.forEach(function (pin) {
 				var position = new google.maps.LatLng(pin.lat, pin.lng);
+				var markerImage; 
+				if (pin.markerImage) {
+					markerImage = new google.maps.MarkerImage(pin.markerImage, null, null, null, new google.maps.Size(24, 24));				
+				}
 				var marker = new google.maps.Marker({
 								      position: position,
 								      map: that.map,
 									  optimized: false,
-								      animation: google.maps.Animation.DROP
+								      animation: google.maps.Animation.DROP,
+									  icon: markerImage
 								    });	
 								
 				that.markers.push(marker);													
