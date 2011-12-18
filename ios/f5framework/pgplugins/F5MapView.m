@@ -438,7 +438,7 @@ static char base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123
     if (!view) {
         if ([annotation isKindOfClass:[F5Annotation class]] && [(F5Annotation*)annotation markerImage]) {
             view = [[[MKAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:identifier] autorelease]; 
-            view.image = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"icon@2x" ofType:@"png"]];
+            view.image = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"pin" ofType:@"png"]];
         } else {
             view = [[[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:identifier] autorelease];            
         }
