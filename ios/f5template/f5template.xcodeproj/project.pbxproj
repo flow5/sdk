@@ -20,10 +20,8 @@
 		BEA26754149E8CC500DF8ADC /* icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = BEA2674B149E8CC500DF8ADC /* icon-72.png */; };
 		BEA26755149E8CC500DF8ADC /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = BEA2674C149E8CC500DF8ADC /* icon.png */; };
 		BEA26756149E8CC500DF8ADC /* icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BEA2674D149E8CC500DF8ADC /* icon@2x.png */; };
-		BEA26757149E8CC500DF8ADC /* streetview.png in Resources */ = {isa = PBXBuildFile; fileRef = BEA2674E149E8CC500DF8ADC /* streetview.png */; };
 		BEA26758149E8CC500DF8ADC /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = BEA26750149E8CC500DF8ADC /* Default.png */; };
 		BEA26759149E8CC500DF8ADC /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BEA26751149E8CC500DF8ADC /* Default@2x.png */; };
-		BEA26763149E934300DF8ADC /* f5.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BEA26762149E934300DF8ADC /* f5.framework */; };
 		BEA26770149E96FD00DF8ADC /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BEA2676F149E96FD00DF8ADC /* SystemConfiguration.framework */; };
 		BEA26772149E972D00DF8ADC /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BEA26771149E972D00DF8ADC /* CoreGraphics.framework */; };
 		BEEE07E6149E82BD0010ABF6 /* f5.plist in Resources */ = {isa = PBXBuildFile; fileRef = BEEE07E5149E82BD0010ABF6 /* f5.plist */; };
@@ -47,10 +45,8 @@
 		BEA2674B149E8CC500DF8ADC /* icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-72.png"; sourceTree = "<group>"; };
 		BEA2674C149E8CC500DF8ADC /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
 		BEA2674D149E8CC500DF8ADC /* icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon@2x.png"; sourceTree = "<group>"; };
-		BEA2674E149E8CC500DF8ADC /* streetview.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = streetview.png; sourceTree = "<group>"; };
 		BEA26750149E8CC500DF8ADC /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		BEA26751149E8CC500DF8ADC /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
-		BEA26762149E934300DF8ADC /* f5.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = f5.framework; path = ../f5framework/Products/f5.framework; sourceTree = "<group>"; };
 		BEA2676F149E96FD00DF8ADC /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		BEA26771149E972D00DF8ADC /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		BEEE07E5149E82BD0010ABF6 /* f5.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = f5.plist; sourceTree = "<group>"; };
@@ -66,7 +62,6 @@
 				BE29F5F114686984009B0CB6 /* CoreLocation.framework in Frameworks */,
 				BE29F5F514686984009B0CB6 /* QuartzCore.framework in Frameworks */,
 				BE9A4B6F147C70E6004FF748 /* MapKit.framework in Frameworks */,
-				BEA26763149E934300DF8ADC /* f5.framework in Frameworks */,
 				BEA26770149E96FD00DF8ADC /* SystemConfiguration.framework in Frameworks */,
 				BEA26772149E972D00DF8ADC /* CoreGraphics.framework in Frameworks */,
 			);
@@ -108,7 +103,6 @@
 		BE29F5E114686984009B0CB6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				BEA26762149E934300DF8ADC /* f5.framework */,
 				BE9A4B6E147C70E6004FF748 /* MapKit.framework */,
 				BE29F5E214686984009B0CB6 /* Foundation.framework */,
 				BE29F5E414686984009B0CB6 /* UIKit.framework */,
@@ -137,7 +131,6 @@
 				BEA2674B149E8CC500DF8ADC /* icon-72.png */,
 				BEA2674C149E8CC500DF8ADC /* icon.png */,
 				BEA2674D149E8CC500DF8ADC /* icon@2x.png */,
-				BEA2674E149E8CC500DF8ADC /* streetview.png */,
 			);
 			path = icons;
 			sourceTree = "<group>";
@@ -214,7 +207,6 @@
 				BEA26754149E8CC500DF8ADC /* icon-72.png in Resources */,
 				BEA26755149E8CC500DF8ADC /* icon.png in Resources */,
 				BEA26756149E8CC500DF8ADC /* icon@2x.png in Resources */,
-				BEA26757149E8CC500DF8ADC /* streetview.png in Resources */,
 				BEA26758149E8CC500DF8ADC /* Default.png in Resources */,
 				BEA26759149E8CC500DF8ADC /* Default@2x.png in Resources */,
 			);
