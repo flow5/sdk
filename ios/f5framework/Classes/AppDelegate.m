@@ -85,13 +85,13 @@
 // f5
 + (NSString*) devservhost
 {
-	return [[[self class] getBundlePlist:@"Flow5"] objectForKey:@"devservhost"];
+	return [[[self class] getBundlePlist:@"f5"] objectForKey:@"devservhost"];
 }
 
 // f5
 + (NSString*) appname
 {
-	return [[[self class] getBundlePlist:@"Flow5"] objectForKey:@"appname"];
+	return [[[self class] getBundlePlist:@"f5"] objectForKey:@"appname"];
 }
 
 // f5
