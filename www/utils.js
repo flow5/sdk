@@ -213,7 +213,11 @@
 	};
 	
 	F5.sourceFromResourceUrl = function (url) {
-		return url.replace('url("', '').replace('")', '');		
+		if (url.match('data://') || url.match('http://')) {
+			return url;
+		} else {
+			return 'apps/jitc/' + url;
+		}
 	};
 		
 	F5.chainTasks = function(tasks, cb) {
