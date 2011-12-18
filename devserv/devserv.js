@@ -25,7 +25,7 @@
 
 ***********************************************************************************************************************/
 
-var WEBROOT = process.cwd();
+var WEBROOT = process.cwd() + '/www';
 
 // nodelibs
 var http = require('http'),
@@ -121,12 +121,10 @@ cli.main(function (args, options) {
 	http.createServer(function (req, res) {
 //		showRequest(req, true);
 		
-		var parsed = url.parse(req.url, true);
+		// prevent directory climbing through passed parameters
+		var parsed = url.parse(req.url.replace('..', ''), true);
+		
 		var app = parsed.query.app;
-		if (app) {
-			// prevent directory climbing
-			app = app.replace('..', '');
-		}
 		
 		var name, service;
 				
@@ -137,8 +135,7 @@ cli.main(function (args, options) {
 			} else if (req.url.indexOf('service?') !== -1) {
 				try {
 					// prevent directory climbing
-					name = parsed.query.name.replace('..', '');
-					service = require('../services/' + app + '/' + name + '.js');
+					service = require('../services/' + app + '/' + parsed.query.name + '.js');
 					
 					req.buffer = '';
 					req.on('data', function (chunk) {
@@ -200,8 +197,7 @@ cli.main(function (args, options) {
 			} else if (req.url.indexOf('service?') !== -1) {
 				try {
 					// prevent directory climbing
-					name = parsed.query.name.replace('..', '');
-					service = require('../services/' + app + '/' + name + '.js');
+					service = require(process.cwd() + '/www/services/' + app + '/' + parsed.query.name + '.js');
 
 					service.exec(parsed.query, function (results) {
 						res.writeHead(200, {'Content-Type': 'application/json'});						

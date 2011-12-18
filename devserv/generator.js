@@ -28,7 +28,7 @@
 
 var fs = require('fs');
 
-F5 = require('../f5.js');
+F5 = require(process.cwd() + '/www/f5.js');
 
 function deleteCaches() {
 	// delete all of the cached entries so we reload the next time
@@ -63,7 +63,7 @@ function generateCacheManifest(app, isDebug, isMobile, isNative) {
 	var cacheManifest = 'CACHE MANIFEST\n';
 	cacheManifest += 'CACHE:\n';
 		
-	checkDate('start.js');		
+	checkDate('www/start.js');		
 	checkDate(__filename);
 			
 	function checkManifest(path) {	
@@ -77,7 +77,7 @@ function generateCacheManifest(app, isDebug, isMobile, isNative) {
 			}
 		}
 			
-		var manifest = require('../' + path + 'manifest.js');
+		var manifest = require(process.cwd() + '/' + path + 'manifest.js');
 		
 		checkDates(manifest.scripts);
 		
@@ -103,7 +103,7 @@ function generateCacheManifest(app, isDebug, isMobile, isNative) {
 		}
 		
 		try {
-			require(path + 'resources.js');
+			require(process.cwd() + '/' + path + 'resources.js');
 
 			handleImageResourcesRecursive(F5.Resources, function (obj, id, src) {
 				checkDate(src);
@@ -113,8 +113,8 @@ function generateCacheManifest(app, isDebug, isMobile, isNative) {
 		}				
 	}
 	
-	checkManifest('');
-	checkManifest('apps/' + app + '/');
+	checkManifest('www/');
+	checkManifest('www/apps/' + app + '/');
 	
 	cacheManifest += 'NETWORK:\n';
 	cacheManifest += '*\n';
@@ -174,7 +174,7 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative) {
 	
 	function inlineImage(src) {
 		var prefix = 'data:image/' + require('path').extname(src).substring(1) + ';base64,';
-		return prefix + fs.readFileSync(src, 'base64');
+		return prefix + fs.readFileSync('www/' + src, 'base64');
 	}
 	
 	injectLink('apple-touch-icon', 'apps/' + app + '/images/icon@114x114.png');
@@ -195,13 +195,13 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative) {
 			// inline scripts
 			// devserv layer will compress and minify	
 			script.id = src;			
-			script.innerHTML = '//<!--\n' + fs.readFileSync(src).toString() + '\n//-->';
+			script.innerHTML = '//<!--\n' + fs.readFileSync('www/' + src).toString() + '\n//-->';
 		}
 		return script;
 	}
 	
 	function injectManifest(path) {		
-		var manifest = require('../' + path + 'manifest.js');
+		var manifest = require(process.cwd() + '/www/' + path + 'manifest.js');
 		
 		// javascript
 		function injectScripts(scripts) {
@@ -235,10 +235,10 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative) {
 					if (file.match('.css')) {
 						// NOTE: JSDOM doesn't fully support style nodes yet. so do it manually below
 //						elementsDiv = document.createElement('style');
-						styleWorkaround += fs.readFileSync(path + file).toString();
+						styleWorkaround += fs.readFileSync('www/' + path + file).toString();
 					} else {
 						elementsDiv = document.createElement('div');
-						elementsDiv.innerHTML = fs.readFileSync(path + file).toString();
+						elementsDiv.innerHTML = fs.readFileSync('www/' + path + file).toString();
 						elementsDiv.id = file;				
 
 						templates.appendChild(elementsDiv);
@@ -258,8 +258,8 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative) {
 	// resources
 	// TODO: allow F5 to also define strings/images	
 	try {
-		var resourceFile = '../apps/' + app + '/resources.js';
-		require(resourceFile);
+		var resourceFile = 'apps/' + app + '/resources.js';
+		require(process.cwd() + '/www/' + resourceFile);
 		if (!doInline) {
 			document.head.appendChild(makeScript(resourceFile));
 			var imagePreload = document.createElement('div');
