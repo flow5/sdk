@@ -12,17 +12,8 @@
 		BE0E7A89149E80CF0089BB38 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = BE0E7A87149E80CF0089BB38 /* InfoPlist.strings */; };
 		BE29F5E314686984009B0CB6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE29F5E214686984009B0CB6 /* Foundation.framework */; };
 		BE29F5E514686984009B0CB6 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE29F5E414686984009B0CB6 /* UIKit.framework */; };
-		BE29F5E714686984009B0CB6 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE29F5E614686984009B0CB6 /* CoreGraphics.framework */; };
-		BE29F5E914686984009B0CB6 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE29F5E814686984009B0CB6 /* AddressBook.framework */; };
-		BE29F5EB14686984009B0CB6 /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE29F5EA14686984009B0CB6 /* AddressBookUI.framework */; };
-		BE29F5ED14686984009B0CB6 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE29F5EC14686984009B0CB6 /* AudioToolbox.framework */; };
-		BE29F5EF14686984009B0CB6 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE29F5EE14686984009B0CB6 /* AVFoundation.framework */; };
 		BE29F5F114686984009B0CB6 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE29F5F014686984009B0CB6 /* CoreLocation.framework */; };
-		BE29F5F314686984009B0CB6 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE29F5F214686984009B0CB6 /* MediaPlayer.framework */; };
 		BE29F5F514686984009B0CB6 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE29F5F414686984009B0CB6 /* QuartzCore.framework */; };
-		BE29F5F714686984009B0CB6 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE29F5F614686984009B0CB6 /* SystemConfiguration.framework */; };
-		BE29F5F914686984009B0CB6 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE29F5F814686984009B0CB6 /* MobileCoreServices.framework */; };
-		BE29F5FB14686984009B0CB6 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE29F5FA14686984009B0CB6 /* CoreMedia.framework */; };
 		BE9A4B6F147C70E6004FF748 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE9A4B6E147C70E6004FF748 /* MapKit.framework */; };
 		BEA26752149E8CC500DF8ADC /* Capture.bundle in Resources */ = {isa = PBXBuildFile; fileRef = BEA26746149E8CC500DF8ADC /* Capture.bundle */; };
 		BEA26753149E8CC500DF8ADC /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = BEA26747149E8CC500DF8ADC /* Localizable.strings */; };
@@ -33,6 +24,8 @@
 		BEA26758149E8CC500DF8ADC /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = BEA26750149E8CC500DF8ADC /* Default.png */; };
 		BEA26759149E8CC500DF8ADC /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BEA26751149E8CC500DF8ADC /* Default@2x.png */; };
 		BEA26763149E934300DF8ADC /* f5.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BEA26762149E934300DF8ADC /* f5.framework */; };
+		BEA26770149E96FD00DF8ADC /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BEA2676F149E96FD00DF8ADC /* SystemConfiguration.framework */; };
+		BEA26772149E972D00DF8ADC /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BEA26771149E972D00DF8ADC /* CoreGraphics.framework */; };
 		BEEE07E6149E82BD0010ABF6 /* f5.plist in Resources */ = {isa = PBXBuildFile; fileRef = BEEE07E5149E82BD0010ABF6 /* f5.plist */; };
 /* End PBXBuildFile section */
 
@@ -45,17 +38,8 @@
 		BE29F5DE14686984009B0CB6 /* f5template.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = f5template.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE29F5E214686984009B0CB6 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		BE29F5E414686984009B0CB6 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
-		BE29F5E614686984009B0CB6 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		BE29F5E814686984009B0CB6 /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
-		BE29F5EA14686984009B0CB6 /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
-		BE29F5EC14686984009B0CB6 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
-		BE29F5EE14686984009B0CB6 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		BE29F5F014686984009B0CB6 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
-		BE29F5F214686984009B0CB6 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		BE29F5F414686984009B0CB6 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		BE29F5F614686984009B0CB6 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
-		BE29F5F814686984009B0CB6 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
-		BE29F5FA14686984009B0CB6 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		BE9A4B6E147C70E6004FF748 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		BEA26746149E8CC500DF8ADC /* Capture.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Capture.bundle; sourceTree = "<group>"; };
 		BEA26748149E8CC500DF8ADC /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -67,6 +51,8 @@
 		BEA26750149E8CC500DF8ADC /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		BEA26751149E8CC500DF8ADC /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
 		BEA26762149E934300DF8ADC /* f5.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = f5.framework; path = ../f5framework/Products/f5.framework; sourceTree = "<group>"; };
+		BEA2676F149E96FD00DF8ADC /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		BEA26771149E972D00DF8ADC /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		BEEE07E5149E82BD0010ABF6 /* f5.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = f5.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -77,19 +63,12 @@
 			files = (
 				BE29F5E314686984009B0CB6 /* Foundation.framework in Frameworks */,
 				BE29F5E514686984009B0CB6 /* UIKit.framework in Frameworks */,
-				BE29F5E714686984009B0CB6 /* CoreGraphics.framework in Frameworks */,
-				BE29F5E914686984009B0CB6 /* AddressBook.framework in Frameworks */,
-				BE29F5EB14686984009B0CB6 /* AddressBookUI.framework in Frameworks */,
-				BE29F5ED14686984009B0CB6 /* AudioToolbox.framework in Frameworks */,
-				BE29F5EF14686984009B0CB6 /* AVFoundation.framework in Frameworks */,
 				BE29F5F114686984009B0CB6 /* CoreLocation.framework in Frameworks */,
-				BE29F5F314686984009B0CB6 /* MediaPlayer.framework in Frameworks */,
 				BE29F5F514686984009B0CB6 /* QuartzCore.framework in Frameworks */,
-				BE29F5F714686984009B0CB6 /* SystemConfiguration.framework in Frameworks */,
-				BE29F5F914686984009B0CB6 /* MobileCoreServices.framework in Frameworks */,
-				BE29F5FB14686984009B0CB6 /* CoreMedia.framework in Frameworks */,
 				BE9A4B6F147C70E6004FF748 /* MapKit.framework in Frameworks */,
 				BEA26763149E934300DF8ADC /* f5.framework in Frameworks */,
+				BEA26770149E96FD00DF8ADC /* SystemConfiguration.framework in Frameworks */,
+				BEA26772149E972D00DF8ADC /* CoreGraphics.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -133,17 +112,10 @@
 				BE9A4B6E147C70E6004FF748 /* MapKit.framework */,
 				BE29F5E214686984009B0CB6 /* Foundation.framework */,
 				BE29F5E414686984009B0CB6 /* UIKit.framework */,
-				BE29F5E614686984009B0CB6 /* CoreGraphics.framework */,
-				BE29F5E814686984009B0CB6 /* AddressBook.framework */,
-				BE29F5EA14686984009B0CB6 /* AddressBookUI.framework */,
-				BE29F5EC14686984009B0CB6 /* AudioToolbox.framework */,
-				BE29F5EE14686984009B0CB6 /* AVFoundation.framework */,
 				BE29F5F014686984009B0CB6 /* CoreLocation.framework */,
-				BE29F5F214686984009B0CB6 /* MediaPlayer.framework */,
 				BE29F5F414686984009B0CB6 /* QuartzCore.framework */,
-				BE29F5F614686984009B0CB6 /* SystemConfiguration.framework */,
-				BE29F5F814686984009B0CB6 /* MobileCoreServices.framework */,
-				BE29F5FA14686984009B0CB6 /* CoreMedia.framework */,
+				BEA2676F149E96FD00DF8ADC /* SystemConfiguration.framework */,
+				BEA26771149E972D00DF8ADC /* CoreGraphics.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -190,7 +162,7 @@
 				BE29F5D714686984009B0CB6 /* Sources */,
 				BE29F5D814686984009B0CB6 /* Frameworks */,
 				BE29F5D914686984009B0CB6 /* Resources */,
-				BE29F638146869BF009B0CB6 /* Flow5 Setup */,
+				BE29F638146869BF009B0CB6 /* f5 Setup */,
 				BE29F5DA14686984009B0CB6 /* Sources */,
 				BE29F5DB14686984009B0CB6 /* Frameworks */,
 			);
@@ -251,19 +223,19 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		BE29F638146869BF009B0CB6 /* Flow5 Setup */ = {
+		BE29F638146869BF009B0CB6 /* f5 Setup */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Flow5 Setup";
+			name = "f5 Setup";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#write the current hostname into the Flow5.plist so the app can use it to find the devserv\ndefaults write ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/f5 devservhost -string $HOSTNAME\n\n#get the app name from the f5.plist (may be a command line option at some point)\nAPP=`defaults read ${SRCROOT}/f5 appname`\nCOMPANY=`defaults read ${SRCROOT}/f5 company`\n\n#set the bundle display name\ndefaults write ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Info CFBundleDisplayName -string $APP\ndefaults write ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Info CFBundleName -string $APP\n#defaults write ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Info CFBundleExecutable -string $APP\ndefaults write ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Info CFBundleIdentifier -string \"com.$COMPANY.$APP\"\n\n#get the icon resources\n\n/usr/local/bin/wget http://\"$HOSTNAME\":8008/apps/\"$APP\"/images/splash@320x480.png -O ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Default.png\n/usr/local/bin/wget http://\"$HOSTNAME\":8008/apps/\"$APP\"/images/splash@640x960.png -O ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Default@2x.png\n/usr/local/bin/wget http://\"$HOSTNAME\":8008/apps/\"$APP\"/images/icon@114x114.png -O ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/icon@2x.png\n/usr/local/bin/wget http://\"$HOSTNAME\":8008/apps/\"$APP\"/images/icon@57x57.png -O ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/icon.png\n/usr/local/bin/wget http://\"$HOSTNAME\":8008/apps/\"$APP\"/images/icon@72x72.png -O ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/icon-72.png\n\nif [ $CONFIGURATION = \"Debug\" ]\nthen\nPDEBUG=\"debug=true\"\nelse\nPDEBUG=\"debug=false\"\nfi\n\nif [ $PLATFORM_NAME = \"iphonesimulator\" ]\nthen\nPINLINE=\"inline=false\"\nelse\nPINLINE=\"inline=true\"\nfi\n\nURL=\"http://$HOSTNAME:8008/generate?app=$APP&native=true&$PINLINE&$PDEBUG\"\necho $URL\n\n#get the webapp\nmkdir -p ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/www\n/usr/local/bin/wget --user-agent=iPhone $URL -O ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/www/index.html\n\n\n";
+			shellScript = "#write the current hostname into the Flow5.plist so the app can use it to find the devserv\ndefaults write ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/f5 devservhost -string $HOSTNAME\n\n#get the app name from the f5.plist (may be a command line option at some point)\nAPP=`defaults read ${SRCROOT}/f5 appname`\nCOMPANY=`defaults read ${SRCROOT}/f5 company`\n\n#set the bundle display name\ndefaults write ${TARGET_BUILD_DIR}/${$}/Info CFBundleDisplayName -string $APP\ndefaults write ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Info CFBundleName -string $APP\n#defaults write ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Info CFBundleExecutable -string $APP\ndefaults write ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Info CFBundleIdentifier -string \"com.$COMPANY.$APP\"\n\n#get the icon resources\n\n/usr/local/bin/wget http://\"$HOSTNAME\":8008/apps/\"$APP\"/images/splash@320x480.png -O ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Default.png\n/usr/local/bin/wget http://\"$HOSTNAME\":8008/apps/\"$APP\"/images/splash@640x960.png -O ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Default@2x.png\n/usr/local/bin/wget http://\"$HOSTNAME\":8008/apps/\"$APP\"/images/icon@114x114.png -O ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/icon@2x.png\n/usr/local/bin/wget http://\"$HOSTNAME\":8008/apps/\"$APP\"/images/icon@57x57.png -O ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/icon.png\n/usr/local/bin/wget http://\"$HOSTNAME\":8008/apps/\"$APP\"/images/icon@72x72.png -O ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/icon-72.png\n\nif [ $CONFIGURATION = \"Debug\" ]\nthen\nPDEBUG=\"debug=true\"\nelse\nPDEBUG=\"debug=false\"\nfi\n\nif [ $PLATFORM_NAME = \"iphonesimulator\" ]\nthen\nPINLINE=\"inline=false\"\nelse\nPINLINE=\"inline=true\"\nfi\n\nURL=\"http://$HOSTNAME:8008/generate?app=$APP&native=true&$PINLINE&$PDEBUG\"\n\nif [ $PLATFORM_NAME != \"iphonesimulator\" ]\nthen\n#get the webapp\nmkdir -p ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/www\n/usr/local/bin/wget --user-agent=iPhone $URL -O ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/www/index.html\nfi\n\n\n";
 		};
 		BEED4CC5148DE6D5002F374F /* Configure Info.plist */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -277,7 +249,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#get the app name from the Flow5 plist (may be a command line option at some point)\nAPP=`defaults read ${SRCROOT}/f5 appname`\nCOMPANY=`defaults read ${SRCROOT}/f5 company`\n\ndefaults write ${SRCROOT}/ios-Info CFBundleIdentifier -string \"com.$COMPANY.$APP\"\n\n\n";
+			shellScript = "#get the app name from the Flow5 plist (may be a command line option at some point)\nAPP=`defaults read ${SRCROOT}/f5 appname`\nCOMPANY=`defaults read ${SRCROOT}/f5 company`\n\ndefaults write ${SRCROOT}/${PROJECT_NAME}-Info CFBundleIdentifier -string \"com.$COMPANY.$APP\"\n\n\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

@@ -3,8 +3,8 @@
 <plist version="1.0">
 <dict>
 	<key>appname</key>
-	<string>jitc</string>
+	<string>myApp</string>
 	<key>company</key>
-	<string>juiceinthecity</string>
+	<string>myCompany</string>
 </dict>
 </plist>
