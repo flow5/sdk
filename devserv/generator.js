@@ -44,8 +44,8 @@ function handleImageResourcesRecursive(obj, handler) {
 	F5.forEach(obj, function (id, value) {
 		if (typeof value === 'object') {
 			handleImageResourcesRecursive(value, handler);
-		} else if (value.match('url')){
-			handler(obj, id, value.replace('url("', '').replace('")', ''));
+		} else if (value.indexOf('.png') !== -1 || value.indexOf('.jpg') !== -1){
+			handler(obj, id, value);
 		}
 	});
 }
@@ -129,7 +129,7 @@ function generateCacheManifest(app, isDebug, isMobile, isNative) {
 }
 
 function generateHtml(app, isDebug, doInline, isMobile, isNative) {
-
+	
 	var jsdom = require('jsdom');
 	jsdom.defaultDocumentFeatures = {
 		FetchExternalResources: [],
@@ -174,7 +174,7 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative) {
 	
 	function inlineImage(src) {
 		var prefix = 'data:image/' + require('path').extname(src).substring(1) + ';base64,';
-		return prefix + fs.readFileSync('www/' + src, 'base64');
+		return prefix + fs.readFileSync('www/apps/' + app + '/' + src, 'base64');
 	}
 	
 	injectLink('apple-touch-icon', 'apps/' + app + '/images/icon@114x114.png');
@@ -274,7 +274,7 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative) {
 			/*global F5: true*/
 			try {
 				handleImageResourcesRecursive(F5.Resources, function (obj, id, src) {						
-					obj[id] = 'url("' + inlineImage(src) + '")';										
+					obj[id] = inlineImage(src);										
 				});
 				var script = document.createElement('script');	
 				script.id = 'resources.js';	
@@ -298,7 +298,7 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative) {
 	var splashEl = document.createElement('img');
 	splashEl.id = 'splash';
 	splashEl.className = 'splash';
-	var splashSrc = 'apps/' + app + '/images/splash@640x960.png';
+	var splashSrc = 'images/splash@640x960.png';
 	if (doInline) {
 		splashEl.src = inlineImage(splashSrc);		
 	} else {

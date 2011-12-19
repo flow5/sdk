@@ -32,7 +32,7 @@
     CLLocationManager *locationManager;
 }
 
-@property (nonatomic, assign) CLLocationManager* locationManager;
+@property (nonatomic, retain) CLLocationManager* locationManager;
 
 
 - (void)setReminder:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;

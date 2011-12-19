@@ -34,7 +34,7 @@
     AsyncUdpSocket *socket;    
 }
 
-@property (nonatomic, assign) AsyncUdpSocket* socket;
+@property (nonatomic, retain) AsyncUdpSocket* socket;
 @property (nonatomic, copy) NSString* callbackID;
 
 - (void)sendDatagram:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;

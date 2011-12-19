@@ -61,7 +61,7 @@
     } else {
         AppDelegate *appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];   
         
-        self.navigationBar = [[UINavigationBar alloc] init];
+        self.navigationBar = [[[UINavigationBar alloc] init] autorelease];
         [self.navigationBar sizeToFit];
         
         self.navigationBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
@@ -72,7 +72,7 @@
         
         [mainView addSubview:self.navigationBar];
         
-        self.itemCache = [[NSMutableDictionary alloc] init];
+        self.itemCache = [[[NSMutableDictionary alloc] init] autorelease];
     }    
 }
 
@@ -93,7 +93,7 @@
             if (currentItem) {
                 currentItem.title = [configuration valueForKey:@"title"];
             } else {
-                currentItem = [[UINavigationItem alloc] initWithTitle:[configuration valueForKey:@"title"]];
+                currentItem = [[[UINavigationItem alloc] initWithTitle:[configuration valueForKey:@"title"]] autorelease];
                 [self.itemCache setValue:currentItem forKey:[configuration valueForKey:@"id"]];
             }
             
@@ -101,7 +101,7 @@
             if (left) {                        
                 UINavigationItem *backItem = [self.itemCache valueForKey:[left valueForKey:@"id"]];
                 if (!backItem) {                
-                    backItem = [[UINavigationItem alloc] initWithTitle:[left valueForKey:@"label"]];
+                    backItem = [[[UINavigationItem alloc] initWithTitle:[left valueForKey:@"label"]] autorelease];
                     [self.itemCache setValue:backItem forKey:[left valueForKey:@"id"]];                
                 }
                 

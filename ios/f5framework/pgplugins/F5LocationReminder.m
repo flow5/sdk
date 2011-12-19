@@ -37,7 +37,7 @@
 - (id)initWithWebView:(UIWebView*)webview {
     self = [super initWithWebView:webview];
     if (self) {
-        self.locationManager = [[CLLocationManager alloc] init];        
+        self.locationManager = [[[CLLocationManager alloc] init] autorelease];        
         self.locationManager.delegate = self;
     }
     return self;

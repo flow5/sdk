@@ -48,7 +48,7 @@ typedef void (^CommandBlock)();
 - (id)initWithWebView:(UIWebView*)webview {
     self = [super initWithWebView:webview];
     if (self) {
-        self.queue = [[NSMutableArray alloc] init];
+        self.queue = [[[NSMutableArray alloc] init] autorelease];
     }
     return self;
 }

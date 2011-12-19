@@ -60,7 +60,7 @@
     if ([[url lastPathComponent] isEqualToString:@"gap"]) {
 
         NSArray *components = [[url query] componentsSeparatedByString:@"&"];
-        NSMutableDictionary *parameters = [[NSMutableDictionary alloc] init];
+        NSMutableDictionary *parameters = [[[NSMutableDictionary alloc] init] autorelease];
         for (NSString *component in components) {
             [parameters setObject:[[component componentsSeparatedByString:@"="] objectAtIndex:1] forKey:[[component componentsSeparatedByString:@"="] objectAtIndex:0]];
         }        
@@ -151,9 +151,7 @@
         view.backgroundColor = UIColor.clearColor;
     }
             
-    // attempt at NSURLCache override     
-    NSURLCache *myCache = [[MyURLCache alloc] initWithMemoryCapacity:1024 * 1024 diskCapacity:1024 * 1024 * 10 diskPath:@"Cache"];
-    [NSURLCache setSharedURLCache:myCache];
+    [NSURLCache setSharedURLCache:[[[MyURLCache alloc] initWithMemoryCapacity:1024 * 1024 diskCapacity:1024 * 1024 * 10 diskPath:@"Cache"] autorelease]];
                 
     return result;
 }

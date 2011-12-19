@@ -213,7 +213,7 @@
 	};
 	
 	F5.sourceFromResourceUrl = function (url) {
-		if (url.match('data://') || url.match('http://')) {
+		if (url.match('data:image/') || url.match('http://')) {
 			return url;
 		} else {
 			return 'apps/jitc/' + url;

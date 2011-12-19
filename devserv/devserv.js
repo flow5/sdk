@@ -134,16 +134,15 @@ cli.main(function (args, options) {
 				dot2svg(req, res);	
 			} else if (req.url.indexOf('service?') !== -1) {
 				try {
-					// prevent directory climbing
 					service = require('../services/' + app + '/' + parsed.query.name + '.js');
 					
-					req.buffer = '';
+					req.body = '';
 					req.on('data', function (chunk) {
-						req.buffer += chunk;
+						req.body += chunk;
 					});	
 					req.on('end', function () {
 						try {
-							service.exec(parsed.query, req.buffer, function (results) {
+							service.exec(parsed.query, req.body, function (results) {
 								res.writeHead(200, {'Content-Type': 'application/json'});						
 								res.write(results);						
 								res.end();
@@ -196,7 +195,6 @@ cli.main(function (args, options) {
 				res.end();				
 			} else if (req.url.indexOf('service?') !== -1) {
 				try {
-					// prevent directory climbing
 					service = require(process.cwd() + '/www/services/' + app + '/' + parsed.query.name + '.js');
 
 					service.exec(parsed.query, function (results) {

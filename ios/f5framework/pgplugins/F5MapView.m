@@ -156,7 +156,7 @@ static char base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123
     if (self.mapView) {
         NSLog(@"mapView already created. Was location.reload() called?");
     } else {                    
-        self.mapView = [[F5MKMapView alloc] init];
+        self.mapView = [[[F5MKMapView alloc] init] autorelease];
         
         [mapView sizeToFit]; // ??
         
@@ -233,7 +233,7 @@ static char base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123
         UIGraphicsEndImageContext();
         NSData *data = UIImageJPEGRepresentation(newImage, .5);
         // have to b64 encode here as well
-        NSString *jpegData = [data newStringInBase64FromData];
+        NSString *jpegData = [[data newStringInBase64FromData] autorelease];
         return [PluginResult resultWithStatus:PGCommandStatus_OK messageAsString:jpegData];                
     } else {
         NSLog(@"Trying to use showMap without calling create first");        

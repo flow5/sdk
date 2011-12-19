@@ -39,7 +39,7 @@
 - (id)initWithWebView:(UIWebView*)webview {
     self = [super initWithWebView:webview];
     if (self) {
-        self.socket = [[AsyncUdpSocket alloc] initWithDelegate:self];
+        self.socket = [[[AsyncUdpSocket alloc] initWithDelegate:self] autorelease];
     }
     return self;
 }

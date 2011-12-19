@@ -32,7 +32,7 @@
     NSMutableArray *queue;
 }
 
-@property (nonatomic, assign) NSMutableArray* queue;
+@property (nonatomic, retain) NSMutableArray* queue;
 
 + (F5CommandQueue*)instance;
 
