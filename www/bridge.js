@@ -24,7 +24,7 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global F5*/
+/*global F5, PhoneGap*/
 
 (function () {
 	
@@ -75,5 +75,15 @@
 		return doSync(url);
 	};
 	
+	F5.flushTasks = function (tasks, cb) {
+		PhoneGap.exec(
+			function (result) { // success
+				F5.parallelizeTasks(tasks, cb);	
+			},
+			function (result) { // failure
+				console.log(result);
+			}, "com.flow5.commandqueue", "flush", []
+		);								
+	};
 	
 }());

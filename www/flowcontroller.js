@@ -49,25 +49,36 @@
 						
 		// TODO: fix the case where the recursive flow terminates in a selection or transition
 		// before a leaf node is reached
-		function doLifecycleEventRecursive(event, node, cb) {
-			if (node) {
-				flowObservers.forEach(function doLifecycleEvent(observer) {
-					if (observer['node' + event]) {
-						observer['node' + event](node);
-					}
-				});				
-				
-				// if there is a subflow associated with this lifecycle event, do it now
-				if (node.subflows && node.subflows[event]) {
-					that.doSubflow(node, event, function () {
-						doLifecycleEventRecursive(event, node.selection, cb);
-					});							
-				} else {
+		function doLifecycleEventRecursive(event, node, cb) {	
+
+			function doLifecycleEvent(observer) {
+				if (observer['node' + event]) {
+					observer['node' + event](node);
+				}
+			}
+			
+			function subflowCallback(node) {
+				return function () {
 					doLifecycleEventRecursive(event, node.selection, cb);
+				};
+			}
+					
+			while (node) {
+				flowObservers.forEach(doLifecycleEvent);	
+						
+				// only recurse when an async operation requires it
+				if (node.subflows && node.subflows[event]) {
+					that.doSubflow(node, event, subflowCallback(node));		
+					break;					
+				} else {
+				// otherwise just iterate to keep the stack minimal
+					node = node.selection;
 				}	
-			} else {
+				
+			}
+			if (!node) {
 				cb();
-			}		
+			}
 		}						
 		
 		function nodeDidBecomeActive(node, cb) {								
@@ -99,28 +110,11 @@
 				});									
 			}
 			
-			/*global PhoneGap*/
-			// TODO: move to native/web scripts F5.flushTasks
-			if (typeof PhoneGap !== 'undefined') {
-				// yield back to the event loop to reflow
-				// then flush any native commands that have been queued (native animations)
-				// then execute the html5 tasks
-				setTimeout(function flushCb() {
-					PhoneGap.exec(
-					function (result) { // success
-						F5.parallelizeTasks(tasks, complete);	
-					},
-					function (result) { // failure
-						console.log(result);
-					}, "com.flow5.commandqueue", "flush", []);						
-				});				
-			} else {
-				// yield back to the event loop to reflow
-				// then execute the html5 tasks
-				setTimeout(function flushCb() {
-					F5.parallelizeTasks(tasks, complete);							
-				}, 0);															
-			}
+			// yield back to the event loop to allow any necessary reflow
+			// then flush the remaining tasks (usually animations or queued native commands)
+			setTimeout(function flushTasksCb() {
+				F5.flushTasks(tasks, complete);
+			}, 0);
 		}	
 			
 		this.start = function (cb) {	
