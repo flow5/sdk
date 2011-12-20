@@ -43,7 +43,7 @@
 		};
 		
 		
-that.observer = function () {};
+that.observer = F5.noop;
 
 that.setObserver = function (observer) {
 	that.observer = observer;
@@ -139,7 +139,7 @@ that.setObserver = function (observer) {
 				// yield back to the event loop to reflow
 				// then flush any native commands that have been queued (native animations)
 				// then execute the web animations
-				setTimeout(function () {
+				setTimeout(function flushCb() {
 					PhoneGap.exec(
 						function (result) { // success
 						F5.parallelizeTasks(tasks, complete);
@@ -148,7 +148,7 @@ that.setObserver = function (observer) {
 					}, "com.flow5.commandqueue", "flush", []);						
 				});				
 			} else {
-				setTimeout(function () {
+				setTimeout(function flushCb() {
 					F5.parallelizeTasks(tasks, complete);							
 				}, 0);															
 			}

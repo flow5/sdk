@@ -54,7 +54,7 @@
 		
 		var data = F5.getNodeData(node, arg2);							
 		
-		F5.forEach(widgetEls, function (el) {
+		F5.forEach(widgetEls, function attachWidget(el) {
 			F5.attachWidget(el, data);
 		});
 		

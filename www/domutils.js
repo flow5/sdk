@@ -69,7 +69,7 @@
 		
 		F5.assert(!el.F5.listeners[eventName], 'Already listening for: ' + eventName + ' on: ' + el.outerHTML);
 		
-		el.F5.listeners[eventName] = function (e) {
+		el.F5.listeners[eventName] = function f5eventListenerWrapper(e) {
 			// TODO: check for transitioning for all event callbacks?
 			F5.callback(cb, e);
 		};

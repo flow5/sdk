@@ -92,7 +92,7 @@
 
 	};
 
-	listener.addEventListener(startEvent, function (e) {	
+	listener.addEventListener(startEvent, function startHandler(e) {	
 		function start() {
 			try {
 				F5.Global.flow = new F5.Flow(F5.flowspec);

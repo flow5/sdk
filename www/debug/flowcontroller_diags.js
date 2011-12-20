@@ -28,7 +28,7 @@
 
 (function () {
 
-	F5.addF5ReadyListener(function () {
+	F5.addF5ReadyListener(function f5ReadyListenerCb() {
 		
 		var flow = F5.Global.flow;
 		
