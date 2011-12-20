@@ -93,7 +93,7 @@
 	};
 
 	listener.addEventListener(startEvent, function startHandler(e) {	
-		function start() {
+		function startUp() {
 			try {
 				F5.Global.flow = new F5.Flow(F5.flowspec);
 				
@@ -121,9 +121,14 @@
 					}, 0);																				
 				});
 			} catch (exception) {
+				console.log(exception.message);
 				document.body.className = 'errorframe';
 				document.body.innerHTML = exception.message;
 			}
+		}
+		// increase to delay to allow attaching to webview from remote debugger
+		function start() {
+			setTimeout(startUp, 0);
 		}
 	
 		function updateReady() {

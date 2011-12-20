@@ -117,6 +117,7 @@
 		};
 	
 		this.startSubflow = function () {
+			this.updateConfiguration(F5.Global.flow.root);			
 			configure.apply(this, [false]);					
 		};
 	

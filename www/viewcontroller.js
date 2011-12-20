@@ -37,7 +37,7 @@
 			var div = document.createElement('div');
 			F5.addClass(div, 'f5' + node.type);
 			div.id = node.path;
-			div.f5View = true;
+			div.view = this;
 
 			// TODO: node.id should always exist after subflow reworkd is done
 			if (node.id) {
@@ -167,13 +167,15 @@
 			node.view['view' + event]();
 						
 			function doWidgetLifecycleEventRecursive(el, event) {
-				F5.forEach(el.childNodes, function (childEl) {
+				F5.forEach(el.childNodes, function doWidgetLifecycleEvent(childEl) {
 					if (childEl.getAttribute && childEl.getAttribute('f5_widget')) {
 						if (childEl.widget['widget' + event]) {
 							childEl.widget['widget' + event]();							
 						}
 					}
-					if (!childEl.f5View) {
+					// don't recurse through other views. they'll get handled
+					// via the associated node
+					if (!childEl.view) {
 						doWidgetLifecycleEventRecursive(childEl, event);
 					}
 				});					
@@ -230,6 +232,16 @@
 						
 		this.doTransition = function (container, id, to, animation) {
 			var that = this;
+
+			if (id === 'back') {
+				animation = F5.Animation.inverseAnimation(container.selection.animation);
+			}			
+			if (!animation)  {
+				animation = 'pushLeft'; // default
+			}
+			if (id !== 'back') {
+				to.animation = animation;
+			}									
 									
 			var containerElement = container.view.el.querySelector('[class=f5container]');
 			var oldNode = container.selection;

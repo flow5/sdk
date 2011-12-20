@@ -124,7 +124,7 @@ static NSArray* com_phonegap_CommandStatusMsgs;
                                self.message ? self.message : [NSNull null], @"message",
                                self.keepCallback, @"keepCallback",
                                nil] JSONRepresentation];
-	DLog(@"PluginResult:toJSONString - %@", resultString);
+//	DLog(@"PluginResult:toJSONString - %@", resultString);
 	return resultString;
 }
 -(NSString*) toSuccessCallbackString: (NSString*) callbackId
@@ -137,7 +137,7 @@ static NSArray* com_phonegap_CommandStatusMsgs;
 	else {
 		successCB = [NSString stringWithFormat:@"PhoneGap.callbackSuccess('%@',%@);", callbackId, [self toJSONString]];			
 	}
-	DLog(@"PluginResult toSuccessCallbackString: %@", successCB);
+//	DLog(@"PluginResult toSuccessCallbackString: %@", successCB);
 	return successCB;
 }
 -(NSString*) toErrorCallbackString: (NSString*) callbackId

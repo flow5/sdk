@@ -200,14 +200,14 @@
 		
 		this.setAction = function (cb) {
 			var that = this;
-			F5.addTouchStartListener(this.el, function (e) {
+			F5.addTouchStartListener(this.el, function touchStartListenerCB(e) {
 				that.setState(true);
 			});
-			F5.addTouchMoveListener(this.el, function (e) {
+			F5.addTouchMoveListener(this.el, function touchMoveListenerCB(e) {
 				e.preventDefault();
 				e.stopPropagation();
 			});
-			F5.addTouchStopListener(this.el, function (e) {
+			F5.addTouchStopListener(this.el, function touchStopListenerCB(e) {
 				that.setState(false);
 			});				
 			F5.addTapListener(this.el, cb);			
@@ -224,7 +224,7 @@
 				
 		this.setAction = function (cb) {
 			var that = this;
-			F5.addTouchStartListener(this.el, function (e) {
+			F5.addTouchStartListener(this.el, function touchStartListenerCB(e) {
 				e.stopPropagation();
 				that.setState(!that.state);
 				cb(that.state);
@@ -295,7 +295,7 @@
 		
 		this.setAction = function (cb) {
 			var that = this;
-			F5.addTouchStartListener(this.el, function (e) {
+			F5.addTouchStartListener(this.el, function touchStartListenerCb(e) {
 				e.stopPropagation();
 				if (!that.state) {
 					// do the callback first

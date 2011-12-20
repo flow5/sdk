@@ -85,6 +85,13 @@
 				
 		// flow observer
 		this.doTransition = function (container, id, to, animation) {
+						
+			if (id === 'back') {
+				animation = F5.Animation.inverseAnimation(container.selection.animation);
+			}			
+			if (!animation)  {
+				animation = 'pushLeft'; // default
+			}			
 			if (this.shown && animation.match('push')) {
 				// queue the transition. will be processed before js level transitions are executed
 				PhoneGap.exec(

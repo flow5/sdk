@@ -39,10 +39,10 @@
 
 		
 		var flowObservers = [];		
-		that.addFlowObserver = function (observer) {
+		this.addFlowObserver = function (observer) {
 			flowObservers.push(observer);
 		};		
-		that.removeFlowObserver = function (observer) {
+		this.removeFlowObserver = function (observer) {
 			flowObservers.splice(flowObservers.indexOf(observer), 1);
 		};				
 
@@ -51,7 +51,7 @@
 		// before a leaf node is reached
 		function doLifecycleEventRecursive(event, node, cb) {
 			if (node) {
-				flowObservers.forEach(function (observer) {
+				flowObservers.forEach(function doLifecycleEvent(observer) {
 					if (observer['node' + event]) {
 						observer['node' + event](node);
 					}
@@ -68,37 +68,28 @@
 			} else {
 				cb();
 			}		
-		}		
+		}						
 		
 		function nodeDidBecomeActive(node, cb) {								
 			node.active = true;			
-			doLifecycleEventRecursive('DidBecomeActive', node, function () {
-				cb();
-			});
+			doLifecycleEventRecursive('DidBecomeActive', node, cb);
 		}									
 
 		function nodeDidBecomeInactive(node, cb) {								
 			node.active = false;
-			doLifecycleEventRecursive('DidBecomeInactive', node, function () {
-				cb();
-			});
+			doLifecycleEventRecursive('DidBecomeInactive', node, cb);
 		}									
 
 		function nodeWillBecomeActive(node, cb) {											
-			doLifecycleEventRecursive('WillBecomeActive', node, function () {
-				cb();
-			});
+			doLifecycleEventRecursive('WillBecomeActive', node, cb);
 		}									
 
 		function nodeWillBecomeInactive(node, cb) {											
-			doLifecycleEventRecursive('WillBecomeInactive', node, function () {
-				cb();
-			});
+			doLifecycleEventRecursive('WillBecomeInactive', node, cb);
 		}									
 						
-		function flushTasks(tasks, cb) {
-			
-			function complete() {				
+		function flushTasks(tasks, cb) {			
+			function complete() {	
 				cb();
 				
 				flowObservers.forEach(function (observer) {
@@ -117,7 +108,7 @@
 				setTimeout(function flushCb() {
 					PhoneGap.exec(
 					function (result) { // success
-						F5.parallelizeTasks(tasks, complete);							
+						F5.parallelizeTasks(tasks, complete);	
 					},
 					function (result) { // failure
 						console.log(result);
@@ -132,19 +123,18 @@
 			}
 		}	
 			
-		that.start = function (cb) {						
-			if (!cb) {
-				cb = function () {
-					console.log('start complete');
-				};
-			}
+		this.start = function (cb) {	
+			cb = cb || function () {
+				console.log('start complete');
+			};
 			
 			nodeWillBecomeActive(flow.root, function () {				
-				// TODO: should cb execute here?
+				// NOTE: cb executes here because nodeDidBecomeActive may pop a dialog
+				// so this is the right time to flush any native side tasks that got queued
+				// during startup
 				flushTasks([], cb);		
 				
 				nodeDidBecomeActive(flow.root, function () {
-//that.observer();
 					flowObservers.forEach(function (observer) {
 						if (observer.start) {
 							observer.start();
@@ -155,14 +145,8 @@
 		};
 		
 		// cancel out of any current subflow
-		// NOTE: this might be annoying because when selecting away in the middle
-		// of a subflow the subflow gets cancelled out
-		// the problem is that the subflow might be related to didBecomeActive logic
-		// which should run top to bottom
-		// e.g., if the active subflow is the didBecomeActive subflow that checks for logged in
-		// then tab away, login from another tab and then come back, the didBecomeActive subflow
-		// needs to run again
-		// TODO: this has an effect at the widget layer
+		// TODO: would like to limit this to lifecycle event subflows
+		// other subflows should not have to be cancelled
 		function cancelSubflowRecursive(node) {
 			if (node.activeSubflow && node.activeSubflow.userInput) {
 				flowObservers.forEach(function (observer) {
@@ -180,7 +164,7 @@
 		}		
 		
 		// select the child of node with the given id
-		that.doSelection = function (node, id, cb) {	
+		this.doSelection = function (node, id, cb) {	
 			F5.assert(!lockout, 'Locked out');				
 			F5.assert(node.type === 'switcher' || node.type === 'set', 
 				'Can only doSelection on node of types switcher or set');
@@ -229,7 +213,7 @@
 		};
 				
 		// use the transition on the node with the given id 
-		that.doTransition = function (node, id, parameters, cb) {
+		this.doTransition = function (node, id, parameters, cb) {
 			F5.assert(!lockout, 'Locked out');
 			F5.assert(node.type === 'flow' || node.type === 'set', 
 				'Can only doTransition on node of types flow or set');			
@@ -292,45 +276,8 @@
 				} else {
 					target.data = parameters;
 				}
-			}
-			
-			
-			
-// TODO: move to Animation module
-function inverseAnimation(animation) {
-	var inverse;
-	switch (animation) {
-	case 'cut':
-		inverse = 'cut';
-		break;
-	case 'fadeIn':
-		inverse = 'fadeOut';
-		break;
-	case 'fadeOut':
-		inverse = 'fadeIn';
-		break;
-	case 'pushRight':
-		inverse = 'pushLeft';
-		break;
-	case 'pushLeft':
-		inverse = 'pushRight';
-		break;
-	}
-	
-	return inverse;
-}
-if (id === 'back') {
-	animation = inverseAnimation(container.selection.animation);
-}			
-if (!animation)  {
-	animation = 'pushLeft';
-}
-if (id !== 'back') {
-	target.animation = animation;
-}	
-					
-					
-						 
+			}										
+															 
 			nodeWillBecomeInactive(node, function () {
 				
 				nodeWillBecomeActive(target, function () {		
@@ -372,7 +319,7 @@ if (id !== 'back') {
 		
 		// find an active leaf node
 		// then climb up the stack for the first node with 'back'		
-		that.getBackNode = function (leaf) {
+		this.getBackNode = function (leaf) {
 			leaf = leaf || flow.root;
 			while (leaf.selection) {
 				leaf = leaf.selection;
@@ -389,17 +336,17 @@ if (id !== 'back') {
 			}
 		};
 		
-		that.hasBack = function () {
+		this.hasBack = function () {
 			return that.getBackNode() !== null;
 		};
 		
-		that.doBack = function () {			
+		this.doBack = function () {			
 			var backNode = that.getBackNode();
 			F5.assert(backNode, 'Cannot go back');
 			that.doTransition(backNode, 'back');
 		};
 											
-		that.doSubflow = function (node, id, cb) {
+		this.doSubflow = function (node, id, cb) {
 			F5.assert(node.subflows && node.subflows[id], 'No such subflow');
 			
 			cb = cb || function () {
@@ -420,7 +367,7 @@ if (id !== 'back') {
 			}
 
 			if (delegateMethod) {
-				delegateMethod(node, function (choice) {
+				delegateMethod(node, function subflowChoiceCb(choice) {
 					that.doSubflowChoice(node, choice);
 				});
 			} else {
@@ -438,7 +385,7 @@ if (id !== 'back') {
 			}
 		};																		
 				
-		that.doSubflowChoice = function (node, id) {	
+		this.doSubflowChoice = function (node, id) {	
 			F5.assert(node.activeSubflow, 'No active subflow');
 			F5.assert(node.activeSubflow.choices.hasOwnProperty(id), 'No such choice');	
 						
@@ -504,20 +451,19 @@ if (id !== 'back') {
 						} else if (node.type === 'set') {
 							// for a set, the string indicates a node to sync to
 							// NOTE: this should only occur in a WillBecomeActive context
-							node.selection = node.children[nextAction];
-							F5.forEach(node.children, function (id, child) {
-								child.active = false;
-							});
-							node.selection.active = true;
-							flowObservers.forEach(function (observer) {
-								if (observer.syncSet) {
-									observer.syncSet(node);
-								}
-							});
-							// TODO: call nodeWillBecomeInactive on the previous selection?
-							nodeWillBecomeActive(node.selection, function () {
-								completionCb();													
-							});
+							if (node.selection.id !== nextAction) {
+								node.selection = node.children[nextAction];
+								F5.forEach(node.children, function (id, child) {
+									child.active = false;
+								});
+								node.selection.active = true;
+								flowObservers.forEach(function (observer) {
+									if (observer.syncSet) {
+										observer.syncSet(node);
+									}
+								});
+							} 
+							completionCb();	
 						}					
 					}					
 				}

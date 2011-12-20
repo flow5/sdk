@@ -132,7 +132,30 @@
 		
 		pushRight: function (container, oldEl, newEl) {
 			return pushHorizontal(container, oldEl, newEl, -container.offsetWidth);						
-		}
+		},
+		
+		inverseAnimation: function(animation) {
+			var inverse;
+			switch (animation) {
+			case 'cut':
+				inverse = 'cut';
+				break;
+			case 'fadeIn':
+				inverse = 'fadeOut';
+				break;
+			case 'fadeOut':
+				inverse = 'fadeIn';
+				break;
+			case 'pushRight':
+				inverse = 'pushLeft';
+				break;
+			case 'pushLeft':
+				inverse = 'pushRight';
+				break;
+			}
+
+			return inverse;
+		}		
 	};
 }());
 
