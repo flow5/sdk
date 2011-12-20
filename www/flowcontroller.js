@@ -96,13 +96,24 @@
 			});
 		}									
 						
-		function flushTasks(tasks, complete) {
+		function flushTasks(tasks, cb) {
+			
+			function complete() {				
+				cb();
+				
+				flowObservers.forEach(function (observer) {
+					if (observer.asyncOperationComplete) {
+						observer.asyncOperationComplete();
+					}
+				});									
+			}
+			
 			/*global PhoneGap*/
 			// TODO: move to native/web scripts F5.flushTasks
 			if (typeof PhoneGap !== 'undefined') {
 				// yield back to the event loop to reflow
 				// then flush any native commands that have been queued (native animations)
-				// then execute the web animations
+				// then execute the html5 tasks
 				setTimeout(function flushCb() {
 					PhoneGap.exec(
 					function (result) { // success
@@ -113,6 +124,8 @@
 					}, "com.flow5.commandqueue", "flush", []);						
 				});				
 			} else {
+				// yield back to the event loop to reflow
+				// then execute the html5 tasks
 				setTimeout(function flushCb() {
 					F5.parallelizeTasks(tasks, complete);							
 				}, 0);															
@@ -337,10 +350,12 @@ if (id !== 'back') {
 						nodeDidBecomeInactive(oldSelection, function () {
 							if (id === 'back') {
 								container.selection = backNode.back;
-								delete backNode.back;
-								if (F5.Global.viewController) {
-									F5.Global.viewController.release(backNode);
-								}
+								delete backNode.back;								
+								flowObservers.forEach(function (observer) {
+									if (observer.release) {
+										observer.release(node);
+									}
+								});
 							} else {
 								container.selection = node.transitions[id].to;
 							}		
@@ -446,6 +461,10 @@ if (id !== 'back') {
 
 			// finish the old subflow
 			var oldSubflow = node.activeSubflow;									
+			delete oldSubflow.completionCb;
+			oldSubflow.active = false;
+			delete node.activeSubflow;	
+
 			if (oldSubflow.userInput) {
 				flowObservers.forEach(function (observer) {
 					if (observer.completeSubflow) {
@@ -453,9 +472,6 @@ if (id !== 'back') {
 					}
 				});				
 			}
-			delete oldSubflow.completionCb;
-			oldSubflow.active = false;
-			delete node.activeSubflow;	
 																
 			var nextAction = oldSubflow.choices[id];
 			if (nextAction) {
@@ -493,9 +509,12 @@ if (id !== 'back') {
 								child.active = false;
 							});
 							node.selection.active = true;
-							if (F5.Global.viewController) {
-								F5.Global.viewController.syncSet(node);
-							}
+							flowObservers.forEach(function (observer) {
+								if (observer.syncSet) {
+									observer.syncSet(node);
+								}
+							});
+							// TODO: call nodeWillBecomeInactive on the previous selection?
 							nodeWillBecomeActive(node.selection, function () {
 								completionCb();													
 							});

@@ -47,7 +47,7 @@
 		F5.UI.attachTracker(svgframeEl);
 
 		var sequenceNumber = 0;
-		function observer() {	
+		function update() {	
 			F5.setStyles(backbuttonEl, {
 				'background-color': F5.Global.flowController.hasBack() ? 'lightblue' : 'grey',
 				'border': '2px solid ' + (F5.Global.flowController.hasBack() ? 'white' : 'black'),
@@ -118,7 +118,24 @@
 			}, {'sequence-number': sequenceNumber});
 		}	
 
-		F5.Global.flowController.setChangeObserver(observer);
+		F5.Global.flowController.addFlowObserver({
+			start: function () {
+				update();
+			},
+			startSubflow: function () {
+				update();
+			},
+			syncSet: function (node) {
+				update();
+			},
+			completeSubflow: function () {
+				update();
+			},
+			asyncOperationComplete: function () {
+				update();
+			}
+		});
+		update();
 
 		// make the back button
 		F5.addTapListener(backbuttonEl, function () {
