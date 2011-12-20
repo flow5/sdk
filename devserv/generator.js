@@ -292,20 +292,7 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative) {
 	appframeEl.id = 'appframe';
 	var screenframeEl = document.createElement('div');
 	screenframeEl.id = 'screen';
-//	screenframeEl.className = 'portrait';
-	
-	// TODO: probably not right
-	var splashEl = document.createElement('img');
-	splashEl.id = 'splash';
-	splashEl.className = 'splash';
-	var splashSrc = 'apps/' + app + '/images/splash@640x960.png';
-	if (doInline) {
-		splashEl.src = inlineImage(splashSrc);		
-	} else {
-		splashEl.src = splashSrc;		
-	}
-	screenframeEl.appendChild(splashEl);
-	
+		
 	appframeEl.appendChild(screenframeEl);
 	document.body.appendChild(appframeEl);
 		

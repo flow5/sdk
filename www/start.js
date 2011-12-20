@@ -105,8 +105,6 @@
 					var e = document.createEvent('Events'); 
 		            e.initEvent('f5ready');
 		            document.dispatchEvent(e);		            
-					//console.log('application started');
-					document.getElementById('splash').style.display = 'none';	
 					
 					// TODO: extract
 					/*global PhoneGap*/

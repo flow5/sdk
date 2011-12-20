@@ -113,6 +113,7 @@
 		};
 	
 		this.startSubflow = function () {
+			this.updateConfiguration(F5.Global.flow.root);
 			leftButtonEl.style.visibility = 'hidden';	
 			configure.apply(this);
 		};

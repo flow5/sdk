@@ -49,21 +49,21 @@
 						
 		// TODO: fix the case where the recursive flow terminates in a selection or transition
 		// before a leaf node is reached
-		function doLifecycleEventRecursive(name, node, cb) {
+		function doLifecycleEventRecursive(event, node, cb) {
 			if (node) {
 				flowObservers.forEach(function (observer) {
-					if (observer['node' + name]) {
-						observer['node' + name](node);
+					if (observer['node' + event]) {
+						observer['node' + event](node);
 					}
 				});				
 				
 				// if there is a subflow associated with this lifecycle event, do it now
-				if (node.subflows && node.subflows[name]) {
-					that.doSubflow(node, name, function () {
-						doLifecycleEventRecursive(name, node.selection, cb);
+				if (node.subflows && node.subflows[event]) {
+					that.doSubflow(node, event, function () {
+						doLifecycleEventRecursive(event, node.selection, cb);
 					});							
 				} else {
-					doLifecycleEventRecursive(name, node.selection, cb);
+					doLifecycleEventRecursive(event, node.selection, cb);
 				}	
 			} else {
 				cb();
@@ -95,15 +95,7 @@
 				cb();
 			});
 		}									
-		
-		
-		// TODO: move this to debug layer
-		function doSubflowPrompt(node) {
-			F5.forEach(node.activeSubflow.choices, function (id, choice) {
-				console.log('* ' + id);
-			});
-		}
-		
+						
 		function flushTasks(tasks, complete) {
 			/*global PhoneGap*/
 			// TODO: move to native/web scripts F5.flushTasks
@@ -113,9 +105,10 @@
 				// then execute the web animations
 				setTimeout(function flushCb() {
 					PhoneGap.exec(
-						function (result) { // success
-						F5.parallelizeTasks(tasks, complete);
-					}, function (result) { // failure
+					function (result) { // success
+						F5.parallelizeTasks(tasks, complete);							
+					},
+					function (result) { // failure
 						console.log(result);
 					}, "com.flow5.commandqueue", "flush", []);						
 				});				
@@ -187,50 +180,39 @@
 			// nothing to do
 			if (id === node.selection.id) {
 				cb();
+				return;
 			}			
 			
 			lockout = true;
 			
 			var oldSelection = node.selection;				
 			
-			function complete() {				
-				node.selection.active = false;
-				node.selection = node.children[id];
+			cancelSubflowRecursive(node);
+			
+			nodeWillBecomeInactive(oldSelection, function () {
 				
-				// TODO: should thse delay the callback?
-
-				nodeDidBecomeInactive(oldSelection, function () {
+				nodeWillBecomeActive(node.children[id], function () {
 					
-				});
-							
-				nodeDidBecomeActive(node.selection, function () {
+					var tasks = [];
+					flowObservers.forEach(function (observer) {
+						if (observer.doSelection) {
+							tasks.push(observer.doSelection(node, id));
+						}
+					});		
+					
+					flushTasks(tasks, function selectionComplete() {
+						node.selection.active = false;
+						node.selection = node.children[id];
 
-				});
-
-				lockout = false;	
-							
-				cb();			
-			}					
-
-			if (node.selection !== node.children[id]) {						
-				cancelSubflowRecursive(node);
-				
-				nodeWillBecomeInactive(oldSelection, function () {
-					nodeWillBecomeActive(node.children[id], function () {
-						
-						var tasks = [];
-						flowObservers.forEach(function (observer) {
-							if (observer.doSelection) {
-								tasks.push(observer.doSelection(node, id));
-							}
-						});		
-						
-						flushTasks(tasks, complete);
-					});									
-				});
-			} else {
-				cb();
-			}
+						nodeDidBecomeInactive(oldSelection, function () {
+							nodeDidBecomeActive(node.selection, function () {
+								lockout = false;	
+								cb();			
+							});					
+						});							
+					});
+				});									
+			});
 		};
 				
 		// use the transition on the node with the given id 
@@ -241,7 +223,7 @@
 			F5.assert(id === 'back' || node.transitions, 'No transitions defined for node: ' + node.path);
 			F5.assert(id === 'back' || node.transitions[id], 'No transition with id: ' + id);
 					
-			parmaters = parameters || {};
+			parameters = parameters || {};
 			cb = cb || function () {
 				//					console.log('transition complete');				
 			};
@@ -281,33 +263,7 @@
 					back = back.parent;
 				}
 				node.transitions[id].to.back = back;				
-			}
-												
-			function complete() {
-				var oldSelection = container.selection;
-				
-				nodeDidBecomeInactive(oldSelection, function () {
-
-				});						
-				
-				if (id === 'back') {
-					container.selection = backNode.back;
-					delete backNode.back;
-					if (F5.Global.viewController) {
-						F5.Global.viewController.release(backNode);
-					}
-				} else {
-					container.selection = node.transitions[id].to;
-				}		
-												
-				nodeDidBecomeActive(container.selection, function () {
-
-				});		
-				
-				lockout = false;				
-													
-				cb();
-			}
+			}												
 			
 			cancelSubflowRecursive(node);		
 			
@@ -325,49 +281,76 @@
 				}
 			}
 			
-			// TODO: move to Animation module
-			function inverseAnimation(animation) {
-				var inverse;
-				switch (animation) {
-				case 'cut':
-					inverse = 'cut';
-					break;
-				case 'fadeIn':
-					inverse = 'fadeOut';
-					break;
-				case 'fadeOut':
-					inverse = 'fadeIn';
-					break;
-				case 'pushRight':
-					inverse = 'pushLeft';
-					break;
-				case 'pushLeft':
-					inverse = 'pushRight';
-					break;
-				}
-				
-				return inverse;
-			}
-			if (id === 'back') {
-				animation = inverseAnimation(container.selection.animation);
-			}			
-			if (!animation)  {
-				animation = 'pushLeft';
-			}
-			if (id !== 'back') {
-				target.animation = animation;
-			}			
-			 
+			
+			
+// TODO: move to Animation module
+function inverseAnimation(animation) {
+	var inverse;
+	switch (animation) {
+	case 'cut':
+		inverse = 'cut';
+		break;
+	case 'fadeIn':
+		inverse = 'fadeOut';
+		break;
+	case 'fadeOut':
+		inverse = 'fadeIn';
+		break;
+	case 'pushRight':
+		inverse = 'pushLeft';
+		break;
+	case 'pushLeft':
+		inverse = 'pushRight';
+		break;
+	}
+	
+	return inverse;
+}
+if (id === 'back') {
+	animation = inverseAnimation(container.selection.animation);
+}			
+if (!animation)  {
+	animation = 'pushLeft';
+}
+if (id !== 'back') {
+	target.animation = animation;
+}	
+					
+					
+						 
 			nodeWillBecomeInactive(node, function () {
+				
 				nodeWillBecomeActive(target, function () {		
 					
+					// queue up all of the transition completion functions from flow observers
 					var tasks = [];
 					flowObservers.forEach(function (observer) {
 						if (observer.doTransition) {
 							tasks.push(observer.doTransition(container, id, target, animation));
 						}
-					});				
-					flushTasks(tasks, complete);
+					});		
+					
+					// execute all of the transition competion functions
+					flushTasks(tasks, function transitionComplete() {
+						var oldSelection = container.selection;
+
+						nodeDidBecomeInactive(oldSelection, function () {
+							if (id === 'back') {
+								container.selection = backNode.back;
+								delete backNode.back;
+								if (F5.Global.viewController) {
+									F5.Global.viewController.release(backNode);
+								}
+							} else {
+								container.selection = node.transitions[id].to;
+							}		
+
+							nodeDidBecomeActive(container.selection, function () {
+								lockout = false;				
+								cb();
+							});		
+						});						
+					});
 				});				
 			});
 		};	
@@ -400,133 +383,129 @@
 			F5.assert(backNode, 'Cannot go back');
 			that.doTransition(backNode, 'back');
 		};
+											
+		that.doSubflow = function (node, id, cb) {
+			F5.assert(node.subflows && node.subflows[id], 'No such subflow');
+			
+			cb = cb || function () {
+//				console.log('subflow completed');				
+			};
+			
+			// setup
+			var subflow = node.subflows[id];
+			subflow.completionCb = cb;
+			subflow.active = true;
+			node.activeSubflow = subflow;			
+			
+			// see if this subflow is handled by the flow delegate
+			var delegateMethod = node.flowDelegate ? node.flowDelegate[subflow.method] : null;
+			// if not, see if it's handled by the root delegate
+			if (!delegateMethod) {
+				delegateMethod = F5.Global.flow.root.flowDelegate ? F5.Global.flow.root.flowDelegate[subflow.method] : null;
+			}
+
+			if (delegateMethod) {
+				delegateMethod(node, function (choice) {
+					that.doSubflowChoice(node, choice);
+				});
+			} else {
+				// handle missing delegate method gracefully
+				if (!subflow.userInput) {
+					console.log('Subflow not flagged for user input but no delegate method found: ' + node.id + '-' + id);
+					subflow.userInput = true;						
+				}
 				
+				flowObservers.forEach(function (observer) {
+					if (observer.startSubflow) {
+						observer.startSubflow(node.activeSubflow);
+					}
+				});
+			}
+		};																		
 				
 		that.doSubflowChoice = function (node, id) {	
 			F5.assert(node.activeSubflow, 'No active subflow');
-
-//			console.log('choose: ' + id);
 			F5.assert(node.activeSubflow.choices.hasOwnProperty(id), 'No such choice');	
 						
-			// TODO: does this need to be asynchronous?			
-			// give the flow delegate a chance to do something with the result
+			// if the user made the choice, pass the result to a flowDelegate if a handler exists			
 			if (node.activeSubflow.userInput) {
+				// the flow delegate must name the method <methodName>Choice
 				var name = node.activeSubflow.method + 'Choice';
 				var method = node.flowDelegate ? node.flowDelegate[name] : null;
+				// try the root delegate
 				if (!method) {
 					method = F5.Global.flow.root.flowDelegate ? F5.Global.flow.root.flowDelegate[name] : null;
 				}
 				if (method) {
 					method(node, id);
 				}
-//				else {
-//					console.log('No flowDelegate for method: ' + name);
-//				}							
-			}					
+			}								
 
-			var newSubflow = node.activeSubflow.choices[id];
-			var oldSubflow = node.activeSubflow;
-			var completionCb = oldSubflow.completionCb;
-			
+			// carry the completion callback forward
+			var completionCb = node.activeSubflow.completionCb;
+
+			// finish the old subflow
+			var oldSubflow = node.activeSubflow;									
+			if (oldSubflow.userInput) {
+				flowObservers.forEach(function (observer) {
+					if (observer.completeSubflow) {
+						observer.completeSubflow(oldSubflow);
+					}
+				});				
+			}
 			delete oldSubflow.completionCb;
 			oldSubflow.active = false;
-			
-			function completeChoice() {
-//that.observer();
+			delete node.activeSubflow;	
+																
+			var nextAction = oldSubflow.choices[id];
+			if (nextAction) {
+				// if the next action is another subflow
+				if (typeof nextAction === 'object') {
+					F5.assert(nextAction.type === 'subflow', 'A subflow choice must be a node name or another subflow');
+					var subflow = nextAction;
+					
+					subflow.completionCb = completionCb;
+					subflow.active = true;
+					node.activeSubflow = subflow;
 
-				if (node.activeSubflow) {
-					if (node.activeSubflow.userInput && F5.Global.viewController) {
-						F5.Global.viewController.doSubflowChoice(oldSubflow, id);
-					} else {
-						doSubflowPrompt(node);												
-					}
-				} else {
-					if (oldSubflow.userInput) {
-						flowObservers.forEach(function (observer) {
-							if (observer.completeSubflow) {
-								observer.completeSubflow(oldSubflow);
-							}
-						});				
-					}
-					if (completionCb) {
-						completionCb();
-					}
-				}
-			}
-
-			if (newSubflow && newSubflow.type === 'subflow') {
-				newSubflow.completionCb = completionCb;
-				newSubflow.active = true;
-				node.activeSubflow = newSubflow;
-				completeChoice();
-			} else {
-				delete node.activeSubflow;					
-				
-				if (newSubflow) {
-					if (node.type === 'flow') {
-						completeChoice();							
-						that.doTransition(node, newSubflow);																			
-					} else if (node.type === 'switcher') {
-						completeChoice();							
-						that.doSelection(node, newSubflow);
-					} else if (node.type === 'set') {
-						node.selection = node.children[newSubflow];
-						F5.forEach(node.children, function (id, child) {
-							child.active = false;
-						});
-						node.selection.active = true;
-						if (F5.Global.viewController) {
-							F5.Global.viewController.syncSet(node);
-						}
-						nodeWillBecomeActive(node.selection, function () {
-							completeChoice();													
-						});
-					}					
-				} else {
-					completeChoice();					
-				}
-			}		
-		};							
-		
-		that.doSubflow = function (node, id, cb) {
-			F5.assert(node.subflows && node.subflows[id], 'No such subflow');
-			
-			var subflow = node.subflows[id];
-			subflow.completionCb = cb;
-			subflow.active = true;
-			node.activeSubflow = subflow;
-			
-			
-			var delegateMethod = node.flowDelegate ? node.flowDelegate[subflow.method] : null;
-			if (!delegateMethod) {
-				delegateMethod = F5.Global.flow.root.flowDelegate ? F5.Global.flow.root.flowDelegate[subflow.method] : null;
-			}
-						
-			if (subflow.userInput || !delegateMethod) {
-				if (!subflow.userInput) {
-					// flag as requiring user input
-					console.log('Subflow not flagged for user input but no delegate method found');
-					subflow.userInput = true;						
-				}
-				if (F5.Global.viewController) {
 					flowObservers.forEach(function (observer) {
 						if (observer.startSubflow) {
 							observer.startSubflow(node.activeSubflow);
 						}
 					});
 				} else {
-					// TODO: need to sort out for headless testing
-					doSubflowPrompt(node);												
-				}				
-			} else {			
-				delegateMethod(node, function (choice) {
-					that.doSubflowChoice(node, choice);
-//					console.log(choice);
-				});				
-			}				
-
-//			console.log(node.path + '.' + id + ' started');
-		};				
+					F5.assert(typeof nextAction === 'string', 'A subflow choice must be a node name or another subflow');
+					
+					if (nextAction) {
+						if (node.type === 'flow') {
+							// for a flow, the string indicates a node to transition to
+							completionCb();							
+							that.doTransition(node, nextAction);																			
+						} else if (node.type === 'switcher') {
+							// for a switcher, the string indicates a node to select
+							completionCb();							
+							that.doSelection(node, nextAction);
+						} else if (node.type === 'set') {
+							// for a set, the string indicates a node to sync to
+							// NOTE: this should only occur in a WillBecomeActive context
+							node.selection = node.children[nextAction];
+							F5.forEach(node.children, function (id, child) {
+								child.active = false;
+							});
+							node.selection.active = true;
+							if (F5.Global.viewController) {
+								F5.Global.viewController.syncSet(node);
+							}
+							nodeWillBecomeActive(node.selection, function () {
+								completionCb();													
+							});
+						}					
+					}					
+				}
+			} else {
+				completionCb();					
+			}
+		};												
 	}	
 	
 	F5.FlowController = FlowController;	

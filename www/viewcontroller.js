@@ -292,26 +292,7 @@
 			
 			subflow.view.el.style.opacity = 0;
 			subflow.view.el.style['pointer-events'] = '';			
-		};
-				
-		this.doSubflowChoice = function (subflow, choice) {
-			function fadeComplete() {
-				subflow.view.el.style.visibility = 'hidden';
-				F5.removeTransitionEndListener(subflow.view.el);
-			}
-
-			F5.addTransitionEndListener(subflow.view.el, fadeComplete);
-
-			subflow.view.el.style['pointer-events'] = '';
-			subflow.view.el.style.opacity = 0;				
-						
-			var nextSubflow = subflow.choices[choice];
-			if (nextSubflow.userInput) {
-				nextSubflow.view.el.style.visibility = '';			
-				nextSubflow.view.el.style.opacity = 1;
-				nextSubflow.view.el.style['pointer-events'] = 'auto';				
-			}
-		};
+		};				
 	}
 		
 	F5.ViewController = ViewController;	

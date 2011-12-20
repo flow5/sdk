@@ -42,7 +42,9 @@
 		F5.Global.flowController.start = function (cb) {
 			start.apply(F5.Global.flowController, [function () {
 				changeObserver();
-				cb();
+				if (cb) {
+					cb();					
+				}
 			}]);
 		};
 		
@@ -52,8 +54,10 @@
 			F5.assert(!flow.diags.isSubflowActive(node), 'Cannot select with a subflow active');				
 							
 			doSelection.apply(F5.Global.flowController, [node, id, function () {
-				changeObserver();				
-				cb();
+				changeObserver();	
+				if (cb) {
+					cb();					
+				}			
 			}]);
 		};
 		
@@ -63,8 +67,10 @@
 			F5.assert(!flow.diags.isSubflowActive(node), 'Cannot transition with a subflow active');	
 		
 			doTransition.apply(F5.Global.flowController, [node, id, parameters, function () {
-				changeObserver();								
-				cb();
+				changeObserver();		
+				if (cb) {
+					cb();					
+				}						
 			}]);
 		};
 		
