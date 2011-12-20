@@ -56,15 +56,22 @@ that.setObserver = function (observer) {
 		
 		// TODO: fix the case where the recursive flow terminates in a selection or transition
 		// before a leaf node is reached
-		function doLifecycleSubflowRecursive(name, node, cb) {
+		function doLifecycleEventRecursive(name, node, cb) {
 			if (node) {
-//				console.log('doLifecycleSubflowRecursive: ' + node.path);
+//				console.log('doLifecycleEventRecursive: ' + node.path);
+				
+				flowObservers.forEach(function (observer) {
+					if (observer['node' + name]) {
+						observer['node' + name](node);
+					}
+				});				
+				
 				if (node.subflows && node.subflows[name]) {
 					that.doSubflow(node, name, function () {
-						doLifecycleSubflowRecursive(name, node.selection, cb);
+						doLifecycleEventRecursive(name, node.selection, cb);
 					});							
 				} else {
-					doLifecycleSubflowRecursive(name, node.selection, cb);
+					doLifecycleEventRecursive(name, node.selection, cb);
 				}	
 			} else {
 				cb();
@@ -72,55 +79,27 @@ that.setObserver = function (observer) {
 		}		
 		
 		function nodeDidBecomeActive(node, cb) {								
-			node.active = true;
-			
-			flowObservers.forEach(function (observer) {
-				if (observer.nodeDidBecomeActive) {
-					observer.nodeDidBecomeActive(node);
-				}
-			});
-
-			doLifecycleSubflowRecursive('didBecomeActive', node, function () {
+			node.active = true;			
+			doLifecycleEventRecursive('DidBecomeActive', node, function () {
 				cb();
 			});
 		}									
 
 		function nodeDidBecomeInactive(node, cb) {								
 			node.active = false;
-
-			flowObservers.forEach(function (observer) {
-				if (observer.nodeDidBecomeInactive) {
-					observer.nodeDidBecomeInactive(node);
-				}
-			});
-
-			doLifecycleSubflowRecursive('didBecomeInactive', node, function () {
+			doLifecycleEventRecursive('DidBecomeInactive', node, function () {
 				cb();
 			});
 		}									
 
-		function nodeWillBecomeActive(node, cb) {
-
-			flowObservers.forEach(function (observer) {
-				if (observer.nodeWillBecomeActive) {
-					observer.nodeWillBecomeActive(node);
-				}
-			});
-											
-			doLifecycleSubflowRecursive('willBecomeActive', node, function () {
+		function nodeWillBecomeActive(node, cb) {											
+			doLifecycleEventRecursive('WillBecomeActive', node, function () {
 				cb();
 			});
 		}									
 
-		function nodeWillBecomeInactive(node, cb) {								
-
-			flowObservers.forEach(function (observer) {
-				if (observer.nodeWillBecomeInactive) {
-					observer.nodeWillBecomeInactive(node);
-				}
-			});
-			
-			doLifecycleSubflowRecursive('willBecomeInactive', node, function () {
+		function nodeWillBecomeInactive(node, cb) {											
+			doLifecycleEventRecursive('WillBecomeInactive', node, function () {
 				cb();
 			});
 		}									

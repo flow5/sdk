@@ -29,10 +29,10 @@
 (function () {
 	
 	function isLifecycleSubflow(id) {
-		return {didBecomeActive: true, 
-				didBecomeInactive: true, 
-				willBecomeActive: true, 
-				willBecomeInactive: true}[id];
+		return {DidBecomeActive: true, 
+				DidBecomeInactive: true, 
+				WillBecomeActive: true, 
+				WillBecomeInactive: true}[id];
 	}
 	
 	function FlowViewDelegate() {		

@@ -50,7 +50,7 @@
 		
 		var doSubflow = F5.Global.flowController.doSubflow;
 		F5.Global.flowController.doSubflow = function (node, id, cb) {
-			F5.assert(id === 'willBecomeActive' || id === 'didBecomeInactive' || flow.diags.isNodePathActive(node), 
+			F5.assert(id === 'WillBecomeActive' || id === 'DidBecomeInactive' || flow.diags.isNodePathActive(node), 
 				'Attempt to execute subflow from an inactive node');	
 			F5.assert(!flow.diags.isSubflowActive(node), 'Subflow already in progress');	
 			

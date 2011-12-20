@@ -283,7 +283,7 @@
 				}
 
 				var shape;
-				if (id === 'willBecomeActive' || id === 'didBecomeActive') {
+				if (id === 'WillBecomeActive' || id === 'DidBecomeActive') {
 					shape = 'shape=octagon';
 				} else {
 					shape = 'shape=box';

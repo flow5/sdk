@@ -36,6 +36,7 @@
 			var div = document.createElement('div');
 			F5.addClass(div, 'f5' + node.type);
 			div.id = node.path;
+			div.f5View = true;
 
 			// TODO: node.id should always exist after subflow reworkd is done
 			if (node.id) {
@@ -161,34 +162,34 @@
 		
 		F5.Global.flowController.addFlowObserver(this);						
 		
-		function doLifecycleEventRecursive(node, event) {			
+		function doLifecycleEvent(node, event) {			
 			node.view['view' + event]();
-			while (node.selection) {				
-				node = node.selection;				
-				node.view['view' + event]();
-			}
-			
-			// TODO: this only handles widgets in leaf nodes
-			// to handle widgets in containers is harder because we have to 
-			// figure out which widgets are actually contained in the node but not
-			// in unselected children of the node
-			F5.forEach(node.view.el.querySelectorAll('[f5_widget]'), function (el) {
-				if (el.widget['widget' + event]) {
-					el.widget['widget' + event]();
-				}
-			});
+						
+			function doWidgetLifecycleEventRecursive(el, event) {
+				F5.forEach(el.childNodes, function (childEl) {
+					if (childEl.getAttribute && childEl.getAttribute('f5_widget')) {
+						if (childEl.widget['widget' + event]) {
+							childEl.widget['widget' + event]();							
+						}
+					}
+					if (!childEl.f5View) {
+						doWidgetLifecycleEventRecursive(childEl, event);
+					}
+				});					
+			}			
+			doWidgetLifecycleEventRecursive(node.view.el, event);
 		}
 				
 		this.nodeDidBecomeActive = function (node) {
-			doLifecycleEventRecursive(node, 'DidBecomeActive');
+			doLifecycleEvent(node, 'DidBecomeActive');
 		};				
 
 		this.nodeDidBecomeInactive = function (node) {
-			doLifecycleEventRecursive(node, 'DidBecomeInactive');
+			doLifecycleEvent(node, 'DidBecomeInactive');
 		};		
 		
 		this.nodeWillBecomeInactive = function (node) {
-			doLifecycleEventRecursive(node, 'WillBecomeInactive');
+			doLifecycleEvent(node, 'WillBecomeInactive');
 		};				
 
 		this.nodeWillBecomeActive = function (node) {
@@ -201,7 +202,7 @@
 				}
 			}
 			
-			doLifecycleEventRecursive(node, 'WillBecomeActive');		
+			doLifecycleEvent(node, 'WillBecomeActive');		
 		};				
 		
 		this.start = function () {	
@@ -265,7 +266,7 @@
 			deleteViewsRecursive(node);			
 		};
 		
-		// called in a willBecomeActive context to conditionally pick a starting view
+		// called in a WillBecomeActive context to conditionally pick a starting view
 		this.syncSet = function (node) {
 			F5.forEach(node.children, function (id, child) {
 				child.view.el.style.visibility = 'hidden';

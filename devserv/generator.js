@@ -267,7 +267,7 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative) {
 			templates.appendChild(imagePreload);
 			handleImageResourcesRecursive(F5.Resources, function (obj, id, src) {
 				var img = document.createElement('img');
-				img.src = src;
+				img.src = 'apps/' + app + '/' + src;
 				imagePreload.appendChild(img);
 			});
 		} else {
@@ -298,7 +298,7 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative) {
 	var splashEl = document.createElement('img');
 	splashEl.id = 'splash';
 	splashEl.className = 'splash';
-	var splashSrc = 'images/splash@640x960.png';
+	var splashSrc = 'apps/' + app + '/images/splash@640x960.png';
 	if (doInline) {
 		splashEl.src = inlineImage(splashSrc);		
 	} else {
