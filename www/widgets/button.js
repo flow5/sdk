@@ -204,6 +204,7 @@
 				that.setState(true);
 			});
 			F5.addTouchMoveListener(this.el, function (e) {
+				e.preventDefault();
 				e.stopPropagation();
 			});
 			F5.addTouchStopListener(this.el, function (e) {
