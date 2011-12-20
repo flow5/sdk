@@ -132,9 +132,9 @@ that.setObserver = function (observer) {
 			});
 		}
 		
-		function completeFlow(tasks, complete) {
+		function flushTasks(tasks, complete) {
 			/*global PhoneGap*/
-			// TODO: move to native/web scripts F5.completeFlow
+			// TODO: move to native/web scripts F5.flushTasks
 			if (typeof PhoneGap !== 'undefined') {
 				// yield back to the event loop to reflow
 				// then flush any native commands that have been queued (native animations)
@@ -167,7 +167,8 @@ that.setObserver = function (observer) {
 			nodeWillBecomeActive(flow.root, function () {
 that.observer();	
 				
-				completeFlow([], cb);		
+				// give the native side a chance to handle any queued tasks
+				flushTasks([], cb);		
 				nodeDidBecomeActive(flow.root, function () {
 that.observer();
 					flowObservers.forEach(function (observer) {
@@ -259,7 +260,7 @@ that.observer();
 							}
 						});		
 						
-						completeFlow(tasks, complete);
+						flushTasks(tasks, complete);
 					});									
 				});
 			} else {
@@ -405,7 +406,7 @@ that.observer();
 							tasks.push(observer.doTransition(container, id, target, animation));
 						}
 					});				
-					completeFlow(tasks, complete);
+					flushTasks(tasks, complete);
 				});				
 			});
 		};	

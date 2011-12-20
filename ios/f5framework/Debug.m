@@ -104,7 +104,7 @@
 + (void)instrumentWebView:(UIWebView *)uiWebView {        
     WebView *webView = [[uiWebView _documentView] webView];
     [webView _setAllowsMessaging:YES];
-    [webView setUIDelegate:[[[WebViewShim alloc] initWithObject:[webView UIDelegate]] autorelease]];  
+    [webView setUIDelegate:[[WebViewShim alloc] initWithObject:[webView UIDelegate]]];  
     
     Class webViewClass = NSClassFromString(@"WebView");
     if ([webViewClass respondsToSelector:@selector(_enableRemoteInspector)]) {
