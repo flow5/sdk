@@ -122,39 +122,12 @@
 			div.innerHTML = node.id;
 			el.insertBefore(div, el.firstChild);				
 		};
-	}
-		
-	// TODO: get rid of this and have the view controller use F5.UI to post the appropriate picker widget
-	function SubflowViewDelegate() {
-		this.initialize = function (el, subflow) {			
-			var div = document.createElement('div');
-			div.innerHTML = subflow.method;
-			el.appendChild(div);
-			
-			var choicesEl = document.createElement('div');
-			F5.addClass(choicesEl, 'choices');
-			el.appendChild(choicesEl);
-			
-			F5.forEach(subflow.choices, function (id, choice) {
-				var choiceEl = document.createElement('div');
-				choiceEl.setAttribute('f5_widget', 'ImageButton');
-				choiceEl.setAttribute('f5_id', 'choice');
-				F5.addClass(choiceEl, 'do-choice');
-				choicesEl.appendChild(choiceEl);
-				
-				F5.attachWidget(choiceEl, {choice: id});									
-				choiceEl.widget.setAction(function () {
-					F5.Global.flowController.doSubflowChoice(subflow.node, id);
-				});							
-			});					
-		};
-	}	
+	}		
 	
 	F5.DefaultViewDelegates = {
 		flow: new FlowViewDelegate(),
 		switcher: new SwitcherViewDelegate(),
-		set: new SetViewDelegate(),
-		subflow: new SubflowViewDelegate()
+		set: new SetViewDelegate()
 	};
 
 }());

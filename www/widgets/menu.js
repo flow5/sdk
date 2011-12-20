@@ -24,65 +24,46 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
+/*global F5*/
 
-exports.scripts = [
-	'f5.js',
-	'utils.js',
-	'domutils.js',
-	'animation.js',
-	'defaultviewdelegates.js', // TODO: move this to debugScripts?
-	'flow.js',
-	'flowcontroller.js',
-	'3p/Iuppiter.js',
-	'3p/bezier.js',
-	'templates.js',
-	'viewcontroller.js',
-	'services.js',
-	'bridge.js',
-	'ui.js',
-	'location.js',
-	'widgets/button.js',
-	'widgets/statictext.js',
-	'widgets/picture.js',
-	'widgets/tabset.js',
-	'widgets/navbar.js',
-	'widgets/streetview.js',
-	'widgets/distance.js',
-	'widgets/menu.js',
-	'widgets/scroller.js'
-];
+(function () {
+	
+	function Menu() {
+		this.construct = function (data) {	
+			
+			var that = this;
+			
+			F5.addClass(this.el, 'f5menu');
+					
+			var div = document.createElement('div');
+			div.innerHTML = data.method;
+			this.el.appendChild(div);
 
-exports.elements = [
-	'core.css',
-	'default.css',
-	// TODO: create debug elements section
-	'debug.css'
-];
+			var choicesEl = document.createElement('div');
+			F5.addClass(choicesEl, 'choices');
+			this.el.appendChild(choicesEl);
 
-exports.webScripts = [
-	'widgets/navbar_web.js',
-	'widgets/mapview_web.js'
-];
+			F5.forEach(data.choices, function (id, choice) {
+				var choiceEl = document.createElement('div');
+				choiceEl.setAttribute('f5_widget', 'ImageButton');
+				choiceEl.setAttribute('f5_id', 'choice');
+				F5.addClass(choiceEl, 'do-choice');
+				choicesEl.appendChild(choiceEl);
 
-exports.nativeScripts = [
-	'widgets/navbar_native.js',
-	'widgets/mapview_native.js',
-	'udp.js'
-];
-
-exports.debugScripts = [
-//	'debug/timers.js'
-	'debug/flow_diags.js',
-	'debug/flowcontroller_diags.js',
-	'debug/json.js'
-];
-
-exports.debugDesktopScripts = [
-	'debug/webharness.js',
-];
-
-exports.debugElements = [
-	'debug/json.css',
-	'debug/webharness.css',
-	'debug/webharness.html'
-];
+				F5.attachWidget(choiceEl, {choice: id});									
+				choiceEl.widget.setAction(function () {
+					if (that.action) {
+						that.action(id);
+					}
+				});							
+			});					
+		};
+		
+		this.setAction = function (cb) {
+			this.action = cb;
+		};
+	}	
+		
+	F5.WidgetPrototypes.Menu = new Menu();
+	
+}());

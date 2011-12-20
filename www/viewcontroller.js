@@ -72,25 +72,6 @@
 				}
 			}
 
-
-			// TODO: dump this. just put up widgets from the view controller when needed
-			function doSubflowRecursive(node, id, subflow) {
-				if (subflow && subflow.type === 'subflow') {
-					buildViewForNode(subflow);
-					F5.Global.flow.root.view.el.appendChild(subflow.view.el);						
-
-					F5.forEach(subflow.choices, function (id, child) {
-						doSubflowRecursive(node, id, child);
-					});			
-				}
-			}
-			if (node.subflows) {
-				F5.forEach(node.subflows, function (id, subflow) {
-					doSubflowRecursive(node, id, subflow);
-				});
-			}	
-
-
 			that.delegate.initialize(that.el, that.node);
 			
 			if (!node.active) {
@@ -289,21 +270,30 @@
 		};			
 		
 		this.startSubflow = function (subflow) {
-			subflow.view.el.style.visibility = '';
-			subflow.view.el.style.opacity = 1;
-			subflow.view.el.style['pointer-events'] = 'auto';
+			
+			subflow.menu = document.createElement('div');
+			subflow.menu.setAttribute('f5_widget', 'Menu');
+			F5.attachWidget(subflow.menu, {method: subflow.method, choices: subflow.choices});
+			
+			F5.Global.flow.root.view.el.appendChild(subflow.menu);	
+			
+			subflow.menu.style.opacity = 1;			
+			
+			subflow.menu.widget.setAction(function (id) {
+				F5.Global.flowController.doSubflowChoice(subflow.node, id);
+			});
 		};
 
 		this.completeSubflow = function (subflow) {
 			function fadeComplete() {
-				subflow.view.el.style.visibility = 'hidden';
-				F5.removeTransitionEndListener(subflow.view.el);
+				F5.removeTouchEventListenersRecursive(subflow.menu);
+				F5.Global.flow.root.view.el.removeChild(subflow.menu);
+				F5.removeTransitionEndListener(subflow.menu);
 			}
 
-			F5.addTransitionEndListener(subflow.view.el, fadeComplete);				
+			F5.addTransitionEndListener(subflow.menu, fadeComplete);				
 			
-			subflow.view.el.style.opacity = 0;
-			subflow.view.el.style['pointer-events'] = '';			
+			subflow.menu.style.opacity = 0;
 		};				
 	}
 		

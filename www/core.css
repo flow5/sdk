@@ -96,15 +96,14 @@ body.f5mobile {
 	-webkit-box-orient: vertical;
 }
 
-.f5subflow {
+.f5menu {
 	position: absolute;
 	z-index: 1;
 	opacity: 0;
-	pointer-events: none;
 	-webkit-box-sizing: border-box;		
 }
 
-.f5subflow {
+.f5menu {
 	display: -webkit-box;
 	-webkit-box-pack: center;
 	-webkit-box-align: center;
