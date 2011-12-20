@@ -118,7 +118,7 @@
 			}, {'sequence-number': sequenceNumber});
 		}	
 
-		F5.Global.flowController.setObserver(observer);
+		F5.Global.flowController.setChangeObserver(observer);
 
 		// make the back button
 		F5.addTapListener(backbuttonEl, function () {

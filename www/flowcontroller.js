@@ -31,29 +31,22 @@
 	function FlowController(flow) {
 
 		var that = this;
-		
-		var flowObservers = [];
-		
-		that.addFlowObserver = function (observer) {
-			flowObservers.push(observer);
-		};
-		
-		that.removeFlowObserver = function (observer) {
-			flowObservers.splice(flowObservers.indexOf(observer), 1);
-		};
-		
-		
-that.observer = F5.noop;
 
-that.setObserver = function (observer) {
-	that.observer = observer;
-	that.observer();
-};
-				
 		flow.controller = this;
 		
+		// lockout is set to true during async operations on the flow
 		var lockout = false;
+
 		
+		var flowObservers = [];		
+		that.addFlowObserver = function (observer) {
+			flowObservers.push(observer);
+		};		
+		that.removeFlowObserver = function (observer) {
+			flowObservers.splice(flowObservers.indexOf(observer), 1);
+		};				
+
+						
 		// TODO: fix the case where the recursive flow terminates in a selection or transition
 		// before a leaf node is reached
 		function doLifecycleEventRecursive(name, node, cb) {
@@ -104,6 +97,7 @@ that.setObserver = function (observer) {
 			});
 		}									
 		
+		
 		// TODO: move this to debug layer
 		function doSubflowPrompt(node) {
 			F5.forEach(node.activeSubflow.choices, function (id, choice) {
@@ -133,8 +127,6 @@ that.setObserver = function (observer) {
 			}
 		}	
 			
-		// TODO: cb doesn't execute until didBecomeActive subflows complete
-		// that doesn't seem right
 		that.start = function (cb) {						
 			if (!cb) {
 				cb = function () {
@@ -142,14 +134,12 @@ that.setObserver = function (observer) {
 				};
 			}
 			
-
-			nodeWillBecomeActive(flow.root, function () {
-that.observer();	
-				
-				// give the native side a chance to handle any queued tasks
+			nodeWillBecomeActive(flow.root, function () {				
+				// TODO: should cb execute here?
 				flushTasks([], cb);		
+				
 				nodeDidBecomeActive(flow.root, function () {
-that.observer();
+//that.observer();
 					flowObservers.forEach(function (observer) {
 						if (observer.start) {
 							observer.start();
@@ -215,8 +205,6 @@ that.observer();
 				});
 
 				lockout = false;	
-
-that.observer();
 							
 				cb();			
 			}					
@@ -320,9 +308,7 @@ that.observer();
 				});		
 				
 				lockout = false;				
-					
-that.observer();	
-								
+													
 				cb();
 			}
 			
@@ -420,7 +406,7 @@ that.observer();
 			oldSubflow.active = false;
 			
 			function completeChoice() {
-that.observer();
+//that.observer();
 
 				if (node.activeSubflow) {
 					if (node.activeSubflow.userInput && F5.Global.viewController) {
@@ -453,13 +439,10 @@ that.observer();
 				if (newSubflow) {
 					if (node.type === 'flow') {
 						completeChoice();							
-						that.doTransition(node, newSubflow, {}, function () {
-
-						});																			
+						that.doTransition(node, newSubflow, {}, F5.noop);																			
 					} else if (node.type === 'switcher') {
 						completeChoice();							
-						that.doSelection(node, newSubflow, function () {
-						});
+						that.doSelection(node, newSubflow, F5.noop);
 					} else if (node.type === 'set') {
 						node.selection = node.children[newSubflow];
 						F5.forEach(node.children, function (id, child) {
@@ -536,8 +519,6 @@ that.observer();
 			}				
 
 //			console.log(node.path + '.' + id + ' started');
-
-that.observer();					
 		};
 				
 		that.hasBack = function () {
