@@ -28,6 +28,7 @@
 
 (function () {	
 	var buildViewForNode;
+	
 	function ViewPrototype() {
 		this.ConstructView = function (node) {	
 
@@ -198,6 +199,7 @@
 				if (node === F5.Global.flow.root) {
 					screenFrame.appendChild(node.view.el);
 				} else {
+					// TODO: this is slightly ugly
 					node.parent.view.el.querySelector('[class=f5container]').appendChild(node.view.el);												
 				}
 			}
@@ -254,6 +256,7 @@
 			node.view.el.parentElement.removeChild(node.view.el);
 			
 			function deleteViewsRecursive(node) {
+				// TODO: call viewRelease?
 				delete node.view;
 				delete node.animation;
 				if (node.children) {
@@ -262,7 +265,6 @@
 					});
 				}
 			}
-			// TODO: call viewRelease?
 			deleteViewsRecursive(node);			
 		};
 		

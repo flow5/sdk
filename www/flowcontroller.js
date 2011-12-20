@@ -51,14 +51,13 @@
 		// before a leaf node is reached
 		function doLifecycleEventRecursive(name, node, cb) {
 			if (node) {
-//				console.log('doLifecycleEventRecursive: ' + node.path);
-				
 				flowObservers.forEach(function (observer) {
 					if (observer['node' + name]) {
 						observer['node' + name](node);
 					}
 				});				
 				
+				// if there is a subflow associated with this lifecycle event, do it now
 				if (node.subflows && node.subflows[name]) {
 					that.doSubflow(node, name, function () {
 						doLifecycleEventRecursive(name, node.selection, cb);
@@ -181,6 +180,10 @@
 				'Can only doSelection on node of types switcher or set');
 			F5.assert(node.children[id], 'No child with id: ' + id);
 			
+			cb = cb || function () {
+//				console.log('selection complete');
+			};
+			
 			// nothing to do
 			if (id === node.selection.id) {
 				cb();
@@ -210,11 +213,6 @@
 			}					
 
 			if (node.selection !== node.children[id]) {						
-				if (!cb) {
-					cb = function () {
-//						console.log('selection complete');
-					};
-				}						
 				cancelSubflowRecursive(node);
 				
 				nodeWillBecomeInactive(oldSelection, function () {
@@ -242,14 +240,13 @@
 				'Can only doTransition on node of types flow or set');			
 			F5.assert(id === 'back' || node.transitions, 'No transitions defined for node: ' + node.path);
 			F5.assert(id === 'back' || node.transitions[id], 'No transition with id: ' + id);
+					
+			parmaters = parameters || {};
+			cb = cb || function () {
+				//					console.log('transition complete');				
+			};
 			
-			lockout = true;
-						
-			if (!cb) {
-				cb = function () {
-//					console.log('transition complete');
-				};
-			}
+			lockout = true;			
 
 			var container;
 			
@@ -361,7 +358,6 @@
 				target.animation = animation;
 			}			
 			 
-			// TODO: call nodeWillBecomeInactive
 			nodeWillBecomeInactive(node, function () {
 				nodeWillBecomeActive(target, function () {		
 					
@@ -375,6 +371,36 @@
 				});				
 			});
 		};	
+		
+		// find an active leaf node
+		// then climb up the stack for the first node with 'back'		
+		that.getBackNode = function (leaf) {
+			leaf = leaf || flow.root;
+			while (leaf.selection) {
+				leaf = leaf.selection;
+			}
+
+			while (!leaf.back && leaf.parent) {
+				leaf = leaf.parent;
+			}
+			
+			if (leaf.back) {
+				return leaf;
+			} else {
+				return null;
+			}
+		};
+		
+		that.hasBack = function () {
+			return that.getBackNode() !== null;
+		};
+		
+		that.doBack = function () {			
+			var backNode = that.getBackNode();
+			F5.assert(backNode, 'Cannot go back');
+			that.doTransition(backNode, 'back');
+		};
+				
 				
 		that.doSubflowChoice = function (node, id) {	
 			F5.assert(node.activeSubflow, 'No active subflow');
@@ -439,10 +465,10 @@
 				if (newSubflow) {
 					if (node.type === 'flow') {
 						completeChoice();							
-						that.doTransition(node, newSubflow, {}, F5.noop);																			
+						that.doTransition(node, newSubflow);																			
 					} else if (node.type === 'switcher') {
 						completeChoice();							
-						that.doSelection(node, newSubflow, F5.noop);
+						that.doSelection(node, newSubflow);
 					} else if (node.type === 'set') {
 						node.selection = node.children[newSubflow];
 						F5.forEach(node.children, function (id, child) {
@@ -460,26 +486,7 @@
 					completeChoice();					
 				}
 			}		
-		};	
-		
-		// find an active leaf node
-		// then climb up the stack for the first node with 'back'		
-		that.getBackNode = function (leaf) {
-			leaf = leaf || flow.root;
-			while (leaf.selection) {
-				leaf = leaf.selection;
-			}
-
-			while (!leaf.back && leaf.parent) {
-				leaf = leaf.parent;
-			}
-			
-			if (leaf.back) {
-				return leaf;
-			} else {
-				return null;
-			}
-		};			
+		};							
 		
 		that.doSubflow = function (node, id, cb) {
 			F5.assert(node.subflows && node.subflows[id], 'No such subflow');
@@ -519,17 +526,7 @@
 			}				
 
 //			console.log(node.path + '.' + id + ' started');
-		};
-				
-		that.hasBack = function () {
-			return that.getBackNode() !== null;
-		};
-		
-		that.doBack = function () {			
-			var backNode = that.getBackNode();
-			F5.assert(backNode, 'Cannot go back');
-			that.doTransition(backNode, 'back', {});
-		};
+		};				
 	}	
 	
 	F5.FlowController = FlowController;	

@@ -79,7 +79,7 @@
 
 					F5.attachWidget(transitionEl, {id: id});
 					transitionEl.widget.setAction(function () {
-						F5.Global.flowController.doTransition(node, id, {});
+						F5.Global.flowController.doTransition(node, id);
 					});
 				});				
 			}			
@@ -100,9 +100,7 @@
 			
 			F5.attachWidget(el, F5.getNodeData(node));
 			el.widget.setAction(function (id) {
-				F5.Global.flowController.doSelection(node, id, function () {
-
-				});					
+				F5.Global.flowController.doSelection(node, id);					
 			});
 			el.widget.select(node.selection.id);
 			
