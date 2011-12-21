@@ -48,7 +48,9 @@
 
 						
 		// TODO: fix the case where the recursive flow terminates in a selection or transition
-		// before a leaf node is reached
+		// before a leaf node is reached. current impl the recursion may continue along the old branch
+		// More concerning is that elements that have received "willBecomeActive" events will never
+		// actually be activated (or inactivated) because of a transition or selection away
 		function doLifecycleEventRecursive(event, node, cb) {	
 
 			function doLifecycleEvent(observer) {
