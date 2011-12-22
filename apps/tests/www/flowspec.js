@@ -27,5 +27,10 @@
 /*global F5*/
 
 F5.flowspec = {
-	
+	selection: 'home',
+	children: {
+		home: {
+			
+		}
+	}
 };

@@ -28,3 +28,8 @@
 exports.scripts = [
 	'flowspec.js'
 ];
+
+exports.elements = [
+	'templates.html',
+	'templates.css'
+];

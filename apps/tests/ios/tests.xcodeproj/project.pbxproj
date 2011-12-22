@@ -56,8 +56,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		BE0E7A6B149E80C00089BB38 /* f5template-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "f5template-Info.plist"; sourceTree = "<group>"; };
-		BE0E7A6C149E80C00089BB38 /* f5template-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "f5template-Prefix.pch"; sourceTree = "<group>"; };
+		BE0E7A6B149E80C00089BB38 /* tests-Info.plist */ = {isa = PBXFileReference; path = "tests-Info.plist"; sourceTree = "<group>"; };
+		BE0E7A6C149E80C00089BB38 /* tests-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; path = "tests-Prefix.pch"; sourceTree = "<group>"; };
 		BE0E7A6D149E80C00089BB38 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		BE0E7A6E149E80C00089BB38 /* PhoneGap.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = PhoneGap.plist; sourceTree = "<group>"; };
 		BE0E7A88149E80CF0089BB38 /* en */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -117,7 +117,7 @@
 		BE1A04F914A3D32E004D1AB3 /* PluginResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PluginResult.m; sourceTree = "<group>"; };
 		BE1A04FA14A3D32E004D1AB3 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		BE1A04FB14A3D32E004D1AB3 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
-		BE29F5DE14686984009B0CB6 /* f5template.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = f5template.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		BE29F5DE14686984009B0CB6 /* tests.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = tests.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE29F5E214686984009B0CB6 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		BE29F5E414686984009B0CB6 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		BE29F5F014686984009B0CB6 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
@@ -174,7 +174,7 @@
 				BE1A04D214A3D32E004D1AB3 /* phonegaplib */,
 			);
 			name = f5framework;
-			path = ../f5framework;
+			path = ../../../ios/f5framework;
 			sourceTree = "<group>";
 		};
 		BE1A04C014A3D32E004D1AB3 /* 3p */ = {
@@ -265,8 +265,8 @@
 				BEA26745149E8CC500DF8ADC /* Resources */,
 				BEEE07E5149E82BD0010ABF6 /* f5.plist */,
 				BE0E7A87149E80CF0089BB38 /* InfoPlist.strings */,
-				BE0E7A6B149E80C00089BB38 /* f5template-Info.plist */,
-				BE0E7A6C149E80C00089BB38 /* f5template-Prefix.pch */,
+				BE0E7A6B149E80C00089BB38 /* tests-Info.plist */,
+				BE0E7A6C149E80C00089BB38 /* tests-Prefix.pch */,
 				BE0E7A6D149E80C00089BB38 /* main.m */,
 				BE0E7A6E149E80C00089BB38 /* PhoneGap.plist */,
 				BE29F5E114686984009B0CB6 /* Frameworks */,
@@ -277,7 +277,7 @@
 		BE29F5DF14686984009B0CB6 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BE29F5DE14686984009B0CB6 /* f5template.app */,
+				BE29F5DE14686984009B0CB6 /* tests.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -338,9 +338,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		BE29F5DD14686984009B0CB6 /* f5template */ = {
+		BE29F5DD14686984009B0CB6 /* tests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = BE29F62814686984009B0CB6 /* Build configuration list for PBXNativeTarget "f5template" */;
+			buildConfigurationList = BE29F62814686984009B0CB6 /* Build configuration list for PBXNativeTarget "tests" */;
 			buildPhases = (
 				BEED4CC5148DE6D5002F374F /* Configure Info.plist */,
 				BE29F5D714686984009B0CB6 /* Sources */,
@@ -354,9 +354,9 @@
 			);
 			dependencies = (
 			);
-			name = f5template;
+			name = tests;
 			productName = ios;
-			productReference = BE29F5DE14686984009B0CB6 /* f5template.app */;
+			productReference = BE29F5DE14686984009B0CB6 /* tests.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -367,7 +367,7 @@
 			attributes = {
 				LastUpgradeCheck = 0420;
 			};
-			buildConfigurationList = BE29F5D514686984009B0CB6 /* Build configuration list for PBXProject "f5template" */;
+			buildConfigurationList = BE29F5D514686984009B0CB6 /* Build configuration list for PBXProject "tests" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -380,7 +380,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				BE29F5DD14686984009B0CB6 /* f5template */,
+				BE29F5DD14686984009B0CB6 /* tests */,
 			);
 		};
 /* End PBXProject section */
@@ -565,11 +565,11 @@
 				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "f5template-Prefix.pch";
+				GCC_PREFIX_HEADER = "tests-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				INFOPLIST_FILE = "f5template-Info.plist";
+				INFOPLIST_FILE = "tests-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.2;
 				OTHER_LDFLAGS = (
 					"-weak_framework",
@@ -581,7 +581,7 @@
 					"-weak_library",
 					/usr/lib/libSystem.B.dylib,
 				);
-				PRODUCT_NAME = f5template;
+				PRODUCT_NAME = tests;
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
@@ -602,11 +602,11 @@
 				EXCLUDED_SOURCE_FILE_NAMES = Debug.m;
 				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "f5template-Prefix.pch";
+				GCC_PREFIX_HEADER = "tests-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				INFOPLIST_FILE = "f5template-Info.plist";
+				INFOPLIST_FILE = "tests-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.2;
 				OTHER_LDFLAGS = (
 					"-weak_framework",
@@ -618,7 +618,7 @@
 					"-weak_library",
 					/usr/lib/libSystem.B.dylib,
 				);
-				PRODUCT_NAME = f5template;
+				PRODUCT_NAME = tests;
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
@@ -629,7 +629,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		BE29F5D514686984009B0CB6 /* Build configuration list for PBXProject "f5template" */ = {
+		BE29F5D514686984009B0CB6 /* Build configuration list for PBXProject "tests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BE29F62614686984009B0CB6 /* Debug */,
@@ -638,7 +638,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		BE29F62814686984009B0CB6 /* Build configuration list for PBXNativeTarget "f5template" */ = {
+		BE29F62814686984009B0CB6 /* Build configuration list for PBXNativeTarget "tests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BE29F62914686984009B0CB6 /* Debug */,
