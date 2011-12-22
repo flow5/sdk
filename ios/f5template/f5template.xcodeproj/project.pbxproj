@@ -355,10 +355,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				EXCLUDED_SOURCE_FILE_NAMES = "";
-				FRAMEWORK_SEARCH_PATHS = (
-					"\"$(SRCROOT)/../f5framework/Products\"",
-					"\"$(SRCROOT)/../f5framework/Products\"",
-				);
+				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "f5template-Prefix.pch";
@@ -396,10 +393,7 @@
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EXCLUDED_SOURCE_FILE_NAMES = Debug.m;
-				FRAMEWORK_SEARCH_PATHS = (
-					"\"$(SRCROOT)/../f5framework/Products\"",
-					"\"$(SRCROOT)/../f5framework/Products\"",
-				);
+				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "f5template-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = "";
