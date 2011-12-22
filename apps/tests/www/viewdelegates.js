@@ -24,13 +24,45 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
+/*global F5, PhoneGap*/
 
-exports.scripts = [
-	'flowspec.js',
-	'viewdelegates.js'	
-];
+// TODO: break the Native dependent tests out!
 
-exports.elements = [
-	'templates.html',
-	'templates.css'
-];
+
+(function () {	
+								
+	function RootViewDelegate() {
+		
+		this.initialize = function (el, node) {
+			el.appendChild(F5.Templates.loadTemplate(node));
+			
+			var buttonEl = el.querySelector('[f5_id=wait]');
+
+			var firstTime = true;			
+			var times = [];									
+			buttonEl.addEventListener('touchmove', function () {				
+				times.push('button');
+				
+				if (firstTime) {
+					firstTime = false;					
+										
+					setTimeout(function () {
+						times.push('before sleep');
+
+						// this is a synchronous XHR call
+						F5.callBridgeSynchronous('com.flow5.sleep', 'sleep');
+//						var i = 20000000;
+//						while (i) {
+//							i -= 1;
+//						}
+						
+						times.push('after sleep');						
+						console.log(times);
+					}, 0);								
+				}								
+			});
+		};		
+	}
+
+	F5.ViewDelegates.root = new RootViewDelegate();	
+}());

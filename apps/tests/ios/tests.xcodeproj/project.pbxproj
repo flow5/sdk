@@ -37,6 +37,7 @@
 		BE1A051414A3D32E004D1AB3 /* PhoneGapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BE1A04F714A3D32E004D1AB3 /* PhoneGapViewController.m */; };
 		BE1A051514A3D32E004D1AB3 /* PluginResult.m in Sources */ = {isa = PBXBuildFile; fileRef = BE1A04F914A3D32E004D1AB3 /* PluginResult.m */; };
 		BE1A051614A3D32E004D1AB3 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = BE1A04FB14A3D32E004D1AB3 /* Reachability.m */; };
+		BE1A051F14A3D54E004D1AB3 /* F5Sleep.m in Sources */ = {isa = PBXBuildFile; fileRef = BE1A051E14A3D54E004D1AB3 /* F5Sleep.m */; };
 		BE29F5E314686984009B0CB6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE29F5E214686984009B0CB6 /* Foundation.framework */; };
 		BE29F5E514686984009B0CB6 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE29F5E414686984009B0CB6 /* UIKit.framework */; };
 		BE29F5F114686984009B0CB6 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE29F5F014686984009B0CB6 /* CoreLocation.framework */; };
@@ -56,8 +57,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		BE0E7A6B149E80C00089BB38 /* tests-Info.plist */ = {isa = PBXFileReference; path = "tests-Info.plist"; sourceTree = "<group>"; };
-		BE0E7A6C149E80C00089BB38 /* tests-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; path = "tests-Prefix.pch"; sourceTree = "<group>"; };
+		BE0E7A6B149E80C00089BB38 /* tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "tests-Info.plist"; sourceTree = "<group>"; };
+		BE0E7A6C149E80C00089BB38 /* tests-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "tests-Prefix.pch"; sourceTree = "<group>"; };
 		BE0E7A6D149E80C00089BB38 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		BE0E7A6E149E80C00089BB38 /* PhoneGap.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = PhoneGap.plist; sourceTree = "<group>"; };
 		BE0E7A88149E80CF0089BB38 /* en */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -117,6 +118,8 @@
 		BE1A04F914A3D32E004D1AB3 /* PluginResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PluginResult.m; sourceTree = "<group>"; };
 		BE1A04FA14A3D32E004D1AB3 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		BE1A04FB14A3D32E004D1AB3 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
+		BE1A051D14A3D54E004D1AB3 /* F5Sleep.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = F5Sleep.h; path = Debug/F5Sleep.h; sourceTree = "<group>"; };
+		BE1A051E14A3D54E004D1AB3 /* F5Sleep.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = F5Sleep.m; path = Debug/F5Sleep.m; sourceTree = "<group>"; };
 		BE29F5DE14686984009B0CB6 /* tests.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = tests.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE29F5E214686984009B0CB6 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		BE29F5E414686984009B0CB6 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -189,6 +192,7 @@
 		BE1A04C714A3D32E004D1AB3 /* pgplugins */ = {
 			isa = PBXGroup;
 			children = (
+				BE1A052014A3D55B004D1AB3 /* Debug */,
 				BE1A04C814A3D32E004D1AB3 /* F5CommandQueue.h */,
 				BE1A04C914A3D32E004D1AB3 /* F5CommandQueue.m */,
 				BE1A04CA14A3D32E004D1AB3 /* F5LocationReminder.h */,
@@ -256,6 +260,15 @@
 				BE1A04E614A3D32E004D1AB3 /* SBJsonWriter.m */,
 			);
 			path = JSON;
+			sourceTree = "<group>";
+		};
+		BE1A052014A3D55B004D1AB3 /* Debug */ = {
+			isa = PBXGroup;
+			children = (
+				BE1A051D14A3D54E004D1AB3 /* F5Sleep.h */,
+				BE1A051E14A3D54E004D1AB3 /* F5Sleep.m */,
+			);
+			name = Debug;
 			sourceTree = "<group>";
 		};
 		BE29F5D014686984009B0CB6 = {
@@ -470,6 +483,7 @@
 				BE1A051414A3D32E004D1AB3 /* PhoneGapViewController.m in Sources */,
 				BE1A051514A3D32E004D1AB3 /* PluginResult.m in Sources */,
 				BE1A051614A3D32E004D1AB3 /* Reachability.m in Sources */,
+				BE1A051F14A3D54E004D1AB3 /* F5Sleep.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

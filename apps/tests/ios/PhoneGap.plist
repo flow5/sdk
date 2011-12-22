@@ -44,6 +44,8 @@
 		<string>F5LocationReminder</string>
 		<key>com.flow5.udp</key>
 		<string>F5udp</string>
+		<key>com.flow5.sleep</key>
+		<string>F5Sleep</string>
 		<key>com.phonegap.accelerometer</key>
 		<string>PGAccelerometer</string>
 		<key>com.phonegap.camera</key>

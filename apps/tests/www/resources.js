@@ -24,13 +24,13 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
+/*global F5*/
 
-exports.scripts = [
-	'flowspec.js',
-	'viewdelegates.js'	
-];
-
-exports.elements = [
-	'templates.html',
-	'templates.css'
-];
+(function () {			
+	F5.Resources = {
+		root: {
+			wait: 'Wait'
+		}
+	};
+}());
+	
