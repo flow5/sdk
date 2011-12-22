@@ -134,7 +134,7 @@ cli.main(function (args, options) {
 				dot2svg(req, res);	
 			} else if (req.url.indexOf('service?') !== -1) {
 				try {
-					service = require('../services/' + app + '/' + parsed.query.name + '.js');
+					service = require('../www/services/' + app + '/' + parsed.query.name + '.js');
 					
 					req.body = '';
 					req.on('data', function (chunk) {
