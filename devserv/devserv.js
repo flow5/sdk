@@ -214,7 +214,7 @@ cli.main(function (args, options) {
 						sys.puts('Error delivering: ' + req.url);
 					})
 					.otherwise(function () {
-						res.writeHead(404, {'Content-Type': 'text/plain'});
+						res.writeHead(404, {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': '*'});
 						res.end();
 					});				
 			}
