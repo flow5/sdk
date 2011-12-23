@@ -210,11 +210,12 @@ cli.main(function (args, options) {
 			} else {
 				paperboy
 					.deliver(WEBROOT, req, res)
+					.addHeader('Access-Control-Allow-Origin', '*')
 					.error(function () {
 						sys.puts('Error delivering: ' + req.url);
 					})
 					.otherwise(function () {
-						res.writeHead(404, {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': '*'});
+						res.writeHead(404, {'Content-Type': 'text/plain'});
 						res.end();
 					});				
 			}
