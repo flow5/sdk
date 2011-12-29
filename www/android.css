@@ -25,77 +25,22 @@
 
 ***********************************************************************************************************************/
 
-exports.scripts = [
-	'f5.js',
-	'utils.js',
-	'domutils.js',
-	'animation.js',
-	'defaultviewdelegates.js', // TODO: move this to debugScripts?
-	'flow.js',
-	'flowcontroller.js',
-	'3p/Iuppiter.js',
-	'3p/bezier.js',
-	'templates.js',
-	'viewcontroller.js',
-	'services.js',
-	'ui.js',
-	'location.js',
-	'widgets/button.js',
-	'widgets/statictext.js',
-	'widgets/picture.js',
-	'widgets/tabset.js',
-	'widgets/navbar.js',
-	'widgets/streetview.js',
-	'widgets/distance.js',
-	'widgets/menu.js',
-	'widgets/scroller.js'
-];
+/* mainly workarounds for Android WebKit bugs and quirks */
 
-exports.elements = [
-	'core.css',
-	'default.css',
-	// TODO: create debug elements section
-	'debug.css'
-];
+/* override default tap highlighting on webview content */
+body {
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);	
+}
 
-exports.androidElements = [
-	'android.css'
-];
+/* unclear on why this is required for Android */
+.f5mobile #screen {
+	position: static;
+}
 
-exports.webScripts = [
-	'nobridge.js',
-	'widgets/navbar_web.js',
-	'widgets/mapview_web.js'
-];
-
-exports.androidScripts = [
-	'nobridge.js',
-	'widgets/navbar_web.js',
-	'widgets/mapview_web.js',
-	'3p/phonegap-1.3.0.js'
-];
-
-exports.iosScripts = [
-	'bridge.js',
-	'widgets/navbar_native.js',
-	'widgets/mapview_native.js',
-	'udp.js',
-	'3p/phonegap-1.1.0.js'
-];
-
-exports.debugScripts = [
-//	'debug/timers.js'
-	'debug/flow_diags.js',
-	'debug/flowcontroller_diags.js',
-	'debug/json.js'
-];
-
-exports.debugDesktopScripts = [
-	'debug/webharness.js',
-];
-
-exports.debugElements = [
-	'debug/json.css',
-	'debug/webharness.css',
-	'debug/webharness.html'
-];
+/* -webkit-image-mask doesn't render properly in a page with some elements using -webkit-transform
+   unless the elements containing the -webkit-image-mask also have -webkit-transform applied
+   one of a number of cases where the Android WebKit implementation seems to drop some rendering tasks on the floor
+*/
+.f5button-imagecontainer {
+	-webkit-transform: translate3d(0px, 0px, 0px);	
+}

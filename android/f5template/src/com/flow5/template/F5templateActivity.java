@@ -8,6 +8,6 @@ public class F5templateActivity extends DroidGap {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        super.loadUrl("http://10.0.1.5:8008/generate?app=jitc&native=true&inline=false&debug=true");
+        super.loadUrl("http://10.0.1.5:8008/generate?app=jitc&native=true&inline=true&debug=true");
     }
 }

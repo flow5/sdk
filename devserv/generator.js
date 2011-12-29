@@ -91,6 +91,7 @@ function generateCacheManifest(app, isDebug, isMobile, isNative, platform) {
 		}
 		
 		checkDates(manifest.elements);
+		checkDates(manifest[platform+'Elements']);
 		
 		if (isDebug) {
 			checkDates(manifest.debugElements);
@@ -239,6 +240,7 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative, platform) {
 			}					
 		}		
 		injectElements(manifest.elements);
+		injectElements(manifest[platform+'Elements']);
 		if (isDebug) {
 			injectElements(manifest.debugElements);
 		}			
@@ -287,18 +289,10 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative, platform) {
 		
 	appframeEl.appendChild(screenframeEl);
 	document.body.appendChild(appframeEl);
-			
-	if (isNative) {
-		if (platform === 'ios') {
-			document.body.appendChild(makeScript('3p/phonegap-1.1.0.js'));			
-		} else {
-			document.body.appendChild(makeScript('3p/phonegap-1.3.0.js'));									
-		}	
-	}
-	
+				
 	document.body.appendChild(makeScript('start.js'));		
 	
-	if (false && isMobile && isDebug) {
+	if (isMobile && isDebug) {
 		var weinre = document.createElement('script');
 //		weinre.src = 'http://' + require('os').hostname() + ':8081/target/target-script-min.js#anonymous';
 		weinre.src = 'http://10.0.1.5:8081/target/target-script-min.js#anonymous';

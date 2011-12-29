@@ -32,7 +32,7 @@
 	var flickVelocityThreshold = 0.05;		
 	var bounceBackDuration = 500;
 			
-	function transform(scroller, offset, duration, bezierValues) {				
+	function transform(scroller, offset, duration, bezierValues) {	
 		if (duration) {
 			var bezier = 'cubic-bezier(' + bezierValues.join(',') + ')';
 			scroller.el.style['-webkit-transition'] = '-webkit-transform ' + duration + 's ' + bezier;				
