@@ -28,7 +28,8 @@
 
 (function () {
 		
-	function pushHorizontal(container, oldEl, newEl, distance) {			
+	function pushHorizontal(container, oldEl, newEl, distance) {
+		
 		oldEl.style['-webkit-transform'] = 'translate3d(0px, 0px, 0px)';			
 		newEl.style['-webkit-transform'] = 'translate3d(' + distance + 'px, 0px, 0px)';
 		newEl.style.visibility = '';
@@ -39,16 +40,19 @@
 				oldEl.style['-webkit-transform'] = '';
 				oldEl.style['-webkit-transition'] = '';
 
-				newEl.style['-webkit-transform'] = '';
+// Android: screen flashes if this is cleared while el is visible
+//				newEl.style['-webkit-transform'] = '';
 				newEl.style['-webkit-transition'] = '';
 
 				F5.removeTransitionEndListener(oldEl);			
-
+				
 				cb();
 			}			
-			F5.addTransitionEndListener(oldEl, complete);		
+// Android: transition stutters if the event listener is used		
+//			F5.addTransitionEndListener(oldEl, complete);		
+			setTimeout(complete, 325);
 			
-			var transition = '-webkit-transform ease-in .3s';
+			var transition = '-webkit-transform .3s';
 			oldEl.style['-webkit-transition'] = transition;
 			newEl.style['-webkit-transition'] = transition;
 			

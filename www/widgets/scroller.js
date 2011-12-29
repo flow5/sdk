@@ -285,7 +285,7 @@
 			transform(this, this.staticOffset);
 		};
 				
-		this.widgetWillBecomeActive = function () {
+		this.widgetDidBecomeActive = function () {
 			window.addEventListener('orientationchange', this.refreshFunction);
 			this.refresh();
 		};
