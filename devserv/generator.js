@@ -50,7 +50,7 @@ function handleImageResourcesRecursive(obj, handler) {
 	});
 }
 	
-function generateCacheManifest(app, isDebug, isMobile, isNative) {
+function generateCacheManifest(app, isDebug, isMobile, isNative, platform) {
 	
 	var latestDate;
 	function checkDate(path) {
@@ -96,11 +96,7 @@ function generateCacheManifest(app, isDebug, isMobile, isNative) {
 			checkDates(manifest.debugElements);
 		}
 		
-		if (isNative) {
-			checkDates(manifest.nativeScripts);
-		} else {
-			checkDates(manifest.webScripts);
-		}
+		checkDates(manifest[platform+'Scripts']);
 		
 		try {
 			require(process.cwd() + '/' + path + 'resources.js');
@@ -128,7 +124,7 @@ function generateCacheManifest(app, isDebug, isMobile, isNative) {
 	return cacheManifest;
 }
 
-function generateHtml(app, isDebug, doInline, isMobile, isNative) {
+function generateHtml(app, isDebug, doInline, isMobile, isNative, platform) {
 	
 	var jsdom = require('jsdom');
 	jsdom.defaultDocumentFeatures = {
@@ -221,11 +217,7 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative) {
 				injectScripts(manifest.debugDesktopScripts);				
 			}
 		}				
-		if (isNative) {
-			injectScripts(manifest.nativeScripts);
-		} else {
-			injectScripts(manifest.webScripts);
-		}		
+		injectScripts(manifest[platform+'Scripts']);
 		
 		// html and css
 		function injectElements(elements) {
@@ -295,18 +287,23 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative) {
 		
 	appframeEl.appendChild(screenframeEl);
 	document.body.appendChild(appframeEl);
-		
-	document.body.appendChild(makeScript('start.js'));	
-	
-	if (isNative) {		
-		document.body.appendChild(makeScript('3p/phonegap-1.1.0.js'));				
+			
+	if (isNative) {
+		if (platform === 'ios') {
+			document.body.appendChild(makeScript('3p/phonegap-1.1.0.js'));			
+		} else {
+			document.body.appendChild(makeScript('3p/phonegap-1.3.0.js'));									
+		}	
 	}
 	
-//	if (isMobile && isDebug) {
-//		var weinre = document.createElement('script');
+	document.body.appendChild(makeScript('start.js'));		
+	
+	if (isMobile && isDebug) {
+		var weinre = document.createElement('script');
 //		weinre.src = 'http://' + require('os').hostname() + ':8081/target/target-script-min.js#anonymous';
-//		document.head.appendChild(weinre);			
-//	}
+		weinre.src = 'http://10.0.1.5:8081/target/target-script-min.js#anonymous';
+		document.head.appendChild(weinre);			
+	}
 			
 	deleteCaches();	
 	

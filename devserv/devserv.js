@@ -169,11 +169,19 @@ cli.main(function (args, options) {
 			
 			var agent = req.headers['user-agent'];
 			var isMobile = agent.match(/iPhone/) || agent.match(/iPad/) || agent.match(/Android/);
+			var platform = 'web'
+			if (isMobile) {
+				if (agent.match(/iPhone/) || agent.match(/iPad/)) {
+					platform = 'ios';
+				} else if (agent.match(/Android/)) {
+					platform = 'android';
+				}
+			}
 			
 			if (req.url.indexOf('generate?') !== -1) {
 				try {
-					var html = generator.generateHtml(app, isDebug, doInline, isMobile, isNative);
-					if (isDebug && !isMobile) {
+					var html = generator.generateHtml(app, isDebug, doInline, isMobile, isNative, platform);
+					if (isDebug || !isMobile) {
 						res.writeHead(200, {'Content-Type': 'text/html'});
 						res.write(html);
 						res.end();					
@@ -188,7 +196,7 @@ cli.main(function (args, options) {
 //				res.writeHead(404);
 				res.writeHead(200, {'Content-Type': 'text/cache-manifest'});
 				try {
-					res.write(generator.generateCacheManifest(app, isDebug, isMobile, isNative));					
+					res.write(generator.generateCacheManifest(app, isDebug, isMobile, isNative, platform));					
 				} catch (e) {
 					console.log(e);
 				}

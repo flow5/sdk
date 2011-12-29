@@ -64,7 +64,13 @@ exports.webScripts = [
 	'widgets/mapview_web.js'
 ];
 
-exports.nativeScripts = [
+exports.androidScripts = [
+	'nobridge.js',
+	'widgets/navbar_web.js',
+	'widgets/mapview_web.js'
+];
+
+exports.iosScripts = [
 	'bridge.js',
 	'widgets/navbar_native.js',
 	'widgets/mapview_native.js',

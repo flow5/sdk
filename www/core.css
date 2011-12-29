@@ -33,6 +33,10 @@ body {
 	display: -webkit-box;	
 }
 
+body {
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);	
+}
+
 body.f5mobile {
 	background-color: transparent;
 }

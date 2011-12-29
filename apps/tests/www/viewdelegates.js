@@ -33,6 +33,8 @@
 								
 	function RootViewDelegate() {
 		
+		var url = "http://www.flow5.com";		
+		
 		this.initialize = function (el, node) {
 			el.appendChild(F5.Templates.loadTemplate(node));
 			
@@ -40,23 +42,25 @@
 
 			var firstTime = true;			
 			var times = [];									
-			buttonEl.addEventListener('touchmove', function () {				
+			buttonEl.addEventListener('touchend', function () {				
 				times.push('button');
 				
 				if (firstTime) {
 					firstTime = false;					
 										
-					setTimeout(function () {
-						times.push('before sleep');
-
-						// this is a synchronous XHR call
-						F5.callBridgeSynchronous('com.flow5.sleep', 'sleep');
-//						var i = 20000000;
-//						while (i) {
-//							i -= 1;
-//						}
+					setTimeout(function () {						
+						times.push('before xhrs');
 						
-						times.push('after sleep');						
+						var i = 5000;
+						while (i) {
+							i -= 1;
+							var xhr = new XMLHttpRequest();
+							xhr.open('GET', url, true);
+							xhr.send();
+						}
+						
+						times.push('after xhrs');						
+						
 						console.log(times);
 					}, 0);								
 				}								
