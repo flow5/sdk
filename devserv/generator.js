@@ -298,7 +298,7 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative, platform) {
 	
 	document.body.appendChild(makeScript('start.js'));		
 	
-	if (isMobile && isDebug) {
+	if (false && isMobile && isDebug) {
 		var weinre = document.createElement('script');
 //		weinre.src = 'http://' + require('os').hostname() + ':8081/target/target-script-min.js#anonymous';
 		weinre.src = 'http://10.0.1.5:8081/target/target-script-min.js#anonymous';
