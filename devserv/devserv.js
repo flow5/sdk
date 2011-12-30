@@ -170,7 +170,7 @@ cli.main(function (args, options) {
 			var agent = req.headers['user-agent'];
 			var isMobile = agent.match(/iPhone/) || agent.match(/iPad/) || agent.match(/Android/);
 			var platform = 'web'
-			if (isMobile) {
+			if (isNative) {
 				if (agent.match(/iPhone/) || agent.match(/iPad/)) {
 					platform = 'ios';
 				} else if (agent.match(/Android/)) {

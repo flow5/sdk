@@ -126,7 +126,7 @@ function generateCacheManifest(app, isDebug, isMobile, isNative, platform) {
 }
 
 function generateHtml(app, isDebug, doInline, isMobile, isNative, platform) {
-	
+		
 	var jsdom = require('jsdom');
 	jsdom.defaultDocumentFeatures = {
 		FetchExternalResources: [],

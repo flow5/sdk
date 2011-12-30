@@ -277,13 +277,15 @@
 		
 	F5.setupScreenGeometry = function (isMobile, isNative) {
 		// TODO: get toolbar deltas based on platform lookup table
-		var portraitToolbarDelta = 20;
-		var landscapeToolbarDelta = 20;
+		var portraitToolbarDelta = 0;
+		var landscapeToolbarDelta = 0;
 		if (isMobile) {
-			var isFullScreen = (window.innerHeight === screen.height - portraitToolbarDelta);		
+			var isFullScreen = (window.innerHeight === screen.height - 20);		
 			if (!isNative) {
 				// TODO: get toolbar deltas based on platform lookup table
-				if (!isFullScreen) {
+				if (isFullScreen) {
+//					portraitToolbarDelta = landscapeToolbarDelta = 20;
+				} else {
 					portraitToolbarDelta += 44;	
 					landscapeToolbarDelta += 32;						
 				}
@@ -292,15 +294,15 @@
 			style.innerHTML = '@media screen and (orientation: portrait)\n\
 								{\n\
 									.f5mobile #screen {\n\
-										width:' + screen.width + 'px;\n\
-										height:' + (screen.height - portraitToolbarDelta) + 'px;\n\
+										width:' + window.innerWidth + 'px;\n\
+										height:' + (window.innerHeight - portraitToolbarDelta) + 'px;\n\
 									}\n\
 								}\n\
 								@media screen and (orientation: landscape)\n\
 								{\n\
 									.f5mobile #screen {\n\
-										width:' + screen.height + 'px;\n\
-										height:' + (screen.width - landscapeToolbarDelta) + 'px;\n\
+										width:' + (window.innerHeight + 20) + 'px;\n\
+										height:' + (window.innerWidth - 20) + 'px;\n\
 									}\n\
 								}';
 			document.head.appendChild(style);
