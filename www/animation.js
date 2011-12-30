@@ -52,7 +52,7 @@
 //			F5.addTransitionEndListener(oldEl, complete);		
 			setTimeout(complete, 325);
 			
-			var transition = '-webkit-transform .3s';
+			var transition = '-webkit-transform ease-in .3s';
 			oldEl.style['-webkit-transition'] = transition;
 			newEl.style['-webkit-transition'] = transition;
 			
