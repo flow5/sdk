@@ -216,7 +216,8 @@
 		if (url.match('data:image/') || url.match('http://')) {
 			return url;
 		} else {
-			return 'apps/jitc/' + url;
+			var app = F5.getURLParameters()['app'];
+			return 'apps/' + app + '/' + url;
 		}
 	};
 		
@@ -260,6 +261,14 @@
 		}
 		return obj;
 	};
+	
+	F5.getURLParameters = function () {
+		var urlParameters = {};
+		F5.forEach(window.location.search.substring(1).split('&'), function (parameter) {
+			urlParameters[parameter.split('=')[0]] = parameter.split('=')[1];
+		});	
+		return urlParameters;		
+	}
 	
 }());
 

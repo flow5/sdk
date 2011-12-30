@@ -34,12 +34,9 @@
 	if (navigator.userAgent.match(/iPhone/) || navigator.userAgent.match(/iPad/) ||navigator.userAgent.match(/Android/)) {
 		isMobile = true;
 		F5.addClass(document.body, 'f5mobile');
-	}
+	}	
 	
-	var urlParameters = {};
-	F5.forEach(window.location.search.substring(1).split('&'), function (parameter) {
-		urlParameters[parameter.split('=')[0]] = parameter.split('=')[1];
-	});	
+	var urlParameters = F5.getURLParameters();
 	// PhoneGap does not make it easy to pass URL parameters to the start page
 	// so check for the file protocl or the url parameter
 	var isNative = (window.location.protocol === 'file:' && urlParameters['native'] !== 'false') || 
