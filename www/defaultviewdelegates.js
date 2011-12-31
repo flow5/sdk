@@ -97,6 +97,12 @@
 				child.view.el.setAttribute('f5_tab', id);
 			});			
 			el.setAttribute('f5_widget', 'Tabset');
+
+			// FIX: part of the tab set problem
+			// want to declare position in the html template
+			if (F5.platform() === 'android') {
+				el.setAttribute('f5_tabset_position', 'top');				
+			}
 			
 			F5.attachWidget(el, F5.getNodeData(node));
 			el.widget.setAction(function (id) {

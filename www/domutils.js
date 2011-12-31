@@ -328,6 +328,14 @@
 				width: el.offsetWidth,
 				height: el.offsetHeight};
 	};
+	
+	F5.platform = function () {
+		if (navigator.userAgent.match(/(Android)|(iPad)/i)) {
+			return 'android';
+		} else {
+			return 'ios';
+		}
+	};
 		
 }());
 
