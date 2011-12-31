@@ -27,14 +27,82 @@
 /*global F5, PhoneGap*/
 
 (function () {
+		
+function MenuHelper() {
 	
-document.addEventListener('backbutton', function () {
-	if (F5.Global.flowController.hasBack()) {
-		F5.Global.flowController.doBack();
-	} else {
-		PhoneGap.exec(null, null, "App", "exitApp", [false]);		
-	}
+	this.start = function () {
+		this.updateConfiguration(F5.Global.flow.root);
+	};
+
+	this.doSelection = function (node, id) {
+		this.updateConfiguration(node.children[id]);		
+		return function (cb) {cb();};
+	};
+
+	this.doTransition = function (container, id, to, animation) {
+		this.updateConfiguration(to);				
+		return function (cb) {cb();};
+	};
+
+	this.startSubflow = function () {
+		this.updateConfiguration(F5.Global.flow.root);
+	};
+
+	this.syncSet = function (node) {
+		this.updateConfiguration(node);
+	};
+
+	this.completeSubflow = function () {
+		this.updateConfiguration(F5.Global.flow.root);
+	};			
+}
+MenuHelper.prototype = F5.WidgetPrototypes.NavBarBase;
+
+/* TODO: Initial pass at hooking up settings. Initially tying it to what would normally be in nav bar.
+   this is just to illustrate the navbar-less style in Android */
+
+F5.addF5ReadyListener(function () {
+	document.addEventListener('backbutton', function () {
+		if (F5.Global.flowController.hasBack()) {
+			F5.Global.flowController.doBack();
+		} else {
+			PhoneGap.exec(null, null, "App", "exitApp", [false]);		
+		}
+	});
+
+	var menuHelper = new MenuHelper();
+	F5.Global.flowController.addFlowObserver(menuHelper);	
+
+	document.addEventListener('menubutton', function () {
+		if (menuHelper.configuration.left || menuHelper.configuration.right) {
+			var menu = document.createElement('div');
+			menu.setAttribute('f5_widget', 'Menu');
+			var choices = {};
+			if (menuHelper.configuration.left) {
+				choices[menuHelper.configuration.left.label] = true;
+			}
+			if (menuHelper.configuration.right) {
+				choices[menuHelper.configuration.right.label] = true;
+			}
+			choices['Cancel'] = true;
+			
+			F5.attachWidget(menu, {method: 'Options', choices: choices});
+
+			F5.Global.flow.root.view.el.appendChild(menu);	
+
+			menu.style.opacity = 1;			
+
+			menu.widget.setAction(function (id) {
+				if (menuHelper.configuration.left && menuHelper.configuration.left.label === id) {
+					menuHelper.configuration.left.action();
+				} else if (menuHelper.configuration.right && menuHelper.configuration.right.label === id) {
+					menuHelper.configuration.right.action();					
+				} 
+				F5.Global.flow.root.view.el.removeChild(menu);
+			});
+		}	
+	});	
 });
-	
+
 }());
 
