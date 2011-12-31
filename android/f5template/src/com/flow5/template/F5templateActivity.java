@@ -26,7 +26,7 @@ public class F5templateActivity extends DroidGap {
 			public void run() {
 				String devservhostname = "unknown.local";
 				
-				XmlPullParser xpp = getApplicationContext().getResources().getXml(R.xml.f5);				
+				XmlPullParser xpp = getApplicationContext().getResources().getXml(R.xml.f5gen);				
 				try {
 					while (xpp.getEventType() != XmlPullParser.END_DOCUMENT) {						 
 				        if (xpp.getEventType() == XmlPullParser.START_TAG) {	

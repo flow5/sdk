@@ -14,18 +14,19 @@ public class MDNSResolver {
 
 	public MDNSResolver() {
 		
-//      android.net.wifi.WifiManager wifi = (android.net.wifi.WifiManager) getSystemService(android.content.Context.WIFI_SERVICE);
-//      lock = wifi.createMulticastLock("mylockthereturn");
-//      lock.setReferenceCounted(true);
-//      lock.acquire();
 
-//      lock.release();
+
 	}
 	
 	public String resolve(String localName) {
 		String result = null;
 		Record answer = null;
 		try {	
+//	      android.net.wifi.WifiManager wifi = (android.net.wifi.WifiManager) getSystemService(android.content.Context.WIFI_SERVICE);
+//	      lock = wifi.createMulticastLock("mylockthereturn");
+//	      lock.setReferenceCounted(true);
+//	      lock.acquire();
+			
 			Name name = Name.fromString(localName);
 				
 			// setup the multicast socket for mDNS queries
@@ -66,6 +67,8 @@ public class MDNSResolver {
 			 result = ((ARecord)answer).getAddress().getHostAddress();			
 		}
 		 
+//     lock.release();
+		
 		return result;
 	}
 	
