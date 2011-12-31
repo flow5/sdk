@@ -92,12 +92,18 @@ function generateCacheManifest(app, isDebug, isMobile, isNative, platform) {
 		
 		checkDates(manifest.elements);
 		checkDates(manifest[platform+'Elements']);
+		if (isNative) {
+			checkDates(manifest[platform+'NativeElements']);			
+		}
 		
 		if (isDebug) {
 			checkDates(manifest.debugElements);
 		}
 		
 		checkDates(manifest[platform+'Scripts']);
+		if (isNative) {
+			checkDates(manifest[platform+'NativeScripts']);			
+		}
 		
 		try {
 			require(process.cwd() + '/' + path + 'resources.js');
@@ -222,6 +228,9 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative, platform) {
 			}
 		}				
 		injectScripts(manifest[platform+'Scripts']);
+		if (isNative) {
+			injectScripts(manifest[platform+'NativeScripts']);			
+		}
 		
 		// html and css
 		function injectElements(elements) {
@@ -244,6 +253,9 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative, platform) {
 		}		
 		injectElements(manifest.elements);
 		injectElements(manifest[platform+'Elements']);
+		if (isNative) {
+			injectElements(manifest[platform+'NativeElements']);			
+		}
 		if (isDebug) {
 			injectElements(manifest.debugElements);
 		}			

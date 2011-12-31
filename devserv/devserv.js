@@ -169,13 +169,11 @@ cli.main(function (args, options) {
 			
 			var agent = req.headers['user-agent'];
 			var isMobile = agent.match(/iPhone/) || agent.match(/iPad/) || agent.match(/Android/);
-			var platform = 'web'
-			if (isNative) {
-				if (agent.match(/iPhone/) || agent.match(/iPad/)) {
-					platform = 'ios';
-				} else if (agent.match(/Android/)) {
-					platform = 'android';
-				}
+			var platform = 'web';
+			if (agent.match(/iPhone/) || agent.match(/iPad/)) {
+				platform = 'ios';
+			} else if (agent.match(/Android/)) {
+				platform = 'android';
 			}
 			
 			if (req.url.indexOf('generate?') !== -1) {

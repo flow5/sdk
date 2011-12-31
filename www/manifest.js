@@ -76,14 +76,24 @@ exports.webScripts = [
 	'widgets/mapview_web.js'
 ];
 
+exports.iosScripts = [
+	'nobridge.js',
+	'widgets/navbar_web.js',
+	'widgets/mapview_web.js'
+];
+
 exports.androidScripts = [
 	'nobridge.js',
 	'widgets/navbar_web.js',
-	'widgets/mapview_web.js',
-	'3p/phonegap-1.3.0.js'
+	'widgets/mapview_web.js'
 ];
 
-exports.iosScripts = [
+exports.androidNativeScripts = [
+	'3p/phonegap-1.3.0.js',
+	'androidnative.js'
+];
+
+exports.iosNativeScripts = [
 	'bridge.js',
 	'widgets/navbar_native.js',
 	'widgets/mapview_native.js',
