@@ -44,3 +44,7 @@ body {
 .f5button-imagecontainer {
 	-webkit-transform: translate3d(0px, 0px, 0px);	
 }
+
+.f5navbar {
+	height: 3.66em;
+}

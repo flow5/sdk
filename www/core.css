@@ -70,7 +70,6 @@ body.f5mobile {
 
 .splash {
 	position: absolute;
-	top: -20px;
 	width: 100%;
 	height: 100%;
 }
@@ -121,13 +120,13 @@ body.f5mobile {
 	border: 1px solid black;
 	width: 75%;
 	-webkit-box-align: center;
-	margin-top: 10px;
-	margin-bottom: 10px;
+	margin-top: 1em;
+	margin-bottom: 1em;
 }
 
 .do-choice, .do-transition, .do-subflow {
 	border-bottom: 1px solid black;	
-	padding:4px;
+	padding:.25em;
 	width: 100%;
 	-webkit-box-sizing: border-box;
 }

@@ -62,6 +62,14 @@ exports.androidElements = [
 	'android.css'
 ];
 
+exports.iosElements = [
+	'ios.css'
+];
+
+exports.webElements = [
+	'ios.css'
+];
+
 exports.webScripts = [
 	'nobridge.js',
 	'widgets/navbar_web.js',

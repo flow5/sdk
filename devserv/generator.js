@@ -161,6 +161,9 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative, platform) {
 	// ios webapp stuff
 	injectMeta({name: 'apple-mobile-web-app-status-bar-style', content: 'black'});
 	injectMeta({name: 'apple-mobile-web-app-capable', content: 'yes'});
+
+	// Android experiment
+	injectMeta({name: 'viewport', content: 'target-densitydpi=device-dpi'});
 	
 	function injectLink(rel, href) {
 		var link = document.createElement('link');

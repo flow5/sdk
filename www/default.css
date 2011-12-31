@@ -37,7 +37,6 @@
 	display: -webkit-box;
 	width: 100%;
 	padding-left: 2px;
-	height: 44px;
 	-webkit-box-align: center;
 	-webkit-box-pack: center;	
 	background-color:grey;
@@ -46,12 +45,12 @@
 
 .f5navbar .f5leftbutton, .f5navbar .f5rightbutton {
 	position: absolute;
-	top: 7px;
-	height: 30px;
-	font-size: 16px;
-	padding: 2px;
-	padding-left: 5px;
-	padding-right: 5px;
+	top: .5em;
+	height: 2em;
+	font-size: 1.33em;
+	padding: .16em;
+	padding-left: .5em;
+	padding-right: .5em;
 	display: -webkit-box;
 	-webkit-box-pack: center;
 	-webkit-box-align: center;
@@ -61,16 +60,16 @@
 }
 
 .f5navbar .f5leftbutton {
-	left: 3px;
+	left: .25em;
 }
 
 .f5navbar .f5rightbutton {
-	right: 3px;
+	right: .25em;
 }
 
 .f5navbar .f5title {
-	font-size: 16px;
-	padding:2px;
+	font-size: 1.33em;
+	padding:.16em;
 }
 
 /***************************************/
@@ -102,7 +101,7 @@
 	white-space: nowrap;
 	position: relative;
 	color: white;
-	padding:5px;
+	padding:.5em;
 }
 
 .f5button-imagecontainer {
@@ -110,7 +109,7 @@
 }
 
 .standardbutton img {
-	height: 30px;
+	height: 2.5em;
 }
 
 
@@ -130,7 +129,6 @@
 }
 
 .tabset .f5button {
-	height: 48px;
 }
 
 .tabset .f5button.down .f5button-label {
@@ -145,32 +143,23 @@
 	-webkit-box-align: center;
 	-webkit-box-pack: center;
 	font-family: arial;
-	font-size: 10px;
+	font-size: .833em;
 }
-
-/*
-.tabset {
-	height: 48px;
-	-webkit-box-sizing: border-box;
-}
-
-
-*/
 
 /***************************************/
 /*             Miscellany              */
 /***************************************/
 
 .f5closebutton {
-	height: 20px;
-	width: 20px;
+	height: 1.66em;
+	width: 1.66em;
 	background-color: darkgrey;
 	z-index: 1000;
 }
 
 .f5closebutton img {
-	height: 20px;
-	width: 20px;	
+	height: 1.66em;
+	width: 1.66em;	
 }
 
 /* only for the auto generated links. move to optional include */
