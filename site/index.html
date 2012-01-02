@@ -1,0 +1,95 @@
+<html>
+
+<head>
+	
+<link href='http://fonts.googleapis.com/css?family=Geo' rel='stylesheet' type='text/css'>
+
+<style>
+
+body {
+	display: -webkit-box;
+	-webkit-box-pack: center;
+	-webkit-box-align: center;
+	background-color: #444
+}
+
+#panel {
+	display: -webkit-box;
+	position: relative;
+	-webkit-box-shadow: 0 0 50px 0px #000;
+	-webkit-box-sizing: border-box;
+	width: 762px;
+	height: 266px;
+	background-image: -webkit-gradient(linear, 50% 80%, center top, 
+		from(#AAA), 
+		color-stop(.25,#333),
+		color-stop(.5,#111),
+		color-stop(.7,#333),
+		to(#AAA));
+	-webkit-transition: opacity .25s;
+	-webkit-transition-delay: .25s;
+	overflow: hidden;
+}
+
+#text {
+	-webkit-background-clip: text;
+	font-family: 'Geo', sans-serif;
+	color: transparent;
+	font-size: 268px;
+	height: 256px;
+	-webkit-text-stroke: .5px black;
+	padding-left: 10px;
+}
+
+#badge {
+	height: 256px;
+	width: 256px;
+	-webkit-mask-repeat: no-repeat;	
+	-webkit-mask-position: center -54px;
+	-webkit-mask-size: 320px 320px;
+	-webkit-mask-image: url('http://www.w3.org/html/logo/downloads/HTML5_1Color_Black.png');
+}
+
+.gradient {
+	position: relative;
+	background-image: -webkit-gradient(linear, 50% 80%, center top, 
+		from(#000), 
+		color-stop(.5,#FFF),
+		to(#000));	
+}
+
+</style>
+</head>
+
+<body>
+	
+<div id='panel' style='opacity:0;'>
+	<div id='text' class='gradient'>Flow</div>
+	<div id='badge' class='gradient'></div>
+</div>
+	
+<script>
+if (navigator.userAgent.match(/Android/) || navigator.userAgent.match(/Silk/)) {
+	var text = document.getElementById('text');
+	text.style['-webkit-background-clip'] = '';
+	text.style.color = '#CCCCCC';
+	text.className = '';
+}
+
+if (navigator.userAgent.match(/WebKit/)) {
+		var img = new Image();
+		img.onload = function () {
+			document.getElementById('panel').style.opacity = 1;
+		};
+		img.src = 'http://www.w3.org/html/logo/downloads/HTML5_1Color_Black.png';
+} else {
+	var a = document.createElement('a');
+	a.href = 'http://www.webkit.org/'
+	a.innerHTML = 'flow5 <3 webkit';
+	document.body.innerHTML = '';
+	document.body.appendChild(a);
+}
+</script>	
+</body>
+
+</html>
