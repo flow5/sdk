@@ -20,7 +20,12 @@ body {
 	-webkit-box-sizing: border-box;
 	width: 762px;
 	height: 266px;
-	background-image: -webkit-linear-gradient(90deg, #AAA 0%, #333 25%, #111 50%, #333 70%, #AAA 100%);	
+	background-image: -webkit-gradient(linear, 50% 80%, center top, 
+		from(#AAA), 
+		color-stop(.25,#333),
+		color-stop(.5,#111),
+		color-stop(.7,#333),
+		to(#AAA));
 	-webkit-transition: opacity .25s;
 	-webkit-transition-delay: .25s;
 	overflow: hidden;
@@ -47,7 +52,10 @@ body {
 
 .gradient {
 	position: relative;
-	background-image: -webkit-linear-gradient(90deg, #000 0%, #FFF 50%, #000 100%);
+	background-image: -webkit-gradient(linear, 50% 80%, center top, 
+		from(#000), 
+		color-stop(.5,#FFF),
+		to(#000));	
 }
 
 </style>
@@ -61,7 +69,7 @@ body {
 </div>
 	
 <script>
-if (navigator.userAgent.match(/Android/)) {
+if (navigator.userAgent.match(/Android/) || navigator.userAgent.match(/Silk/)) {
 	var text = document.getElementById('text');
 	text.style['-webkit-background-clip'] = '';
 	text.style.color = '#CCCCCC';
