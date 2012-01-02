@@ -167,13 +167,17 @@ cli.main(function (args, options) {
 			var isNative = (parsed.query['native'] === 'true');
 			var doInline = (parsed.query['inline'] === 'true');
 			
-			var agent = req.headers['user-agent'];
-			var isMobile = agent.match(/iPhone/) || agent.match(/iPad/) || agent.match(/Android/);
+			var isMobile = false; 
 			var platform = 'web';
-			if (agent.match(/iPhone/) || agent.match(/iPad/)) {
-				platform = 'ios';
-			} else if (agent.match(/Android/)) {
-				platform = 'android';
+			
+			var agent = req.headers['user-agent'];
+			if (agent) {
+				isMobile = agent.match(/iPhone/) || agent.match(/iPad/) || agent.match(/Android/);				
+				if (agent.match(/iPhone/) || agent.match(/iPad/)) {
+					platform = 'ios';
+				} else if (agent.match(/Android/)) {
+					platform = 'android';
+				}				
 			}
 			
 			if (req.url.indexOf('generate?') !== -1) {
