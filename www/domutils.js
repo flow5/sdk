@@ -275,34 +275,36 @@
 		}
 	};
 		
-	F5.setupScreenGeometry = function (isMobile, isNative) {
-		// TODO: get toolbar deltas based on platform lookup table
-		var portraitToolbarDelta = 0;
-		var landscapeToolbarDelta = 0;
-		if (isMobile) {
-			var isFullScreen = (window.innerHeight === screen.height - 20);		
-			if (!isNative) {
-				// TODO: get toolbar deltas based on platform lookup table
-				if (isFullScreen) {
-//					portraitToolbarDelta = landscapeToolbarDelta = 20;
-				} else {
-					portraitToolbarDelta += 44;	
-					landscapeToolbarDelta += 32;						
-				}
+	F5.setupScreenGeometry = function (isMobile, isNative) {		
+		if (isMobile) {						
+			var width, height;
+			if (screen.width > screen.height) {
+				width = screen.height;
+				height = screen.width;
+			} else {
+				width = screen.width;
+				height = screen.height;
 			}
-			var style = document.createElement('style');
+			var toolbar = 0;
+			if (screen.width > screen.height) {
+				toolbar = screen.width - screen.availWidth;
+			} else {
+				toolbar = screen.height - screen.availHeight;
+			}
+			
+			var style = document.createElement('style');			
 			style.innerHTML = '@media screen and (orientation: portrait)\n\
 								{\n\
 									.f5mobile #screen {\n\
-										width:' + window.innerWidth + 'px;\n\
-										height:' + (window.innerHeight - portraitToolbarDelta) + 'px;\n\
+										width:' + screen.width + 'px;\n\
+										height:' + (screen.height - toolbar) + 'px;\n\
 									}\n\
 								}\n\
 								@media screen and (orientation: landscape)\n\
 								{\n\
 									.f5mobile #screen {\n\
-										width:' + (window.innerHeight + 20) + 'px;\n\
-										height:' + (window.innerWidth - 20) + 'px;\n\
+										width:' + screen.height + 'px;\n\
+										height:' + (screen.width - toolbar) + 'px;\n\
 									}\n\
 								}';
 			document.head.appendChild(style);

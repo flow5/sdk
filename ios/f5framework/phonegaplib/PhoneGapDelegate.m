@@ -403,8 +403,9 @@ BOOL gSplashScreenShown = NO;
 
 
     self.window.autoresizesSubviews = YES;
-    CGRect webViewBounds = [ [ UIScreen mainScreen ] applicationFrame ] ;
-    webViewBounds.origin = screenBounds.origin;
+    CGRect webViewBounds = screenBounds;
+    webViewBounds.size.height -= 20;
+        
     if (!self.webView) {
         self.webView = [[ [ UIWebView alloc ] initWithFrame:webViewBounds] autorelease];
     }
