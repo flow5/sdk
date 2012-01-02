@@ -61,10 +61,14 @@ body {
 </div>
 	
 <script>
-if (navigator.userAgent.match(/iPhone/) || 
-	navigator.userAgent.match(/iPad/) ||
-	navigator.userAgent.match(/Android/) || 
-	navigator.userAgent.match(/WebKit/)) {
+if (navigator.userAgent.match(/Android/)) {
+	var text = document.getElementById('text');
+	text.style['-webkit-background-clip'] = '';
+	text.style.color = '#CCCCCC';
+	text.className = '';
+}
+
+if (navigator.userAgent.match(/WebKit/)) {
 		var img = new Image();
 		img.onload = function () {
 			document.getElementById('panel').style.opacity = 1;
