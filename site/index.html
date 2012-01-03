@@ -81,7 +81,7 @@ if (navigator.userAgent.match(/Android/) || navigator.userAgent.match(/Silk/)) {
 	text.className = '';
 }
 
-window.onload = function () {
+document.body.onload = function () {
 	if (navigator.userAgent.match(/WebKit/)) {
 			var img = new Image();
 			img.onload = function () {			
