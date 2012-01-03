@@ -94,13 +94,6 @@ body {
 </div>
 	
 <script>
-if (navigator.userAgent.match(/Android/) || navigator.userAgent.match(/Silk/)) {
-	var text = document.getElementById('text');
-	text.style['-webkit-background-clip'] = '';
-	text.style.color = '#CCCCCC';
-	text.className = '';
-}
-
 if (navigator.userAgent.match(/WebKit/)) {
 	window.onload = function () {
 		document.getElementById('panel').style.opacity = 1;					
