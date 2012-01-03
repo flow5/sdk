@@ -53,6 +53,7 @@ body {
 	-webkit-mask-repeat: no-repeat;	
 	-webkit-mask-position: center -54px;
 	-webkit-mask-size: 320px 320px;
+	-webkit-mask-image: url('http://www.w3.org/html/logo/downloads/HTML5_1Color_Black.png');
 }
 
 .gradient {
@@ -81,25 +82,16 @@ if (navigator.userAgent.match(/Android/) || navigator.userAgent.match(/Silk/)) {
 	text.className = '';
 }
 
-document.body.onload = function () {
-	if (navigator.userAgent.match(/WebKit/)) {
-			var img = new Image();
-			img.onload = function () {			
-				document.getElementById('badge').style['-webkit-mask-image'] = 
-					"url('http://www.w3.org/html/logo/downloads/HTML5_1Color_Black.png')";
-				setTimeout(function () {
-					document.getElementById('panel').style.opacity = 1;					
-				},500);
-			};
-			img.src = 'http://www.w3.org/html/logo/downloads/HTML5_1Color_Black.png';
-	} else {
-		var a = document.createElement('a');
-		a.href = 'http://www.webkit.org/'
-		a.innerHTML = 'flow5 <3 webkit';
-		document.body.innerHTML = '';
-		document.body.appendChild(a);
-	}	
+if (navigator.userAgent.match(/WebKit/)) {
+	document.getElementById('panel').style.opacity = 1;					
+} else {
+	var a = document.createElement('a');
+	a.href = 'http://www.webkit.org/'
+	a.innerHTML = 'flow5 <3 webkit';
+	document.body.innerHTML = '';
+	document.body.appendChild(a);
 }
+
 </script>	
 </body>
 
