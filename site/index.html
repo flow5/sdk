@@ -32,8 +32,6 @@ body {
 		color-stop(.5,#111),
 		color-stop(.7,#333),
 		to(#AAA));
-	-webkit-transition: opacity .25s;
-	-webkit-transition-delay: .25s;
 	overflow: hidden;
 }
 
@@ -83,7 +81,9 @@ if (navigator.userAgent.match(/Android/) || navigator.userAgent.match(/Silk/)) {
 }
 
 if (navigator.userAgent.match(/WebKit/)) {
-	document.getElementById('panel').style.opacity = 1;					
+	window.onload = function () {
+		document.getElementById('panel').style.opacity = 1;					
+	};
 } else {
 	var a = document.createElement('a');
 	a.href = 'http://www.webkit.org/'
