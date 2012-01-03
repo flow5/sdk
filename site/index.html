@@ -85,10 +85,11 @@ document.body.onload = function () {
 	if (navigator.userAgent.match(/WebKit/)) {
 			var img = new Image();
 			img.onload = function () {			
-				document.getElementById('panel').style.opacity = 1;
 				document.getElementById('badge').style['-webkit-mask-image'] = 
 					"url('http://www.w3.org/html/logo/downloads/HTML5_1Color_Black.png')";
-
+				setTimeout(function () {
+					document.getElementById('panel').style.opacity = 1;					
+				});
 			};
 			img.src = 'http://www.w3.org/html/logo/downloads/HTML5_1Color_Black.png';
 	} else {
