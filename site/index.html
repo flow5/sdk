@@ -81,13 +81,13 @@ if (navigator.userAgent.match(/Android/) || navigator.userAgent.match(/Silk/)) {
 	text.className = '';
 }
 
-document.onload = function () {
+window.onload = function () {
 	if (navigator.userAgent.match(/WebKit/)) {
 			var img = new Image();
 			img.onload = function () {			
 				document.getElementById('panel').style.opacity = 1;
 				document.getElementById('badge').style['-webkit-mask-image'] = 
-					url('http://www.w3.org/html/logo/downloads/HTML5_1Color_Black.png');
+					"url('http://www.w3.org/html/logo/downloads/HTML5_1Color_Black.png')";
 
 			};
 			img.src = 'http://www.w3.org/html/logo/downloads/HTML5_1Color_Black.png';
