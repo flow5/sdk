@@ -16,26 +16,27 @@ body {
 	display: -webkit-box;
 	-webkit-box-pack: center;
 	-webkit-box-align: center;
-	background-color: #444
+	background-color: #233
 }
 
 #panel {
 	display: -webkit-box;
 	position: relative;
-	-webkit-box-shadow: 0 0 50px 0px #000;
+	-webkit-box-shadow: 0 0 50px 5px #000;
 	-webkit-box-sizing: border-box;
 	width: 762px;
-	height: 266px;
-	background-image: -webkit-gradient(linear, 50% 80%, center top, 
-		from(#AAA), 
-		color-stop(.25,#333),
-		color-stop(.5,#111),
-		color-stop(.7,#333),
-		to(#AAA));
+	height: 256px;
+	background-image: -webkit-gradient(linear, 50% 100%, center top, 
+		from(#BBB), 
+		color-stop(0.25,#BBB),
+		color-stop(0.25,#333),
+		color-stop(.725,#333),
+		color-stop(.725,#BBB),
+		to(#BBB));
 	overflow: hidden;
 }
 
-#text {
+.text {
 	-webkit-background-clip: text;
 	font-family: 'Geo', sans-serif;
 	color: transparent;
@@ -43,6 +44,7 @@ body {
 	height: 256px;
 	-webkit-text-stroke: .5px black;
 	padding-left: 10px;
+	color: black;
 }
 
 #badge {
@@ -56,10 +58,26 @@ body {
 
 .gradient {
 	position: relative;
-	background-image: -webkit-gradient(linear, 50% 80%, center top, 
+	background-image: -webkit-gradient(linear, 50% 100%, center top, 
 		from(#000), 
-		color-stop(.5,#FFF),
+		color-stop(0.25,#000),
+		color-stop(0.25,#FFF),
+		color-stop(.725,#FFF),
+		color-stop(.725,#000),
 		to(#000));	
+}
+
+.over {
+	height: 66px;
+	overflow: hidden;
+	position: absolute;
+	top: 104px;
+	left: 0px;
+}
+
+.over .text {
+	margin-top: -104px;
+	color: white;	
 }
 
 </style>
@@ -68,7 +86,10 @@ body {
 <body>
 	
 <div id='panel' style='opacity:0;'>
-	<div id='text' class='gradient'>Flow</div>
+	<div class='text'>Flow</div>
+	<div class='over'>
+		<div class='text'>Flow</div>
+	</div>
 	<div id='badge' class='gradient'></div>
 </div>
 	
