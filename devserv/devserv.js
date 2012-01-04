@@ -193,6 +193,8 @@ cli.main(function (args, options) {
 					}					
 				} catch (e2) {
 					console.log(e2);
+					// TODO: would be nice to return 404 if the appname is bad
+					res.writeHead(500);
 					res.end();					
 				}
 			} else if (req.url.match('cache.manifest')) {

@@ -47,27 +47,46 @@
 	
 	
 	<taskdef name="xmltask" classname="com.oopsconsultancy.xmltask.ant.XmlTask"/>
+	<taskdef name="http" classname="org.missinglink.ant.task.http.HttpClientTask"/>	
 
-	<!-- check that the f5gen.xml exists and is in sync -->
+	<!-- check that the f5config.xml exists and is in sync -->
 	<exec executable="hostname" outputproperty="f5.hostname"/>
-	<available file="res/xml/f5gen.xml" property="f5gen.xml.present"/>
-	<target name="readf5" if="f5gen.xml.present">
+	<available file="res/xml/f5config.xml" property="f5config.xml.present"/>
+	<target name="readf5config" if="f5config.xml.present">
 		<echo message="reading"/>
-		<xmltask source="res/xml/f5gen.xml">
+		<xmltask source="res/xml/f5config.xml">
 			<copy path="/devservhost/@name" property="f5.storedhostname"/>    		
 		</xmltask>	
-		<condition property="f5.uptodate">
+		<condition property="f5config.uptodate">
 			<equals arg1="${f5.hostname}." arg2="${f5.storedhostname}"/>
 		</condition>
-	</target>				
-	<target name="-pre-build" depends="readf5" unless="f5.uptodate">				
-    	<xmltask dest="res/xml/f5gen.xml">     		
-    		<insert path="/">
+	</target>	
+	<target name="updatef5config" depends="readf5config" unless="f5config.uptodate">
+    	<xmltask dest="res/xml/f5config.xml">     		
+    		<insert path="/">    			
     			<![CDATA[ 
     				<devservhost name="${f5.hostname}." />
     			]]>    			
     		</insert>
-    	</xmltask>
+    	</xmltask>		
+	</target>
+	
+	<target name="generatef5html">		
+		<property name="url" value="http://localhost:8008/generate" />
+		<http url="${url}" method="GET" entityProperty="f5.html">			
+			<headers>
+				<header name="user-agent" value="Android"/>
+			</headers> 
+			<query>
+				<parameter name="app" value="jitc"/>
+				<parameter name="native" value="true"/>
+				<parameter name="inline" value="true"/>
+			</query>
+		</http>
+		<echo message="${f5.html}" file="assets/index.html"/>
+	</target>
+	
+	<target name="-pre-build" depends="updatef5config,generatef5html">				
     </target>
 	
 	

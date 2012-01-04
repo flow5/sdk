@@ -23,7 +23,7 @@ public class F5templateActivity extends DroidGap {
 			public void run() {
 				String devservhostname = "unknown.local";
 				
-				XmlPullParser xpp = getApplicationContext().getResources().getXml(R.xml.f5gen);				
+				XmlPullParser xpp = getApplicationContext().getResources().getXml(R.xml.f5config);				
 				try {
 					while (xpp.getEventType() != XmlPullParser.END_DOCUMENT) {						 
 				        if (xpp.getEventType() == XmlPullParser.START_TAG) {	
@@ -44,7 +44,8 @@ public class F5templateActivity extends DroidGap {
                 activity.runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
-						String url = "http://" + address + ":8008/generate?app=jitc&native=true&inline=true&debug=true";
+						String url = "http://" + address + ":8008/generate?app=jitc&native=true&inline=true&debug=true";											
+						url = ("file:///android_asset/index.html");
 						LOG.d("F5", url);
 		                activity.loadUrl(url);					
 					}
