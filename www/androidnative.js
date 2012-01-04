@@ -72,36 +72,108 @@ F5.addF5ReadyListener(function () {
 
 	var menuHelper = new MenuHelper();
 	F5.Global.flowController.addFlowObserver(menuHelper);	
+	var menu;
 
 	document.addEventListener('menubutton', function () {
-		if (menuHelper.configuration.left || menuHelper.configuration.right) {
-			var menu = document.createElement('div');
-			menu.setAttribute('f5_widget', 'Menu');
-			var choices = {};
-			if (menuHelper.configuration.left) {
-				choices[menuHelper.configuration.left.label] = true;
-			}
-			if (menuHelper.configuration.right) {
-				choices[menuHelper.configuration.right.label] = true;
-			}
-			choices['Cancel'] = true;
-			
-			F5.attachWidget(menu, {method: 'Options', choices: choices});
+		function removeMenu() {
+			var tmp = menu;
+			menu = null;			
+			tmp.widget.dismiss();
+		}
+		
+		if (menu) {
+			removeMenu();
+		} else {
+			if (menuHelper.configuration.left || menuHelper.configuration.right) {
+				menu = document.createElement('div');
+				menu.setAttribute('f5_widget', 'AndroidSettingsMenu');
+				var choices = [];
+				if (menuHelper.configuration.left) {
+					choices.push(menuHelper.configuration.left.label);
+				}
+				if (menuHelper.configuration.right) {
+					choices.push(menuHelper.configuration.right.label);
+				}
 
-			F5.Global.flow.root.view.el.appendChild(menu);	
+				F5.attachWidget(menu, {choices: choices});
 
-			menu.style.opacity = 1;			
-
-			menu.widget.setAction(function (id) {
-				if (menuHelper.configuration.left && menuHelper.configuration.left.label === id) {
-					menuHelper.configuration.left.action();
-				} else if (menuHelper.configuration.right && menuHelper.configuration.right.label === id) {
-					menuHelper.configuration.right.action();					
-				} 
-				F5.Global.flow.root.view.el.removeChild(menu);
-			});
-		}	
+				menu.widget.setAction(function (id) {
+					if (id) {
+						if (menuHelper.configuration.left && menuHelper.configuration.left.label === id) {
+							menuHelper.configuration.left.action();
+						} else if (menuHelper.configuration.right && menuHelper.configuration.right.label === id) {
+							menuHelper.configuration.right.action();					
+						}				
+					}
+					removeMenu();
+				});
+				menu.widget.present();
+			}			
+		}			
 	});	
+	
+	
+	function AndroidSettingsMenu() {
+		this.construct = function (data) {	
+
+			var that = this;
+
+			F5.addClass(this.el, 'f5androidsettingsmenu');
+			
+			F5.addTouchStartListener(this.el, function (e) {
+				e.stopPropagation();
+				if (that.action) {
+					that.action(null);
+				}
+			});
+			
+			this.container = document.createElement('div');
+			F5.addClass(this.container, 'f5androidsettingscontainer');
+			this.el.appendChild(this.container);
+
+			F5.forEach(data.choices, function (choice) {
+				var choiceEl = document.createElement('div');
+				F5.addClass(choiceEl, 'f5androidsetting');
+				choiceEl.innerText = choice;
+				that.container.appendChild(choiceEl);
+				F5.addTouchStartListener(choiceEl, function () {
+					if (that.action) {
+						that.action(choice);
+					}					
+				});
+			});					
+		};
+
+		this.setAction = function (cb) {
+			this.action = cb;
+		};
+		
+		this.present = function () {
+			var that = this;
+			F5.Global.flow.root.view.el.appendChild(this.el);				
+			setTimeout(function () {
+				that.container.style.opacity = 1;	
+				that.container.style['-webkit-transform'] = 'scale(1)';	
+			}, 0);
+			
+		};
+		
+		this.dismiss = function () {
+			var that = this;
+			F5.removeTouchEventListenersRecursive(this.el);			
+			setTimeout(function () {
+				that.container.style.opacity = 0;
+				that.container.style['-webkit-transform'] = '';					
+				// TODO: use transition end listener?
+				setTimeout(function () {
+					that.el.parentElement.removeChild(that.el);
+				}, 500);
+			});			
+			
+		};
+	}	
+
+	F5.WidgetPrototypes.AndroidSettingsMenu = new AndroidSettingsMenu();	
 });
 
 }());
