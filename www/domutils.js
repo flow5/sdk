@@ -29,7 +29,7 @@
 (function () {
 		
 	function startEventName() {
-		if (navigator.userAgent.match(/(iPhone)|(iPad)|(Android)/i)) {
+		if (F5.isMobile()) {
 			return 'touchstart';		
 		}
 		else {
@@ -38,7 +38,7 @@
 	}
 
 	function stopEventName() {
-		if (navigator.userAgent.match(/(iPhone)|(iPad)|(Android)/i)) {
+		if (F5.isMobile()) {
 			return 'touchend';		
 		}
 		else {
@@ -47,7 +47,7 @@
 	}
 
 	function moveEventName() {
-		if (navigator.userAgent.match(/(iPhone)|(iPad)|(Android)/i)) {
+		if (F5.isMobile()) {
 			return 'touchmove';		
 		}
 		else {
@@ -177,7 +177,7 @@
 	
 	F5.eventLocation = function(event) {
 		var x, y;
-		if (navigator.userAgent.match(/(iPhone)|(iPad)|(Android)/i)) {
+		if (F5.isMobile()) {
 			if (event.touches[0]) {
 				x = event.touches[0].screenX;
 				y = event.touches[0].screenY;					
@@ -275,36 +275,41 @@
 		}
 	};
 		
-	F5.setupScreenGeometry = function (isMobile, isNative) {		
-		if (isMobile) {						
+	F5.setupScreenGeometry = function (isMobile, isNative) {
+		if (isMobile && !isNative) {
 			var width, height;
-			if (screen.width > screen.height) {
-				width = screen.height;
-				height = screen.width;
+			if (window.innerWidth > window.innerHeight) {
+				width = window.innerHeight;
+				height = window.innerWidth;
 			} else {
-				width = screen.width;
-				height = screen.height;
+				width = window.innerWidth;
+				height = window.innerHeight;
 			}
-			var toolbar = 0;
+			var statusbar;
 			if (screen.width > screen.height) {
-				toolbar = screen.width - screen.availWidth;
+				statusbar = screen.width - screen.availWidth;
 			} else {
-				toolbar = screen.height - screen.availHeight;
+				statusbar = screen.height - screen.availHeight;
 			}
+			
+			// on iOS the window can be scrolled so that the location bar is clipped
+			// TODO: would love to be able to determine these sizes programtically but so far no luck
+			var portraitToolbar = 44;
+			var landscapeToolbar = 30;
 			
 			var style = document.createElement('style');			
 			style.innerHTML = '@media screen and (orientation: portrait)\n\
 								{\n\
 									.f5mobile #screen {\n\
 										width:' + screen.width + 'px;\n\
-										height:' + (screen.height - toolbar) + 'px;\n\
+										height:' + (screen.height - (statusbar + portraitToolbar)) + 'px;\n\
 									}\n\
 								}\n\
 								@media screen and (orientation: landscape)\n\
 								{\n\
 									.f5mobile #screen {\n\
 										width:' + screen.height + 'px;\n\
-										height:' + (screen.width - toolbar) + 'px;\n\
+										height:' + (screen.width - (statusbar + landscapeToolbar)) + 'px;\n\
 									}\n\
 								}';
 			document.head.appendChild(style);
@@ -331,8 +336,12 @@
 				height: el.offsetHeight};
 	};
 	
+	F5.isMobile = function () {
+		return navigator.userAgent.match(/(iPhone)|(iPad)|(Android)|(Silk)/i);
+	};
+	
 	F5.platform = function () {
-		if (navigator.userAgent.match(/(Android)|(iPad)/i)) {
+		if (navigator.userAgent.match(/(Android)|(Silk)/i)) {
 			return 'android';
 		} else {
 			return 'ios';

@@ -160,6 +160,8 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative, platform) {
 		document.head.appendChild(meta);
 	}
 	
+	// TODO: create a meta section in manifest for this stuff
+	
 	// standard meta
 	injectMeta({'http-equiv': 'Content-Type', content: 'text/html; charset=UTF-8'});
 	injectMeta({name: 'viewport', content: 'width=device-width initial-scale=1.0 maximum-scale=1.0 user-scalable=0'});
@@ -168,7 +170,7 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative, platform) {
 	injectMeta({name: 'apple-mobile-web-app-status-bar-style', content: 'black'});
 	injectMeta({name: 'apple-mobile-web-app-capable', content: 'yes'});
 
-	// Android experiment
+	// Android
 	injectMeta({name: 'viewport', content: 'target-densitydpi=device-dpi'});
 	
 	function injectLink(rel, href) {

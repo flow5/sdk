@@ -41,6 +41,7 @@
 				streetViewControl: false,
 				mapTypeControl: false
 			};
+									
 			this.map = new google.maps.Map(this.el, options);		
 			this.markers = [];								
 		};	

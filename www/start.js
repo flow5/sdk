@@ -31,7 +31,7 @@
 	
 	// detect mobile browser
 	var isMobile = false;
-	if (navigator.userAgent.match(/iPhone/) || navigator.userAgent.match(/iPad/) ||navigator.userAgent.match(/Android/)) {
+	if (F5.isMobile()) {
 		isMobile = true;
 		F5.addClass(document.body, 'f5mobile');
 	}	

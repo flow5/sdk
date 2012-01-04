@@ -2,11 +2,7 @@ package com.flow5.template;
 
 import org.xmlpull.v1.XmlPullParser;
 
-import android.content.res.Resources;
-import android.content.res.XmlResourceParser;
 import android.os.Bundle;
-import android.util.AttributeSet;
-import android.util.Xml;
 
 import com.flow5.framework.MDNSResolver;
 import com.phonegap.*;
@@ -20,6 +16,7 @@ public class F5templateActivity extends DroidGap {
         super.onCreate(savedInstanceState);
                 
         final F5templateActivity activity = this;
+        final MDNSResolver resolver = new MDNSResolver(this); 
         
         new Thread(new Runnable() {
 			@Override
@@ -41,8 +38,7 @@ public class F5templateActivity extends DroidGap {
 				} catch (Exception e) {
 					LOG.d("F5", e.getMessage());
 				}
-				
-				MDNSResolver resolver = new MDNSResolver();               
+								              
                 final String address = resolver.resolve(devservhostname);
                 
                 activity.runOnUiThread(new Runnable() {

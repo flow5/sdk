@@ -48,3 +48,10 @@ body {
 .f5navbar {
 	height: 3.66em;
 }
+
+/* for web map view, on high density devices google map default font size is too small */
+@media only screen and (-webkit-min-device-pixel-ratio: 1.5) {
+	.map {
+		zoom: 2;
+	}	
+}

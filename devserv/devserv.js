@@ -172,10 +172,10 @@ cli.main(function (args, options) {
 			
 			var agent = req.headers['user-agent'];
 			if (agent) {
-				isMobile = agent.match(/iPhone/) || agent.match(/iPad/) || agent.match(/Android/);				
+				isMobile = agent.match(/(iPhone)|(iPad)|(Android)|(Silk)/);				
 				if (agent.match(/iPhone/) || agent.match(/iPad/)) {
 					platform = 'ios';
-				} else if (agent.match(/Android/)) {
+				} else if (agent.match(/(Android)|(Silk)/)) {
 					platform = 'android';
 				}				
 			}

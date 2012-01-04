@@ -44,6 +44,11 @@
 		};				
 		
 		this.start = function () {	
+			if (!navigator.geolocation) {
+				return;
+			}
+			
+			
 			var that = this;
 					
 			var options = {

@@ -6,26 +6,24 @@ import java.net.MulticastSocket;
 
 import org.xbill.DNS.*;
 
+import android.app.Activity;
+
 
 public class MDNSResolver {
 	
-//    android.net.wifi.WifiManager.MulticastLock lock;
-//    android.os.Handler handler = new android.os.Handler();
+    android.net.wifi.WifiManager.MulticastLock lock;
 
-	public MDNSResolver() {
-		
-
-
+	public MDNSResolver(Activity activity) {
+	      android.net.wifi.WifiManager wifi = (android.net.wifi.WifiManager) activity.getSystemService(android.content.Context.WIFI_SERVICE);
+	      lock = wifi.createMulticastLock("mylockthereturn");
+	      lock.setReferenceCounted(true);	
 	}
 	
 	public String resolve(String localName) {
 		String result = null;
 		Record answer = null;
 		try {	
-//	      android.net.wifi.WifiManager wifi = (android.net.wifi.WifiManager) getSystemService(android.content.Context.WIFI_SERVICE);
-//	      lock = wifi.createMulticastLock("mylockthereturn");
-//	      lock.setReferenceCounted(true);
-//	      lock.acquire();
+		    lock.acquire();	      
 			
 			Name name = Name.fromString(localName);
 				
@@ -61,13 +59,13 @@ public class MDNSResolver {
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
-			}	
+			} finally {
+			    lock.release();  
+			}
 		 
 		if (answer != null) {
 			 result = ((ARecord)answer).getAddress().getHostAddress();			
-		}
-		 
-//     lock.release();
+		} 
 		
 		return result;
 	}
