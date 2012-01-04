@@ -84,6 +84,7 @@ exports.iosScripts = [
 
 exports.androidScripts = [
 	'nobridge.js',
+	'android.js',
 	'widgets/navbar_web.js',
 	'widgets/mapview_web.js'
 ];
