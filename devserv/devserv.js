@@ -166,6 +166,7 @@ cli.main(function (args, options) {
 			var isDebug = (parsed.query.debug === 'true');
 			var isNative = (parsed.query['native'] === 'true');
 			var doInline = (parsed.query['inline'] === 'true');
+			var doCompress = (parsed.query['compress'] === 'true');
 			
 			var isMobile = false; 
 			var platform = 'web';
@@ -183,7 +184,7 @@ cli.main(function (args, options) {
 			if (req.url.indexOf('generate?') !== -1) {
 				try {
 					var html = generator.generateHtml(app, isDebug, doInline, isMobile, isNative, platform);
-					if (isDebug || !isMobile) {
+					if (!doCompress && (isDebug || !isMobile)) {
 						res.writeHead(200, {'Content-Type': 'text/html'});
 						res.write(html);
 						res.end();					
