@@ -85,18 +85,17 @@ F5.addF5ReadyListener(function () {
 			removeMenu();
 		} else {
 			if (menuHelper.configuration.left || menuHelper.configuration.right) {
-				menu = document.createElement('div');
-				menu.setAttribute('f5widget', 'AndroidSettingsMenu');
-				var choices = [];
+				
+				var data = {choices:[]};
 				if (menuHelper.configuration.left) {
-					choices.push(menuHelper.configuration.left.label);
+					data.choices.push(menuHelper.configuration.left.label);
 				}
 				if (menuHelper.configuration.right) {
-					choices.push(menuHelper.configuration.right.label);
+					data.choices.push(menuHelper.configuration.right.label);
 				}
 
-				F5.attachWidget(menu, {choices: choices});
-
+				menu = F5.createWidget('AndroidSettingsMenu', data);
+				
 				menu.widget.setAction(function (id) {
 					if (id) {
 						if (menuHelper.configuration.left && menuHelper.configuration.left.label === id) {

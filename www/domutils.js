@@ -363,6 +363,16 @@
 		widget.construct(data);		
 	};	
 	
+	F5.createWidget = function(f5widget, data, f5id) {
+		var el = document.createElement('div');
+		el.setAttribute('f5widget', f5widget);
+		if (f5id) {
+			el.setAttribute('f5id', f5id);			
+		}
+		F5.attachWidget(el, data);
+		return el;		
+	};
+	
 	F5.getElementById = function (el, f5id) {
 		var result = el.querySelector('[f5id=' + f5id + ']');
 		F5.assert(result, 'Did not find element with f5id=' + f5id + ' in: ' + el.outerHTML);

@@ -32,12 +32,10 @@
 		
 		this.construct = function (data) {
 			this.streetView = new google.maps.StreetViewPanorama(this.el, {pano:data.pano});
+						
+			this.closeButton = F5.createWidget('ImageButton', data, 'closeButton');
+			F5.addClass(this.closeButton, 'f5closebutton');
 			
-			this.closeButton = document.createElement('div');	
-			this.closeButton.className = 'f5closebutton';
-			this.closeButton.setAttribute('f5id', 'closeButton');
-			this.closeButton.setAttribute('f5widget', 'ImageButton');
-			F5.attachWidget(this.closeButton, data);
 			F5.setStyles(this.closeButton, {
 				position: 'absolute',
 				top: '3px',

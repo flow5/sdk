@@ -270,10 +270,9 @@
 		};			
 		
 		this.startSubflow = function (subflow) {
-			
-			subflow.menu = document.createElement('div');
-			subflow.menu.setAttribute('f5widget', 'Menu');
-			F5.attachWidget(subflow.menu, {method: subflow.method, choices: subflow.choices});
+						
+			var data = {method: subflow.method, choices: subflow.choices};
+			subflow.menu = F5.createWidget('Menu', data);
 			
 			F5.Global.flow.root.view.el.appendChild(subflow.menu);	
 			

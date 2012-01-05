@@ -74,15 +74,11 @@
 			F5.forEach(findTabs(this.el), function (el) {
 				var id = el.getAttribute('f5_tab');
 			
-				var tab = document.createElement('div');
-				tab.setAttribute('f5widget', 'TabButton');
-				tab.setAttribute('f5id', id);								
+				var tab = F5.createWidget('TabButton', data, id);
+												
 				F5.addClass(tab, 'tab');
-
+				tabset.appendChild(tab);								
 				that.tabs[id] = tab;
-				tabset.appendChild(tab);
-								
-				F5.attachWidget(tab, data);				
 
 				tab.widget.setAction(function (e) {
 					// do the action first. if it errors out, the state of the
