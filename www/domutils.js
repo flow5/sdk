@@ -362,6 +362,12 @@
 		}
 		widget.construct(data);		
 	};	
+	
+	F5.getElementById = function (el, f5id) {
+		var result = el.querySelector('[f5id=' + f5id + ']');
+		F5.assert(result, 'Did not find element with f5id=' + f5id + ' in: ' + el.outerHTML);
+		return result;
+	};
 		
 }());
 

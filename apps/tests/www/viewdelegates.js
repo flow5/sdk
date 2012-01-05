@@ -38,7 +38,7 @@
 		this.initialize = function (el, node) {
 			el.appendChild(F5.Templates.loadTemplate(node));
 			
-			var buttonEl = el.querySelector('[f5id=wait]');
+			var buttonEl = F5.getElementById(el, 'wait');
 
 			var firstTime = true;			
 			var times = [];									

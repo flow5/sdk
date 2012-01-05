@@ -36,13 +36,13 @@
 		var viewerbuttonEl = F5.Templates.loadTemplate('viewerbutton');
 		document.body.appendChild(viewerbuttonEl);
 
-		var viewerEl = viewerframeEl.querySelector('[f5id=viewer]'),
-			svgframeEl = viewerframeEl.querySelector('[f5id=svgframe]'),
-			jsonframeEl = viewerframeEl.querySelector('[f5id=jsonframe]'),
-			jsonbuttonEl = viewerframeEl.querySelector('[f5id=jsonbutton]'),
-			framesbuttonEl = viewerframeEl.querySelector('[f5id=framesbutton]'),
-			resetbuttonEl = viewerframeEl.querySelector('[f5id=resetbutton]'),
-			backbuttonEl = viewerframeEl.querySelector('[f5id=backbutton]');
+		var viewerEl = F5.getElementById(viewerframeEl, 'viewer'),
+			svgframeEl = F5.getElementById(viewerframeEl, 'svgframe'),
+			jsonframeEl = F5.getElementById(viewerframeEl, 'jsonframe'),
+			jsonbuttonEl = F5.getElementById(viewerframeEl, 'jsonbutton'),
+			framesbuttonEl = F5.getElementById(viewerframeEl, 'framesbutton'),
+			resetbuttonEl = F5.getElementById(viewerframeEl, 'resetbutton'),
+			backbuttonEl = F5.getElementById(viewerframeEl, 'backbutton');
 
 		var sequenceNumber = 0;
 		function update() {	
