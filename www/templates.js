@@ -28,6 +28,8 @@
 
 (function () {	
 			
+	// TODO: I think make this explicit with
+	// loadTemplateByName and loadTemplateForNode
 	function loadTemplate(arg1, arg2) {
 		
 		var id;
