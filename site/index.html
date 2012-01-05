@@ -38,14 +38,12 @@ body {
 
 .text {
 	display: -webkit-box;
-	-webkit-background-clip: text;
 	font-family: 'Geo', sans-serif;
-	color: transparent;
 	font-size: 268px;
 	height: 256px;
-	-webkit-text-stroke: .5px black;
+	-webkit-text-stroke: 6px black;
 	padding-left: 12px;
-	color: black;
+	color: #252525;
 }
 
 .letter {
@@ -73,17 +71,36 @@ body {
 		to(#000));	
 }
 
-.over {
-	height: 66px;
+.over.white {
+	height: 119px;
 	overflow: hidden;
 	position: absolute;
-	top: 104px;
+	top: 72px;
 	left: 0px;
 }
 
-.over .text {
-	margin-top: -104px;
+.over.white .text {
+	margin-top: -72px;
+}
+
+.over.white .text {
 	color: white;	
+}
+
+.over.grey {
+	height: 30px;
+	overflow: hidden;
+	position: absolute;
+	top: 190px;
+	left: 0px;
+}
+
+.over.grey .text {
+	margin-top: -190px;
+}
+
+.over.grey .text {
+	color: #252525;	
 }
 
 #badgeContainer {
@@ -94,7 +111,8 @@ body {
 </head>
 
 <body>
-	
+
+<!-- sadly, android doesn't do text mask. so fake it -->
 <div id='panel' style='opacity:0;'>
 	<div class='text'>
 		<div class='letter'>F</div>
@@ -102,7 +120,15 @@ body {
 		<div class='letter'>o</div>
 		<div class='letter'>w</div>
 	</div>
-	<div class='over'>
+	<div class='over white'>
+		<div class='text'>
+			<div class='letter'>F</div>
+			<div class='letter'>l</div>
+			<div class='letter'>o</div>
+			<div class='letter'>w</div>
+		</div>
+	</div>
+	<div class='over grey'>
 		<div class='text'>
 			<div class='letter'>F</div>
 			<div class='letter'>l</div>
