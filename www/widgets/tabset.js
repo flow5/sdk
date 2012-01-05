@@ -37,7 +37,7 @@
 		function findTabs(el) {
 			var tabs = [];
 			F5.forEach(el.childNodes, function (child) {
-				if (child.getAttribute('f5_tab')) {
+				if (child.getAttribute && child.getAttribute('f5_tab')) {
 					tabs.push(child);
 				}
 			});
@@ -61,14 +61,7 @@
 		
 			var tabset = document.createElement('div');
 			F5.addClass(tabset, 'tabset');
-			
-			var position = that.el.getAttribute('f5_tabset_position');
-			if (position && position === 'top') {
-				that.el.insertBefore(tabset, that.el.childNodes[0]);
-			} else {
-				that.el.appendChild(tabset);				
-			}
-					
+								
 			that.tabs = {};
 		
 			F5.forEach(findTabs(this.el), function (el) {
@@ -91,7 +84,14 @@
 						tab.widget.setState(tabid === id);
 					});					
 				});				
-			});			
+			});	
+			
+			var position = that.el.getAttribute('f5_tabset_position');
+			if (position && position === 'top') {
+				that.el.insertBefore(tabset, that.el.childNodes[0]);
+			} else {
+				that.el.appendChild(tabset);				
+			}					
 		};
 	
 		this.setAction = function (cb) {

@@ -27,119 +27,7 @@
 /*global F5*/
 
 (function () {	
-	var buildViewForNode;
-	
-	function ViewPrototype() {
-		this.ConstructView = function (node) {	
-
-			var that = this;
-																
-			var div = document.createElement('div');
-			F5.addClass(div, 'f5' + node.type);
-			div.id = node.path;
-			div.view = this;
-
-			// TODO: node.id should always exist after subflow reworkd is done
-			if (node.id) {
-				F5.addClass(div, node.id);				
-			}
-						
-			that.el = div;			
-			that.node = node;
-			node.view = that;
-			
-			
-			var viewDelegatePrototype = F5.ViewDelegates[node.id];
-			if (!viewDelegatePrototype) {
-				viewDelegatePrototype = F5.DefaultViewDelegates[that.node.type];
-			}			
-			that.delegate = F5.objectFromPrototype(viewDelegatePrototype);
-						
-						
-			if (node.children) {
-				var container = document.createElement('div');
-				F5.addClass(container, 'f5container');
-				that.el.appendChild(container);	
-
-				if (node.type === 'switcher' || node.type === 'set') {
-					F5.forEach(node.children, function (id, child) {
-						buildViewForNode(child);
-						container.appendChild(child.view.el);
-					});					
-				} else {
-					buildViewForNode(node.selection);
-					container.appendChild(node.selection.view.el);
-				}
-			}
-
-			that.delegate.initialize(that.el, that.node);
-			
-			if (!node.active) {
-				div.style.visibility = 'hidden';
-			}										
-		};
-				
-		this.viewWillBecomeActive = function () {
-			if (this.delegate.viewWillBecomeActive) {
-				this.delegate.viewWillBecomeActive(this.el, this.node);
-			}			
-		};
 		
-		this.viewWillBecomeInactive = function () {
-			if (this.delegate.viewWillBecomeInactive) {
-				this.delegate.viewWillBecomeInactive(this.el, this.node);
-			}			
-		};
-		
-		this.viewDidBecomeActive = function () {
-			if (this.delegate.viewDidBecomeActive) {
-				this.delegate.viewDidBecomeActive(this.el, this.node);
-			}						
-		};
-		
-		this.viewDidBecomeInactive = function () {
-			if (this.delegate.viewDidBecomeInactive) {
-				this.delegate.viewDidBecomeInactive(this.el, this.node);
-			}						
-		};
-		
-		this.getNavConfig = function () {
-			if (this.delegate.getNavConfig) {
-				return this.delegate.getNavConfig(this.node);
-			} else {
-				if (this.node.back) {
-					var leaf = this.node.back;
-					while (leaf.selection) {
-						leaf = leaf.selection;
-					}
-										
-					return {
-						left: {
-							label: leaf.id, 
-							transition: 'back'
-						}											
-					};
-				} else {
-					return null;
-				}				
-			}
-		};
-		
-		// OPTION: can use display:none for lower memory construction or z-index: -1 for speed
-		this.show = function () {
-			this.el.visibility = '';
-		};
-		
-		this.hide = function () {
-			this.el.visibility = 'hidden';
-		};
-	}
-	var viewPrototype = new ViewPrototype();
-	buildViewForNode = function (node) {
-		F5.objectFromPrototype(viewPrototype).ConstructView(node);
-	};
-
-			
 	function ViewController(flow, screenFrame) {
 		
 		F5.Global.flowController.addFlowObserver(this);						
@@ -178,7 +66,7 @@
 
 		this.nodeWillBecomeActive = function (node) {
 			if (!node.view) {
-				buildViewForNode(node);
+				F5.objectFromPrototype(F5.Views[node.type]).initialize(node);
 				if (node === F5.Global.flow.root) {
 					screenFrame.appendChild(node.view.el);
 				} else {
@@ -199,9 +87,7 @@
 				F5.Global.navigationController.doSelection(node, id);
 			}				
 			
-			if (node.view.delegate.doSelection) {
-				node.view.delegate.doSelection(node, id);
-			}												
+			node.view.doSelection(node, id);
 			
 			var oldEl = document.getElementById(node.selection.path);
 			var newEl = document.getElementById(node.children[id].path);

@@ -349,10 +349,13 @@
 		}
 	};
 	
-	F5.attachWidget = function(el, data) {
-		var type = el.getAttribute('f5widget');
-		F5.assert(F5.WidgetPrototypes[type], 'No widget: ' + type);
-		var widget = F5.objectFromPrototype(F5.WidgetPrototypes[type]);
+	F5.attachWidget = function(el, f5widget, data) {
+		// NOTE: this is just for readability in the DOM inspector
+		if (!el.getAttribute('f5widget')) {
+			el.setAttribute('f5widget', f5widget);
+		}
+		F5.assert(F5.WidgetPrototypes[f5widget], 'No widget: ' + f5widget);
+		var widget = F5.objectFromPrototype(F5.WidgetPrototypes[f5widget]);
 		widget.el = el;
 		el.widget = widget;
 		
@@ -365,11 +368,10 @@
 	
 	F5.createWidget = function(f5widget, data, f5id) {
 		var el = document.createElement('div');
-		el.setAttribute('f5widget', f5widget);
 		if (f5id) {
 			el.setAttribute('f5id', f5id);			
 		}
-		F5.attachWidget(el, data);
+		F5.attachWidget(el, f5widget, data);
 		return el;		
 	};
 	
@@ -377,6 +379,16 @@
 		var result = el.querySelector('[f5id=' + f5id + ']');
 		F5.assert(result, 'Did not find element with f5id=' + f5id + ' in: ' + el.outerHTML);
 		return result;
+	};
+	
+	F5.attachTabset = function (el, node, position) {
+		el.setAttribute('f5_tabset_position', position);						
+		F5.attachWidget(el, 'Tabset', F5.getNodeData(node));
+		
+		el.widget.setAction(function selectionChangeCb(id) {
+			F5.Global.flowController.doSelection(node, id);					
+		});
+		el.widget.select(node.selection.id);		
 	};
 		
 }());

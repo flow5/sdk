@@ -45,7 +45,7 @@ public class F5templateActivity extends DroidGap {
 					@Override
 					public void run() {
 						String url = "http://" + address + ":8008/generate?app=jitc&native=true&inline=true&debug=true";											
-						url = ("file:///android_asset/index.html");
+//						url = ("file:///android_asset/index.html");
 						LOG.d("F5", url);
 		                activity.loadUrl(url);					
 					}

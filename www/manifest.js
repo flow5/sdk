@@ -30,7 +30,7 @@ exports.scripts = [
 	'utils.js',
 	'domutils.js',
 	'animation.js',
-	'defaultviewdelegates.js', // TODO: move this to debugScripts?
+	'views.js',
 	'flow.js',
 	'flowcontroller.js',
 	'3p/Iuppiter.js',
