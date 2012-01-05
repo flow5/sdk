@@ -75,8 +75,8 @@
 				var id = el.getAttribute('f5_tab');
 			
 				var tab = document.createElement('div');
-				tab.setAttribute('f5_widget', 'TabButton');
-				tab.setAttribute('f5_id', id);								
+				tab.setAttribute('f5widget', 'TabButton');
+				tab.setAttribute('f5id', id);								
 				F5.addClass(tab, 'tab');
 
 				that.tabs[id] = tab;

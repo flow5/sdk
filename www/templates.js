@@ -44,11 +44,11 @@
 		
 		var widgetEls = [];
 		
-		if (instance.hasAttribute('f5_widget')) {
+		if (instance.hasAttribute('f5widget')) {
 			widgetEls.push(instance);
 		}
 
-		F5.forEach(instance.querySelectorAll('[f5_widget]'), function (el) {
+		F5.forEach(instance.querySelectorAll('[f5widget]'), function (el) {
 			widgetEls.push(el);			
 		});
 		

@@ -187,10 +187,11 @@
 			}	
 		}		
 		else {
-			// divide by 2 in browser because of the use of zoom: 2 on the 'screen' div
-			// TODO: link this and the zoom level. annoying
-			x = event.clientX / 2;
-			y = event.clientY / 2; 
+			// in browser, there may be a zoom on the screen element
+			// TODO: cache this value
+			var zoom = window.getComputedStyle(document.getElementById('screen')).zoom;
+			x = event.clientX / zoom;
+			y = event.clientY / zoom; 
 		}	
 
 		return {x: x, y: y};
@@ -349,7 +350,7 @@
 	};
 	
 	F5.attachWidget = function(el, data) {
-		var type = el.getAttribute('f5_widget');
+		var type = el.getAttribute('f5widget');
 		F5.assert(F5.WidgetPrototypes[type], 'No widget: ' + type);
 		var widget = F5.objectFromPrototype(F5.WidgetPrototypes[type]);
 		widget.el = el;

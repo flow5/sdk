@@ -30,7 +30,7 @@
 	
 	function Picture() {
 		this.construct = function (data) {
-			var id = this.el.getAttribute('f5_id');
+			var id = this.el.getAttribute('f5id');
 			var url = F5.valueFromId(data, id);
 			if (url) {
 				var img = document.createElement('img');

@@ -45,8 +45,8 @@
 
 			F5.forEach(data.choices, function (id, choice) {
 				var choiceEl = document.createElement('div');
-				choiceEl.setAttribute('f5_widget', 'ImageButton');
-				choiceEl.setAttribute('f5_id', 'choice');
+				choiceEl.setAttribute('f5widget', 'ImageButton');
+				choiceEl.setAttribute('f5id', 'choice');
 				F5.addClass(choiceEl, 'do-choice');
 				choicesEl.appendChild(choiceEl);
 

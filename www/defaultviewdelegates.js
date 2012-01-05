@@ -48,8 +48,8 @@
 						
 						var subflowEl = document.createElement('div');
 						F5.addClass(subflowEl, 'do-subflow');
-						subflowEl.setAttribute('f5_widget', 'ImageButton');
-						subflowEl.setAttribute('f5_id', 'id');
+						subflowEl.setAttribute('f5widget', 'ImageButton');
+						subflowEl.setAttribute('f5id', 'id');
 						subflowsEl.appendChild(subflowEl);	
 						
 						F5.attachWidget(subflowEl, {id: id});
@@ -72,8 +72,8 @@
 
 				F5.forEach(node.transitions, function (id, transition) {
 					var transitionEl = document.createElement('div');
-					transitionEl.setAttribute('f5_id', 'id');
-					transitionEl.setAttribute('f5_widget', 'ImageButton');
+					transitionEl.setAttribute('f5id', 'id');
+					transitionEl.setAttribute('f5widget', 'ImageButton');
 					F5.addClass(transitionEl, 'do-transition');
 					transitionsEl.appendChild(transitionEl);	
 
@@ -96,7 +96,7 @@
 			F5.forEach(node.children, function (id, child) {
 				child.view.el.setAttribute('f5_tab', id);
 			});			
-			el.setAttribute('f5_widget', 'Tabset');
+			el.setAttribute('f5widget', 'Tabset');
 
 			// FIX: part of the tab set problem
 			// want to declare position in the html template

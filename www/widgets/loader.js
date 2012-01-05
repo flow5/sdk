@@ -1,4 +1,4 @@
-<!--
+/***********************************************************************************************************************
 
 	Copyright (c) 2011 Paul Greyson
 
@@ -23,11 +23,16 @@
 	FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR 
 	OTHER DEALINGS IN THE SOFTWARE.
 
--->
+***********************************************************************************************************************/
+/*global F5*/
 
-
-<div id='root'>
+(function () {	
+	function Loader() {		
+		this.construct = function (data) {			
+			var template = F5.Templates.loadTemplate(this.el.getAttribute('f5template'));
+			this.el.appendChild(template);
+		};
+	}
 	
-<div f5id='wait' f5widget='ImageButton'></div>
-	
-</div>
+	F5.WidgetPrototypes.Loader = new Loader();	
+}());

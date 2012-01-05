@@ -86,7 +86,7 @@ F5.addF5ReadyListener(function () {
 		} else {
 			if (menuHelper.configuration.left || menuHelper.configuration.right) {
 				menu = document.createElement('div');
-				menu.setAttribute('f5_widget', 'AndroidSettingsMenu');
+				menu.setAttribute('f5widget', 'AndroidSettingsMenu');
 				var choices = [];
 				if (menuHelper.configuration.left) {
 					choices.push(menuHelper.configuration.left.label);

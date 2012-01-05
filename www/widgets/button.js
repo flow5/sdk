@@ -50,13 +50,13 @@
 				}
 			}
 			
-			f5_id: {
+			f5id: {
 				ButtonF5Id: <string>
 			}
 			
 				OR
 			
-			f5_id: {
+			f5id: {
 				label: <string>,
 				image: {
 					up: <url>,
@@ -66,7 +66,7 @@
 		}
 		
 		this allows button styles to be defined at any scope using ButtonClass (Toggle, Temporary, Tab)
-		or to be defined for a specific button using f5_id or a combination (probably label for f5_id and 
+		or to be defined for a specific button using f5id or a combination (probably label for f5id and 
 		images for ButtonClass)	
 		
 		while CSS can be used to set button dimensions, buttons should be allowed to take dimensions from
@@ -195,7 +195,7 @@
 			}
 			
 			// then override with styles for the instance
-			applyValue(data[this.el.getAttribute('f5_id')]);			
+			applyValue(data[this.el.getAttribute('f5id')]);			
 		};
 		
 		this.setAction = function (cb) {
@@ -285,7 +285,7 @@
 			}
 
 			// then override with styles for the instance
-			applyValue(data[this.el.getAttribute('f5_id')]);			
+			applyValue(data[this.el.getAttribute('f5id')]);			
 		};		
 	}
 	MaskButton.prototype = new Button();						

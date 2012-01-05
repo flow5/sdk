@@ -149,7 +149,7 @@
 						
 			function doWidgetLifecycleEventRecursive(el, event) {
 				F5.forEach(el.childNodes, function doWidgetLifecycleEvent(childEl) {
-					if (childEl.getAttribute && childEl.getAttribute('f5_widget')) {
+					if (childEl.getAttribute && childEl.getAttribute('f5widget')) {
 						if (childEl.widget['widget' + event]) {
 							childEl.widget['widget' + event]();							
 						}
@@ -239,7 +239,7 @@
 		};	
 		
 		this.release = function (node) {
-			F5.forEach(node.view.el.querySelectorAll('[f5_widget]'), function (el) {
+			F5.forEach(node.view.el.querySelectorAll('[f5widget]'), function (el) {
 				if (el.widget.release) {
 					el.widget.release();
 				}
@@ -272,7 +272,7 @@
 		this.startSubflow = function (subflow) {
 			
 			subflow.menu = document.createElement('div');
-			subflow.menu.setAttribute('f5_widget', 'Menu');
+			subflow.menu.setAttribute('f5widget', 'Menu');
 			F5.attachWidget(subflow.menu, {method: subflow.method, choices: subflow.choices});
 			
 			F5.Global.flow.root.view.el.appendChild(subflow.menu);	

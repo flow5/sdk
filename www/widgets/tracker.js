@@ -36,15 +36,17 @@
 			var tracking;
 			var startLocation;
 			var startTransform;
+			
+			var constrain = this.el.getAttribute('f5constrain');
 
 			function moveHandler(e) {
 				var currentLocation = F5.eventLocation(e);
 				if (tracking) {
-					var deltaX = currentLocation.x - startLocation.x;
-					var deltaY = currentLocation.y - startLocation.y;
+					var deltaX = constrain === 'vertical' ? 0 : currentLocation.x - startLocation.x;
+					var deltaY = constrain === 'horizontal' ? 0 : currentLocation.y - startLocation.y;
 					that.el.style['-webkit-transform'] = 'translate3d(' + (deltaX + startTransform.x) +
-							'px,' + (deltaY + startTransform.y) + 'px, 0px)';								
-
+							'px,' + (deltaY + startTransform.y) + 'px, 0px)';	
+							
 					if (that.cb) {
 						that.cb({x: deltaX, y: deltaY}, currentLocation, startLocation);
 					}

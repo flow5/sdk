@@ -30,7 +30,7 @@
 	
 	function StaticText() {
 		this.construct = function (data) {
-			var id = this.el.getAttribute('f5_id');
+			var id = this.el.getAttribute('f5id');
 			var value = F5.valueFromId(data, id);
 			if (value) {
 				this.el.innerText = value;				
@@ -43,7 +43,7 @@
 	
 	function Telephone() {
 		this.construct = function (data) {
-			var id = this.el.getAttribute('f5_id');
+			var id = this.el.getAttribute('f5id');
 			var value = F5.valueFromId(data, id);
 			if (value) {
 				this.el.innerText = value;
