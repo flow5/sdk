@@ -277,7 +277,15 @@
 	};
 		
 	F5.setupScreenGeometry = function (isMobile, isNative) {
-		if (isMobile && !isNative) {
+		var geometry = F5.getURLParameters()['geometry'];
+		var style;
+		if (geometry) {
+			var size = geometry.split('x');
+			style = document.createElement('style');
+			var zoom = size[1] > 480 ? 1 : 2;
+			style.innerHTML = '#screen {width:' + size[0] + 'px; height:' + size[1] + 'px; zoom: ' + zoom + ';';
+			document.head.appendChild(style);
+		} else if (isMobile && !isNative) {
 			var width, height;
 			if (window.innerWidth > window.innerHeight) {
 				width = window.innerHeight;
@@ -298,7 +306,7 @@
 			var portraitToolbar = 44;
 			var landscapeToolbar = 30;
 			
-			var style = document.createElement('style');			
+			style = document.createElement('style');			
 			style.innerHTML = '@media screen and (orientation: portrait)\n\
 								{\n\
 									.f5mobile #screen {\n\
@@ -342,11 +350,16 @@
 	};
 	
 	F5.platform = function () {
-		if (navigator.userAgent.match(/(Android)|(Silk)/i)) {
-			return 'android';
-		} else {
-			return 'ios';
+		var platform = F5.getURLParameters()['platform'];
+		
+		if (!platform) {
+			if (navigator.userAgent.match(/(Android)|(Silk)/i)) {
+				platform = 'android';
+			} else {
+				platform = 'ios';
+			}			
 		}
+		return platform;
 	};
 	
 	F5.attachWidget = function(el, f5widget, data) {
