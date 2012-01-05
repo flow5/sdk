@@ -29,25 +29,11 @@ body {
 	background-image: -webkit-gradient(linear, 50% 100%, center top, 
 		from(#BBB), 
 		color-stop(0.25,#BBB),
-		color-stop(0.25,#444),
-		color-stop(.725,#444),
+		color-stop(0.25,#333),
+		color-stop(.725,#333),
 		color-stop(.725,#BBB),
 		to(#BBB));
 	overflow: hidden;
-}
-
-.text {
-	display: -webkit-box;
-	font-family: 'Geo', sans-serif;
-	font-size: 268px;
-	height: 256px;
-	-webkit-text-stroke: 6px black;
-	padding-left: 12px;
-	color: #252525;
-}
-
-.letter {
-	-webkit-transform: matrix3d(1, 0, 0, 0, 0.0, 1, 0, 0.0008, 0, 0, 1, 0, 0, -0, 0, 1);	
 }
 
 #badge {
@@ -63,16 +49,33 @@ body {
 .gradient {
 	position: relative;
 	background-image: -webkit-gradient(linear, 50% 100%, center top, 
-		from(#000), 
-		color-stop(0.25,#000),
-		color-stop(0.25,#FFF),
-		color-stop(.725,#FFF),
-		color-stop(.725,#000),
-		to(#000));	
+		from(#1C1C1C), 
+		color-stop(0.25,#1C1C1C),
+		color-stop(0.25,#FAFAFA),
+		color-stop(.725,#FAFAFA),
+		color-stop(.725,#1C1C1C),
+		to(#1C1C1C));	
+}
+
+.text {
+	display: -webkit-box;
+	font-family: 'Geo', sans-serif;
+	font-size: 268px;
+	height: 256px;
+	padding-left: 12px;
+	color: #252525;
+}
+.text.main {
+	-webkit-text-stroke: 8px #dadada;	
+}
+
+
+.letter {
+	-webkit-transform: matrix3d(1, 0, 0, 0, 0.0, 1, 0, 0.0008, 0, 0, 1, 0, 0, -0, 0, 1);	
 }
 
 .over.white {
-	height: 120px;
+	height: 121px;
 	overflow: hidden;
 	position: absolute;
 	top: 71px;
@@ -81,10 +84,8 @@ body {
 
 .over.white .text {
 	margin-top: -71px;
-}
-
-.over.white .text {
-	color: white;	
+	-webkit-text-stroke: 8px #252525;	
+	color: #FAFAFA;	
 }
 
 .over.grey {
@@ -97,10 +98,8 @@ body {
 
 .over.grey .text {
 	margin-top: -192px;
-}
-
-.over.grey .text {
 	color: #252525;	
+	-webkit-text-stroke: 8px #dadada;			
 }
 
 #badgeContainer {
@@ -114,7 +113,7 @@ body {
 
 <!-- sadly, android doesn't do text mask. so fake it -->
 <div id='panel' style='opacity:0;'>
-	<div class='text'>
+	<div class='text main'>
 		<div class='letter'>F</div>
 		<div class='letter'>l</div>
 		<div class='letter'>o</div>
