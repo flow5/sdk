@@ -40,13 +40,13 @@
 			function moveHandler(e) {
 				var currentLocation = F5.eventLocation(e);
 				if (tracking) {
-					var deltaH = currentLocation.x - startLocation.x;
+					var deltaX = currentLocation.x - startLocation.x;
 					var deltaY = currentLocation.y - startLocation.y;
-					that.el.style['-webkit-transform'] = 'translate3d(' + (deltaH + startTransform.x) +
+					that.el.style['-webkit-transform'] = 'translate3d(' + (deltaX + startTransform.x) +
 							'px,' + (deltaY + startTransform.y) + 'px, 0px)';								
 
 					if (that.cb) {
-						that.cb({deltaH: deltaH, deltaY: deltaY});
+						that.cb({x: deltaX, y: deltaY}, currentLocation, startLocation);
 					}
 				}
 			}
