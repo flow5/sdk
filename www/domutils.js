@@ -347,6 +347,20 @@
 			return 'ios';
 		}
 	};
+	
+	F5.attachWidget = function(el, data) {
+		var type = el.getAttribute('f5_widget');
+		F5.assert(F5.WidgetPrototypes[type], 'No widget: ' + type);
+		var widget = F5.objectFromPrototype(F5.WidgetPrototypes[type]);
+		widget.el = el;
+		el.widget = widget;
+		
+		var className = el.getAttribute('f5_class');
+		if (className) {
+			F5.addClass(el, className);
+		}
+		widget.construct(data);		
+	};	
 		
 }());
 

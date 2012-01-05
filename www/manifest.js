@@ -48,6 +48,7 @@ exports.scripts = [
 	'widgets/streetview.js',
 	'widgets/distance.js',
 	'widgets/menu.js',
+	'widgets/tracker.js',
 	'widgets/scroller.js'
 ];
 

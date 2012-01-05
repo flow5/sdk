@@ -44,8 +44,6 @@
 			resetbuttonEl = viewerframeEl.querySelector('[f5_id=resetbutton]'),
 			backbuttonEl = viewerframeEl.querySelector('[f5_id=backbutton]');
 
-		F5.UI.attachTracker(svgframeEl);
-
 		var sequenceNumber = 0;
 		function update() {	
 			F5.setStyles(backbuttonEl, {
