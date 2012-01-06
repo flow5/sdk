@@ -28,6 +28,27 @@
 
 (function () {
 	
+	// NOTE: TabButton shouldn't be used standalone
+	function TabButton() {
+		this.state = false;			
+		
+		/* for tab button, the state is managed by the owning tabset */
+		this.setAction = function (cb) {
+			var that = this;
+			F5.addTouchStartListener(this.el, function touchStartListenerCb(e) {
+				e.stopPropagation();
+				if (!that.state) {
+					// do the callback first
+					// if it errors out the state doesn't change
+					cb();
+				}
+			});						
+		};
+	}
+	TabButton.prototype = F5.WidgetPrototypes.Button;
+	
+	F5.WidgetPrototypes._TabButton = new TabButton();	
+	
 	// Tabset works by looking for elements with f5tab attribute set
 	// TODO: customize with images or alternate text
 	// TODO: can't really go querySelectorAll since there might be nested tab sets
@@ -67,7 +88,7 @@
 			F5.forEach(findTabs(this.el), function (el) {
 				var id = el.getAttribute('f5tab');
 			
-				var tab = F5.createWidget('TabButton', data, id);
+				var tab = F5.createWidget('_TabButton', data, id);
 												
 				F5.addClass(tab, 'f5tab');
 				tabset.appendChild(tab);								

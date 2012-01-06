@@ -121,10 +121,11 @@
 	border: 2px solid white;
 }
 
-
-.backbutton {
+.viewerframe .backbutton .f5button-label {
 	font-size: .40em;
+	margin-top: -.3em;	
 }
+
 
 .arrow {
 	margin-top:-.20em;

@@ -26,53 +26,7 @@
 ***********************************************************************************************************************/
 /*global F5*/
 
-(function () {
-	
-	/*
-		data schema:
-			
-		nodeId: {
-			ButtonClass: {
-				image: {
-					up: <url>,
-					down: <url>
-				}
-				
-					OR
-					
-				image: {
-					up: {
-						left: <url>,
-						middle: <url>,
-						right: <url>
-					},
-					down: etc.
-				}
-			}
-			
-			f5id: {
-				ButtonF5Id: <string>
-			}
-			
-				OR
-			
-			f5id: {
-				label: <string>,
-				image: {
-					up: <url>,
-					down: <url>
-				}
-			}
-		}
-		
-		this allows button styles to be defined at any scope using ButtonClass (Toggle, Temporary, Tab)
-		or to be defined for a specific button using f5id or a combination (probably label for f5id and 
-		images for ButtonClass)	
-		
-		while CSS can be used to set button dimensions, buttons should be allowed to take dimensions from
-		image and label size. buttons will use device pixel density to convert image dimensions to div dimensions.
-	
-	*/
+(function () {	
 	
 	function Button() {
 		this.makeContainer = function() {
@@ -120,55 +74,11 @@
 			});				
 			F5.addTapListener(this.el, cb);			
 		};		
-	}	
-	
-	function CSSButton() {
-		this.construct = function (data) {
-			F5.addClass(this.el, 'f5button');
-			
-			var label = this.innerText;
-			this.innerHTML = '';
-
-			this.label = document.createElement('div');
-			F5.addClass(this.label, 'f5button-label');
-			this.el.appendChild(this.label);		
-			
-			function applyValue(value) {
-				if (value) {
-					F5.assert(typeof value === 'string');
-					this.label.innerText = value;
-				} else if (label) {
-					this.label.innerText = label;
-				}
-			}			
-				
-
-			// first apply styles from the Button class
-			var className = this.el.getAttribute('f5class');
-			if (className) {
-				applyValue(data['.' + className]);
-			}
-			
-			// then override with styles for the instance
-			applyValue(data[this.el.getAttribute('f5id')]);			
-		};
-	}
-	CSSButton.prototype = new Button();
-	
-	F5.WidgetPrototypes.CSSButton = new CSSButton();	
-
-		
-	function ImageButton() {		
+					
 		this.construct = function (data) {
 			
 			var that = this;
 			
-			F5.addClass(this.el, 'f5button');
-
-			this.label = document.createElement('div');
-			F5.addClass(this.label, 'f5button-label');
-			this.el.appendChild(this.label);			
-
 			function makeStretchyButton(value) {
 				that.makeContainer();
 
@@ -178,10 +88,8 @@
 					function makeImage(which, value, position) {
 						var img = document.createElement('img');
 						img.src = F5.sourceFromResourceUrl(value[which][position]);
-						// TODO: need to adjust based on pixel density						
-//						img.style.height = '30px';
 						that[which].appendChild(img);
-						
+
 						if (position === 'middle') {
 							img.style.display = '-webkit-box';
 							img.style['-webkit-box-flex'] = 1.0;
@@ -190,72 +98,105 @@
 					makeImage(which, value, 'left');
 					makeImage(which, value, 'middle');
 					makeImage(which, value, 'right');
-					
+
 					that[which].style.display = '-webkit-box';
 				}
-				
+
 				makeImages('up', value);
 				makeImages('down', value);								
 			}
-			
+
 			function makeFixedButton(value) {
 				that.makeContainer();	
-				
+
 				function makeImage(which, value) {
 					var img = document.createElement('img');
 					img.src = F5.sourceFromResourceUrl(value[which]);
-					// TODO: need to adjust based on pixel density											
-//					img.style.height = '30px';
 					that[which].appendChild(img);
 				}
-				
+
 				makeImage('up', value);
 				makeImage('down', value);
-									
-//				F5.assert(this.up.width === this.down.width && this.up.height === this.down.height, 
-//					'Up and down images should have the same dimensions');				
 			}
 			
-			function applyValue(value) {
-				if (value) {
-					if (typeof value === 'object') {
-						if (value.label) {
-							that.label.innerText = value.label;
-						}
-						if (value.image.up) {
-							F5.assert(value.image.down, 'Both up and down images should be defined together');
+			function maskMaskButton(value) {
+				that.makeContainer();	
+				var div = document.createElement('div');
+				F5.addClass(div, 'f5mask');
+				div.style['-webkit-mask-image'] = 'url("' + F5.sourceFromResourceUrl(value) + '")';
+				that.up.appendChild(div);
 
-							if (typeof value.image.up === 'object') {
-								makeStretchyButton(value.image);
-							} else {
-								makeFixedButton(value.image);
-							}						
+				div = document.createElement('div');
+				F5.addClass(div, 'f5mask-shadow');
+				div.style['-webkit-mask-image'] = 'url("' + F5.sourceFromResourceUrl(value) + '")';						
+				that.down.appendChild(div);
+
+				div = document.createElement('div');
+				F5.addClass(div, 'f5mask');
+				div.style['-webkit-mask-image'] = 'url("' + F5.sourceFromResourceUrl(value) + '")';						
+				that.down.appendChild(div);
+			}
+			
+						
+			F5.addClass(this.el, 'f5button');
+
+			/* label can be defined by putting it in the HTML */
+			var labelText = this.el.innerText;
+			this.el.innerHTML = '';
+
+			function applyData(data) {
+				if (data) {
+					// id: text
+					if (typeof data === 'string') {
+						labelText = data;
+					} else if (typeof data === 'object') {
+						if (data.label) {
+							labelText = data.label;
 						}
-					} else {
-						that.label.innerText = value;
+						// up/down images are defined
+						if (data.image) {
+							F5.assert(typeof data.image === 'object', "Image based buttons must define up/down states");
+							if (data.image.up) {
+								F5.assert(data.image.down, "Both up and down images must be defined");
+								// simple button
+								if (typeof data.image.up === 'string') {
+									makeFixedButton(data.image);
+								} else {
+									makeStretchyButton(data.image);
+								}
+							}							
+						}
+						if (data.mask) {
+							maskMaskButton(data.mask);
+						}
 					}
 				}
 			}
-			
-			this.makeContainer();
 
 			// first apply styles from the Button class
 			var className = this.el.getAttribute('f5class');
 			if (className) {
-				applyValue(data['.' + className]);
+				applyData(data['.' + className]);
 			}
-			
+
 			// then override with styles for the instance
-			applyValue(data[this.el.getAttribute('f5id')]);			
-		};		
-	}
-	ImageButton.prototype = new Button();
-	
-	F5.WidgetPrototypes.ImageButton = new ImageButton();	
-	
-	
-	function ToggleButton() {
+			applyData(data[this.el.getAttribute('f5id')]);	
+			
+			
+			if (labelText) {
+				/* all buttons have a label div */
+				this.label = document.createElement('div');
+				F5.addClass(this.label, 'f5button-label');
+				this.label.innerText = labelText;					
+				this.el.appendChild(this.label);						
+			}
+		};
+	}	
 		
+	F5.WidgetPrototypes.Button = new Button();	
+																				
+	
+	function ToggleButton() {		
 		this.state = false;
 				
 		this.setAction = function (cb) {
@@ -267,85 +208,7 @@
 			});			
 		};
 	}
-	ToggleButton.prototype = new CSSButton();
+	ToggleButton.prototype = F5.WidgetPrototypes.Button;
 	
 	F5.WidgetPrototypes.ToggleButton = new ToggleButton();				
-	
-	
-	function MaskButton() {		
-		this.construct = function (data) {
-
-			var that = this;
-
-			F5.addClass(this.el, 'f5button');
-
-			this.label = document.createElement('div');
-			F5.addClass(this.label, 'f5button-label');
-			this.el.appendChild(this.label);	
-			
-			function applyValue(value) {
-				if (value && typeof value === 'object') {
-					F5.assert(value.label && value.image, 'MaskButton requires label and mask image specification');
-					
-					that.label.innerText = value.label;
-
-					that.makeContainer();	
-					
-					var div;
-					
-					div = document.createElement('div');
-					F5.addClass(div, 'f5mask');
-					div.style['-webkit-mask-image'] = 'url("' + F5.sourceFromResourceUrl(value.image) + '")';
-					that.up.appendChild(div);
-
-					div = document.createElement('div');
-					F5.addClass(div, 'f5mask-shadow');
-					div.style['-webkit-mask-image'] = 'url("' + F5.sourceFromResourceUrl(value.image) + '")';						
-					that.down.appendChild(div);
-
-					div = document.createElement('div');
-					F5.addClass(div, 'f5mask');
-					div.style['-webkit-mask-image'] = 'url("' + F5.sourceFromResourceUrl(value.image) + '")';						
-					that.down.appendChild(div);
-				} else {
-					that.label.innerText = value;
-				}
-			}
-
-			this.makeContainer();
-
-			// first apply styles from the Button class
-			var className = this.el.getAttribute('f5class');
-			if (className) {
-				applyValue(data['.' + className]);
-			}
-
-			// then override with styles for the instance
-			applyValue(data[this.el.getAttribute('f5id')]);			
-		};		
-	}
-	MaskButton.prototype = new Button();						
-	
-	function TabButton() {
-		this.state = false;			
-		
-		this.setAction = function (cb) {
-			var that = this;
-			F5.addTouchStartListener(this.el, function touchStartListenerCb(e) {
-				e.stopPropagation();
-				if (!that.state) {
-					// do the callback first
-					// if it errors out the state doesn't change
-					cb();
-				}
-			});						
-		};
-	}
-	TabButton.prototype = new MaskButton();
-	
-	F5.WidgetPrototypes.TabButton = new TabButton();
-	
-	
-	
-
 }());

@@ -46,7 +46,7 @@
 
 			F5.forEach(data.choices, function (id, choice) {
 				
-				var choiceEl = F5.createWidget('ImageButton', {choice: id}, 'choice');
+				var choiceEl = F5.createWidget('Button', {choice: id}, 'choice');
 				F5.addClass(choiceEl, 'f5menuitem');
 				choicesEl.appendChild(choiceEl);
 
