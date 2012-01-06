@@ -105,7 +105,23 @@
 				F5.removeClass(this.el, 'f5button-down');
 			}
 		};		
-	}
+		
+		this.setAction = function (cb) {
+			var that = this;
+			F5.addTouchStartListener(this.el, function touchStartListenerCB(e) {
+				that.setState(true);
+			});
+			F5.addTouchMoveListener(this.el, function touchMoveListenerCB(e) {
+				e.preventDefault();
+				e.stopPropagation();
+			});
+			F5.addTouchStopListener(this.el, function touchStopListenerCB(e) {
+				that.setState(false);
+			});				
+			F5.addTapListener(this.el, cb);			
+		};		
+	}	
+
 		
 	function ImageButton() {		
 		this.construct = function (data) {
@@ -196,22 +212,7 @@
 			
 			// then override with styles for the instance
 			applyValue(data[this.el.getAttribute('f5id')]);			
-		};
-		
-		this.setAction = function (cb) {
-			var that = this;
-			F5.addTouchStartListener(this.el, function touchStartListenerCB(e) {
-				that.setState(true);
-			});
-			F5.addTouchMoveListener(this.el, function touchMoveListenerCB(e) {
-				e.preventDefault();
-				e.stopPropagation();
-			});
-			F5.addTouchStopListener(this.el, function touchStopListenerCB(e) {
-				that.setState(false);
-			});				
-			F5.addTapListener(this.el, cb);			
-		};
+		};		
 	}
 	ImageButton.prototype = new Button();
 	

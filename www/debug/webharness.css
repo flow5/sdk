@@ -105,20 +105,27 @@
 	-webkit-box-align: center;
 	border: 2px solid black;
 	height: 30px;
-	width: 80px;
 	margin: 6px;
+	padding-left: .6em;
+	padding-right: .6em;
 	-webkit-border-radius: 4px;
 	font-family: sans-serif;
 }
 
-.jsonbutton {
+.jsonbutton, .framesbutton, .resetbutton {
 	font-size: .24em;	
 }
+
+.jsonbutton.f5button-down, .framesbutton.f5button-down, .viewerbutton.f5button-down {
+	background-color: lightblue;
+	border: 2px solid white;
+}
+
 
 .backbutton {
 	font-size: .40em;
 }
 
 .arrow {
-	margin-top:-.10em;
+	margin-top:-.20em;
 }

@@ -65,6 +65,7 @@
 		var doBack = F5.Global.flowController.doBack;
 		F5.Global.flowController.doBack = function () {			
 			var backNode = F5.Global.flowController.getBackNode();
+			F5.assert(backNode, 'Cannot go back');			
 			F5.assert(!flow.diags.isSubflowActive(backNode), 'Cannot go back with a subflow active');
 			
 			doBack.apply(F5.Global.flowController);

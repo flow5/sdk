@@ -46,11 +46,6 @@
 
 		var sequenceNumber = 0;
 		function update() {	
-			F5.setStyles(backbuttonEl, {
-				'background-color': F5.Global.flowController.hasBack() ? 'lightblue' : 'grey',
-				'border': '2px solid ' + (F5.Global.flowController.hasBack() ? 'white' : 'black'),
-			});				
-
 			sequenceNumber += 1;						
 			F5.post('dot2svg', F5.Global.flow.diags.toDOT(), function (response, headers) {
 
@@ -135,8 +130,7 @@
 		});
 		update();
 
-		// make the back button
-		F5.addTapListener(backbuttonEl, function () {
+		backbuttonEl.widget.setAction(function () {
 			try {
 				F5.Global.flowController.doBack();								
 			} catch (e) {
@@ -147,7 +141,7 @@
 		var jsonDiv;
 
 		// TODO: show hide and update the jsonDiv rather than adding/removing
-		F5.addTapListener(jsonbuttonEl, function () {
+		jsonbuttonEl.widget.setAction(function () {
 			if (jsonDiv) {
 				jsonframeEl.removeChild(jsonDiv);
 				jsonDiv = null;
@@ -166,13 +160,9 @@
 					console.log('Exception: ' + e.message);
 				}	
 			}
-			F5.setStyles(jsonbuttonEl, {
-				'background-color': jsonDiv ? 'lightblue' : 'grey',
-				'border': '2px solid ' + (jsonDiv ? 'white' : 'black')								
-			});							
 		});	
 
-		F5.addTapListener(framesbuttonEl, function () {
+		framesbuttonEl.widget.setAction(function () {
 			var selected = true;
 			if (F5.hasClass(appframeEl, 'f5frames')) {
 				F5.removeClass(appframeEl, 'f5frames');
@@ -180,31 +170,18 @@
 			} else {
 				F5.addClass(appframeEl, 'f5frames');
 			}
-			F5.setStyles(framesbuttonEl, {
-				'background-color': selected ? 'lightblue' : 'grey',
-				'border': '2px solid ' + (selected ? 'white' : 'black')								
-			});										
 		});		
 
-		F5.addTapListener(resetbuttonEl, function () {
+		resetbuttonEl.widget.setAction(function () {
 			var showViewer = localStorage.showViewer;
 			localStorage.clear();
 			localStorage.showViewer = showViewer;
 
 			location.reload();
 		});		
-
-		if (!localStorage.showViewer) {
-			localStorage.showViewer = true;
-		}
-		function updateViewerButton() {
-			var showViewer  = JSON.parse(localStorage.showViewer);
-			F5.setStyles(viewerbuttonEl, {
-				'background-color': showViewer ? 'lightblue' : 'grey',
-				'border': '2px solid ' + (showViewer ? 'white' : 'black')								
-			});																
-		}
-		F5.addTapListener(viewerbuttonEl, function () {
+		
+		viewerbuttonEl.widget.setState(localStorage.showViewer === 'true');
+		viewerbuttonEl.widget.setAction(function () {
 			if (viewerframeEl.style.display === 'none') {
 				viewerframeEl.style.display = '';
 				localStorage.showViewer = true;
@@ -212,9 +189,7 @@
 				localStorage.showViewer = false;
 				viewerframeEl.style.display = 'none';				
 			}
-			updateViewerButton();
 		});	
-		updateViewerButton();
 
 		if (localStorage.showViewer && JSON.parse(localStorage.showViewer)) {
 			viewerframeEl.style.display = '';

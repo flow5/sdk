@@ -27,14 +27,14 @@
 
 <div id='viewerframe' class='viewerframe'>
 	<div f5id='toolbar' class='toolbar'>
-		<div f5id='backbutton' class='backbutton'><div class='arrow'>&larr;</div></div>
-		<div f5id='jsonbutton' class='jsonbutton'>JSON</div>			
-		<div f5id='framesbutton' class='framesbutton'>Frames</div>			
-		<div f5id='resetbutton' class='resetbutton'>Reset</div>			
+		<div f5widget='ImageButton' f5id='backbutton' class='backbutton'><div class='arrow'>&larr;</div></div>
+		<div f5widget='ToggleButton' f5id='jsonbutton' class='jsonbutton'>JSON</div>			
+		<div f5widget='ToggleButton' f5id='framesbutton' class='framesbutton'>Frames</div>			
+		<div f5widget='ImageButton' f5id='resetbutton' class='resetbutton'>Reset</div>			
 	</div>
 	<div f5id='viewer' class='viewer'>
 		<div f5widget='Tracker' f5id='svgframe' class='svgframe'></div>
 		<div f5id='jsonframe' class='jsonframe'></div>
 	</div>
 </div>
-<div id='viewerbutton' class='viewerbutton'></div>
+<div f5widget='ToggleButton' id='viewerbutton' class='viewerbutton'></div>
