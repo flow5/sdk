@@ -12,7 +12,7 @@
   src: url('geo.ttf') format('truetype');
 }
 
-body {
+body.webkit {
 	display: -webkit-box;
 	-webkit-box-pack: center;
 	-webkit-box-align: center;
@@ -102,14 +102,28 @@ body {
 	-webkit-text-stroke: 8px #dadada;			
 }
 
+/* workaround for annoying Android image mask bug */
 #badgeContainer {
 	-webkit-transform: translate3d(0px, 0px, 0px);
+}
+
+body.notwebkit {
+	background-color: black;
+	width: 100%;
+	height: 100%;
+	font-size: 64px;
+	font-family: "Andale Mono", Arial;
+	text-align: center;
+}
+.notwebkit a {
+	color: white;
+	margin: 0px;
 }
 
 </style>
 </head>
 
-<body>
+<body class='webkit'>
 
 <!-- sadly, android doesn't do text mask. so fake it -->
 <div id='panel' style='opacity:0;'>
@@ -148,7 +162,8 @@ if (navigator.userAgent.match(/WebKit/)) {
 } else {
 	var a = document.createElement('a');
 	a.href = 'http://www.webkit.org/'
-	a.innerHTML = 'flow5 <3 webkit';
+	a.innerHTML = 'flow5 <3 WebKit';
+	document.body.className = 'notwebkit';
 	document.body.innerHTML = '';
 	document.body.appendChild(a);
 }
