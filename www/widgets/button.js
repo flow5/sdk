@@ -121,6 +121,41 @@
 			F5.addTapListener(this.el, cb);			
 		};		
 	}	
+	
+	function CSSButton() {
+		this.construct = function (data) {
+			F5.addClass(this.el, 'f5button');
+			
+			var label = this.innerText;
+			this.innerHTML = '';
+
+			this.label = document.createElement('div');
+			F5.addClass(this.label, 'f5button-label');
+			this.el.appendChild(this.label);		
+			
+			function applyValue(value) {
+				if (value) {
+					F5.assert(typeof value === 'string');
+					this.label.innerText = value;
+				} else if (label) {
+					this.label.innerText = label;
+				}
+			}			
+				
+
+			// first apply styles from the Button class
+			var className = this.el.getAttribute('f5class');
+			if (className) {
+				applyValue(data['.' + className]);
+			}
+			
+			// then override with styles for the instance
+			applyValue(data[this.el.getAttribute('f5id')]);			
+		};
+	}
+	CSSButton.prototype = new Button();
+	
+	F5.WidgetPrototypes.CSSButton = new CSSButton();	
 
 		
 	function ImageButton() {		
@@ -232,7 +267,7 @@
 			});			
 		};
 	}
-	ToggleButton.prototype = new ImageButton();
+	ToggleButton.prototype = new CSSButton();
 	
 	F5.WidgetPrototypes.ToggleButton = new ToggleButton();				
 	

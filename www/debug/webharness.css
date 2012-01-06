@@ -116,7 +116,7 @@
 	font-size: .24em;	
 }
 
-.jsonbutton.f5button-down, .framesbutton.f5button-down, .viewerbutton.f5button-down {
+.viewerframe .f5button-down, .viewerbutton.f5button-down {
 	background-color: lightblue;
 	border: 2px solid white;
 }

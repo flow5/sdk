@@ -147,18 +147,16 @@
 				jsonDiv = null;
 				jsonframeEl.style.display = '';
 			} else {
-				try {					
-					var jsonFormatter = new JSONFormatter();
-					jsonDiv = document.createElement('div');
-					F5.addClass(jsonDiv, 'json');
-					jsonDiv.innerHTML = jsonFormatter.valueToHTML(JSON.parse(F5.Global.flow.diags.toJSON()));
-
-					jsonframeEl.appendChild(jsonDiv);
-					jsonframeEl.style.display = 'block';
-					jsonFormatter.attachListeners();																
-				} catch (e) {
-					console.log('Exception: ' + e.message);
-				}	
+				var jsonFormatter = new JSONFormatter();
+				var json = jsonFormatter.valueToHTML(JSON.parse(F5.Global.flow.diags.toJSON()));
+								
+				jsonDiv = document.createElement('div');
+				F5.addClass(jsonDiv, 'json');
+				jsonDiv.innerHTML = json; 
+				
+				jsonframeEl.appendChild(jsonDiv);
+				jsonframeEl.style.display = 'block';
+				jsonFormatter.attachListeners();																	
 			}
 		});	
 
