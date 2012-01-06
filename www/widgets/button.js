@@ -63,6 +63,7 @@
 		this.setAction = function (cb) {
 			var that = this;
 			F5.addTouchStartListener(this.el, function touchStartListenerCB(e) {
+				F5.addClass(that.el, 'f5button-press');
 				that.setState(true);
 			});
 			F5.addTouchMoveListener(this.el, function touchMoveListenerCB(e) {
@@ -70,6 +71,7 @@
 				e.stopPropagation();
 			});
 			F5.addTouchStopListener(this.el, function touchStopListenerCB(e) {
+				F5.removeClass(that.el, 'f5button-press');
 				that.setState(false);
 			});				
 			F5.addTapListener(this.el, cb);			
