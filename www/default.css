@@ -76,7 +76,7 @@
 /*              Buttons                */
 /***************************************/
 
-.f5button.up .down, .f5button.down .up {
+.f5button.f5up .f5down, .f5button.f5down .f5up {
 	visibility: hidden;
 }
 
@@ -87,13 +87,13 @@
 	-webkit-box-align: center;	
 }
 
-.f5button-imagecontainer, .f5button-imagecontainer .up {
+.f5button-imagecontainer, .f5button-imagecontainer .f5up {
 	position: absolute;
 	top: 0px;
 	left: 0px;
 }
 
-.f5button-imagecontainer .up {
+.f5button-imagecontainer .f5up {
 	width: 100%;
 }
 
@@ -128,11 +128,11 @@
 	width: 100%;	
 }
 
-.f5tabset .f5button.down .f5button-label {
+.f5tabset .f5button.f5up .f5button-label {
 	color: white;
 }
 
-.f5tabset .f5button.up .f5button-label {
+.f5tabset .f5button.f5up .f5button-label {
 	color: grey;
 }
 

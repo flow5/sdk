@@ -37,10 +37,10 @@
 	-webkit-box-sizing: border-box;	
 }
 
-.f5button.up .f5button-label {
+.f5button.f5up .f5button-label {
 	color: black;
 }
 
-.f5button.down .f5button-label {
+.f5button.f5down .f5button-label {
 	color: grey;
 }

@@ -33,9 +33,9 @@
 	
 F5.addF5ReadyListener(function () {
 	if (navigator.userAgent.match(/Android 4.0/)) {
-		F5.addClass(document.body, 'ics');
+		F5.addClass(document.body, 'f5ics');
 	} else {
-		F5.addClass(document.body, 'not-ics');
+		F5.addClass(document.body, 'f5not-ics');
 	}	
 });
 	
