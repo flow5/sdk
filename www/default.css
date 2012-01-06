@@ -76,7 +76,7 @@
 /*              Buttons                */
 /***************************************/
 
-.f5button.f5up .f5down, .f5button.f5down .f5up {
+.f5button.f5button-up .f5button-down, .f5button.f5button-down .f5button-up {
 	visibility: hidden;
 }
 
@@ -87,13 +87,13 @@
 	-webkit-box-align: center;	
 }
 
-.f5button-imagecontainer, .f5button-imagecontainer .f5up {
+.f5button-imagecontainer, .f5button-imagecontainer .f5button-up {
 	position: absolute;
 	top: 0px;
 	left: 0px;
 }
 
-.f5button-imagecontainer .f5up {
+.f5button-imagecontainer .f5button-up {
 	width: 100%;
 }
 
@@ -108,10 +108,9 @@
 	width:100%;
 }
 
-.standardbutton img {
+.f5standardbutton img {
 	height: 2.5em;
 }
-
 
 /***************************************/
 /*              Tab Set                */
@@ -122,21 +121,21 @@
 	display: -webkit-box;	
 }
 
-.tab {
+.f5tab {
 	display: -webkit-box;
 	-webkit-box-flex: 1.0;
 	width: 100%;	
 }
 
-.f5tabset .f5button.f5up .f5button-label {
+.f5tabset .f5button.f5button-up .f5button-label {
 	color: white;
 }
 
-.f5tabset .f5button.f5up .f5button-label {
+.f5tabset .f5button.f5button-up .f5button-label {
 	color: grey;
 }
 
-.tab {
+.f5tab {
 	-webkit-box-align: center;
 	-webkit-box-pack: center;
 	font-family: arial;
@@ -159,9 +158,65 @@
 	width: 1.66em;	
 }
 
-/* only for the auto generated links. move to optional include */
+/***************************************/
+/*                Menus                */
+/***************************************/
+
+.f5menu {
+	position: absolute;
+	z-index: 1;
+	opacity: 0;
+	-webkit-box-sizing: border-box;		
+}
+
+.f5menu {
+	display: -webkit-box;
+	-webkit-box-pack: center;
+	-webkit-box-align: center;
+	top: 25%;
+	left: 25%;
+	width: 50%;
+	height: 50%;
+	-webkit-transition: opacity .5s;
+	background-color: grey;
+	-webkit-box-orient: vertical;
+	padding:10px;
+}
+
+
+/***************************************/
+/*       default view elements         */
+/***************************************/
+
 .subflow .f5button-label, .f5transitions .f5button-label {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	width: 100%;
+}
+
+.choices, .f5transitions, .subflows {
+	border: 1px solid black;
+	width: 75%;
+	-webkit-box-align: center;
+	margin-top: 1em;
+	margin-bottom: 1em;
+}
+
+.do-choice, .do-transition, .do-subflow {
+	border-bottom: 1px solid black;	
+	padding:.25em;
+	width: 100%;
+	-webkit-box-sizing: border-box;
+}
+
+.do-choice:last-child, .do-transition:last-child, .do-subflow:last-child  {
+	border-bottom: none;
+}
+
+.f5transitions {
+	background-color: lightgrey;
+}
+
+.do-subflow {
+	background-color: darkslategrey;
 }

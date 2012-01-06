@@ -83,26 +83,26 @@
 			F5.addClass(this.imageContainer, 'f5button-imagecontainer');
 
 			this.up = document.createElement('div');
-			F5.addClass(this.up, 'f5up');
+			F5.addClass(this.up, 'f5button-up');
 			this.imageContainer.appendChild(this.up);
 			
 			this.down = document.createElement('div');
-			F5.addClass(this.down, 'f5down');
+			F5.addClass(this.down, 'f5button-down');
 			this.imageContainer.appendChild(this.down);
 			
 			this.el.insertBefore(this.imageContainer, this.label);
 			
-			F5.addClass(this.el, 'f5up');
+			F5.addClass(this.el, 'f5button-up');
 		};
 		
 		this.setState = function (state) {
 			this.state = state;
 			if (state) {
-				F5.addClass(this.el, 'f5down');
-				F5.removeClass(this.el, 'f5up');
+				F5.addClass(this.el, 'f5button-down');
+				F5.removeClass(this.el, 'f5button-up');
 			} else {
-				F5.addClass(this.el, 'f5up');
-				F5.removeClass(this.el, 'f5down');
+				F5.addClass(this.el, 'f5button-up');
+				F5.removeClass(this.el, 'f5button-down');
 			}
 		};		
 	}

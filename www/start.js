@@ -69,7 +69,7 @@
 	window.addEventListener('load', hideAddressBar, false);
 	window.addEventListener('touchstart', hideAddressBar, false);
 	
-	var screenEl = document.getElementById('screen');
+	var screenEl = document.getElementById('f5screen');
 	
 	F5.setupScreenGeometry(isMobile, isNative);		
 

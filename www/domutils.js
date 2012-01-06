@@ -189,7 +189,7 @@
 		else {
 			// in browser, there may be a zoom on the screen element
 			// TODO: cache this value
-			var zoom = window.getComputedStyle(document.getElementById('screen')).zoom;
+			var zoom = window.getComputedStyle(document.getElementById('f5screen')).zoom;
 			x = event.clientX / zoom;
 			y = event.clientY / zoom; 
 		}	
@@ -283,7 +283,7 @@
 			var size = geometry.split('x');
 			style = document.createElement('style');
 			var zoom = size[1] > 480 ? 1 : 2;
-			style.innerHTML = '#screen {width:' + size[0] + 'px; height:' + size[1] + 'px; zoom: ' + zoom + ';';
+			style.innerHTML = '#f5screen {width:' + size[0] + 'px; height:' + size[1] + 'px; zoom: ' + zoom + ';';
 			document.head.appendChild(style);
 		} else if (isMobile && !isNative) {
 			var width, height;
@@ -309,14 +309,14 @@
 			style = document.createElement('style');			
 			style.innerHTML = '@media screen and (orientation: portrait)\n\
 								{\n\
-									.f5mobile #screen {\n\
+									.f5mobile #f5screen {\n\
 										width:' + screen.width + 'px;\n\
 										height:' + (screen.height - (statusbar + portraitToolbar)) + 'px;\n\
 									}\n\
 								}\n\
 								@media screen and (orientation: landscape)\n\
 								{\n\
-									.f5mobile #screen {\n\
+									.f5mobile #f5screen {\n\
 										width:' + screen.height + 'px;\n\
 										height:' + (screen.width - (statusbar + landscapeToolbar)) + 'px;\n\
 									}\n\

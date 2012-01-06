@@ -69,7 +69,7 @@
 			
 				var tab = F5.createWidget('TabButton', data, id);
 												
-				F5.addClass(tab, 'tab');
+				F5.addClass(tab, 'f5tab');
 				tabset.appendChild(tab);								
 				that.tabs[id] = tab;
 

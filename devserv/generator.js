@@ -300,9 +300,9 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative, platform) {
 	}
 		
 	var appframeEl = document.createElement('div');
-	appframeEl.id = 'appframe';
+	appframeEl.id = 'f5appframe';
 	var screenframeEl = document.createElement('div');
-	screenframeEl.id = 'screen';
+	screenframeEl.id = 'f5screen';
 		
 	appframeEl.appendChild(screenframeEl);
 	document.body.appendChild(appframeEl);

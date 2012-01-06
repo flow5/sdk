@@ -28,7 +28,7 @@
 
 (function () {		
 	F5.addF5ReadyListener(function () {
-		var appframeEl = document.getElementById('appframe');
+		var appframeEl = document.getElementById('f5appframe');
 
 		var viewerframeEl = F5.Templates.loadTemplate('viewerframe');
 		document.body.appendChild(viewerframeEl);
