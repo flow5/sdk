@@ -30,7 +30,10 @@
 /* override default tap highlighting on webview content */
 body {
 	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);	
-	font-size: 150px;
+}
+
+#f5appframe {
+	font-size: 150px;	
 }
 
 /* unclear on why this is required for Android */

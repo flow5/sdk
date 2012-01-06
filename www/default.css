@@ -29,7 +29,7 @@
 
 /* for resolution independence, sizes should be expressed in em. by specifying a default size of 100px
    em = px * 100. default sizes are based on iOS screen densities */
-body {
+#f5appframe {
 	font-size: 100px;
 }
 

@@ -43,7 +43,8 @@
 	-webkit-box-orient: vertical;
 	position: relative;
 	border-left: 4px double black;	
-	-webkit-user-select: none;			
+	-webkit-user-select: none;	
+	font-size: 100px;			
 }
 
 .mobile .viewerFrame {
