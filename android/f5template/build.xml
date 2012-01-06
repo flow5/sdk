@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="F5templateActivity" default="help">
+<project name="F5TemplateActivity" default="help">
 
     <!-- The local.properties file is created and updated by the 'android' tool.
          It contains the path to the SDK. It should *NOT* be checked into
@@ -45,7 +45,7 @@
             unless="sdk.dir"
     />
 	
-	<property name="app" value="jitc"/>
+	<property name="app" value="tests"/>
 	
 	<taskdef name="xmltask" classname="com.oopsconsultancy.xmltask.ant.XmlTask"/>
 	<taskdef name="http" classname="org.missinglink.ant.task.http.HttpClientTask"/>	
@@ -86,7 +86,7 @@
 				<header name="user-agent" value="Android"/>
 			</headers> 
 			<query>
-				<parameter name="app" value="jitc"/>
+				<parameter name="app" value="${app}"/>
 				<parameter name="native" value="true"/>
 				<parameter name="inline" value="true"/>
 			</query>

@@ -24,7 +24,7 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name" >
         <activity
-            android:name="com.flow5.framework.F5Activity"
+            android:name="com.flow5.template.F5TemplateActivity"
             android:label="@string/app_name"
             android:configChanges="orientation|keyboardHidden">
             <intent-filter>

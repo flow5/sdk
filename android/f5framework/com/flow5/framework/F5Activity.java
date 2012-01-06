@@ -4,15 +4,11 @@ import org.xmlpull.v1.XmlPullParser;
 
 import android.os.Bundle;
 
-import com.flow5.template.R;
-import com.flow5.template.R.xml;
 import com.phonegap.*;
 import com.phonegap.api.LOG;
 
 public class F5Activity extends DroidGap {
-    /** Called when the activity is first created. */
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState, final int configId) {
     	LOG.setLogLevel("VERBOSE");
         super.onCreate(savedInstanceState);
                 
@@ -24,7 +20,7 @@ public class F5Activity extends DroidGap {
 			public void run() {
 				String devservhostname = "unknown.local";
 				String appName = "unknown";
-				XmlPullParser xpp = getApplicationContext().getResources().getXml(R.xml.f5config);				
+				XmlPullParser xpp = getApplicationContext().getResources().getXml(configId);				
 				try {
 					while (xpp.getEventType() != XmlPullParser.END_DOCUMENT) {						 
 				        if (xpp.getEventType() == XmlPullParser.START_TAG) {	
