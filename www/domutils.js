@@ -372,7 +372,7 @@
 		widget.el = el;
 		el.widget = widget;
 		
-		var className = el.getAttribute('f5_class');
+		var className = el.getAttribute('f5class');
 		if (className) {
 			F5.addClass(el, className);
 		}
@@ -395,7 +395,7 @@
 	};
 	
 	F5.attachTabset = function (el, node, position) {
-		el.setAttribute('f5_tabset_position', position);						
+		el.setAttribute('f5tabsetposition', position);						
 		F5.attachWidget(el, 'Tabset', F5.getNodeData(node));
 		
 		el.widget.setAction(function selectionChangeCb(id) {

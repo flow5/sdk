@@ -189,7 +189,7 @@
 			this.makeContainer();
 
 			// first apply styles from the Button class
-			var className = this.el.getAttribute('f5_class');
+			var className = this.el.getAttribute('f5class');
 			if (className) {
 				applyValue(data['.' + className]);
 			}
@@ -279,7 +279,7 @@
 			this.makeContainer();
 
 			// first apply styles from the Button class
-			var className = this.el.getAttribute('f5_class');
+			var className = this.el.getAttribute('f5class');
 			if (className) {
 				applyValue(data['.' + className]);
 			}

@@ -28,7 +28,7 @@
 
 (function () {
 	
-	// Tabset works by looking for elements with f5_tab attribute set
+	// Tabset works by looking for elements with f5tab attribute set
 	// TODO: customize with images or alternate text
 	// TODO: can't really go querySelectorAll since there might be nested tab sets
 	function Tabset() {
@@ -37,7 +37,7 @@
 		function findTabs(el) {
 			var tabs = [];
 			F5.forEach(el.childNodes, function (child) {
-				if (child.getAttribute && child.getAttribute('f5_tab')) {
+				if (child.getAttribute && child.getAttribute('f5tab')) {
 					tabs.push(child);
 				}
 			});
@@ -60,12 +60,12 @@
 			var that = this;
 		
 			var tabset = document.createElement('div');
-			F5.addClass(tabset, 'tabset');
+			F5.addClass(tabset, 'f5tabset');
 								
 			that.tabs = {};
 		
 			F5.forEach(findTabs(this.el), function (el) {
-				var id = el.getAttribute('f5_tab');
+				var id = el.getAttribute('f5tab');
 			
 				var tab = F5.createWidget('TabButton', data, id);
 												
@@ -86,7 +86,7 @@
 				});				
 			});	
 			
-			var position = that.el.getAttribute('f5_tabset_position');
+			var position = that.el.getAttribute('f5tabsetposition');
 			if (position && position === 'top') {
 				that.el.insertBefore(tabset, that.el.childNodes[0]);
 			} else {

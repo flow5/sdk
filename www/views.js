@@ -198,7 +198,7 @@
 			this.initializeView(node);
 
 			F5.forEach(node.children, function (id, child) {
-				child.view.el.setAttribute('f5_tab', id);
+				child.view.el.setAttribute('f5tab', id);
 			});						
 
 			if (this.delegate && this.delegate.initialize) {
