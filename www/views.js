@@ -150,7 +150,7 @@
 				// default navigation controls
 				if (node.subflows) {
 					var subflowsEl = document.createElement('div');
-					F5.addClass(subflowsEl, 'subflows');
+					F5.addClass(subflowsEl, 'f5subflows');
 
 					var showSubflows = false;
 					F5.forEach(node.subflows, function (id, subflow) {
@@ -158,7 +158,7 @@
 							showSubflows = true;
 
 							var subflowEl = F5.createWidget('ImageButton', {id: id}, 'id');
-							F5.addClass(subflowEl, 'do-subflow');
+							F5.addClass(subflowEl, 'f5dosubflow');
 							subflowsEl.appendChild(subflowEl);	
 
 							subflowEl.widget.setAction(function () {
@@ -180,7 +180,7 @@
 					F5.forEach(node.transitions, function (id, transition) {
 
 						var transitionEl = F5.createWidget('ImageButton', {id: id}, 'id');					
-						F5.addClass(transitionEl, 'do-transition');
+						F5.addClass(transitionEl, 'f5dotransition');
 						transitionsEl.appendChild(transitionEl);	
 
 						transitionEl.widget.setAction(function () {

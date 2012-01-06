@@ -25,7 +25,7 @@
 
 ***********************************************************************************************************************/
 
-/* default.css contains styles that are required for the f5 widget set but may be overridden by the application */
+/* default.css contains styles that are used by f5 widgets but may be overridden by the application */
 
 /***************************************/
 /*              Nav Bar                */
@@ -183,18 +183,7 @@
 	padding:10px;
 }
 
-
-/***************************************/
-/*       default view elements         */
-/***************************************/
-
-.subflow .f5button-label, .f5transitions .f5button-label {
-	overflow: hidden;
-	text-overflow: ellipsis;
-	width: 100%;
-}
-
-.choices, .f5transitions, .subflows {
+.f5menuitems {
 	border: 1px solid black;
 	width: 75%;
 	-webkit-box-align: center;
@@ -202,14 +191,43 @@
 	margin-bottom: 1em;
 }
 
-.do-choice, .do-transition, .do-subflow {
+.f5menuitem {
 	border-bottom: 1px solid black;	
 	padding:.25em;
 	width: 100%;
 	-webkit-box-sizing: border-box;
 }
 
-.do-choice:last-child, .do-transition:last-child, .do-subflow:last-child  {
+.f5menuitem:last-child {
+	border-bottom: none;
+}
+
+/***************************************/
+/*      default navigation elements    */
+/***************************************/
+
+.f5transitions .f5button-label {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	width: 100%;
+}
+
+.f5transitions, .f5subflows {
+	border: 1px solid black;
+	width: 75%;
+	-webkit-box-align: center;
+	margin-top: 1em;
+	margin-bottom: 1em;
+}
+
+.f5dotransition, .f5dosubflow {
+	border-bottom: 1px solid black;	
+	padding:.25em;
+	width: 100%;
+	-webkit-box-sizing: border-box;
+}
+
+.f5dotransition:last-child, .f5dosubflow:last-child  {
 	border-bottom: none;
 }
 
@@ -217,6 +235,6 @@
 	background-color: lightgrey;
 }
 
-.do-subflow {
+.f5dosubflow {
 	background-color: darkslategrey;
 }

@@ -40,13 +40,13 @@
 			this.el.appendChild(div);
 
 			var choicesEl = document.createElement('div');
-			F5.addClass(choicesEl, 'choices');
+			F5.addClass(choicesEl, 'f5menuitems');
 			this.el.appendChild(choicesEl);
 
 			F5.forEach(data.choices, function (id, choice) {
 				
 				var choiceEl = F5.createWidget('ImageButton', {choice: id}, 'choice');
-				F5.addClass(choiceEl, 'do-choice');
+				F5.addClass(choiceEl, 'f5menuitem');
 				choicesEl.appendChild(choiceEl);
 
 				choiceEl.widget.setAction(function () {
