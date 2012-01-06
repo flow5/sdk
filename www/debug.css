@@ -29,7 +29,7 @@
 
 
 .f5frames .f5flow, .f5frames .f5switcher, .f5frames .f5set {
-	padding: 4px;
+	padding: .04em;
 	border: 1px solid grey;
 }
 
@@ -38,11 +38,11 @@
 }
 
 .f5frames .f5nodelabel {
-	font-size:8px;
+	font-size:.08em;
 	opacity: .5;
 	display: block;
 }
 
 .f5frames .f5flow {
-	padding: 4px;
+	padding: .04em;
 }

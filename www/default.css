@@ -27,6 +27,12 @@
 
 /* default.css contains styles that are used by f5 widgets but may be overridden by the application */
 
+/* for resolution independence, sizes should be expressed in em. by specifying a default size of 100px
+   em = px * 100. default sizes are based on iOS screen densities */
+body {
+	font-size: 100px;
+}
+
 /***************************************/
 /*              Nav Bar                */
 /***************************************/
@@ -45,12 +51,10 @@
 
 .f5navbar .f5leftbutton, .f5navbar .f5rightbutton {
 	position: absolute;
-	top: .5em;
-	height: 2em;
-	font-size: 1.33em;
-	padding: .16em;
-	padding-left: .5em;
-	padding-right: .5em;
+	top: .06em;
+	height: .30em;
+	padding-left: .06em;
+	padding-right: .06em;
 	display: -webkit-box;
 	-webkit-box-pack: center;
 	-webkit-box-align: center;
@@ -59,16 +63,20 @@
 	-webkit-box-sizing: border-box;
 }
 
+.f5navbar .f5leftbutton .f5label, .f5navbar .f5rightbutton .f5label {
+	font-size: .16em;
+}
+
 .f5navbar .f5leftbutton {
-	left: .25em;
+	left: .03em;
 }
 
 .f5navbar .f5rightbutton {
-	right: .25em;
+	right: .03em;
 }
 
 .f5navbar .f5title {
-	font-size: 1.33em;
+	font-size: .16em;
 	padding:.16em;
 }
 
@@ -101,7 +109,7 @@
 	white-space: nowrap;
 	position: relative;
 	color: white;
-	padding:.5em;
+	padding: .06em;
 }
 
 .f5button-imagecontainer {
@@ -109,7 +117,11 @@
 }
 
 .f5standardbutton img {
-	height: 2.5em;
+	height: .30em;
+}
+
+.f5standardbutton .f5button-label {
+	font-size: .12em;
 }
 
 /***************************************/
@@ -139,7 +151,6 @@
 	-webkit-box-align: center;
 	-webkit-box-pack: center;
 	font-family: arial;
-	font-size: .833em;
 }
 
 /***************************************/
@@ -147,15 +158,15 @@
 /***************************************/
 
 .f5closebutton {
-	height: 1.66em;
-	width: 1.66em;
+	height: .20em;
+	width: .20em;
 	background-color: darkgrey;
 	z-index: 1000;
 }
 
 .f5closebutton img {
-	height: 1.66em;
-	width: 1.66em;	
+	height: .20em;
+	width: .20em;	
 }
 
 /***************************************/
@@ -187,15 +198,20 @@
 	border: 1px solid black;
 	width: 75%;
 	-webkit-box-align: center;
-	margin-top: 1em;
-	margin-bottom: 1em;
+	margin-top: .12em;
+	margin-bottom: .12em;
+}
+
+.f5menutitle {
+	font-size: .16em;	
 }
 
 .f5menuitem {
 	border-bottom: 1px solid black;	
-	padding:.25em;
+	padding:.03em;
 	width: 100%;
 	-webkit-box-sizing: border-box;
+	font-size: .16em;	
 }
 
 .f5menuitem:last-child {
@@ -206,23 +222,24 @@
 /*      default navigation elements    */
 /***************************************/
 
-.f5transitions .f5button-label {
+.f5transitions .f5button-label, .f5subflows .f5button-label {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	width: 100%;
+	font-size: .16em;
 }
 
 .f5transitions, .f5subflows {
 	border: 1px solid black;
 	width: 75%;
 	-webkit-box-align: center;
-	margin-top: 1em;
-	margin-bottom: 1em;
+	margin-top: .12em;
+	margin-bottom: .12em;
 }
 
 .f5dotransition, .f5dosubflow {
 	border-bottom: 1px solid black;	
-	padding:.25em;
+	padding:.03em;
 	width: 100%;
 	-webkit-box-sizing: border-box;
 }

@@ -30,7 +30,7 @@
 			
 	function NavBar() {
 	
-		var navbarEl, leftButtonEl, rightButtonEl, titleEl;
+		var navbarEl, leftButtonEl, leftButtonLabelEl, rightButtonEl, rightButtonLabelEl, titleEl;
 	
 		this.construct = function () {
 			navbarEl = document.createElement('div');
@@ -42,6 +42,10 @@
 			F5.addClass(leftButtonEl, 'f5leftbutton');
 			leftButtonEl.style.visibility = 'hidden';
 			navbarEl.appendChild(leftButtonEl);
+			leftButtonLabelEl = document.createElement('div');
+			F5.addClass(leftButtonLabelEl, 'f5label');
+			leftButtonEl.appendChild(leftButtonLabelEl);
+			
 
 			titleEl = document.createElement('div');
 			F5.addClass(titleEl, 'f5title');
@@ -51,6 +55,10 @@
 			F5.addClass(rightButtonEl, 'f5rightbutton');
 			rightButtonEl.style.visibility = 'hidden';
 			navbarEl.appendChild(rightButtonEl);
+			rightButtonLabelEl = document.createElement('div');
+			F5.addClass(rightButtonLabelEl, 'f5label');
+			rightButtonEl.appendChild(rightButtonLabelEl);
+			
 
 			var that = this;
 			
@@ -77,7 +85,7 @@
 				if (this.configuration.left) {
 					leftButtonEl.style.visibility = '';
 					leftButtonEl.style['pointer-events'] = '';
-					leftButtonEl.innerText = this.configuration.left.label;					
+					leftButtonLabelEl.innerText = this.configuration.left.label;					
 				} else {
 					leftButtonEl.style.visibility = 'hidden';					
 					leftButtonEl.style['pointer-events'] = 'none';
@@ -85,7 +93,7 @@
 				if (this.configuration.right) {
 					rightButtonEl.style.visibility = '';
 					rightButtonEl.style['pointer-events'] = '';				
-					rightButtonEl.innerText = this.configuration.right.label;					
+					rightButtonLabelEl.innerText = this.configuration.right.label;					
 				} else {
 					rightButtonEl.style.visibility = 'hidden';					
 					rightButtonEl.style['pointer-events'] = 'none';

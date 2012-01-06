@@ -36,6 +36,7 @@
 			F5.addClass(this.el, 'f5menu');
 					
 			var div = document.createElement('div');
+			F5.addClass(div, 'f5menutitle');
 			div.innerHTML = data.method;
 			this.el.appendChild(div);
 

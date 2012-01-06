@@ -30,7 +30,7 @@
 
 .collapser {
   position: absolute;
-  left: -1em;
+  left: -.12em;
   cursor: pointer;
   -webkit-user-select: none;
 }
@@ -47,17 +47,16 @@ li {
 
 .json {
   font-family: monospace;
-//  font-size: 1.1em;
-  font-size: 14px;
+  font-size: .14em;
   white-space: pre-wrap;
 }
 
 ul {
   list-style: none;
-  margin: 0 0 0 2em;
+  margin: 0 0 0 .24em;
   padding: 0;
 }
 
 h1 {
-  font-size: 1.2em;
+  font-size: .14em;
 }

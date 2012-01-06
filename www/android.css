@@ -46,7 +46,7 @@ body {
 }
 
 .f5navbar {
-	height: 3.66em;
+	height: .44em;
 }
 
 /* for web map view, on high density devices google map default font size is too small */
@@ -79,9 +79,9 @@ body {
 
 .f5androidsetting {
 	border-bottom: 1px solid #4F4F4F;	
-	padding: .75em;
+	padding: .09em;
 	-webkit-box-sizing: border-box;	
-	font-size: 1.5em;
+	font-size: .18em;
 	background-color: #303030;
 	color: #EEE;
 }
