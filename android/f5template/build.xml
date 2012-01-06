@@ -45,6 +45,7 @@
             unless="sdk.dir"
     />
 	
+	<property name="app" value="jitc"/>
 	
 	<taskdef name="xmltask" classname="com.oopsconsultancy.xmltask.ant.XmlTask"/>
 	<taskdef name="http" classname="org.missinglink.ant.task.http.HttpClientTask"/>	
@@ -67,8 +68,15 @@
     			<![CDATA[ 
     				<devservhost name="${f5.hostname}." />
     			]]>    			
-    		</insert>
+    		</insert>	
     	</xmltask>		
+    	<xmltask dest="res/xml/f5config.xml">     		
+    		<insert path="/">    			
+    			<![CDATA[ 
+    				<app name="${app}" />
+    			]]>    			
+    		</insert>	
+    	</xmltask>			    			
 	</target>
 	
 	<target name="generatef5html">		
