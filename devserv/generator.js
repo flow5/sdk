@@ -278,14 +278,16 @@ function generateHtml(parsed) {
 			injectElements(manifest.debugElements);
 		}			
 	}
-			
-	injectManifest('');
-	injectManifest('apps/' + query.app + '/');
+	
+	document.head.appendChild(makeScript('f5.js'));
 	
 	var queryScript = document.createElement('script');
 	queryScript.innerHTML = "F5.query = " + JSON.stringify(query);
 	document.head.appendChild(queryScript);
-		
+			
+	injectManifest('');
+	injectManifest('apps/' + query.app + '/');
+			
 	// resources
 	// TODO: allow F5 to also define strings/images	
 	try {

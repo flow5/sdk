@@ -35,12 +35,9 @@
 		isMobile = true;
 		F5.addClass(document.body, 'f5mobile');
 	}	
-	
-	var urlParameters = F5.getURLParameters();
-	// PhoneGap does not make it easy to pass URL parameters to the start page
-	// so check for the file protocl or the url parameter
-	var isNative = (window.location.protocol === 'file:' && urlParameters['native'] !== 'false') || 
-						urlParameters['native'] === 'true';	
+							
+	var isNative = F5.query.native === 'true';
+	var isMobile = F5.query.mobile === 'true';
 	
 	// TODO: specify a mock image server location
 	if (isMobile) {
@@ -48,7 +45,6 @@
 	} else {
 		F5.imageServerHost = '';
 	}
-	isMobile = true;
 	
 	// prevent scrolling
 	document.body.addEventListener('touchmove', function (e) {

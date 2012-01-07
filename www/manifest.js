@@ -26,7 +26,7 @@
 ***********************************************************************************************************************/
 
 exports.scripts = [
-	'f5.js',
+//	'f5.js', always added by generator.js
 	'utils.js',
 	'domutils.js',
 	'animation.js',
