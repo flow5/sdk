@@ -135,7 +135,7 @@
 	// TODO: if stop event is outside div, don't fire
 	F5.addTapListener = function (el, cb) {
 		var maxClickTime = 1000;
-		var maxClickMove = 10;
+		var maxClickMove = 30;
 				
 		addEventListener(el, startEventName(), function (startEvent) {
 			var startLoc = F5.eventLocation(startEvent);
