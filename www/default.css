@@ -91,7 +91,7 @@
 	-webkit-box-align: center;	
 }
 
-.f5button-imagecontainer, .f5button-imagecontainer .f5button-up {
+.f5button-container, .f5button-container .f5button-up {
 	position: absolute;
 	top: 0px;
 	left: 0px;

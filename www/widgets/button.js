@@ -28,31 +28,9 @@
 
 (function () {	
 	
-	function Button() {
-		this.makeContainer = function() {
-			if (this.imageContainer) {
-				this.el.removeChild(this.imageContainer);
-			}
-			this.imageContainer = document.createElement('div');
-			F5.addClass(this.imageContainer, 'f5button-imagecontainer');
-
-			this.up = document.createElement('div');
-			F5.addClass(this.up, 'f5button-up');
-			this.imageContainer.appendChild(this.up);
-
-			this.press = document.createElement('div');
-			F5.addClass(this.press, 'f5button-press');
-			this.imageContainer.appendChild(this.press);
-			
-			this.down = document.createElement('div');
-			F5.addClass(this.down, 'f5button-down');
-			this.imageContainer.appendChild(this.down);
-			
-			this.el.insertBefore(this.imageContainer, this.label);
-			
-			F5.addClass(this.el, 'f5button-up');
-		};
-				
+	function Button() {			
+		
+		/* true=down, false=up */	
 		this.setState = function (state) {
 			var that = this;
 
@@ -71,7 +49,7 @@
 				this[tag].style.visibility = '';
 			}			
 		};	
-				
+		
 		this.setAction = function (cb) {
 			var that = this;
 			
@@ -132,15 +110,25 @@
 		this.construct = function (data) {
 			
 			var that = this;
-			this.state = false;
 			
-			function makeStretchyButton(value) {
-				that.makeContainer();
+			var container;
+			function makeContainer(tag) {
+				if (!container) {
+					container = document.createElement('div');
+					F5.addClass(container, 'f5button-container');
+					that.el.appendChild(container);
+				}
 
+				that[tag] = document.createElement('div');
+				F5.addClass(that[tag], 'f5button-' + tag);
+				container.appendChild(that[tag]);
+			}			
+			
+			function makeStretchyButton(values) {
 				function makeImages(which, value) {
 					function makeImage(which, value, position) {
 						var img = document.createElement('img');
-						img.src = F5.sourceFromResourceUrl(value[which][position]);
+						img.src = F5.sourceFromResourceUrl(value[position]);
 						that[which].appendChild(img);
 
 						if (position === 'middle') {
@@ -148,40 +136,37 @@
 							img.style['-webkit-box-flex'] = 1.0;
 						}
 					}
-					if (value[which]) {
-						F5.assert(value[which].left && value[which].middle && value[which].right, 
-									'Image must specify left, middle and right');
-						makeImage(which, value, 'left');
-						makeImage(which, value, 'middle');
-						makeImage(which, value, 'right');
+					F5.assert(value.left && value.middle && value.right, 
+								'Image must specify left, middle and right');
+					makeImage(which, value, 'left');
+					makeImage(which, value, 'middle');
+					makeImage(which, value, 'right');
 
-						that[which].style.display = '-webkit-box';						
-					}
+					that[which].style.display = '-webkit-box';						
 				}
 
-				makeImages('up', value);
-				makeImages('down', value);								
-				makeImages('press', value);								
+				F5.forEach(values, function (id, value) {
+					makeContainer(id);
+					makeImages(id, value);
+				});
 			}
 
-			function makeFixedButton(value) {
-				that.makeContainer();	
-
+			function makeFixedButton(values) {
 				function makeImage(which, value) {
-					if (value[which]) {
-						var img = document.createElement('img');
-						img.src = F5.sourceFromResourceUrl(value[which]);
-						that[which].appendChild(img);						
-					}
+					var img = document.createElement('img');
+					img.src = F5.sourceFromResourceUrl(value);
+					that[which].appendChild(img);						
 				}
 
-				makeImage('up', value);
-				makeImage('down', value);
-				makeImage('press', value);
+				F5.forEach(values, function (id, value) {
+					makeContainer(id);	
+					makeImage(id, value);					
+				});
 			}
 			
 			function maskMaskButton(value) {
-				that.makeContainer();	
+				makeContainer('up');	
+				makeContainer('down');	
 				
 				var div = document.createElement('div');
 				F5.addClass(div, 'f5mask');
@@ -197,58 +182,57 @@
 				F5.addClass(div, 'f5mask');
 				div.style['-webkit-mask-image'] = 'url("' + F5.sourceFromResourceUrl(value) + '")';						
 				that.down.appendChild(div);
+			}									
+			
+			function applyResourceData(resourceData) {
+				if (resourceData.image) {
+					if (resourceData.image.up) {
+						// simple button
+						if (typeof resourceData.image.up === 'string') {
+							makeFixedButton(resourceData.image);
+						} else {
+							makeStretchyButton(resourceData.image);
+						}
+					}							
+				}
+				if (resourceData.mask) {
+					maskMaskButton(resourceData.mask);
+				}
+				if (resourceData.label) {
+					that.label = document.createElement('div');
+					F5.addClass(that.label, 'f5button-label');
+					that.label.innerText = resourceData.label;					
+					that.el.appendChild(that.label);
+				}				
 			}
 			
-						
-			F5.addClass(this.el, 'f5button');
+			this.state = false;				
+			F5.addClass(that.el, 'f5button-up');									
+			F5.addClass(this.el, 'f5button');			
 
 			/* label can be defined by putting it in the HTML */
-			var labelText = this.el.innerText;
+			var mergedResourceData = {label: this.el.innerText};
 			this.el.innerHTML = '';
-
-			function applyData(data) {
-				if (data) {
-					// id: text
-					if (typeof data === 'string') {
-						labelText = data;
-					} else if (typeof data === 'object') {
-						if (data.label) {
-							labelText = data.label;
-						}
-						if (data.image) {
-							if (data.image.up) {
-								// simple button
-								if (typeof data.image.up === 'string') {
-									makeFixedButton(data.image);
-								} else {
-									makeStretchyButton(data.image);
-								}
-							}							
-						}
-						if (data.mask) {
-							maskMaskButton(data.mask);
-						}
-					}
-				}
-			}
-
+			
 			// first apply styles from the Button class
 			var className = this.el.getAttribute('f5class');
 			if (className) {
-				applyData(data['.' + className]);
+				var classData = data['.' + className];
+				if (typeof classData === 'string') {
+					mergedResourceData.label = classData;
+				} else {					
+					F5.merge(classData, mergedResourceData);
+				}
+			}
+			
+			var instanceData = data[this.el.getAttribute('f5id')];
+			if (typeof instanceData === 'string') {
+				mergedResourceData.label = instanceData;
+			} else {
+				F5.merge(instanceData, mergedResourceData);				
 			}
 
-			// then override with styles for the instance
-			applyData(data[this.el.getAttribute('f5id')]);	
-			
-			
-			if (labelText) {
-				/* all buttons have a label div */
-				this.label = document.createElement('div');
-				F5.addClass(this.label, 'f5button-label');
-				this.label.innerText = labelText;					
-				this.el.appendChild(this.label);						
-			}
+			applyResourceData(mergedResourceData);	
 		};
 	}	
 		

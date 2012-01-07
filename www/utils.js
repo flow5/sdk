@@ -153,6 +153,31 @@
 //		}		
 	};	
 	
+	// TODO: need a unit test for this one
+	F5.merge = function(src, dst) {
+		function assign(id, value) {
+			if (!dst[id]) {
+				if (typeof value === 'string') {
+					dst[id] = value;									
+				} else {
+					dst[id] = {};
+				}
+			} 
+
+			if (typeof value === 'object') {
+				F5.assert(typeof dst[id] === 'object', 'mismatched data schema');
+				F5.forEach(value, function (valueid, value) {
+					dst[id][valueid] = value;
+				});
+			} else {
+				console.log('Data field name shadowed');					
+			}
+		}
+		if (src && typeof src === 'object') {
+			F5.forEach(src, assign);			
+		}
+	};
+	
 	// TODO: need a better name
 	// this function takes the user data and combines it with data from the images
 	// and string files to create a structure which contains all the data that is going
@@ -160,31 +185,11 @@
 	F5.getNodeData = function (node, userData) {
 		// if arg2 is provided, copy out its fields
 		var data = {};
-		function assign(id, value) {
-			if (!data[id]) {
-				data[id] = value;				
-			} else {
-				// TODO: this allows strings and images to be combined
-				if (typeof value === 'object') {
-					F5.assert(typeof data[id] === 'object', 'mismatched data schema');
-					F5.forEach(value, function (valueid, value) {
-						data[id][valueid] = value;
-					});
-				} else {
-					console.log('Data field name shadowed');					
-				}
-			}
-		}
-		if (userData && typeof userData === 'object') {
-			F5.forEach(userData, assign);
-		}
+		F5.merge(userData, data);
 		
 		// then add all of the strings resources associated with this node and ancestors
 		while (node) {
-			var resources = F5.Resources[node.id];
-			if (resources) {
-				F5.forEach(resources, assign);				
-			}
+			F5.merge(F5.Resources[node.id], data);
 			node = node.parent;
 		}
 		
@@ -268,7 +273,7 @@
 			urlParameters[parameter.split('=')[0]] = parameter.split('=')[1];
 		});	
 		return urlParameters;		
-	}
+	};
 	
 }());
 

@@ -45,7 +45,7 @@ body {
    unless the elements containing the -webkit-image-mask also have -webkit-transform applied
    one of a number of cases where the Android WebKit implementation seems to drop some rendering tasks on the floor
 */
-.f5button-imagecontainer {
+.f5button-container {
 	-webkit-transform: translate3d(0px, 0px, 0px);	
 }
 
