@@ -84,7 +84,7 @@
 /*              Buttons                */
 /***************************************/
 
-.f5button.f5button-up .f5button-down, .f5button.f5button-down .f5button-up {
+.f5button.f5button-up:not(.f5button-press) .f5button-down, .f5button.f5button-down .f5button-up, .f5button-press .f5button-up {
 	visibility: hidden;
 }
 

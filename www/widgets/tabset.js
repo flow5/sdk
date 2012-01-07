@@ -29,31 +29,30 @@
 (function () {
 	
 	// NOTE: TabButton shouldn't be used standalone
-	function TabButton() {
+	function IOSTabButton() {
 		this.state = false;			
 		
 		/* for tab button, the state is managed by the owning tabset */
 		this.setAction = function (cb) {
 			var that = this;
 			F5.addTouchStartListener(this.el, function touchStartListenerCb(e) {
-				F5.addClass(that.el, 'f5button-press');				
 				e.stopPropagation();
 				if (!that.state) {
 					// do the callback first
 					// if it errors out the state doesn't change
 					cb();
 				}
-			});		
-			
-			F5.addTouchStopListener(this.el, function touchStopListenerCB(e) {
-				F5.removeClass(that.el, 'f5button-press');
-			});				
-							
+			});												
 		};
 	}
-	TabButton.prototype = F5.WidgetPrototypes.Button;
+	IOSTabButton.prototype = F5.WidgetPrototypes.Button;
 	
-	F5.WidgetPrototypes._TabButton = new TabButton();	
+	// TODO: not sure I want this decision in the framework
+	if (F5.platform() === 'ios') {
+		F5.WidgetPrototypes._TabButton = new IOSTabButton();			
+	} else {
+		F5.WidgetPrototypes._TabButton = F5.WidgetPrototypes.Button;			
+	}
 	
 	// Tabset works by looking for elements with f5tab attribute set
 	// TODO: customize with images or alternate text

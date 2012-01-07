@@ -71,11 +71,21 @@
     		</insert>	
     	</xmltask>		
     	<xmltask dest="res/xml/f5config.xml">     		
-    		<insert path="/">    			
+    		<insert path="/">
+    			<![CDATA[ 
+    				<root/>
+    			]]>   
+    		</insert>
+    		<insert path="/root">    			
+    			<![CDATA[ 
+    				<devservhost name="${f5.hostname}." />
+    			]]>    			
+    		</insert>	
+    		<insert path="/root">    			
     			<![CDATA[ 
     				<app name="${app}" />
     			]]>    			
-    		</insert>	
+    		</insert>	 
     	</xmltask>			    			
 	</target>
 	
