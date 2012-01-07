@@ -173,10 +173,13 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative, platform) {
 	// Android
 	injectMeta({name: 'viewport', content: 'target-densitydpi=device-dpi'});
 	
-	function injectLink(rel, href) {
+	function injectLink(rel, href, type) {
 		var link = document.createElement('link');
 		link.rel = rel;
 		link.href = href;
+		if (type) {
+			link.type = type;
+		}
 		document.head.appendChild(link);
 	}
 	
@@ -238,13 +241,16 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative, platform) {
 		function injectElements(elements) {
 			if (elements) {
 				elements.forEach(function (file) {
-					var elementsDiv;
 					if (file.match('.css')) {
-						// NOTE: JSDOM doesn't fully support style nodes yet. so do it manually below
-//						elementsDiv = document.createElement('style');
-						styleWorkaround += fs.readFileSync('www/' + path + file).toString();
+						if (doInline) {
+							// NOTE: JSDOM doesn't fully support style nodes yet. so do it manually below
+							// elementsDiv = document.createElement('style');
+							styleWorkaround += fs.readFileSync('www/' + path + file).toString();							
+						} else {
+							injectLink('stylesheet', path + file, 'text/css');
+						}
 					} else {
-						elementsDiv = document.createElement('div');
+						var elementsDiv = document.createElement('div');
 						elementsDiv.innerHTML = fs.readFileSync('www/' + path + file).toString();
 						elementsDiv.id = file;				
 
