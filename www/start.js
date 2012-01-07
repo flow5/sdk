@@ -28,19 +28,10 @@
 /*global F5*/
 
 (function () {	
-	
-	// detect mobile browser
-	var isMobile = false;
-	if (F5.isMobile()) {
-		isMobile = true;
-		F5.addClass(document.body, 'f5mobile');
-	}	
-							
-	var isNative = F5.query.native === 'true';
-	var isMobile = F5.query.mobile === 'true';
-	
+		
 	// TODO: specify a mock image server location
-	if (isMobile) {
+	if (F5.isMobile()) {
+		F5.addClass(document.body, 'f5mobile');
 		F5.imageServerHost = 'http://www.flow5.com/';
 	} else {
 		F5.imageServerHost = '';
@@ -67,11 +58,11 @@
 	
 	var screenEl = document.getElementById('f5screen');
 	
-	F5.setupScreenGeometry(isMobile, isNative);		
+	F5.setupScreenGeometry(F5.isMobile(), F5.isNative());		
 
 	// TODO: use the device block of manifest to avoid the PhoneGap reference
 	var startEvent, listener;
-	if (isNative) {
+	if (F5.isNative()) {
 		startEvent = 'deviceready';
 		listener = document;
 	} else {

@@ -353,6 +353,11 @@
 		return F5.query.platform;
 	};
 	
+	F5.isNative = function () {
+		// F5.query.native confuses the JavaScript compressor
+		return F5.query['native'] === 'true';		
+	};
+	
 	F5.attachWidget = function(el, f5widget, data) {
 		// NOTE: this is just for readability in the DOM inspector
 		if (!el.getAttribute('f5widget')) {
