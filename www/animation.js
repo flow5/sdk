@@ -40,17 +40,23 @@
 				oldEl.style['-webkit-transform'] = '';
 				oldEl.style['-webkit-transition'] = '';
 
-// Android: screen flashes if this is cleared while el is visible
-//				newEl.style['-webkit-transform'] = '';
+				// Android pre-ICS: screen flashes if -webkit-transform is cleared while el is visible
+				if (F5.platform() !== 'android') {
+					newEl.style['-webkit-transform'] = '';					
+				}
 				newEl.style['-webkit-transition'] = '';
 
 				F5.removeTransitionEndListener(oldEl);			
 				
 				cb();
 			}			
-// Android: transition stutters if the event listener is used		
-//			F5.addTransitionEndListener(oldEl, complete);		
-			setTimeout(complete, 325);
+		
+			if (F5.platform() === 'android') {
+				// Android: transition stutters if the event listener is used
+				setTimeout(complete, 325);				
+			} else {
+				F5.addTransitionEndListener(oldEl, complete);	
+			}
 			
 			var transition = '-webkit-transform ease-in .3s';
 			oldEl.style['-webkit-transition'] = transition;
