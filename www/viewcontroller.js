@@ -158,27 +158,34 @@
 		this.startSubflow = function (subflow) {
 						
 			var data = {method: subflow.method, choices: subflow.choices};
-			subflow.menu = F5.createWidget('Menu', data);
-			
-			F5.Global.flow.root.view.el.appendChild(subflow.menu);	
-			
-			subflow.menu.style.opacity = 1;			
-			
+			subflow.menu = F5.createWidget('Menu', data);			
+			document.getElementById('f5screen').appendChild(subflow.menu);
+						
 			subflow.menu.widget.setAction(function (id) {
 				F5.Global.flowController.doSubflowChoice(subflow.node, id);
 			});
+			
+			setTimeout(function () {
+				subflow.menu.style.opacity = 1;							
+			}, 0);
 		};
 
 		this.completeSubflow = function (subflow) {
 			function fadeComplete() {
 				F5.removeTouchEventListenersRecursive(subflow.menu);
-				F5.Global.flow.root.view.el.removeChild(subflow.menu);
+				subflow.menu.parentElement.removeChild(subflow.menu);
 				F5.removeTransitionEndListener(subflow.menu);
 			}
 
 			F5.addTransitionEndListener(subflow.menu, fadeComplete);				
 			
-			subflow.menu.style.opacity = 0;
+			subflow.menu.style.opacity = 0;	
+			
+			// wtf? workaround for a safari rendering bug. without this, the opacity
+			// transition stops (window.getComputedStyle(menu).opacity reports .99999something)
+			setTimeout(function () {
+				subflow.menu.style.opacity = 0.01;				
+			}, 100);
 		};				
 	}
 		
