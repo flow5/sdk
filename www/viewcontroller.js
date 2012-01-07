@@ -183,9 +183,11 @@
 			
 			// wtf? workaround for a safari rendering bug. without this, the opacity
 			// transition stops (window.getComputedStyle(menu).opacity reports .99999something)
-			setTimeout(function () {
-				subflow.menu.style.opacity = 0.01;				
-			}, 100);
+			if (!F5.isMobile()) {
+				setTimeout(function () {
+					subflow.menu.style.opacity = 0.01;				
+				}, 100);				
+			}
 		};				
 	}
 		
