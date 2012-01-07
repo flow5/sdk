@@ -208,10 +208,13 @@
 
 .f5menuitem {
 	border-bottom: 1px solid black;	
-	padding:.03em;
+	padding:.06em;
 	width: 100%;
 	-webkit-box-sizing: border-box;
-	font-size: .16em;	
+}
+
+.f5menuitem .f5button-label {
+	font-size: .16em;		
 }
 
 .f5menuitem:last-child {
@@ -239,7 +242,7 @@
 
 .f5dotransition, .f5dosubflow {
 	border-bottom: 1px solid black;	
-	padding:.03em;
+	padding:.06em;
 	width: 100%;
 	-webkit-box-sizing: border-box;
 }
