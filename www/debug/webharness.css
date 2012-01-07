@@ -117,14 +117,14 @@
 	font-size: .24em;	
 }
 
-.viewerframe .f5button-down, .viewerbutton.f5button-down {
+.viewerframe .f5button-down, .viewerframe .f5button-press, .viewerbutton.f5button-down {
 	background-color: lightblue;
 	border: 2px solid white;
 }
 
 .viewerframe .backbutton .f5button-label {
 	font-size: .40em;
-	margin-top: -.3em;	
+	margin-top: -.24em;	
 }
 
 

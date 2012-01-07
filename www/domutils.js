@@ -132,11 +132,10 @@
 		removeEventListener(el, moveEventName());		
 	};	
 	
-	// TODO: if stop event is outside div, don't fire
+	F5.maxClickDistance = 30;
+	F5.maxClickTime = 1000;
+	
 	F5.addTapListener = function (el, cb) {
-		var maxClickTime = 1000;
-		var maxClickMove = 30;
-				
 		addEventListener(el, startEventName(), function (startEvent) {
 			var startLoc = F5.eventLocation(startEvent);
 			removeEventListener(el, startEventName(), 'tap');
@@ -147,7 +146,7 @@
 				var clickTime = stopEvent.timeStamp - startEvent.timeStamp;
 				var clickMove = F5.eventDistance(startLoc, stopLoc);
 				
-				if (clickTime <= maxClickTime && clickMove <= maxClickMove) {
+				if (clickTime <= F5.maxClickTime  && clickMove <= F5.maxClickDistance) {
 					F5.callback(cb, stopEvent);
 				}
 				

@@ -84,10 +84,6 @@
 /*              Buttons                */
 /***************************************/
 
-.f5button.f5button-up:not(.f5button-press) .f5button-down, .f5button.f5button-down .f5button-up, .f5button-press .f5button-up {
-	visibility: hidden;
-}
-
 .f5button {
 	position: relative;
 	display: -webkit-box;
@@ -99,9 +95,6 @@
 	position: absolute;
 	top: 0px;
 	left: 0px;
-}
-
-.f5button-imagecontainer .f5button-up {
 	width: 100%;
 }
 
@@ -109,10 +102,6 @@
 	white-space: nowrap;
 	position: relative;
 	color: white;
-}
-
-.f5button-imagecontainer {
-	width:100%;
 }
 
 .f5standardbutton img {
@@ -220,6 +209,12 @@
 	border-bottom: none;
 }
 
+.f5menuitem.f5button-press {
+	background-color: black;
+	color: white;
+}
+
+
 /***************************************/
 /*      default navigation elements    */
 /***************************************/
@@ -250,10 +245,16 @@
 	border-bottom: none;
 }
 
-.f5transitions {
+.f5dotransition {
 	background-color: lightgrey;
 }
 
-.f5dosubflow {
+.f5dosubflow{
 	background-color: darkslategrey;
 }
+
+.f5dotransition.f5button-press, .f5dosubflow.f5button-press {
+	background-color: black;
+	color: white;
+}
+

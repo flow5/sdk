@@ -39,6 +39,10 @@
 			this.up = document.createElement('div');
 			F5.addClass(this.up, 'f5button-up');
 			this.imageContainer.appendChild(this.up);
+
+			this.press = document.createElement('div');
+			F5.addClass(this.press, 'f5button-press');
+			this.imageContainer.appendChild(this.press);
 			
 			this.down = document.createElement('div');
 			F5.addClass(this.down, 'f5button-down');
@@ -48,43 +52,92 @@
 			
 			F5.addClass(this.el, 'f5button-up');
 		};
-		
+				
 		this.setState = function (state) {
+			var that = this;
+
 			this.state = state;
-			if (state) {
-				F5.addClass(this.el, 'f5button-down');
-				F5.removeClass(this.el, 'f5button-up');
-			} else {
-				F5.addClass(this.el, 'f5button-up');
-				F5.removeClass(this.el, 'f5button-down');
-			}
-		};		
-		
+
+			['up', 'down'].forEach(function (state) {
+				F5.removeClass(that.el, 'f5button-' + state);
+				if (that[state]) {
+					that[state].style.visibility = 'hidden';
+				}
+			});
+			
+			var tag = state ? 'down' : 'up';
+			F5.addClass(this.el, 'f5button-' + tag);
+			if (this[tag]) {
+				this[tag].style.visibility = '';
+			}			
+		};	
+				
 		this.setAction = function (cb) {
 			var that = this;
-			F5.addTouchStartListener(this.el, function touchStartListenerCB(e) {
+			
+			function press() {
 				F5.addClass(that.el, 'f5button-press');
-			});
-			F5.addTouchMoveListener(this.el, function touchMoveListenerCB(e) {
+				if (that.press) {
+					var tag = that.savedState ? 'down' : 'up';
+					that[tag].style.visibility = 'hidden';
+					that.press.style.visibility = '';
+				}
+			}
+			
+			function release() {
+				F5.removeClass(that.el, 'f5button-press');				
+				if (that.press) {
+					var tag = that.savedState ? 'down' : 'up';
+					that[tag].style.visibility = '';
+					that.press.style.visibility = 'hidden';
+				}
+			}			
+			
+			var moveListener;
+			
+			function stopListener() {
+				release();			
+				that.setState(that.savedState);		
+				
+				F5.removeTouchMoveListener(that.el, moveListener);
+				F5.removeTouchStopListener(that.el, stopListener);
+				F5.removeTouchStopListener(document.body, stopListener);				
+			}
+
+			moveListener = function (e) {
 				e.preventDefault();
 				e.stopPropagation();
+				
+				var moveLoc = F5.eventLocation(e);
+				if (F5.eventDistance(moveLoc, that.startLoc) > F5.maxClickDistance) {
+					stopListener();
+				}
+			};		
+			
+			F5.addTouchStartListener(this.el, function touchStartListenerCB(e) {
+				that.savedState = that.state;
+				that.startLoc = F5.eventLocation(e);
+				press();
+								
+				F5.addTouchMoveListener(that.el, moveListener);								
+				F5.addTouchStopListener(that.el, stopListener);
+				F5.addTouchStopListener(document.body, stopListener);												
 			});
-			F5.addTouchStopListener(this.el, function touchStopListenerCB(e) {
-				F5.removeClass(that.el, 'f5button-press');
-			});				
-			F5.addTapListener(this.el, cb);			
+			F5.addTapListener(this.el, function () {
+				stopListener();
+				cb();
+			});			
 		};		
 					
 		this.construct = function (data) {
 			
 			var that = this;
+			this.state = false;
 			
 			function makeStretchyButton(value) {
 				that.makeContainer();
 
 				function makeImages(which, value) {
-					F5.assert(value[which].left && value[which].middle && value[which].right, 
-								'Image must specify left, middle and right');
 					function makeImage(which, value, position) {
 						var img = document.createElement('img');
 						img.src = F5.sourceFromResourceUrl(value[which][position]);
@@ -95,32 +148,41 @@
 							img.style['-webkit-box-flex'] = 1.0;
 						}
 					}
-					makeImage(which, value, 'left');
-					makeImage(which, value, 'middle');
-					makeImage(which, value, 'right');
+					if (value[which]) {
+						F5.assert(value[which].left && value[which].middle && value[which].right, 
+									'Image must specify left, middle and right');
+						makeImage(which, value, 'left');
+						makeImage(which, value, 'middle');
+						makeImage(which, value, 'right');
 
-					that[which].style.display = '-webkit-box';
+						that[which].style.display = '-webkit-box';						
+					}
 				}
 
 				makeImages('up', value);
 				makeImages('down', value);								
+				makeImages('press', value);								
 			}
 
 			function makeFixedButton(value) {
 				that.makeContainer();	
 
 				function makeImage(which, value) {
-					var img = document.createElement('img');
-					img.src = F5.sourceFromResourceUrl(value[which]);
-					that[which].appendChild(img);
+					if (value[which]) {
+						var img = document.createElement('img');
+						img.src = F5.sourceFromResourceUrl(value[which]);
+						that[which].appendChild(img);						
+					}
 				}
 
 				makeImage('up', value);
 				makeImage('down', value);
+				makeImage('press', value);
 			}
 			
 			function maskMaskButton(value) {
 				that.makeContainer();	
+				
 				var div = document.createElement('div');
 				F5.addClass(div, 'f5mask');
 				div.style['-webkit-mask-image'] = 'url("' + F5.sourceFromResourceUrl(value) + '")';
@@ -153,11 +215,8 @@
 						if (data.label) {
 							labelText = data.label;
 						}
-						// up/down images are defined
 						if (data.image) {
-							F5.assert(typeof data.image === 'object', "Image based buttons must define up/down states");
 							if (data.image.up) {
-								F5.assert(data.image.down, "Both up and down images must be defined");
 								// simple button
 								if (typeof data.image.up === 'string') {
 									makeFixedButton(data.image);
