@@ -119,11 +119,35 @@ cli.main(function (args, options) {
 	options.port = options.port || 8008;
 
 	http.createServer(function (req, res) {
+		
+		function assert(cond, message) {
+			if (!cond) {
+				throw new Error(message);
+			}
+		}
+		
+		function isBool(value) {
+			return value && (value === 'true' || value === 'false');
+		}
+		
+		function isPlatform(value) {
+			return value && (value === 'ios' || value === 'android');
+		}
+		
+		function verifyQueryParameters(query) {
+			assert(isBool(query.debug), 'Bad parameter "debug" = ' + query.debug);
+			assert(isBool(query.native), 'Bad parameter "native" = ' + query.native);
+			assert(isBool(query.inline), 'Bad parameter "inline" = ' + query.inline);
+			assert(isBool(query.compress), 'Bad parameter "compress" = ' + query.compress);
+			assert(isBool(query.mobile), 'Bad parameter "mobile" = ' + query.mobile);
+			assert(isPlatform(query.platform), 'Bad parameter "platform" = ' + query.platform);
+			assert(query.app, 'Bad parameter "app" = ' + query.app);
+		}		
+		
 //		showRequest(req, true);
 		
 		// prevent directory climbing through passed parameters
 		var parsed = url.parse(req.url.replace('..', ''), true);
-		
 		var app = parsed.query.app;
 		
 		var name, service;
@@ -163,34 +187,11 @@ cli.main(function (args, options) {
 			}
 			break;		
 		case 'GET':
-			var isDebug = (parsed.query.debug === 'true');
-			var isNative = (parsed.query['native'] === 'true');
-			var doInline = (parsed.query['inline'] === 'true');
-			var doCompress = (parsed.query['compress'] === 'true');
-			var platform = parsed.query['platform'];
-			
-			var isMobile = false; 
-			
-			var agent = req.headers['user-agent'];
-			if (agent) {
-				isMobile = agent.match(/(iPhone)|(iPad)|(Android)|(Silk)/);	
-				if (!platform) {
-					if (agent.match(/iPhone/) || agent.match(/iPad/)) {
-						platform = 'ios';
-					} else if (agent.match(/(Android)|(Silk)/)) {
-						platform = 'android';
-					}					
-				}
-			}
-			if (!platform) {
-				platform = 'web';				
-			}
-						
-
 			if (req.url.indexOf('generate?') !== -1) {
 				try {
-					var html = generator.generateHtml(app, isDebug, doInline, isMobile, isNative, platform);
-					if (!doCompress && (isDebug || !isMobile)) {
+					verifyQueryParameters(parsed.query);
+					var html = generator.generateHtml(parsed);
+					if (parsed.query.compress === 'false') {
 						res.writeHead(200, {'Content-Type': 'text/html'});
 						res.write(html);
 						res.end();					
@@ -207,7 +208,8 @@ cli.main(function (args, options) {
 //				res.writeHead(404);
 				res.writeHead(200, {'Content-Type': 'text/cache-manifest'});
 				try {
-					res.write(generator.generateCacheManifest(app, isDebug, isMobile, isNative, platform));					
+					verifyQueryParameters(parsed.query);					
+					res.write(generator.generateCacheManifest(parsed.query));					
 				} catch (e) {
 					console.log(e);
 				}

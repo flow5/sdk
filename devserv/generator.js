@@ -49,8 +49,16 @@ function handleImageResourcesRecursive(obj, handler) {
 		}
 	});
 }
+
+function boolValue(string) {
+	if (string !== 'true' && string !== 'false') {
+		throw 'Bad bool value';
+	}
+	return string === 'true';
 	
-function generateCacheManifest(app, isDebug, isMobile, isNative, platform) {
+}
+	
+function generateCacheManifest(query) {
 	
 	var latestDate;
 	function checkDate(path) {
@@ -81,9 +89,9 @@ function generateCacheManifest(app, isDebug, isMobile, isNative, platform) {
 		
 		checkDates(manifest.scripts);
 		
-		if (isDebug) {
+		if (boolValue(query.debug)) {
 			checkDates(manifest.debugScripts);
-			if (isMobile) {
+			if (boolValue(query.mobile)) {
 				checkDates(manifest.debugMobileScripts);								
 			} else {
 				checkDates(manifest.debugDesktopScripts);				
@@ -91,18 +99,18 @@ function generateCacheManifest(app, isDebug, isMobile, isNative, platform) {
 		}
 		
 		checkDates(manifest.elements);
-		checkDates(manifest[platform+'Elements']);
-		if (isNative) {
-			checkDates(manifest[platform+'NativeElements']);			
+		checkDates(manifest[query.platform+'Elements']);
+		if (boolValue(query.native)) {
+			checkDates(manifest[query.platform+'NativeElements']);			
 		}
 		
-		if (isDebug) {
+		if (boolValue(query.debug)) {
 			checkDates(manifest.debugElements);
 		}
 		
-		checkDates(manifest[platform+'Scripts']);
-		if (isNative) {
-			checkDates(manifest[platform+'NativeScripts']);			
+		checkDates(manifest[query.platform+'Scripts']);
+		if (boolValue(query.native)) {
+			checkDates(manifest[query.platform+'NativeScripts']);			
 		}
 		
 		try {
@@ -117,7 +125,7 @@ function generateCacheManifest(app, isDebug, isMobile, isNative, platform) {
 	}
 	
 	checkManifest('www/');
-	checkManifest('www/apps/' + app + '/');
+	checkManifest('www/apps/' + query.app + '/');
 	
 	cacheManifest += 'NETWORK:\n';
 	cacheManifest += '*\n';
@@ -131,7 +139,9 @@ function generateCacheManifest(app, isDebug, isMobile, isNative, platform) {
 	return cacheManifest;
 }
 
-function generateHtml(app, isDebug, doInline, isMobile, isNative, platform) {
+function generateHtml(parsed) {
+	
+	var query = parsed.query;
 		
 	var jsdom = require('jsdom');
 	jsdom.defaultDocumentFeatures = {
@@ -144,9 +154,9 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative, platform) {
 	var styleWorkaround = '';
 	
 	var document = jsdom.jsdom();
-	
+		
 	// manifest
-	var manifestString = 'cache.manifest?app=' + app + '&debug=' + isDebug + '&native=' + isNative;
+	var manifestString = 'cache.manifest' + parsed.search;
 	document.documentElement.setAttribute('manifest', manifestString);
 	
 	function injectMeta(properties) {
@@ -185,11 +195,11 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative, platform) {
 	
 	function inlineImage(src) {
 		var prefix = 'data:image/' + require('path').extname(src).substring(1) + ';base64,';
-		return prefix + fs.readFileSync('www/apps/' + app + '/' + src, 'base64');
+		return prefix + fs.readFileSync('www/apps/' + query.app + '/' + src, 'base64');
 	}
 	
-	injectLink('apple-touch-icon', 'apps/' + app + '/images/icon@114x114.png');
-	injectLink('apple-touch-startup-image', 'apps/' + app + '/images/splash@320x460.png');
+	injectLink('apple-touch-icon', 'apps/' + query.app + '/images/icon@114x114.png');
+	injectLink('apple-touch-startup-image', 'apps/' + query.app + '/images/splash@320x460.png');
 	
 	var templates = document.createElement('div');
 	templates.id = 'f5_templates';
@@ -199,7 +209,7 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative, platform) {
 	
 	function makeScript(src) {
 		var script = document.createElement('script');		
-		if (!doInline) {
+		if (!boolValue(query.inline)) {
 			// reference scripts
 			script.src = src;				
 		} else {
@@ -224,17 +234,17 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative, platform) {
 		}
 		
 		injectScripts(manifest.scripts);
-		if (isDebug) {
+		if (boolValue(query.debug)) {
 			injectScripts(manifest.debugScripts);
-			if (isMobile) {
+			if (boolValue(query.mobile)) {
 				injectScripts(manifest.debugMobileScripts);				
 			} else {
 				injectScripts(manifest.debugDesktopScripts);				
 			}
 		}				
-		injectScripts(manifest[platform+'Scripts']);
-		if (isNative) {
-			injectScripts(manifest[platform+'NativeScripts']);			
+		injectScripts(manifest[query.platform+'Scripts']);
+		if (boolValue(query.native)) {
+			injectScripts(manifest[query.platform+'NativeScripts']);			
 		}
 		
 		// html and css
@@ -242,7 +252,7 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative, platform) {
 			if (elements) {
 				elements.forEach(function (file) {
 					if (file.match('.css')) {
-						if (doInline) {
+						if (boolValue(query.inline)) {
 							// NOTE: JSDOM doesn't fully support style nodes yet. so do it manually below
 							// elementsDiv = document.createElement('style');
 							styleWorkaround += fs.readFileSync('www/' + path + file).toString();							
@@ -260,31 +270,35 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative, platform) {
 			}					
 		}		
 		injectElements(manifest.elements);
-		injectElements(manifest[platform+'Elements']);
-		if (isNative) {
-			injectElements(manifest[platform+'NativeElements']);			
+		injectElements(manifest[query.platform+'Elements']);
+		if (boolValue(query.native)) {
+			injectElements(manifest[query.platform+'NativeElements']);			
 		}
-		if (isDebug) {
+		if (boolValue(query.debug)) {
 			injectElements(manifest.debugElements);
 		}			
 	}
 			
 	injectManifest('');
-	injectManifest('apps/' + app + '/');
+	injectManifest('apps/' + query.app + '/');
 	
+	var queryScript = document.createElement('script');
+	queryScript.innerHTML = "F5.query = " + JSON.stringify(query);
+	document.head.appendChild(queryScript);
+		
 	// resources
 	// TODO: allow F5 to also define strings/images	
 	try {
-		var resourceFile = 'apps/' + app + '/resources.js';
+		var resourceFile = 'apps/' + query.app + '/resources.js';
 		require(process.cwd() + '/www/' + resourceFile);
-		if (!doInline) {
+		if (!boolValue(query.inline)) {
 			document.head.appendChild(makeScript(resourceFile));
 			var imagePreload = document.createElement('div');
 			imagePreload.id = 'image-preload';
 			templates.appendChild(imagePreload);
 			handleImageResourcesRecursive(F5.Resources, function (obj, id, src) {
 				var img = document.createElement('img');
-				img.src = 'apps/' + app + '/' + src;
+				img.src = 'apps/' + query.app + '/' + src;
 				imagePreload.appendChild(img);
 			});
 		} else {
@@ -315,7 +329,7 @@ function generateHtml(app, isDebug, doInline, isMobile, isNative, platform) {
 				
 	document.body.appendChild(makeScript('start.js'));		
 	
-	if (false && isMobile && isDebug) {
+	if (false && boolValue(query.mobile) && boolValue(query.debug)) {
 		var weinre = document.createElement('script');
 //		weinre.src = 'http://' + require('os').hostname() + ':8081/target/target-script-min.js#anonymous';
 		weinre.src = 'http://10.0.1.5:8081/target/target-script-min.js#anonymous';
