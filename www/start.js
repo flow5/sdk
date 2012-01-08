@@ -92,15 +92,23 @@
 					
 					// TODO: extract
 					/*global PhoneGap*/
+					console.log('started');
 					setTimeout(function () {
 						if (typeof PhoneGap !== 'undefined') {
-							PhoneGap.exec(
-								function (result) { // success
-								console.log(result);
-							}, function (result) { // failure
-								console.log(result);
-							}, "com.phonegap.splashscreen", "hide", []);	
-
+							// TODO: unify
+							console.log('hiding splash: ' + F5.platform());
+							if (F5.platform() === 'android') {
+								setTimeout(function () {
+								    PhoneGap.exec(null, null, "App", "hideSplashScreen", [false]);																		
+								}, 500);
+							} else {
+								PhoneGap.exec(
+									function (result) { // success
+									console.log(result);
+								}, function (result) { // failure
+									console.log(result);
+								}, "com.phonegap.splashscreen", "hide", []);									
+							}							
 						}						
 					}, 0);																				
 				});

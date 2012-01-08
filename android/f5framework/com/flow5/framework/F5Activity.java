@@ -12,7 +12,7 @@ public class F5Activity extends DroidGap {
     	LOG.setLogLevel("VERBOSE");
         super.onCreate(savedInstanceState);
                 
-        super.init();
+ //       super.init();
         
         final F5Activity activity = this;
         final MDNSResolver resolver = new MDNSResolver(this); 

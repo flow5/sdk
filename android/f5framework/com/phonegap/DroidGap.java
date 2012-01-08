@@ -65,6 +65,7 @@ import android.webkit.WebStorage;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.phonegap.api.LOG;
@@ -159,6 +160,7 @@ public class DroidGap extends PhonegapActivity {
     
     // The webview for our app
     protected WebView appView;
+    protected ImageView splashScreenView;
     protected WebViewClient webViewClient;
     private ArrayList<Pattern> whiteList = new ArrayList<Pattern>();
     private HashMap<String, Boolean> whiteListCache = new HashMap<String,Boolean>();
@@ -237,7 +239,7 @@ public class DroidGap extends PhonegapActivity {
         root.setOrientation(LinearLayout.VERTICAL);
         root.setBackgroundColor(this.backgroundColor);
         root.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, 
-                ViewGroup.LayoutParams.FILL_PARENT, 0.0F));
+                ViewGroup.LayoutParams.FILL_PARENT, 0.0F));               
         
         // Load PhoneGap configuration:
         //      white list of allowed URLs
@@ -331,7 +333,12 @@ public class DroidGap extends PhonegapActivity {
         // If spashscreen
         this.splashscreen = this.getIntegerProperty("splashscreen", 0);
         if ((this.urls.size() == 0) && (this.splashscreen != 0)) {
-            root.setBackgroundResource(this.splashscreen);
+ //           root.setBackgroundResource(this.splashscreen);
+        	splashScreenView = new ImageView(this);
+        	splashScreenView.setImageResource(this.splashscreen);
+        	splashScreenView.setAdjustViewBounds(true); // set the ImageView bounds to match the Drawable's dimensions
+        	splashScreenView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT));
+        	root.addView(splashScreenView);
         }
 
         // If loadUrlTimeoutValue
@@ -461,12 +468,12 @@ public class DroidGap extends PhonegapActivity {
                             me.appView.stopLoading();
                             LOG.e(TAG, "DroidGap: TIMEOUT ERROR! - calling webViewClient");
                             me.webViewClient.onReceivedError(me.appView, -6, "The connection to the server was unsuccessful.", url);
-                        }
+                        }                            
                     }
                 };
                 Thread thread = new Thread(runnable);
                 thread.start();
-                me.appView.loadUrl(url);
+                me.appView.loadUrl(url);                              
             }
         });
     }

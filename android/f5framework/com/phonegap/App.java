@@ -70,6 +70,9 @@ public class App extends Plugin {
         	else if (action.equals("exitApp")) {
             	this.exitApp();
             }
+        	else if (action.equals("hideSplashScreen")) {
+            	this.hideSplashScreen();
+            }
             return new PluginResult(status, result);
         } catch (JSONException e) {
             return new PluginResult(PluginResult.Status.JSON_EXCEPTION);
@@ -195,4 +198,16 @@ public class App extends Plugin {
     public void exitApp() {
     	((DroidGap)this.ctx).endActivity();
     }
+    
+    /* Flow5 */
+    public void hideSplashScreen() {
+    	final DroidGap activity = ((DroidGap)this.ctx); 
+    	activity.runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				activity.root.removeView(activity.splashScreenView);     					
+			}        	
+        });	
+    	
+    }    
 }
