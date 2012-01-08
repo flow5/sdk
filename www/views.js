@@ -76,8 +76,7 @@
 				el.style.visibility = 'hidden';
 			}		
 			
-			var labels = true;
-			if (labels) {
+			if (F5.isDebug() && !F5.isMobile()) {
 				var label = document.createElement('div');
 				label.innerHTML = this.node.id;
 				F5.addClass(label, 'f5nodelabel');

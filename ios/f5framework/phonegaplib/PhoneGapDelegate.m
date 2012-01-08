@@ -359,8 +359,8 @@ BOOL gSplashScreenShown = NO;
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {    
     // read from UISupportedInterfaceOrientations (or UISupportedInterfaceOrientations~iPad, if its iPad) from -Info.plist
-    //    NSArray* supportedOrientations = [self parseInterfaceOrientations:
-  //                                             [[[NSBundle mainBundle] infoDictionary] objectForKey:@"UISupportedInterfaceOrientations"]];
+    NSArray* supportedOrientations = [self parseInterfaceOrientations:
+                                               [[[NSBundle mainBundle] infoDictionary] objectForKey:@"UISupportedInterfaceOrientations"]];
     
     // read from PhoneGap.plist in the app bundle
     NSString* appPlistName = @"PhoneGap";

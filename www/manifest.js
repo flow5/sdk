@@ -25,98 +25,100 @@
 
 ***********************************************************************************************************************/
 
-exports.scripts = [
-//	'f5.js', always added by generator.js
-	'utils.js',
-	'domutils.js',
-	'animation.js',
-	'views.js',
-	'flow.js',
-	'flowcontroller.js',
-	'3p/Iuppiter.js',
-	'3p/bezier.js',
-	'templates.js',
-	'viewcontroller.js',
-	'services.js',
-	'ui.js',
-	'location.js',
-	'widgets/button.js',
-	'widgets/statictext.js',
-	'widgets/picture.js',
-	'widgets/tabset.js',
-	'widgets/navcontroller.js',
-	'widgets/streetview.js',
-	'widgets/distance.js',
-	'widgets/menu.js',
-	'widgets/tracker.js',
-	'widgets/loader.js',
-	'widgets/scroller.js'
-];
+exports.all = {
+	scripts: [
+	//	'f5.js', always added by generator.js
+		'utils.js',
+		'domutils.js',
+		'animation.js',
+		'views.js',
+		'flow.js',
+		'flowcontroller.js',
+		'3p/Iuppiter.js',
+		'3p/bezier.js',
+		'templates.js',
+		'viewcontroller.js',
+		'services.js',
+		'ui.js',
+		'location.js',
+		'widgets/button.js',
+		'widgets/statictext.js',
+		'widgets/picture.js',
+		'widgets/tabset.js',
+		'widgets/navcontroller.js',
+		'widgets/streetview.js',
+		'widgets/distance.js',
+		'widgets/menu.js',
+		'widgets/tracker.js',
+		'widgets/loader.js',
+		'widgets/scroller.js'
+	], 
+	elements: [
+		'core.css',
+		'default.css'
+	],
+	debug: {
+		scripts: [
+		//	'debug/timers.js'
+			'debug/flow_diags.js',
+			'debug/flowcontroller_diags.js',
+			'debug/json.js'
+		]
+	},
+	desktop: {
+		debug: {
+			scripts: [
+				'debug/webharness.js'
+			],
+			elements: [
+				'debug.css',
+				'debug/json.css',
+				'debug/webharness.css',
+				'debug/webharness.html'
+			]
+		}		
+	}
+};
 
-exports.elements = [
-	'core.css',
-	'default.css',
-	// TODO: create debug elements section
-	'debug.css'
-];
+exports.android = {
+	scripts: [
+		'android.js',	
+		'widgets/navbar_web.js',
+		'widgets/mapview_web.js'
+	],
+	elements: [
+		'android.css'
+	],
+	app: {
+		scripts: [
+			'3p/phonegap-1.3.0.js'
+		]
+	},
+	browser: {
+		scripts: [
+			'nobridge.js',
+		]
+	}
+};
 
-exports.androidElements = [
-	'android.css'
-];
-
-exports.iosElements = [
-	'ios.css'
-];
-
-exports.webElements = [
-	'ios.css'
-];
-
-exports.webScripts = [
-	'nobridge.js',
-	'widgets/navbar_web.js',
-	'widgets/mapview_web.js'
-];
-
-exports.iosScripts = [
-	'nobridge.js',
-	'widgets/navbar_web.js',
-	'widgets/mapview_web.js'
-];
-
-exports.androidScripts = [
-	'nobridge.js',
-	'android.js',
-	'widgets/navbar_web.js',
-	'widgets/mapview_web.js'
-];
-
-exports.androidNativeScripts = [
-	'3p/phonegap-1.3.0.js',
-	'androidnative.js'
-];
-
-exports.iosNativeScripts = [
-	'bridge.js',
-	'widgets/navbar_native.js',
-	'widgets/mapview_native.js',
-	'udp.js',
-	'3p/phonegap-1.1.0.js'
-];
-
-exports.debugScripts = [
-//	'debug/timers.js'
-	'debug/flow_diags.js',
-	'debug/flowcontroller_diags.js',
-	'debug/json.js'
-];
-
-exports.debugDesktopScripts = [
-	'debug/webharness.js',
-];
-
-exports.debugElements = [
-	'debug/json.css',
-	'debug/webharness.css',
-	'debug/webharness.html'
-];
+exports.ios = {
+	elements: [
+		'ios.css'
+	],
+	app: {
+		scripts: [
+			'bridge.js',
+			'widgets/navbar_native.js',
+			'widgets/mapview_native.js',
+			'udp.js',
+			'3p/phonegap-1.1.0.js'	
+		]
+	},
+	browser: {
+		scripts: [
+			'nobridge.js',
+			'widgets/navbar_web.js',
+			'widgets/mapview_web.js'		
+		]
+	}
+};

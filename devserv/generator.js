@@ -57,9 +57,49 @@ function boolValue(string) {
 	return string === 'true';
 	
 }
+
+function processManifest(manifest, query, type, process) {
+
+	function manifestEntry(manifest, path) {
+		var pathComponents = path.split('.');
+		var obj = manifest;
+		while (obj && typeof obj === 'object' && pathComponents.length) {
+			obj = obj[pathComponents.shift()];
+		}
+				
+		return obj;
+	}
+	
+	function processSection(section) {
+		process(manifestEntry(manifest, section + '.' + type));
+		if (boolValue(query.debug)) {
+			process(manifestEntry(manifest, section + '.debug.' + type));
+		}	
+		if (!boolValue(query.mobile)) {
+			process(manifestEntry(manifest, section + '.desktop.' + type));
+			if (boolValue(query.debug)) {
+				process(manifestEntry(manifest, section + '.desktop.debug.' + type));
+			}									
+		}						
+
+		if (boolValue(query.native)) {
+			process(manifestEntry(manifest, section + '.app.' + type));
+			if (boolValue(query.debug)) {
+				process(manifestEntry(manifest, section + '.app.debug.' + type));
+			}			
+		} else {
+			process(manifestEntry(manifest, section + '.browser.' + type));
+			if (boolValue(query.debug)) {
+				process(manifestEntry(manifest, section + '.browser.debug.' + type));
+			}			
+		}		
+	}
+	
+	processSection('all');
+	processSection(query.platform);
+}
 	
 function generateCacheManifest(query) {
-	
 	var latestDate;
 	function checkDate(path) {
 		var modDate = new Date(fs.statSync(path).mtime);
@@ -84,34 +124,11 @@ function generateCacheManifest(query) {
 				});				
 			}
 		}
-			
+					
 		var manifest = require(process.cwd() + '/' + path + 'manifest.js');
 		
-		checkDates(manifest.scripts);
-		
-		if (boolValue(query.debug)) {
-			checkDates(manifest.debugScripts);
-			if (boolValue(query.mobile)) {
-				checkDates(manifest.debugMobileScripts);								
-			} else {
-				checkDates(manifest.debugDesktopScripts);				
-			}
-		}
-		
-		checkDates(manifest.elements);
-		checkDates(manifest[query.platform+'Elements']);
-		if (boolValue(query.native)) {
-			checkDates(manifest[query.platform+'NativeElements']);			
-		}
-		
-		if (boolValue(query.debug)) {
-			checkDates(manifest.debugElements);
-		}
-		
-		checkDates(manifest[query.platform+'Scripts']);
-		if (boolValue(query.native)) {
-			checkDates(manifest[query.platform+'NativeScripts']);			
-		}
+		processManifest(manifest, query, 'scripts', checkDates);									
+		processManifest(manifest, query, 'elements', checkDates);									
 		
 		try {
 			require(process.cwd() + '/' + path + 'resources.js');
@@ -232,21 +249,7 @@ function generateHtml(parsed) {
 				});				
 			}
 		}
-		
-		injectScripts(manifest.scripts);
-		if (boolValue(query.debug)) {
-			injectScripts(manifest.debugScripts);
-			if (boolValue(query.mobile)) {
-				injectScripts(manifest.debugMobileScripts);				
-			} else {
-				injectScripts(manifest.debugDesktopScripts);				
-			}
-		}				
-		injectScripts(manifest[query.platform+'Scripts']);
-		if (boolValue(query.native)) {
-			injectScripts(manifest[query.platform+'NativeScripts']);			
-		}
-		
+				
 		// html and css
 		function injectElements(elements) {
 			if (elements) {
@@ -269,14 +272,9 @@ function generateHtml(parsed) {
 				});
 			}					
 		}		
-		injectElements(manifest.elements);
-		injectElements(manifest[query.platform+'Elements']);
-		if (boolValue(query.native)) {
-			injectElements(manifest[query.platform+'NativeElements']);			
-		}
-		if (boolValue(query.debug)) {
-			injectElements(manifest.debugElements);
-		}			
+
+		processManifest(manifest, query, 'scripts', injectScripts);									
+		processManifest(manifest, query, 'elements', injectElements);											
 	}
 	
 	document.head.appendChild(makeScript('f5.js'));

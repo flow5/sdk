@@ -353,6 +353,10 @@
 		return F5.query.platform;
 	};
 	
+	F5.isDebug = function () {
+		return F5.query.debug === 'true';
+	};
+	
 	F5.isNative = function () {
 		// F5.query.native confuses the JavaScript compressor
 		return F5.query['native'] === 'true';		
