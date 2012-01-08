@@ -106,53 +106,59 @@ function processManifest(manifest, query, type, process) {
 }
 	
 function generateCacheManifest(query) {
-	var latestDate;
-	function checkDate(path) {
-		var modDate = new Date(fs.statSync(path).mtime);
-		if (!latestDate || modDate > latestDate) {
-			latestDate = modDate;
+	
+	function getModDate() {
+		var latestDate;
+		function checkDate(path) {
+			var modDate = new Date(fs.statSync(path).mtime);
+			if (!latestDate || modDate > latestDate) {
+				latestDate = modDate;
+			}
 		}
+
+		checkDate('www/start.js');		
+		checkDate(__filename);
+
+		function checkManifest(path) {	
+			checkDate(path + 'manifest.js');
+
+			function checkDates(files, type) {
+				files.forEach(function (file) {
+					checkDate(path + file);
+					if (type === 'resources') {
+						try {
+							var resources = require(process.cwd() + '/' + path + file).resources;
+							handleImageResourcesRecursive(resources, function (obj, id, src) {
+								checkDate(src);
+							});			
+						} catch (e) {
+							console.log(e.stack);
+						}										
+					}
+				});				
+			}
+
+			var manifest = require(process.cwd() + '/' + path + 'manifest.js');
+
+			processManifest(manifest, query, 'scripts', checkDates);									
+			processManifest(manifest, query, 'elements', checkDates);									
+			processManifest(manifest, query, 'resources', checkDates);											
+		}
+
+		checkManifest('www/');
+		checkManifest('www/apps/' + query.app + '/');
+		
+		return latestDate;		
 	}
+
 
 	var cacheManifest = 'CACHE MANIFEST\n';
 	cacheManifest += 'CACHE:\n';
-		
-	checkDate('www/start.js');		
-	checkDate(__filename);
 			
-	function checkManifest(path) {	
-		checkDate(path + 'manifest.js');
-		
-		function checkDates(files, type) {
-			files.forEach(function (file) {
-				checkDate(path + file);
-				if (type === 'resources') {
-					try {
-						var resources = require(process.cwd() + '/' + path + file).resources;
-						handleImageResourcesRecursive(resources, function (obj, id, src) {
-							checkDate(src);
-						});			
-					} catch (e) {
-						console.log(e.stack);
-					}										
-				}
-			});				
-		}
-					
-		var manifest = require(process.cwd() + '/' + path + 'manifest.js');
-		
-		processManifest(manifest, query, 'scripts', checkDates);									
-		processManifest(manifest, query, 'elements', checkDates);									
-		processManifest(manifest, query, 'resources', checkDates);											
-	}
-	
-	checkManifest('www/');
-	checkManifest('www/apps/' + query.app + '/');
-	
 	cacheManifest += 'NETWORK:\n';
 	cacheManifest += '*\n';
 						
-	cacheManifest += '#' + latestDate + '\n';
+	cacheManifest += '#' + getModDate() + '\n';
 	
 //	console.log(cacheManifest)
 	
