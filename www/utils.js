@@ -270,6 +270,14 @@
 		return obj;
 	};
 		
+	F5.reset = function () {
+		document.body.innerHTML = '';
+		document.body.style['background-color'] = 'black';
+		localStorage.clear();
+		setTimeout(function () {
+			location.reload();					
+		}, 0);
+	}	
 }());
 
 
