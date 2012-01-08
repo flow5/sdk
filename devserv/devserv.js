@@ -172,13 +172,13 @@ cli.main(function (args, options) {
 								res.end();
 							});							
 						} catch (e2) {
-							console.log(e2);
+							console.log(e2.stack);
 							res.writeHead(500);
 							res.end();											
 						}
 					});										
 				} catch (e1) {
-					console.log(e1);
+					console.log(e1.stack);
 					res.end();				
 				}
 			} else {
@@ -199,7 +199,7 @@ cli.main(function (args, options) {
 						compress(html, res);					
 					}					
 				} catch (e2) {
-					console.log(e2);
+					console.log(e2.stack);
 					// TODO: would be nice to return 404 if the appname is bad
 					res.writeHead(500);
 					res.end();					
@@ -211,7 +211,7 @@ cli.main(function (args, options) {
 					verifyQueryParameters(parsed.query);					
 					res.write(generator.generateCacheManifest(parsed.query));					
 				} catch (e) {
-					console.log(e);
+					console.log(e.stack);
 				}
 				res.end();				
 			} else if (req.url.indexOf('service?') !== -1) {
@@ -224,7 +224,7 @@ cli.main(function (args, options) {
 						res.end();
 					});
 				} catch (e3) {
-					console.log(e3);
+					console.log(e3.stack);
 					res.writeHead(500);					
 					res.end();
 				}

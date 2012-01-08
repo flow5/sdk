@@ -70,27 +70,33 @@ function processManifest(manifest, query, type, process) {
 		return obj;
 	}
 	
+	function processIfExists(list) {
+		if (list) {
+			process(list);
+		}
+	}
+	
 	function processSection(section) {
-		process(manifestEntry(manifest, section + '.' + type));
+		processIfExists(manifestEntry(manifest, section + '.' + type), type);
 		if (boolValue(query.debug)) {
-			process(manifestEntry(manifest, section + '.debug.' + type));
+			processIfExists(manifestEntry(manifest, section + '.debug.' + type), type);
 		}	
 		if (!boolValue(query.mobile)) {
-			process(manifestEntry(manifest, section + '.desktop.' + type));
+			processIfExists(manifestEntry(manifest, section + '.desktop.' + type), type);
 			if (boolValue(query.debug)) {
-				process(manifestEntry(manifest, section + '.desktop.debug.' + type));
+				processIfExists(manifestEntry(manifest, section + '.desktop.debug.' + type), type);
 			}									
 		}						
 
 		if (boolValue(query.native)) {
-			process(manifestEntry(manifest, section + '.app.' + type));
+			processIfExists(manifestEntry(manifest, section + '.app.' + type), type);
 			if (boolValue(query.debug)) {
-				process(manifestEntry(manifest, section + '.app.debug.' + type));
+				processIfExists(manifestEntry(manifest, section + '.app.debug.' + type), type);
 			}			
 		} else {
-			process(manifestEntry(manifest, section + '.browser.' + type));
+			processIfExists(manifestEntry(manifest, section + '.browser.' + type), type);
 			if (boolValue(query.debug)) {
-				process(manifestEntry(manifest, section + '.browser.debug.' + type));
+				processIfExists(manifestEntry(manifest, section + '.browser.debug.' + type), type);
 			}			
 		}		
 	}
@@ -117,28 +123,27 @@ function generateCacheManifest(query) {
 	function checkManifest(path) {	
 		checkDate(path + 'manifest.js');
 		
-		function checkDates(files) {
-			if (files) {
-				files.forEach(function (file) {
-					checkDate(path + file);
-				});				
-			}
+		function checkDates(files, type) {
+			files.forEach(function (file) {
+				checkDate(path + file);
+				if (type === 'resources') {
+					try {
+						var resources = require(process.cwd() + '/' + path + file).resources;
+						handleImageResourcesRecursive(resources, function (obj, id, src) {
+							checkDate(src);
+						});			
+					} catch (e) {
+						console.log(e.stack);
+					}										
+				}
+			});				
 		}
 					
 		var manifest = require(process.cwd() + '/' + path + 'manifest.js');
 		
 		processManifest(manifest, query, 'scripts', checkDates);									
 		processManifest(manifest, query, 'elements', checkDates);									
-		
-		try {
-			require(process.cwd() + '/' + path + 'resources.js');
-
-			handleImageResourcesRecursive(F5.Resources, function (obj, id, src) {
-				checkDate(src);
-			});			
-		} catch (e) {
-//			console.log(e.message);
-		}				
+		processManifest(manifest, query, 'resources', checkDates);											
 	}
 	
 	checkManifest('www/');
@@ -168,14 +173,25 @@ function generateHtml(parsed) {
 		QuerySelector: false
 	};
 	
-	var styleWorkaround = '';
+	
 	
 	var document = jsdom.jsdom();
-		
-	// manifest
-	var manifestString = 'cache.manifest' + parsed.search;
-	document.documentElement.setAttribute('manifest', manifestString);
 	
+	var templates = document.createElement('div');
+	templates.id = 'f5_templates';
+	templates.setAttribute('style', 'display:none;');
+	
+	var imagePreload = document.createElement('div');
+	imagePreload.id = 'image-preload';
+	templates.appendChild(imagePreload);
+		
+	document.body.appendChild(templates);	
+
+	var styleWorkaround = '';
+	var resources = {};
+	
+		
+
 	function injectMeta(properties) {
 		var meta = document.createElement('meta');
 		var name;
@@ -186,19 +202,6 @@ function generateHtml(parsed) {
 		}		
 		document.head.appendChild(meta);
 	}
-	
-	// TODO: create a meta section in manifest for this stuff
-	
-	// standard meta
-	injectMeta({'http-equiv': 'Content-Type', content: 'text/html; charset=UTF-8'});
-	injectMeta({name: 'viewport', content: 'width=device-width initial-scale=1.0 maximum-scale=1.0 user-scalable=0'});
-
-	// ios webapp stuff
-	injectMeta({name: 'apple-mobile-web-app-status-bar-style', content: 'black'});
-	injectMeta({name: 'apple-mobile-web-app-capable', content: 'yes'});
-
-	// Android
-	injectMeta({name: 'viewport', content: 'target-densitydpi=device-dpi'});
 	
 	function injectLink(rel, href, type) {
 		var link = document.createElement('link');
@@ -211,18 +214,13 @@ function generateHtml(parsed) {
 	}
 	
 	function inlineImage(src) {
-		var prefix = 'data:image/' + require('path').extname(src).substring(1) + ';base64,';
-		return prefix + fs.readFileSync('www/apps/' + query.app + '/' + src, 'base64');
+		try {
+			var prefix = 'data:image/' + require('path').extname(src).substring(1) + ';base64,';
+			return prefix + fs.readFileSync('www/apps/' + query.app + '/' + src, 'base64');			
+		} catch (e) {
+			console.log(e.stack);
+		}
 	}
-	
-	injectLink('apple-touch-icon', 'apps/' + query.app + '/images/icon@114x114.png');
-	injectLink('apple-touch-startup-image', 'apps/' + query.app + '/images/splash@320x460.png');
-	
-	var templates = document.createElement('div');
-	templates.id = 'f5_templates';
-	templates.setAttribute('style', 'display:none;');
-	
-	document.body.appendChild(templates);
 	
 	function makeScript(src) {
 		var script = document.createElement('script');		
@@ -243,81 +241,93 @@ function generateHtml(parsed) {
 		
 		// javascript
 		function injectScripts(scripts) {
-			if (scripts) {
-				scripts.forEach(function (file) {
-					document.head.appendChild(makeScript(path + file));				
-				});				
-			}
+			scripts.forEach(function (file) {
+				document.head.appendChild(makeScript(path + file));				
+			});				
 		}
 				
 		// html and css
 		function injectElements(elements) {
-			if (elements) {
-				elements.forEach(function (file) {
-					if (file.match('.css')) {
-						if (boolValue(query.inline)) {
-							// NOTE: JSDOM doesn't fully support style nodes yet. so do it manually below
-							// elementsDiv = document.createElement('style');
-							styleWorkaround += fs.readFileSync('www/' + path + file).toString();							
-						} else {
-							injectLink('stylesheet', path + file, 'text/css');
-						}
+			elements.forEach(function (file) {
+				if (file.match('.css')) {
+					if (boolValue(query.inline)) {
+						// NOTE: JSDOM doesn't fully support style nodes yet. so do it manually below
+						// elementsDiv = document.createElement('style');
+						styleWorkaround += fs.readFileSync('www/' + path + file).toString();							
 					} else {
-						var elementsDiv = document.createElement('div');
-						elementsDiv.innerHTML = fs.readFileSync('www/' + path + file).toString();
-						elementsDiv.id = file;				
-
-						templates.appendChild(elementsDiv);
+						injectLink('stylesheet', path + file, 'text/css');
 					}
-				});
-			}					
-		}		
+				} else {
+					var elementsDiv = document.createElement('div');
+					elementsDiv.innerHTML = fs.readFileSync('www/' + path + file).toString();
+					elementsDiv.id = file;				
+
+					templates.appendChild(elementsDiv);
+				}
+			});
+		}	
+		
+		// resource files
+		function injectResources(resourceFiles) {
+			resourceFiles.forEach(function (file) {
+				try {
+					resources = require(process.cwd() + '/www/' + path + file).resources;	
+					if (boolValue(query.inline)) {
+						handleImageResourcesRecursive(resources, function (obj, id, src) {						
+							obj[id] = inlineImage(src);										
+						});
+					} else {
+						handleImageResourcesRecursive(resources, function (obj, id, src) {
+							var img = document.createElement('img');
+							img.src = 'apps/' + query.app + '/' + src;
+							imagePreload.appendChild(img);
+						});
+					}		
+				} catch (e) {
+					console.log(e.stack);
+				}				
+			});				
+		}
 
 		processManifest(manifest, query, 'scripts', injectScripts);									
 		processManifest(manifest, query, 'elements', injectElements);											
-	}
+		processManifest(manifest, query, 'resources', injectResources);											
+	}	
+
 	
+	// manifest
+	var manifestString = 'cache.manifest' + parsed.search;
+	document.documentElement.setAttribute('manifest', manifestString);
+	
+	
+	// TODO: create a meta section in manifest for this stuff
+	
+	// standard meta
+	injectMeta({'http-equiv': 'Content-Type', content: 'text/html; charset=UTF-8'});
+	injectMeta({name: 'viewport', content: 'width=device-width initial-scale=1.0 maximum-scale=1.0 user-scalable=0'});
+
+	// ios webapp stuff
+	injectMeta({name: 'apple-mobile-web-app-status-bar-style', content: 'black'});
+	injectMeta({name: 'apple-mobile-web-app-capable', content: 'yes'});
+	injectLink('apple-touch-icon', 'apps/' + query.app + '/images/icon@114x114.png');
+	injectLink('apple-touch-startup-image', 'apps/' + query.app + '/images/splash@320x460.png');
+
+	// Android
+	injectMeta({name: 'viewport', content: 'target-densitydpi=device-dpi'});
+		
+				
 	document.head.appendChild(makeScript('f5.js'));
 	
 	var queryScript = document.createElement('script');
 	queryScript.innerHTML = "F5.query = " + JSON.stringify(query);
 	document.head.appendChild(queryScript);
-			
+				
 	injectManifest('');
-	injectManifest('apps/' + query.app + '/');
-			
-	// resources
-	// TODO: allow F5 to also define strings/images	
-	try {
-		var resourceFile = 'apps/' + query.app + '/resources.js';
-		require(process.cwd() + '/www/' + resourceFile);
-		if (!boolValue(query.inline)) {
-			document.head.appendChild(makeScript(resourceFile));
-			var imagePreload = document.createElement('div');
-			imagePreload.id = 'image-preload';
-			templates.appendChild(imagePreload);
-			handleImageResourcesRecursive(F5.Resources, function (obj, id, src) {
-				var img = document.createElement('img');
-				img.src = 'apps/' + query.app + '/' + src;
-				imagePreload.appendChild(img);
-			});
-		} else {
-			/*global F5: true*/
-			try {
-				handleImageResourcesRecursive(F5.Resources, function (obj, id, src) {						
-					obj[id] = inlineImage(src);										
-				});
-				var script = document.createElement('script');	
-				script.id = 'resources.js';	
-				script.innerHTML = '//<!--\nF5.Resources = ' + JSON.stringify(F5.Resources) + ';\n//-->';
-				document.head.appendChild(script);
-			} catch (e) {
-				console.log(e.message);
-			}			
-		}		
-	} catch (exception) {
-		console.log(exception.message);
-	}
+	injectManifest('apps/' + query.app + '/');	
+	
+	var resourcesScript = document.createElement('script');
+	resourcesScript.innerHTML = "F5.Resources = " + JSON.stringify(resources);
+	document.head.appendChild(resourcesScript);
 		
 	var appframeEl = document.createElement('div');
 	appframeEl.id = 'f5appframe';
@@ -338,9 +348,6 @@ function generateHtml(parsed) {
 			
 	deleteCaches();	
 	
-//	console.log('Size: ' + document.outerHTML.length);
-	
-//	return document.outerHTML;
 	return document.outerHTML.replace('<head>', '<head><style>' + styleWorkaround + '</style>');			
 }
 
