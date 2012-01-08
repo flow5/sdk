@@ -359,8 +359,8 @@ BOOL gSplashScreenShown = NO;
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {    
     // read from UISupportedInterfaceOrientations (or UISupportedInterfaceOrientations~iPad, if its iPad) from -Info.plist
-    NSArray* supportedOrientations = [self parseInterfaceOrientations:
-                                               [[[NSBundle mainBundle] infoDictionary] objectForKey:@"UISupportedInterfaceOrientations"]];
+    //    NSArray* supportedOrientations = [self parseInterfaceOrientations:
+  //                                             [[[NSBundle mainBundle] infoDictionary] objectForKey:@"UISupportedInterfaceOrientations"]];
     
     // read from PhoneGap.plist in the app bundle
     NSString* appPlistName = @"PhoneGap";
@@ -395,7 +395,8 @@ BOOL gSplashScreenShown = NO;
     [[UIApplication sharedApplication] setStatusBarOrientation:[[supportedOrientations objectAtIndex:0] intValue]];
     
     // Set the supported orientations for rotation. If number of items in the array is > 1, autorotate is supported
-    viewController.supportedOrientations = supportedOrientations;
+    // F5: don't do this until the webview has loaded
+//    viewController.supportedOrientations = supportedOrientations;
     
     
     CGRect screenBounds = [ [ UIScreen mainScreen ] bounds ];
@@ -593,6 +594,9 @@ BOOL gSplashScreenShown = NO;
         self.activityView.hidden = YES;    
         [self.window bringSubviewToFront:self.viewController.view];
     }
+    
+    self.viewController.supportedOrientations = [self parseInterfaceOrientations:
+                                      [[[NSBundle mainBundle] infoDictionary] objectForKey:@"UISupportedInterfaceOrientations"]];
     
     [self.viewController didRotateFromInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation]];
 }

@@ -76,9 +76,9 @@
 	}
 	
 	/*global shouldRotateToOrientation: true*/
-	// TODO: phonegap doesn't implement this. . .??
+	// TODO: this is a phonegap thing. . .
 	shouldRotateToOrientation = function () {
-
+		// let the plist specify
 	};
 
 	listener.addEventListener(startEvent, function startHandler(e) {	
