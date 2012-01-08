@@ -56,7 +56,7 @@ function MenuHelper() {
 		this.updateConfiguration(F5.Global.flow.root);
 	};			
 }
-MenuHelper.prototype = F5.WidgetPrototypes.NavBarBase;
+MenuHelper.prototype = F5.WidgetPrototypes.NavController;
 
 /* TODO: Initial pass at hooking up settings. Initially tying it to what would normally be in nav bar.
    this is just to illustrate the navbar-less style in Android */
