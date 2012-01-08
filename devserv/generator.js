@@ -297,8 +297,7 @@ function generateHtml(parsed) {
 	
 	// manifest
 	var manifestString = 'cache.manifest' + parsed.search;
-	document.documentElement.setAttribute('manifest', manifestString);
-	
+	document.documentElement.setAttribute('manifest', manifestString);	
 	
 	// TODO: create a meta section in manifest for this stuff
 	
@@ -315,16 +314,19 @@ function generateHtml(parsed) {
 	// Android
 	injectMeta({name: 'viewport', content: 'target-densitydpi=device-dpi'});
 		
-				
+	// f5.js comes first
 	document.head.appendChild(makeScript('f5.js'));
 	
+	// provide the query parameters
 	var queryScript = document.createElement('script');
 	queryScript.innerHTML = "F5.query = " + JSON.stringify(query);
 	document.head.appendChild(queryScript);
 				
+	// process the manifests
 	injectManifest('');
 	injectManifest('apps/' + query.app + '/');	
 	
+	// inject the merged (and possibly inlined) resources
 	var resourcesScript = document.createElement('script');
 	resourcesScript.innerHTML = "F5.Resources = " + JSON.stringify(resources);
 	document.head.appendChild(resourcesScript);
