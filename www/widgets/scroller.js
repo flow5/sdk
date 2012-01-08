@@ -270,17 +270,25 @@
 				that.refresh();
 			};
 			
+			function moveHandlerWrapper(e) {
+				moveHandler(that, e);
+			}
+
+			function stopHandlerWrapper(e) {
+				F5.removeTouchStopListener(document.body, stopHandlerWrapper);				
+				F5.removeTouchStopListener(document.body, moveHandlerWrapper);				
+				stopHandler(that, e);
+			}			
+			
 			F5.addTouchStartListener(this.el, function (e) {
 				startHandler(that, e);
+				// makes the scroller play nice in a desktop browser
+				F5.addTouchStopListener(document.body, stopHandlerWrapper);
+				F5.addTouchMoveListener(document.body, moveHandlerWrapper);
 			});
 			
-			F5.addTouchStopListener(this.el, function (e) {
-				stopHandler(that, e);
-			});
-			
-			F5.addTouchMoveListener(this.el, function (e) {
-				moveHandler(that, e);
-			});
+			F5.addTouchStopListener(this.el, stopHandlerWrapper);			
+			F5.addTouchMoveListener(this.el, moveHandlerWrapper);
 			
 			transform(this, this.staticOffset);
 		};
