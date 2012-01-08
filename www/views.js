@@ -38,14 +38,14 @@
 	function View() {
 		this.initializeView = function (node) {	
 
-			var div = document.createElement('div');
-			F5.addClass(div, 'f5' + node.type);
-			F5.addClass(div, node.id);			
+			var el = document.createElement('div');
+			F5.addClass(el, 'f5' + node.type);
+			F5.addClass(el, node.id);			
 			
-			div.id = node.path;
-			div.view = this;
+			el.id = node.path;
+			el.view = this;
 						
-			this.el = div;			
+			this.el = el;			
 			this.node = node;
 
 			node.view = this;												
@@ -68,10 +68,12 @@
 			
 			if (F5.ViewDelegates[node.id]) {
 				this.delegate = F5.objectFromPrototype(F5.ViewDelegates[node.id]);
+				this.delegate.node = node;
+				this.delegate.el = el;
 			}
 			
 			if (!node.active) {
-				div.style.visibility = 'hidden';
+				el.style.visibility = 'hidden';
 			}		
 			
 			var labels = true;
@@ -85,31 +87,31 @@
 				
 		this.viewWillBecomeActive = function () {
 			if (this.delegate && this.delegate.viewWillBecomeActive) {
-				this.delegate.viewWillBecomeActive(this.el, this.node);
+				this.delegate.viewWillBecomeActive();
 			}			
 		};
 		
 		this.viewWillBecomeInactive = function () {
 			if (this.delegate && this.delegate.viewWillBecomeInactive) {
-				this.delegate.viewWillBecomeInactive(this.el, this.node);
+				this.delegate.viewWillBecomeInactive();
 			}			
 		};
 		
 		this.viewDidBecomeActive = function () {
 			if (this.delegate && this.delegate.viewDidBecomeActive) {
-				this.delegate.viewDidBecomeActive(this.el, this.node);
+				this.delegate.viewDidBecomeActive();
 			}						
 		};
 		
 		this.viewDidBecomeInactive = function () {
 			if (this.delegate && this.delegate.viewDidBecomeInactive) {
-				this.delegate.viewDidBecomeInactive(this.el, this.node);
+				this.delegate.viewDidBecomeInactive();
 			}						
 		};
 		
 		this.getNavConfig = function () {
 			if (this.delegate && this.delegate.getNavConfig) {
-				return this.delegate.getNavConfig(this.node);
+				return this.delegate.getNavConfig();
 			} else {
 				if (this.node.back) {
 					var leaf = this.node.back;
@@ -202,7 +204,7 @@
 			});						
 
 			if (this.delegate && this.delegate.initialize) {
-				this.delegate.initialize(this.el, this.node);					
+				this.delegate.initialize();					
 			} else {
 				F5.attachTabset(this.el, node, 'bottom');
 			}				
@@ -210,7 +212,7 @@
 		
 		this.doSelection = function (node, id) {
 			if (this.delegate && this.delegate.doSelection) {
-				this.delegate.doSelection(node, id);
+				this.delegate.doSelection(id);
 			} else {
 				node.view.el.widget.select(id);				
 			}
@@ -223,7 +225,7 @@
 		this.initialize = function (node) {
 			this.initializeView(node);	
 			if (this.delegate && this.delegate.initialize) {
-				this.delegate.initialize(this.el, this.node);					
+				this.delegate.initialize();					
 			}
 						
 		};

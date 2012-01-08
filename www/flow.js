@@ -53,7 +53,8 @@
 			
 			var flowDelegatePrototype = F5.FlowDelegates[node.id];
 			if (flowDelegatePrototype) {
-				node.flowDelegate = F5.objectFromPrototype(flowDelegatePrototype);			
+				node.flowDelegate = F5.objectFromPrototype(flowDelegatePrototype);
+				node.flowDelegate.node = node;			
 			}									
 							
 			if (nodeSpec.children) {

@@ -356,16 +356,18 @@
 			node.activeSubflow = subflow;			
 			
 			// see if this subflow is handled by the flow delegate
-			var delegateMethod = node.flowDelegate ? node.flowDelegate[subflow.method] : null;
+			var delegate = node.flowDelegate;
+			var delegateMethod = delegate ? delegate[subflow.method] : null;
 			// if not, see if it's handled by the root delegate
 			if (!delegateMethod) {
-				delegateMethod = F5.Global.flow.root.flowDelegate ? F5.Global.flow.root.flowDelegate[subflow.method] : null;
+				delegate = F5.Global.flow.root.flowDelegate;
+				delegateMethod = delegate ? delegate[subflow.method] : null;
 			}
 
 			if (delegateMethod) {
-				delegateMethod(node, function subflowChoiceCb(choice) {
+				delegateMethod.apply(delegate, [function subflowChoiceCb(choice) {
 					that.doSubflowChoice(node, choice);
-				});
+				}]);
 			} else {
 				// handle missing delegate method gracefully
 				if (!subflow.userInput) {
@@ -389,13 +391,15 @@
 			if (node.activeSubflow.userInput) {
 				// the flow delegate must name the method <methodName>Choice
 				var name = node.activeSubflow.method + 'Choice';
-				var method = node.flowDelegate ? node.flowDelegate[name] : null;
+				var delegate = node.flowDelegate;
+				var delegateMethod = delegate ? delegate[name] : null;
 				// try the root delegate
-				if (!method) {
-					method = F5.Global.flow.root.flowDelegate ? F5.Global.flow.root.flowDelegate[name] : null;
+				if (!delegateMethod) {
+					delegate = F5.Global.flow.root.flowDelegate;
+					delegateMethod = delegate ? delegate[name] : null;
 				}
-				if (method) {
-					method(node, id);
+				if (delegateMethod) {
+					delegateMethod.apply(delegate, [id]);
 				}
 			}								
 
