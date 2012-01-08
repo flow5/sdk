@@ -93,8 +93,11 @@
 					newEl.style['z-index'] = '';
 					newEl.style['-webkit-transition'] = '';
 
-					oldEl.style.opacity = '';
-					oldEl.style.visibility = 'hidden';
+					// setting opacity causes flickering on Android (Gingerbread)
+					if (F5.platform() !== 'android') {
+						oldEl.style.opacity = '';						
+						oldEl.style.visibility = 'hidden';
+					}
 
 					F5.removeTransitionEndListener(newEl);
 
@@ -122,8 +125,11 @@
 					newEl.style['z-index'] = '';
 					newEl.style['-webkit-transition'] = '';
 
-					oldEl.style.opacity = '';
-					oldEl.style.visibility = 'hidden';
+					// setting opacity causes flickering on Android (Gingerbread)
+					if (F5.platform() !== 'android') {
+						oldEl.style.opacity = '';						
+						oldEl.style.visibility = 'hidden';
+					}
 
 					F5.removeTransitionEndListener(oldEl);
 
