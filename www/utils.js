@@ -157,9 +157,7 @@
 	F5.merge = function(src, dst) {
 		function assign(id, value) {
 			if (!dst[id]) {
-				if (typeof value === 'string') {
-					dst[id] = value;									
-				} else {
+				if (typeof value === 'object') {
 					dst[id] = {};
 				}
 			} 
@@ -167,10 +165,16 @@
 			if (typeof value === 'object') {
 				F5.assert(typeof dst[id] === 'object', 'mismatched data schema');
 				F5.forEach(value, function (valueid, value) {
+					if (dst[id][valueid]) {
+						console.log('WARNING: data field name shadowed: ' + id + '.' + valueid);										
+					}
 					dst[id][valueid] = value;
 				});
 			} else {
-				console.log('Data field name shadowed');					
+				if (dst[id]) {
+					console.log('WARNING: data field name shadowed: ' + id);										
+				}
+				dst[id] = value;
 			}
 		}
 		if (src && typeof src === 'object') {
