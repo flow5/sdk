@@ -91,7 +91,8 @@ exports.android = {
 	],
 	app: {
 		scripts: [
-			'3p/phonegap-1.3.0.js'
+			'3p/phonegap-1.3.0.js',
+			'nobridge.js'
 		]
 	},
 	browser: {
