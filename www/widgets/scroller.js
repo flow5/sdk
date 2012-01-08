@@ -275,16 +275,22 @@
 			}
 
 			function stopHandlerWrapper(e) {
-				F5.removeTouchStopListener(document.body, stopHandlerWrapper);				
-				F5.removeTouchStopListener(document.body, moveHandlerWrapper);				
+				if (!F5.isMobile()) {				
+					F5.removeTouchStopListener(document.body, stopHandlerWrapper);				
+					F5.removeTouchMoveListener(document.body, moveHandlerWrapper);				
+				}
+				F5.removeTouchStopListener(that.el, stopHandlerWrapper);				
+				F5.removeTouchMoveListener(that.el, moveHandlerWrapper);				
 				stopHandler(that, e);
 			}			
 			
 			F5.addTouchStartListener(this.el, function (e) {
 				startHandler(that, e);
 				// makes the scroller play nice in a desktop browser
-				F5.addTouchStopListener(document.body, stopHandlerWrapper);
-				F5.addTouchMoveListener(document.body, moveHandlerWrapper);
+				if (!F5.isMobile()) {
+					F5.addTouchStopListener(document.body, stopHandlerWrapper);
+					F5.addTouchMoveListener(document.body, moveHandlerWrapper);					
+				}
 			});
 			
 			F5.addTouchStopListener(this.el, stopHandlerWrapper);			
