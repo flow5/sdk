@@ -71,7 +71,11 @@ function JSONFormatterPrototype() {
 	        output += that.decorateWithSpan(value, 'num');
 	    }
 	    else if (valueType === 'string') {
-			output += '<span class="string">"' + that.jsString(value) + '"</span>';	            
+			if (value.match('-> ')) {
+				output += '<span class="reference">' + that.jsString(value) + '</span>';	            				
+			} else {
+				output += '<span class="string">"' + that.jsString(value) + '"</span>';	            								
+			}
 	    }
 	    else if (valueType === 'boolean') {
 	        output += that.decorateWithSpan(value, 'bool');
@@ -87,13 +91,13 @@ function JSONFormatterPrototype() {
 	    var numProps = 0;
 		var prop;
 
-		F5.forEach(json, function (id, obj) {
+		F5.forEach(json, function (item) {
 	        numProps += 1;				
 		});
 		
-		F5.forEach(json, function (prop, obj) {
+		F5.forEach(json, function (item) {
 	        hasContents = true;
-	        output += '<li>' + that.valueToHTML(json[prop]);
+	        output += '<li>' + that.valueToHTML(item);
 	        if (numProps > 1) {
 	            output += ',';
 	        }
@@ -138,7 +142,11 @@ function JSONFormatterPrototype() {
 	    });
 
 	    if (hasContents) {
-	        output = '{<ul class="obj collapsible">' + output + '</ul>}';
+			if (json.id) {
+				output = '{<ul class="obj collapsible" id="json-' + json.id + '">' + output + '</ul>}';		       
+			} else {
+		        output = '{<ul class="obj collapsible">' + output + '</ul>}';				
+			}
 	    } else {
 	        output = '{ }';
 	    }
@@ -146,33 +154,37 @@ function JSONFormatterPrototype() {
 	    return output;
 	};
 	
+	this.collapse = function(collapser) {	
+	    var target = collapser.parentNode.getElementsByClassName('collapsible');
+
+	    if (!target.length) {
+	        return;
+	    }
+		
+		target = target[0];
+			
+		var ellipsis;
+	    if (target.style.display === 'none') {
+	        ellipsis = target.parentNode.getElementsByClassName('ellipsis')[0];
+	        target.parentNode.removeChild(ellipsis);
+	        target.style.display = '';
+	        collapser.innerHTML = '-';
+	    } else {
+	        target.style.display = 'none';
+
+	        ellipsis = document.createElement('span');
+			F5.addClass(ellipsis, 'ellipsis');
+	        ellipsis.innerHTML = ' &hellip; ';
+	        target.parentNode.insertBefore(ellipsis, target);
+	        collapser.innerHTML = '+';
+	    }
+	}
+	
 	this.attachListeners = function () {
+		var that = this;
+		
 		function collapse(evt) {
-		    var collapser = evt.target;
-
-		    var target = collapser.parentNode.getElementsByClassName('collapsible');
-
-		    if (!target.length) {
-		        return;
-		    }
-
-		    target = target[0];
-
-			var ellipsis;
-		    if (target.style.display === 'none') {
-		        ellipsis = target.parentNode.getElementsByClassName('ellipsis')[0];
-		        target.parentNode.removeChild(ellipsis);
-		        target.style.display = '';
-		        collapser.innerHTML = '-';
-		    } else {
-		        target.style.display = 'none';
-
-		        ellipsis = document.createElement('span');
-				F5.addClass(ellipsis, 'ellipsis');
-		        ellipsis.innerHTML = ' &hellip; ';
-		        target.parentNode.insertBefore(ellipsis, target);
-		        collapser.innerHTML = '+';
-		    }
+			that.collapse(evt.target);
 		}
 
 		function addCollapser(item) {

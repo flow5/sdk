@@ -8,55 +8,59 @@
  */
 
 .prop {
-  font-weight: bold;
+  color: lightgreen;
 }
 
 .null {
-  color: red;
+  color: darkred;
 }
 
 .bool {
-  color: blue;
+  color: lightblue;
 }
 
 .num {
-  color: blue;
+  color: lightblue;
 }
 
 .string {
-  color: green;
+  color: white;
+  white-space: pre-wrap;
+}
+
+.reference {
+  color: lightgreen;
   white-space: pre-wrap;
 }
 
 .collapser {
   position: absolute;
-  left: -.12em;
+  left: -1em;
   cursor: pointer;
   -webkit-user-select: none;
+  color: yellow;
 }
 
+/*
 .q {
   display: inline-block;
   width: 0px;
-  color: transparent;
 }
+*/
 
 li {
   position: relative;
+	color: grey;
 }
 
 .json {
-  font-family: monospace;
-  font-size: .14em;
+  font-family: "Consolas", monospace;
+  font-size: .16em;
   white-space: pre-wrap;
 }
 
 ul {
   list-style: none;
-  margin: 0 0 0 .24em;
+  margin: 0 0 0 1em;
   padding: 0;
-}
-
-h1 {
-  font-size: .14em;
 }

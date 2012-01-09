@@ -30,16 +30,13 @@ exports.all = {
 	//	'f5.js', always added by generator.js
 		'utils.js',
 		'domutils.js',
-		'animation.js',
-		'views.js',
 		'flow.js',
 		'flowcontroller.js',
-		'3p/Iuppiter.js',
-		'3p/bezier.js',
+		'views.js',
 		'templates.js',
 		'viewcontroller.js',
+		'animation.js',
 		'services.js',
-		'ui.js',
 		'location.js',
 		'widgets/button.js',
 		'widgets/statictext.js',
@@ -51,7 +48,9 @@ exports.all = {
 		'widgets/menu.js',
 		'widgets/tracker.js',
 		'widgets/loader.js',
-		'widgets/scroller.js'
+		'widgets/scroller.js',
+		'3p/Iuppiter.js',
+		'3p/bezier.js'
 	], 
 	elements: [
 		'core.css',
@@ -62,13 +61,13 @@ exports.all = {
 		//	'debug/timers.js'
 			'debug/flow_diags.js',
 			'debug/flowcontroller_diags.js',
-			'debug/json.js'
 		]
 	},
 	desktop: {
 		debug: {
 			scripts: [
-				'debug/webharness.js'
+				'debug/webharness.js',
+				'debug/json.js'
 			],
 			elements: [
 				'debug/json.css',

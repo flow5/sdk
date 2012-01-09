@@ -87,15 +87,26 @@
 						back: true}[id];
 			}
 
-			function copyForPrettyPrintRecursive(obj, objId) {
+			function copyForPrettyPrintRecursive(obj) {
+				if (obj.constructor === HTMLDivElement) {
+					console.log('div');
+				}
+				
 				var copy = {};
 				F5.forEach(obj, function (id, child) {
 					if (child && typeof child === 'object') {
-						// break cycles and use paths to indicate references
-						if (isReference(id)) {
-							copy[id] = '[-> ' + child.path + ']';
-						} else if (id !== 'view' && id !== 'flowDelegate') {
-							copy[id] = copyForPrettyPrintRecursive(child, id);
+						if (child.constructor === Array) {
+							copy[id] = [];
+							F5.forEach(child, function (item) {
+								copy[id].push(copyForPrettyPrintRecursive(item));
+							});
+						} else {
+							// break cycles and use paths to indicate references
+							if (isReference(id)) {
+								copy[id] = '[-> ' + child.path + ']';
+							} else if (id !== 'view' && id !== 'menu' && id !== 'flowDelegate') {
+								copy[id] = copyForPrettyPrintRecursive(child);
+							}							
 						}
 					} else {
 						copy[id] = child;

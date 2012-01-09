@@ -24,15 +24,24 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global F5: true*/
 
+(function () {
+	
 var fs = require('fs');
 
-F5 = require(process.cwd() + '/www/f5.js');
+
+function forEach(obj, fn) {
+	var name;
+	for (name in obj) {
+		if (obj.hasOwnProperty(name)) {
+			fn(name, obj[name]);
+		}
+	}							
+}
 
 function deleteCaches() {
 	// delete all of the cached entries so we reload the next time
-	F5.forEach(require.cache, function (id, obj) {
+	forEach(require.cache, function (id, obj) {
 		if (id.match('manifest.js') || id.match('resources.js')) {
 			delete require.cache[id];
 		}
@@ -41,7 +50,7 @@ function deleteCaches() {
 
 // the image references are at the leaf nodes
 function handleImageResourcesRecursive(obj, handler) {
-	F5.forEach(obj, function (id, value) {
+	forEach(obj, function (id, value) {
 		if (typeof value === 'object') {
 			handleImageResourcesRecursive(value, handler);
 		} else if (value.indexOf('.png') !== -1 || value.indexOf('.jpg') !== -1){
@@ -105,7 +114,7 @@ function processManifest(manifest, query, type, process) {
 	processSection(query.platform);
 }
 	
-function generateCacheManifest(query) {
+exports.generateCacheManifest = function(query) {
 	
 	function getModDate() {
 		var latestDate;
@@ -165,9 +174,9 @@ function generateCacheManifest(query) {
 	deleteCaches();
 	
 	return cacheManifest;
-}
+};
 
-function generateHtml(parsed) {
+exports.generateHtml = function(parsed) {
 	
 	var query = parsed.query;
 		
@@ -177,12 +186,11 @@ function generateHtml(parsed) {
 		ProcessExternalResources: [],
 		MutationEvents: false,
 		QuerySelector: false
-	};
-	
-	
-	
+	};			
 	var document = jsdom.jsdom();
 	
+
+	/* setup container */
 	var templates = document.createElement('div');
 	templates.id = 'f5_templates';
 	templates.setAttribute('style', 'display:none;');
@@ -195,9 +203,9 @@ function generateHtml(parsed) {
 
 	var styleWorkaround = '';
 	var resources = {};
-	
-		
-
+			
+			
+	/* helper functions */
 	function injectMeta(properties) {
 		var meta = document.createElement('meta');
 		var name;
@@ -218,16 +226,7 @@ function generateHtml(parsed) {
 		}
 		document.head.appendChild(link);
 	}
-	
-	function inlineImage(src) {
-		try {
-			var prefix = 'data:image/' + require('path').extname(src).substring(1) + ';base64,';
-			return prefix + fs.readFileSync('www/apps/' + query.app + '/' + src, 'base64');			
-		} catch (e) {
-			console.log(e.stack);
-		}
-	}
-	
+		
 	function makeScript(src) {
 		var script = document.createElement('script');		
 		if (!boolValue(query.inline)) {
@@ -243,7 +242,15 @@ function generateHtml(parsed) {
 	}
 	
 	function injectManifest(path) {		
-		var manifest = require(process.cwd() + '/www/' + path + 'manifest.js');
+		
+		function inlineImage(src) {
+			try {
+				var prefix = 'data:image/' + require('path').extname(src).substring(1) + ';base64,';
+				return prefix + fs.readFileSync('www/apps/' + query.app + '/' + src, 'base64');			
+			} catch (e) {
+				console.log(e.stack);
+			}
+		}		
 		
 		// javascript
 		function injectScripts(scripts) {
@@ -295,11 +302,18 @@ function generateHtml(parsed) {
 			});				
 		}
 
+		var manifest = require(process.cwd() + '/www/' + path + 'manifest.js');
+
 		processManifest(manifest, query, 'scripts', injectScripts);									
 		processManifest(manifest, query, 'elements', injectElements);											
 		processManifest(manifest, query, 'resources', injectResources);											
 	}	
-
+	
+	
+	
+	/***********************************/
+	/************** BUILD **************/
+	/***********************************/
 	
 	// manifest
 	var manifestString = 'cache.manifest' + parsed.search;
@@ -347,6 +361,7 @@ function generateHtml(parsed) {
 				
 	document.body.appendChild(makeScript('start.js'));		
 	
+	// TODO: enable/disable on device? need to expose mdns lookup on Android
 	if (false && boolValue(query.mobile) && boolValue(query.debug)) {
 		var weinre = document.createElement('script');
 //		weinre.src = 'http://' + require('os').hostname() + ':8081/target/target-script-min.js#anonymous';
@@ -357,7 +372,6 @@ function generateHtml(parsed) {
 	deleteCaches();	
 	
 	return document.outerHTML.replace('<head>', '<head><style>' + styleWorkaround + '</style>');			
-}
+};
 
-exports.generateHtml = generateHtml;
-exports.generateCacheManifest = generateCacheManifest;
+}());

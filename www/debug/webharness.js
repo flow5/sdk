@@ -42,10 +42,41 @@
 			jsonbuttonEl = F5.getElementById(viewerframeEl, 'jsonbutton'),
 			framesbuttonEl = F5.getElementById(viewerframeEl, 'framesbutton'),
 			resetbuttonEl = F5.getElementById(viewerframeEl, 'resetbutton'),
-			backbuttonEl = F5.getElementById(viewerframeEl, 'backbutton');
-
+			backbuttonEl = F5.getElementById(viewerframeEl, 'backbutton'),
+			jsonDiv = F5.getElementById(viewerframeEl, 'json');
+		
+		function updateJson() {
+			jsonDiv.innerHTML = '';
+			
+			var jsonFormatter = new JSONFormatter();
+			var json = jsonFormatter.valueToHTML(JSON.parse(F5.Global.flow.diags.toJSON()));
+							
+			jsonDiv.innerHTML = json;						
+			jsonFormatter.attachListeners();																	
+			
+			F5.forEach(jsonDiv.querySelectorAll('.collapser'), function (collapser) {
+				jsonFormatter.collapse(collapser);
+			});
+			
+			var activeNode = F5.Global.flow.diags.getActiveLeafNode();
+			if (activeNode.type === 'subflow') {
+				activeNode = activeNode.node;
+			}
+			var activeId = 'json-' + activeNode.id;
+			var activeDiv = document.getElementById(activeId);
+			while (activeDiv.parentElement !== jsonDiv) {
+				var collapser = activeDiv.parentElement.firstChild;
+				if (F5.hasClass(collapser, 'collapser')) {
+					jsonFormatter.collapse(collapser);						
+				}
+				activeDiv = activeDiv.parentElement;
+			}			
+		}
+		
 		var sequenceNumber = 0;
 		function update() {	
+			updateJson();
+			
 			sequenceNumber += 1;						
 			F5.post('dot2svg', F5.Global.flow.diags.toDOT(), function (response, headers) {
 
@@ -138,25 +169,13 @@
 			}
 		});				
 
-		var jsonDiv;
-
 		// TODO: show hide and update the jsonDiv rather than adding/removing
 		jsonbuttonEl.widget.setAction(function () {
-			if (jsonDiv) {
-				jsonframeEl.removeChild(jsonDiv);
-				jsonDiv = null;
+			if (jsonframeEl.style.display === 'none') {
 				jsonframeEl.style.display = '';
+				updateJson();
 			} else {
-				var jsonFormatter = new JSONFormatter();
-				var json = jsonFormatter.valueToHTML(JSON.parse(F5.Global.flow.diags.toJSON()));
-								
-				jsonDiv = document.createElement('div');
-				F5.addClass(jsonDiv, 'json');
-				jsonDiv.innerHTML = json; 
-				
-				jsonframeEl.appendChild(jsonDiv);
-				jsonframeEl.style.display = 'block';
-				jsonFormatter.attachListeners();																	
+				jsonframeEl.style.display = 'none';
 			}
 		});	
 
