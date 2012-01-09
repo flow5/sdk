@@ -71,7 +71,6 @@ exports.all = {
 				'debug/webharness.js'
 			],
 			elements: [
-				'debug.css',
 				'debug/json.css',
 				'debug/webharness.css',
 				'debug/webharness.html'
