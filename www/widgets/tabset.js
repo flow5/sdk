@@ -45,13 +45,13 @@
 			});												
 		};
 	}
-	IOSTabButton.prototype = F5.WidgetPrototypes.Button;
+	IOSTabButton.prototype = F5.Widgets.Button;
 	
 	// TODO: not sure I want this decision in the framework
 	if (F5.platform() === 'ios') {
-		F5.WidgetPrototypes._TabButton = new IOSTabButton();			
+		F5.Widgets._TabButton = new IOSTabButton();			
 	} else {
-		F5.WidgetPrototypes._TabButton = F5.WidgetPrototypes.Button;			
+		F5.Widgets._TabButton = F5.Widgets.Button;			
 	}
 	
 	// Tabset works by looking for elements with f5tab attribute set
@@ -131,6 +131,6 @@
 		};
 	}
 
-	F5.WidgetPrototypes.Tabset = new Tabset();
+	F5.Widgets.Tabset = new Tabset();
 
 }());

@@ -318,6 +318,6 @@
 		};
 	}
 
-	F5.WidgetPrototypes.Scroller = new Scroller();
+	F5.Widgets.Scroller = new Scroller();
 		
 }());

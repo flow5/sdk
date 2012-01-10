@@ -136,7 +136,7 @@
 			configure.apply(this);
 		};
 	}
-	NavBar.prototype = F5.WidgetPrototypes.NavController;
+	NavBar.prototype = F5.Widgets.NavController;
 
-	F5.WidgetPrototypes.NavBar = new NavBar();
+	F5.Widgets.NavBar = new NavBar();
 }());

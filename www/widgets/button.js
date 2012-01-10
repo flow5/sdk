@@ -128,7 +128,7 @@
 				function makeImages(which, value) {
 					function makeImage(which, value, position) {
 						var img = document.createElement('img');
-						img.src = F5.sourceFromResourceUrl(value[position]);
+						img.src = value[position].src();
 						that[which].appendChild(img);
 
 						if (position === 'middle') {
@@ -154,7 +154,7 @@
 			function makeFixedButton(values) {
 				function makeImage(which, value) {
 					var img = document.createElement('img');
-					img.src = F5.sourceFromResourceUrl(value);
+					img.src = value.src();
 					that[which].appendChild(img);						
 				}
 
@@ -170,17 +170,17 @@
 				
 				var div = document.createElement('div');
 				F5.addClass(div, 'f5mask');
-				div.style['-webkit-mask-image'] = 'url("' + F5.sourceFromResourceUrl(value) + '")';
+				div.style['-webkit-mask-image'] = 'url("' + value.src() + '")';
 				that.up.appendChild(div);
 
 				div = document.createElement('div');
 				F5.addClass(div, 'f5mask-shadow');
-				div.style['-webkit-mask-image'] = 'url("' + F5.sourceFromResourceUrl(value) + '")';						
+				div.style['-webkit-mask-image'] = 'url("' + value.src() + '")';						
 				that.down.appendChild(div);
 
 				div = document.createElement('div');
 				F5.addClass(div, 'f5mask');
-				div.style['-webkit-mask-image'] = 'url("' + F5.sourceFromResourceUrl(value) + '")';						
+				div.style['-webkit-mask-image'] = 'url("' + value.src() + '")';						
 				that.down.appendChild(div);
 			}									
 			
@@ -188,7 +188,7 @@
 				if (resourceData.image) {
 					if (resourceData.image.up) {
 						// simple button
-						if (typeof resourceData.image.up === 'string') {
+						if (resourceData.image.up instanceof F5.ImagePreloader) {
 							makeFixedButton(resourceData.image);
 						} else {
 							makeStretchyButton(resourceData.image);
@@ -236,7 +236,7 @@
 		};
 	}	
 		
-	F5.WidgetPrototypes.Button = new Button();	
+	F5.Widgets.Button = new Button();	
 																				
 	
 	function ToggleButton() {		
@@ -251,7 +251,7 @@
 			});			
 		};
 	}
-	ToggleButton.prototype = F5.WidgetPrototypes.Button;
+	ToggleButton.prototype = F5.Widgets.Button;
 	
-	F5.WidgetPrototypes.ToggleButton = new ToggleButton();				
+	F5.Widgets.ToggleButton = new ToggleButton();				
 }());

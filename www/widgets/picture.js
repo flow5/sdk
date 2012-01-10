@@ -31,15 +31,19 @@
 	function Picture() {
 		this.construct = function (data) {
 			var id = this.el.getAttribute('f5id');
-			var url = F5.valueFromId(data, id);
-			if (url) {
+			var value = F5.valueFromId(data, id);
+			if (value) {
 				var img = document.createElement('img');
-				img.src = F5.sourceFromResourceUrl(url);
+				if (value instanceof F5.ImagePreloader) {
+					img.src = value.src();					
+				} else {
+					img.src = value;
+				}
 				this.el.appendChild(img);				
 			}			
 		};
 	}
 	
-	F5.WidgetPrototypes.Picture = new Picture();
+	F5.Widgets.Picture = new Picture();
 		
 }());

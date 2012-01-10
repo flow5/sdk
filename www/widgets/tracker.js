@@ -77,5 +77,5 @@
 		};
 	}
 	
-	F5.WidgetPrototypes.Tracker = new Tracker();
+	F5.Widgets.Tracker = new Tracker();
 }());

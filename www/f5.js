@@ -27,49 +27,18 @@
 /*global define, F5: true*/
 
 if (typeof F5 === 'undefined') {
+	
 	F5 = {};
 	
 	F5.mockDataHost = 'http://www.flow5.com/';
 //	F5.mockDataHost = 'http://flow5.local:8008/';	
 
 	F5.Global = {};
-	F5.Resources = {};
 	F5.FlowDelegates = {};	
 			
 	if (typeof document !== 'undefined') {
-		F5.WidgetPrototypes = {};
+		F5.Widgets = {};
 		F5.ViewDelegates = {};
 	}
-
-	F5.forEach = function (obj, fn) {
-		/*global NodeList*/
-		if (typeof NodeList !== 'undefined' && obj.constructor === NodeList) {
-			var i;
-			for (i = 0; i < obj.length; i += 1) {
-				fn(obj[i]);
-			}
-
-		} else if (obj.constructor === Array) {
-			obj.forEach(fn);
-		} else {
-			var name;
-			for (name in obj) {
-				if (obj.hasOwnProperty(name)) {
-					fn(name, obj[name]);
-				}
-			}							
-		}
-	};
-
-	F5.extend = function (obj1, obj2) {
-		F5.forEach(obj2, function (id, value) {
-			obj1[id] = value;
-		});
-	};	
 }
-
-if (typeof exports !== 'undefined') {
-	F5.extend(exports, F5);
-}
-
 	

@@ -55,5 +55,5 @@
 		};
 	}
 	
-	F5.WidgetPrototypes.StreetView = new StreetView();		
+	F5.Widgets.StreetView = new StreetView();		
 }());

@@ -155,14 +155,20 @@
 	
 	// TODO: need a unit test for this one
 	F5.merge = function(src, dst) {
+		
+		// resources may also contain F5.ImagePreloader objects which are treated like literals
+		function isSimpleObject(value) {
+			return typeof value === 'object' && value.constructor === Object;
+		}
+				
 		function assign(id, value) {
 			if (!dst[id]) {
-				if (typeof value === 'object') {
+				if (isSimpleObject(value)) {
 					dst[id] = {};
 				}
 			} 
 
-			if (typeof value === 'object') {
+			if (isSimpleObject(value)) {
 				F5.assert(typeof dst[id] === 'object', 'mismatched data schema');
 				F5.forEach(value, function (valueid, value) {
 					if (dst[id][valueid]) {
@@ -220,15 +226,7 @@
 			console.log(e.message);
 		}
 	};
-	
-	F5.sourceFromResourceUrl = function (url) {
-		if (url.match('data:image/') || url.match('http://')) {
-			return url;
-		} else {
-			return 'apps/' + F5.query.app + '/' + url;
-		}
-	};
-		
+			
 	F5.chainTasks = function(tasks, cb) {
         if (tasks.length) {
             tasks.shift()(function() {
@@ -277,7 +275,33 @@
 		setTimeout(function () {
 			location.reload();					
 		}, 0);
-	}	
+	};
+	
+	F5.forEach = function (obj, fn) {
+		/*global NodeList*/
+		if (typeof NodeList !== 'undefined' && obj.constructor === NodeList) {
+			var i;
+			for (i = 0; i < obj.length; i += 1) {
+				fn(obj[i]);
+			}
+
+		} else if (obj.constructor === Array) {
+			obj.forEach(fn);
+		} else {
+			var name;
+			for (name in obj) {
+				if (obj.hasOwnProperty(name)) {
+					fn(name, obj[name]);
+				}
+			}							
+		}
+	};
+
+	F5.extend = function (obj1, obj2) {
+		F5.forEach(obj2, function (id, value) {
+			obj1[id] = value;
+		});
+	};	
 }());
 
 

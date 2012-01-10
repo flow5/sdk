@@ -76,6 +76,6 @@
 		};
 	}
 		
-	F5.WidgetPrototypes.Distance = new Distance();
+	F5.Widgets.Distance = new Distance();
 		
 }());

@@ -367,8 +367,8 @@
 		if (!el.getAttribute('f5widget')) {
 			el.setAttribute('f5widget', f5widget);
 		}
-		F5.assert(F5.WidgetPrototypes[f5widget], 'No widget: ' + f5widget);
-		var widget = F5.objectFromPrototype(F5.WidgetPrototypes[f5widget]);
+		F5.assert(F5.Widgets[f5widget], 'No widget: ' + f5widget);
+		var widget = F5.objectFromPrototype(F5.Widgets[f5widget]);
 		widget.el = el;
 		el.widget = widget;
 		
@@ -402,6 +402,26 @@
 			F5.Global.flowController.doSelection(node, id);					
 		});
 		el.widget.select(node.selection.id);		
+	};
+	
+	F5.parseResources = function () {
+		
+		function isImageResource(resource) {
+			return resource.indexOf('.png') !== -1 || 
+					resource.indexOf('.jpg') !== -1 ||
+					resource.indexOf('data:image') !== -1;
+		}
+		
+		function preloadImagesRecursive(resources) {
+			F5.forEach(resources, function (id, resource) {
+				if (typeof resource === 'object') {
+					preloadImagesRecursive(resource);
+				} else if (isImageResource(resource)){
+					resources[id] = new F5.ImagePreloader(resource);
+				}
+			});			
+		}
+		preloadImagesRecursive(F5.Resources);		
 	};
 		
 }());

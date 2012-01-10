@@ -37,6 +37,8 @@
 		// lockout is set to true during async operations on the flow
 		var lockout = false;
 
+		// tasks to wait for in flushWaitTasks
+		var waitTasks = [];
 		
 		var flowObservers = [];		
 		this.addFlowObserver = function (observer) {
@@ -44,8 +46,8 @@
 		};		
 		this.removeFlowObserver = function (observer) {
 			flowObservers.splice(flowObservers.indexOf(observer), 1);
-		};				
-
+		};		
+		
 						
 		// TODO: fix the case where the recursive flow terminates in a selection or transition
 		// before a leaf node is reached. current impl the recursion may continue along the old branch
@@ -101,7 +103,7 @@
 			doLifecycleEventRecursive('WillBecomeInactive', node, cb);
 		}									
 						
-		function flushTasks(tasks, cb) {			
+		function flushWaitTasks(cb) {			
 			function complete() {	
 				cb();
 				
@@ -114,8 +116,11 @@
 			
 			// yield back to the event loop to allow any necessary reflow
 			// then flush the remaining tasks (usually animations or queued native commands)
-			setTimeout(function flushTasksCb() {
-				F5.flushTasks(tasks, complete);
+			setTimeout(function flushWaitTasksCb() {
+				F5.flushTasks(waitTasks, function () {
+					waitTasks = [];
+					complete();
+				});
 			}, 0);
 		}	
 			
@@ -124,11 +129,13 @@
 				console.log('start complete');
 			};
 			
+			F5.parseResources();
+			
 			nodeWillBecomeActive(flow.root, function () {				
 				// NOTE: cb executes here because nodeDidBecomeActive may pop a dialog
 				// so this is the right time to flush any native side tasks that got queued
 				// during startup
-				flushTasks([], cb);		
+				flushWaitTasks(cb);		
 				
 				nodeDidBecomeActive(flow.root, function () {
 					flowObservers.forEach(function (observer) {
@@ -157,7 +164,11 @@
 					cancelSubflowRecursive(child);
 				});					
 			}
-		}		
+		}	
+		
+		this.addWaitTask = function (task) {
+			waitTasks.push(task);
+		};
 		
 		// select the child of node with the given id
 		this.doSelection = function (node, id, cb) {	
@@ -189,11 +200,11 @@
 					var tasks = [];
 					flowObservers.forEach(function (observer) {
 						if (observer.doSelection) {
-							tasks.push(observer.doSelection(node, id));
+							that.addWaitTask(observer.doSelection(node, id));
 						}
 					});		
 					
-					flushTasks(tasks, function selectionComplete() {
+					flushWaitTasks(function selectionComplete() {
 						node.selection.active = false;
 						node.selection = node.children[id];
 
@@ -282,12 +293,12 @@
 					var tasks = [];
 					flowObservers.forEach(function (observer) {
 						if (observer.doTransition) {
-							tasks.push(observer.doTransition(container, id, target, animation));
+							that.addWaitTask(observer.doTransition(container, id, target, animation));
 						}
 					});		
 					
 					// execute all of the transition competion functions
-					flushTasks(tasks, function transitionComplete() {
+					flushWaitTasks(function transitionComplete() {
 						var oldSelection = container.selection;
 
 						nodeDidBecomeInactive(oldSelection, function () {

@@ -200,17 +200,13 @@ exports.generateHtml = function(parsed) {
 	var document = jsdom.jsdom();
 	
 
-	/* setup container */
+	// templates container
 	var templates = document.createElement('div');
 	templates.id = 'f5_templates';
-	templates.setAttribute('style', 'display:none;');
-	
-	var imagePreload = document.createElement('div');
-	imagePreload.id = 'image-preload';
-	templates.appendChild(imagePreload);
-		
+	templates.setAttribute('style', 'display:none;');			
 	document.body.appendChild(templates);	
 
+	// places to stow parsed data
 	var styleWorkaround = '';
 	var resources = {};
 	var flowspec = {};			
@@ -298,12 +294,6 @@ exports.generateHtml = function(parsed) {
 					if (boolValue(query.inline)) {
 						handleImageResourcesRecursive(resources, function (obj, id, src) {						
 							obj[id] = inlineImage(src);										
-						});
-					} else {
-						handleImageResourcesRecursive(resources, function (obj, id, src) {
-							var img = document.createElement('img');
-							img.src = 'apps/' + query.app + '/' + src;
-							imagePreload.appendChild(img);
 						});
 					}		
 				} catch (e) {
