@@ -42,7 +42,7 @@ function forEach(obj, fn) {
 function deleteCaches() {
 	// delete all of the cached entries so we reload the next time
 	forEach(require.cache, function (id, obj) {
-		if (id.match('manifest.js') || id.match('resources.js')) {
+		if (id.match('manifest.json') || id.match('resources.json')) {
 			delete require.cache[id];
 		}
 	});	
@@ -129,7 +129,7 @@ exports.generateCacheManifest = function(query) {
 		checkDate(__filename);
 
 		function checkManifest(path) {	
-			checkDate(path + 'manifest.js');
+			checkDate(path + 'manifest.json');
 
 			function checkDates(files, type) {
 				files.forEach(function (file) {
@@ -147,7 +147,7 @@ exports.generateCacheManifest = function(query) {
 				});				
 			}
 
-			var manifest = require(process.cwd() + '/' + path + 'manifest.js');
+			var manifest = require(process.cwd() + '/' + path + 'manifest.json');
 
 			processManifest(manifest, query, 'scripts', checkDates);									
 			processManifest(manifest, query, 'elements', checkDates);									
@@ -284,7 +284,7 @@ exports.generateHtml = function(parsed) {
 		function injectResources(resourceFiles) {
 			resourceFiles.forEach(function (file) {
 				try {
-					resources = require(process.cwd() + '/www/' + path + file).resources;	
+					resources = require(process.cwd() + '/www/' + path + file);	
 					if (boolValue(query.inline)) {
 						handleImageResourcesRecursive(resources, function (obj, id, src) {						
 							obj[id] = inlineImage(src);										
@@ -302,7 +302,7 @@ exports.generateHtml = function(parsed) {
 			});				
 		}
 
-		var manifest = require(process.cwd() + '/www/' + path + 'manifest.js');
+		var manifest = require(process.cwd() + '/www/' + path + 'manifest.json');
 
 		processManifest(manifest, query, 'scripts', injectScripts);									
 		processManifest(manifest, query, 'elements', injectElements);											
