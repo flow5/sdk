@@ -114,7 +114,7 @@
 			var bounds = this.map.getBounds();
 			var center = this.map.getCenter();
 			
-			var southEast = new google.maps.LatLng(bounds.getSouthWest().Qa, bounds.getNorthEast().Ra);
+			var southEast = new google.maps.LatLng(bounds.getSouthWest().Pa, bounds.getNorthEast().Qa);
 			// TODO: pick larger? smaller? dimension?
 			var diameter = google.maps.geometry.spherical.computeDistanceBetween(bounds.getSouthWest(), southEast);
 			
