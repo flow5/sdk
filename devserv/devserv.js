@@ -219,7 +219,8 @@ cli.main(function (args, options) {
 					service = require(process.cwd() + '/www/services/' + app + '/' + parsed.query.name + '.js');
 
 					service.exec(parsed.query, function (results) {
-						res.writeHead(200, {'Content-Type': 'application/json'});
+						res.writeHead(200, {'Content-Type': 'application/json',
+									'Access-Control-Allow-Origin': '*'});
 						res.write(JSON.stringify(results));						
 						res.end();
 					});
