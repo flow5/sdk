@@ -152,6 +152,7 @@ exports.generateCacheManifest = function(query) {
 			processManifest(manifest, query, 'scripts', checkDates);									
 			processManifest(manifest, query, 'elements', checkDates);									
 			processManifest(manifest, query, 'resources', checkDates);											
+			processManifest(manifest, query, 'flowspecs', checkDates);											
 		}
 
 		checkManifest('www/');
@@ -203,7 +204,7 @@ exports.generateHtml = function(parsed) {
 
 	var styleWorkaround = '';
 	var resources = {};
-			
+	var flowspec = {};			
 			
 	/* helper functions */
 	function injectMeta(properties) {
@@ -301,12 +302,23 @@ exports.generateHtml = function(parsed) {
 				}				
 			});				
 		}
+		
+		function injectFlows(flowFiles) {
+			flowFiles.forEach(function (file) {
+				try {
+					flowspec = require(process.cwd() + '/www/' + path + file);						
+				} catch (e) {
+					console.log(e.stack);
+				}
+			});
+		}
 
 		var manifest = require(process.cwd() + '/www/' + path + 'manifest.json');
 
 		processManifest(manifest, query, 'scripts', injectScripts);									
 		processManifest(manifest, query, 'elements', injectElements);											
 		processManifest(manifest, query, 'resources', injectResources);											
+		processManifest(manifest, query, 'flowspecs', injectFlows);											
 	}	
 	
 	
@@ -350,6 +362,10 @@ exports.generateHtml = function(parsed) {
 	var resourcesScript = document.createElement('script');
 	resourcesScript.innerHTML = "F5.Resources = " + JSON.stringify(resources);
 	document.head.appendChild(resourcesScript);
+
+	var flowspecScript = document.createElement('script');
+	flowspecScript.innerHTML = "F5.flowspec = " + JSON.stringify(flowspec);
+	document.head.appendChild(flowspecScript);
 		
 	var appframeEl = document.createElement('div');
 	appframeEl.id = 'f5appframe';
