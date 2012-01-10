@@ -34,7 +34,7 @@
 			var value = F5.valueFromId(data, id);
 			if (value) {
 				var img = document.createElement('img');
-				if (value instanceof F5.ImagePreloader) {
+				if (value instanceof F5.ImagePreloader.constructor) {
 					img.src = value.src();					
 				} else {
 					img.src = value;

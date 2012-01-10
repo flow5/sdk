@@ -417,7 +417,8 @@
 				if (typeof resource === 'object') {
 					preloadImagesRecursive(resource);
 				} else if (isImageResource(resource)){
-					resources[id] = new F5.ImagePreloader(resource);
+					resources[id] = F5.objectFromPrototype(F5.ImagePreloader);
+					resources[id].load(resource);
 				}
 			});			
 		}

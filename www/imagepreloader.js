@@ -28,7 +28,7 @@
 
 (function () {
 	
-	function ImagePreloaderPrototype() {
+	function ImagePreloader() {
 		this.load = function (url) {
 			var that = this;
 			
@@ -71,11 +71,7 @@
 			return this.url;
 		};
 	}	
-	function ImagePreloader(url) {
-		this.load(url);
-	}
-	ImagePreloader.prototype = new ImagePreloaderPrototype();
 
-	F5.ImagePreloader = ImagePreloader;
+	F5.ImagePreloader = new ImagePreloader();
 	
 }());
