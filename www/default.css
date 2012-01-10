@@ -146,6 +146,9 @@
 /***************************************/
 
 .f5closebutton {
+	position: absolute;
+	top: 3px;
+	right: 3px;
 	height: .20em;
 	width: .20em;
 	background-color: darkgrey;

@@ -66,8 +66,8 @@
 				}
 			}
 			
-			if (F5.ViewDelegates[node.id]) {
-				this.delegate = F5.objectFromPrototype(F5.ViewDelegates[node.id]);
+			if (F5.Prototypes.ViewDelegates[node.id]) {
+				this.delegate = F5.objectFromPrototype(F5.Prototypes.ViewDelegates[node.id]);
 				this.delegate.node = node;
 				this.delegate.el = el;
 			}

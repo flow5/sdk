@@ -26,7 +26,7 @@
 ***********************************************************************************************************************/
 /*global F5*/
 
-F5.Widgets.NavController = {
+F5.Prototypes.Widgets.NavController = {
 	updateConfiguration: function (node) {		
 		// find the leaf node
 		while (node.selection) {

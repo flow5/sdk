@@ -154,5 +154,5 @@
 		};
 	}	
 	
-	F5.Widgets.MapView = new MapView();	
+	F5.Prototypes.Widgets.MapView = new MapView();	
 }());

@@ -34,11 +34,12 @@ if (typeof F5 === 'undefined') {
 //	F5.mockDataHost = 'http://flow5.local:8008/';	
 
 	F5.Global = {};
-	F5.FlowDelegates = {};	
+	F5.Prototypes = {};
+	F5.Prototypes.FlowDelegates = {};	
 			
 	if (typeof document !== 'undefined') {
-		F5.Widgets = {};
-		F5.ViewDelegates = {};
+		F5.Prototypes.Widgets = {};
+		F5.Prototypes.ViewDelegates = {};
 	}
 }
 	

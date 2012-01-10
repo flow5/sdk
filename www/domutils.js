@@ -331,13 +331,7 @@
 		}
 		// otherwise should get the dimensions from the url parameters		
 	};	
-	
-	F5.setStyles = function(el, styles) {
-		F5.forEach(styles, function (id, value) {
-			el.style[id] = value;
-		});
-	};		
-	
+		
 	F5.elementOffsetGeometry = function (el) {
 		return {top: el.offsetTop,
 				left: el.offsetLeft,
@@ -367,8 +361,8 @@
 		if (!el.getAttribute('f5widget')) {
 			el.setAttribute('f5widget', f5widget);
 		}
-		F5.assert(F5.Widgets[f5widget], 'No widget: ' + f5widget);
-		var widget = F5.objectFromPrototype(F5.Widgets[f5widget]);
+		F5.assert(F5.Prototypes.Widgets[f5widget], 'No widget: ' + f5widget);
+		var widget = F5.objectFromPrototype(F5.Prototypes.Widgets[f5widget]);
 		widget.el = el;
 		el.widget = widget;
 		

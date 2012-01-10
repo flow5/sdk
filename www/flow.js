@@ -51,7 +51,7 @@
 						active: false};
 						
 			
-			var flowDelegatePrototype = F5.FlowDelegates[node.id];
+			var flowDelegatePrototype = F5.Prototypes.FlowDelegates[node.id];
 			if (flowDelegatePrototype) {
 				node.flowDelegate = F5.objectFromPrototype(flowDelegatePrototype);
 				node.flowDelegate.node = node;			

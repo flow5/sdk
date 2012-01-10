@@ -77,7 +77,7 @@ F5.addF5ReadyListener(function () {
 			this.updateConfiguration(F5.Global.flow.root);
 		};			
 	}
-	MenuHelper.prototype = F5.Widgets.NavController;	
+	MenuHelper.prototype = F5.Prototypes.Widgets.NavController;	
 
 	var menuHelper = new MenuHelper();
 	F5.Global.flowController.addFlowObserver(menuHelper);	
@@ -181,7 +181,7 @@ F5.addF5ReadyListener(function () {
 		};
 	}	
 
-	F5.Widgets.AndroidSettingsMenu = new AndroidSettingsMenu();	
+	F5.Prototypes.Widgets.AndroidSettingsMenu = new AndroidSettingsMenu();	
 });
 	
 }());

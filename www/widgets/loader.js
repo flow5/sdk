@@ -34,5 +34,5 @@
 		};
 	}
 	
-	F5.Widgets.Loader = new Loader();	
+	F5.Prototypes.Widgets.Loader = new Loader();	
 }());

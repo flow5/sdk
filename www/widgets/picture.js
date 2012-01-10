@@ -44,6 +44,6 @@
 		};
 	}
 	
-	F5.Widgets.Picture = new Picture();
+	F5.Prototypes.Widgets.Picture = new Picture();
 		
 }());

@@ -236,7 +236,7 @@
 		};
 	}	
 		
-	F5.Widgets.Button = new Button();	
+	F5.Prototypes.Widgets.Button = new Button();	
 																				
 	
 	function ToggleButton() {		
@@ -251,7 +251,7 @@
 			});			
 		};
 	}
-	ToggleButton.prototype = F5.Widgets.Button;
+	ToggleButton.prototype = F5.Prototypes.Widgets.Button;
 	
-	F5.Widgets.ToggleButton = new ToggleButton();				
+	F5.Prototypes.Widgets.ToggleButton = new ToggleButton();				
 }());

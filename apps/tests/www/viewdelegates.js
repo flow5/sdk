@@ -68,5 +68,5 @@
 		};		
 	}
 
-	F5.ViewDelegates.root = new RootViewDelegate();	
+	F5.Prototypes.ViewDelegates.root = new RootViewDelegate();	
 }());

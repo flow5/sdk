@@ -36,11 +36,6 @@
 			this.closeButton = F5.createWidget('Button', data, 'closeButton');
 			F5.addClass(this.closeButton, 'f5closebutton');
 			
-			F5.setStyles(this.closeButton, {
-				position: 'absolute',
-				top: '3px',
-				right: '3px',
-			});			
 			this.el.appendChild(this.closeButton);															
 		};	
 		
@@ -55,5 +50,5 @@
 		};
 	}
 	
-	F5.Widgets.StreetView = new StreetView();		
+	F5.Prototypes.Widgets.StreetView = new StreetView();		
 }());

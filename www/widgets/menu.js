@@ -63,6 +63,6 @@
 		};
 	}	
 		
-	F5.Widgets.Menu = new Menu();
+	F5.Prototypes.Widgets.Menu = new Menu();
 	
 }());

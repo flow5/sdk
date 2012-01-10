@@ -38,7 +38,7 @@
 		};
 	}
 	
-	F5.Widgets.StaticText = new StaticText();	
+	F5.Prototypes.Widgets.StaticText = new StaticText();	
 	
 	
 	function Telephone() {
@@ -51,6 +51,6 @@
 		};
 	}
 	
-	F5.Widgets.Telephone = new Telephone();		
+	F5.Prototypes.Widgets.Telephone = new Telephone();		
 		
 }());
