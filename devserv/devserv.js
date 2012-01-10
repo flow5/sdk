@@ -167,7 +167,8 @@ cli.main(function (args, options) {
 					req.on('end', function () {
 						try {
 							service.exec(parsed.query, req.body, function (results) {
-								res.writeHead(200, {'Content-Type': 'application/json'});						
+								res.writeHead(200, {'Content-Type': 'application/json',
+													'Access-Control-Allow-Origin': '*'});
 								res.write(results);						
 								res.end();
 							});							
@@ -220,7 +221,7 @@ cli.main(function (args, options) {
 
 					service.exec(parsed.query, function (results) {
 						res.writeHead(200, {'Content-Type': 'application/json',
-									'Access-Control-Allow-Origin': '*'});
+											'Access-Control-Allow-Origin': '*'});
 						res.write(JSON.stringify(results));						
 						res.end();
 					});
