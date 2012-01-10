@@ -103,23 +103,29 @@
 	display: -webkit-box;
 	-webkit-box-pack: center;
 	-webkit-box-align: center;
-	border: 2px solid black;
+	border: 1px solid black;
 	height: 30px;
 	margin: 6px;
 	padding-left: .6em;
 	padding-right: .6em;
-	-webkit-border-radius: 4px;
 	font-family: sans-serif;
 }
 
 .jsonbutton, .framesbutton, .resetbutton {
-	font-size: .24em;	
+	font-size: .16em;	
 }
 
 .viewerframe .f5button-down, .viewerframe .f5button-press, .viewerbutton.f5button-down {
-	background-color: lightblue;
-	border: 2px solid white;
+	background-color: lightgrey;
+	border: 1px solid white;
 }
+
+.viewerframe .f5button-down .f5button-label, 
+.viewerframe .f5button-press .f5button-label, 
+.viewerbutton.f5button-down .f5button-label {
+	color: black;
+}
+
 
 .viewerframe .backbutton .f5button-label {
 	font-size: .40em;

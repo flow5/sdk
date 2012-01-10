@@ -31,6 +31,8 @@ body {
 	margin: 0px;
 	background-color: darkslategray;
 	display: -webkit-box;	
+	-webkit-box-pack: center;
+	-webkit-box-align: center;	
 }
 
 /* webview background is transparent on mobile to allow compositing over native views */

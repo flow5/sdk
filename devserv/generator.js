@@ -29,23 +29,33 @@
 	
 var fs = require('fs');
 
-
 function forEach(obj, fn) {
-	var name;
-	for (name in obj) {
-		if (obj.hasOwnProperty(name)) {
-			fn(name, obj[name]);
-		}
-	}							
-}
+	if (obj.constructor === Array) {
+		obj.forEach(fn);
+	} else {
+		var name;
+		for (name in obj) {
+			if (obj.hasOwnProperty(name)) {
+				fn(name, obj[name]);
+			}
+		}							
+	}
+};
 
+var caches = [];
 function deleteCaches() {
-	// delete all of the cached entries so we reload the next time
-	forEach(require.cache, function (id, obj) {
-		if (id.match('manifest.json') || id.match('resources.json')) {
-			delete require.cache[id];
+	forEach(require.cache, function (id, cache) {
+		if (caches.indexOf(cache.exports) !== -1) {
+			delete require.cache[id];			
 		}
 	});	
+	caches = [];
+}
+
+function requireWrapper(path) {
+	var exports = require(path);
+	caches.push(exports);
+	return exports;
 }
 
 // the image references are at the leaf nodes
@@ -63,8 +73,7 @@ function boolValue(string) {
 	if (string !== 'true' && string !== 'false') {
 		throw 'Bad bool value';
 	}
-	return string === 'true';
-	
+	return string === 'true';	
 }
 
 function processManifest(manifest, query, type, process) {
@@ -115,7 +124,7 @@ function processManifest(manifest, query, type, process) {
 }
 	
 exports.generateCacheManifest = function(query) {
-	
+		
 	function getModDate() {
 		var latestDate;
 		function checkDate(path) {
@@ -136,7 +145,7 @@ exports.generateCacheManifest = function(query) {
 					checkDate(path + file);
 					if (type === 'resources') {
 						try {
-							var resources = require(process.cwd() + '/' + path + file).resources;
+							var resources = requireWrapper(process.cwd() + '/' + path + file).resources;
 							handleImageResourcesRecursive(resources, function (obj, id, src) {
 								checkDate(src);
 							});			
@@ -147,7 +156,7 @@ exports.generateCacheManifest = function(query) {
 				});				
 			}
 
-			var manifest = require(process.cwd() + '/' + path + 'manifest.json');
+			var manifest = requireWrapper(process.cwd() + '/' + path + 'manifest.json');
 
 			processManifest(manifest, query, 'scripts', checkDates);									
 			processManifest(manifest, query, 'elements', checkDates);									
@@ -246,7 +255,7 @@ exports.generateHtml = function(parsed) {
 		
 		function inlineImage(src) {
 			try {
-				var prefix = 'data:image/' + require('path').extname(src).substring(1) + ';base64,';
+				var prefix = 'data:image/' + requireWrapper('path').extname(src).substring(1) + ';base64,';
 				return prefix + fs.readFileSync('www/apps/' + query.app + '/' + src, 'base64');			
 			} catch (e) {
 				console.log(e.stack);
@@ -285,7 +294,7 @@ exports.generateHtml = function(parsed) {
 		function injectResources(resourceFiles) {
 			resourceFiles.forEach(function (file) {
 				try {
-					resources = require(process.cwd() + '/www/' + path + file);	
+					resources = requireWrapper(process.cwd() + '/www/' + path + file);	
 					if (boolValue(query.inline)) {
 						handleImageResourcesRecursive(resources, function (obj, id, src) {						
 							obj[id] = inlineImage(src);										
@@ -306,14 +315,14 @@ exports.generateHtml = function(parsed) {
 		function injectFlows(flowFiles) {
 			flowFiles.forEach(function (file) {
 				try {
-					flowspec = require(process.cwd() + '/www/' + path + file);						
+					flowspec = requireWrapper(process.cwd() + '/www/' + path + file);						
 				} catch (e) {
 					console.log(e.stack);
 				}
 			});
 		}
 
-		var manifest = require(process.cwd() + '/www/' + path + 'manifest.json');
+		var manifest = requireWrapper(process.cwd() + '/www/' + path + 'manifest.json');
 
 		processManifest(manifest, query, 'scripts', injectScripts);									
 		processManifest(manifest, query, 'elements', injectElements);											
