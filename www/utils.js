@@ -156,7 +156,7 @@
 	// TODO: need a unit test for this one
 	F5.merge = function(src, dst) {
 		
-		// resources may also contain F5.ImagePreloader objects which are treated like literals
+		// resources may also contain other object types which should be treated as literals
 		function isSimpleObject(value) {
 			return typeof value === 'object' && value.constructor === Object;
 		}

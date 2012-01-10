@@ -188,7 +188,7 @@
 				if (resourceData.image) {
 					if (resourceData.image.up) {
 						// simple button
-						if (resourceData.image.up instanceof F5.ImagePreloader.constructor) {
+						if (F5.ImagePreloader.isImagePreloader(resourceData.image.up)) {
 							makeFixedButton(resourceData.image);
 						} else {
 							makeStretchyButton(resourceData.image);

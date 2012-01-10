@@ -33,8 +33,8 @@
 			var id = this.el.getAttribute('f5id');
 			var value = F5.valueFromId(data, id);
 			if (value) {
-				var img = document.createElement('img');
-				if (value instanceof F5.ImagePreloader.constructor) {
+				var img = document.createElement('img');				
+				if (F5.ImagePreloader.isImagePreloader(value)) {
 					img.src = value.src();					
 				} else {
 					img.src = value;

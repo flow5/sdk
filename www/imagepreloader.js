@@ -29,6 +29,11 @@
 (function () {
 	
 	function ImagePreloader() {
+		
+		this.isImagePreloader = function (obj) {
+			return obj instanceof ImagePreloader;
+		}
+		
 		this.load = function (url) {
 			var that = this;
 			
