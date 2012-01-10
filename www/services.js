@@ -81,18 +81,6 @@
 				}								
 			}				
 		},
-		jitc: {
-			directory: {
-				parameters: {
-					key: 'AIzaSyC9AYf9ET01cP9ol6fESk37cbKzqwyjM_g',
-					app: 'jitc',
-					name: 'directory'
-				},
-				protocol: 'http',
-				baseUrl: 'flow5.local:8008/service',
-				method: 'GET'				
-			}
-		},
 		google: {
 			parameters: {
 //				key: <provided by client>
