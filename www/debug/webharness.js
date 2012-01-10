@@ -190,7 +190,7 @@
 		});		
 
 		resetbuttonEl.widget.setAction(function () {
-			var showViewer = localStorage.showViewer;
+			var showViewer = localStorage.showViewer;		
 			localStorage.clear();
 			localStorage.showViewer = showViewer;
 
