@@ -25,12 +25,12 @@
 
 .string {
   color: white;
-  white-space: pre-wrap;
+  white-space: nowrap;
 }
 
 .reference {
   color: lightgreen;
-  white-space: pre-wrap;
+  white-space: nowrap;
 }
 
 .collapser {
@@ -56,11 +56,11 @@ li {
 .json {
   font-family: "Consolas", monospace;
   font-size: .16em;
-  white-space: pre-wrap;
+  white-space: nowrap;
 }
 
 ul {
   list-style: none;
-  margin: 0 0 0 1em;
+  margin: 0 0 0 1.5em;
   padding: 0;
 }

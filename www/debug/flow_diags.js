@@ -180,13 +180,13 @@
 			}
 
 			function isCluster(node) {
-				return node.transitions || node.children || node.subflows;
+				return node.transitions || node.children || node.subflows || node.parent.type === 'switcher';
 			}
 
 			function activeColorAttribute(attr) {
 				var colors = {
 					color: '="white"',
-					fillcolor: '="lightblue"'
+					fillcolor: '="lightgrey"'
 				};
 				return attr + colors[attr];
 			}
@@ -208,9 +208,9 @@
 				}
 
 				if (pathActive) {
-					return ['color="white"', 'penwidth=1.5', 'fillcolor="lightskyblue"'];
+					return ['color="white"', 'penwidth=1.5', 'fillcolor="darkgrey"'];
 				} else if (nodeActive) { 
-					return ['color="blue"', 'penwidth=.5', 'fillcolor="grey"'];
+					return ['color="lightgrey"', 'penwidth=1', 'fillcolor="grey"'];
 				} else {
 					return ['color="black"', 'penwidth=1.0', 'fillcolor="grey"'];
 				}
@@ -219,8 +219,8 @@
 			function addNode(node) {
 				var attributes = [
 					makeLabel(node.id),
-					'fontname=courier',
-					'style="filled,rounded"',
+					'fontname="Arial"',
+					'style="filled"',
 					'shape=box',
 					'fontsize=18',		
 					'id=' + quote('svg-' + node.path)			
@@ -241,8 +241,8 @@
 				var idAttribute = 'id=' + quote('svg-' + parent.path + ':doSelection' + '_' + id);
 				var attributes = [
 					makeLabel('Select'),
-					'fontname=courier',
-					'style="filled,rounded"',
+					'fontname="Arial"',
+					'style="filled"',
 					'shape=box',
 					'width=0',
 					'height=0',
@@ -268,16 +268,16 @@
 				// height=0 and width=0 makes the box just accomodate the text				
 				var attributes = [
 					makeLabel(id),
-					'fontname="courier new"',
+					'fontname="Arial"',
 					'fontsize=16',
 					'style="filled"',					
-					'margin="0.1,0.0"',
-					'penwidth=0.6',
+					'margin="0.25,0.0"',
+					'penwidth=1',
 					fillColor,
 					color,					
 					'shape=box', 
 					'height=0', 
-					'width=1.25',
+					'width=0',
 					'id=' + quote('svg-' + node.path + ':doTransition' + '_' + id)
 				];				
 				result += quote(node.path + '_' + id) + formatAttributes(attributes); 
@@ -303,11 +303,11 @@
 				// height=0 and width=0 makes the box just accomodate the text				
 				var attributes = [
 					makeLabel(id),
-					'fontname="courier new"',
+					'fontname="Arial"',
 					'fontsize=16',
 					'style="filled"',					
-					'margin="0.1,0.0"',
-					'penwidth=0.6',
+					'margin="0.25,0.0"',
+					'penwidth=1',
 					fillColor,
 					color,					
 					shape, 
@@ -320,7 +320,7 @@
 
 			function addEdge(from, to, head) {																																
 				var attributes = [
-					'fontname="courier new"',
+					'fontname="Arial"',
 					'arrowhead="vee"',
 					'arrowsize=.5',
 					'minlen=2',
@@ -337,7 +337,7 @@
 				var attributes = [
 					'compound=true',
 					'rankdir=LR',
-					'fontname=courier',
+					'fontname="Arial"',
 	//				'splines="ortho"',
 					'nodesep=.25'				
 				].join(';');
@@ -350,8 +350,8 @@
 
 			function clusterStart(node) {
 				var attributes = [
-					'style="filled,rounded"',
-					'fontname="courier"',
+					'style="filled"',
+					'fontname="Arial"',
 					'fontsize=18',	
 					'bgcolor="gray"',
 					'id=' + quote('svg-' + node.path)												
@@ -368,17 +368,17 @@
 			function subflowStart(node, subflow, id) {
 				var fillColor;
 				if (node.activeSubflow === subflow) {
-					fillColor = 'fillcolor="lightskyblue"';
+					fillColor = 'fillcolor="darkgrey"';
 				} else {
 					fillColor = inactiveColorAttribute('fillcolor');
 				}
 
 				var attributes = [
-					'fontname="courier"',
+					'fontname="Arial"',
 					'fontsize=16',
 					'fontcolor="black"',
 					'color="black"',
-					'penwidth=.6',
+					'penwidth=1',
 					'style="filled"',
 					fillColor,
 					'id=' + quote('svg-' + subflow.path)
@@ -435,15 +435,15 @@
 
 				var attributes = [
 					makeLabel(choice),
-					'fontname="courier new"',
+					'fontname="Arial"',
 					'style="filled"',
 					fillColor,
 					color,
 					shapeAttribute,
-					'penwidth=.6',
+					'penwidth=1',
 					'width=0',
 					'height=0',
-					'margin="0.1,0.0"',
+					'margin="0.25,0.0"',
 					'fontsize=16',
 					idAttribute
 				];				
