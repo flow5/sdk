@@ -60,6 +60,8 @@
 			F5.attachWidget(el, el.getAttribute('f5widget'), data);
 		});
 		
+		F5.addClass(instance, id);
+		
 		return instance;
 	}
 	

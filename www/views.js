@@ -52,7 +52,6 @@
 			if (node.children) {
 				var container = document.createElement('div');
 				F5.addClass(container, 'f5container');
-				F5.addClass(container, node.id);				
 				this.el.appendChild(container);	
 
 				if (node.type === 'switcher' || node.type === 'set') {
@@ -64,8 +63,6 @@
 					F5.objectFromPrototype(F5.Views[node.selection.type]).initialize(node.selection);					
 					container.appendChild(node.selection.view.el);
 				}
-			} else {
-				F5.addClass(el, node.id);							
 			}
 			
 			if (F5.Prototypes.ViewDelegates[node.id]) {
