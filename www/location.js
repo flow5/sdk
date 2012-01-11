@@ -43,12 +43,11 @@
 			}
 		};				
 		
-		this.start = function () {	
+		this.start = function (userOptions) {	
 			if (!navigator.geolocation) {
 				return;
 			}
-			
-			
+						
 			var that = this;
 					
 			var options = {
@@ -57,6 +56,8 @@
 			    timeout: 10000,
 			    maximumAge: 0
 			  };
+			
+			F5.merge(userOptions, options);
 		   
 			this.watchId = navigator.geolocation.watchPosition(
 				function (position) {

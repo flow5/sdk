@@ -3258,6 +3258,10 @@ Geolocation.prototype.getCurrentPosition = function(successCallback, errorCallba
         {
             params.timeout = options.timeout;
         }
+		// Flow5
+		if (options.purpose) {
+			params.purpose = options.purpose;
+		}
     }
     
     this.listener = {"success":win,"fail":fail};
@@ -3300,6 +3304,10 @@ Geolocation.prototype.watchPosition = function(successCallback, errorCallback, o
         if (options.timeout) {
             params.timeout = options.timeout;
         }
+		// Flow5
+		if (options.purpose) {
+			params.purpose = options.purpose;
+		}
     }
 
 	var that = this;

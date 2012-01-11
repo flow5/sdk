@@ -15,6 +15,7 @@
 #define kPGLocationErrorDomain          @"kPGLocationErrorDomain"
 #define kPGLocationDesiredAccuracyKey   @"desiredAccuracy"
 #define kPGLocationForcePromptKey       @"forcePrompt"
+#define kPGLocationPurposeKey           @"purpose"
 #define kPGLocationDistanceFilterKey    @"distanceFilter"
 #define kPGLocationFrequencyKey         @"frequency"
 
@@ -174,6 +175,12 @@
         [super writeJavascript:jsCallback];
         
         return;
+    }
+    
+    // Flow5
+    NSString *purpose = [options objectForKey:kPGLocationPurposeKey];
+    if (purpose) {
+        self.locationManager.purpose = purpose;
     }
 	
     // Tell the location manager to start notifying us of location updates
