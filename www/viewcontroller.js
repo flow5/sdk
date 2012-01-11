@@ -71,7 +71,7 @@
 					screenFrame.appendChild(node.view.el);
 				} else {
 					// TODO: this is slightly ugly
-					node.parent.view.el.querySelector('[class=f5container]').appendChild(node.view.el);												
+					node.parent.view.el.getElementsByClassName('f5container')[0].appendChild(node.view.el);												
 				}
 			}
 			
@@ -110,7 +110,7 @@
 				to.animation = animation;
 			}									
 									
-			var containerElement = container.view.el.querySelector('[class=f5container]');
+			var containerElement = container.view.el.getElementsByClassName('f5container')[0];
 			var oldNode = container.selection;
 			
 			var oldEl = oldNode.view.el;

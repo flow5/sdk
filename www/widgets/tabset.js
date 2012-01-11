@@ -85,8 +85,8 @@
 		this.construct = function (data) {
 			var that = this;
 		
-			var tabset = document.createElement('div');
-			F5.addClass(tabset, 'f5tabset');
+			this.tabset = document.createElement('div');
+			F5.addClass(this.tabset, 'f5tabset');
 								
 			that.tabs = {};
 		
@@ -96,7 +96,7 @@
 				var tab = F5.createWidget('_TabButton', data, id);
 												
 				F5.addClass(tab, 'f5tab');
-				tabset.appendChild(tab);								
+				that.tabset.appendChild(tab);								
 				that.tabs[id] = tab;
 
 				tab.widget.setAction(function (e) {
@@ -114,9 +114,9 @@
 			
 			var position = that.el.getAttribute('f5tabsetposition');
 			if (position && position === 'top') {
-				that.el.insertBefore(tabset, that.el.childNodes[0]);
+				that.el.insertBefore(this.tabset, that.el.childNodes[0]);
 			} else {
-				that.el.appendChild(tabset);				
+				that.el.appendChild(this.tabset);				
 			}					
 		};
 	

@@ -291,11 +291,10 @@
 					F5.addTouchStopListener(document.body, stopHandlerWrapper);
 					F5.addTouchMoveListener(document.body, moveHandlerWrapper);					
 				}
+				F5.addTouchStopListener(that.el, stopHandlerWrapper);			
+				F5.addTouchMoveListener(that.el, moveHandlerWrapper);
 			});
-			
-			F5.addTouchStopListener(this.el, stopHandlerWrapper);			
-			F5.addTouchMoveListener(this.el, moveHandlerWrapper);
-			
+						
 			transform(this, this.staticOffset);
 		};
 				
