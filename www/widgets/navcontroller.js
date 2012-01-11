@@ -62,7 +62,8 @@ F5.Prototypes.Widgets.NavController = {
 		
 		var that = this;
 		
-		if (configuration.left) {
+		if (configuration.left && !configuration.left.action) {
+			F5.assert(configuration.left.transition, 'Nav config must specify transition or action')
 			configuration.left.action = function () {
 				var transition = that.configuration.left.transition;
 				var node = that.configuration.left.node;
@@ -70,7 +71,8 @@ F5.Prototypes.Widgets.NavController = {
 			};
 		}
 		
-		if (configuration.right) {
+		if (configuration.right && !configuration.right.action) {
+			F5.assert(configuration.right.transition, 'Nav config must specify transition or action')			
 			configuration.right.action = function () {
 				var transition = that.configuration.right.transition;
 				var node = that.configuration.right.node;

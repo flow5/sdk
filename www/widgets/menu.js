@@ -61,6 +61,35 @@
 		this.setAction = function (cb) {
 			this.action = cb;
 		};
+		
+		this.present = function () {
+			var that = this;
+			document.getElementById('f5screen').appendChild(that.el);			
+			setTimeout(function () {
+				that.el.style.opacity = 1;							
+			}, 0);			
+		};
+		
+		this.dismiss = function () {
+			var that = this;
+			
+			function fadeComplete() {
+				F5.removeTouchEventListenersRecursive(that.el);
+				F5.removeTransitionEndListener(that.el);
+				that.el.parentElement.removeChild(that.el);
+			}
+
+			F5.addTransitionEndListener(this.el, fadeComplete);							
+			that.el.style.opacity = 0;	
+			
+			// wtf? workaround for a safari rendering bug. without this, the opacity
+			// transition stops (window.getComputedStyle(menu).opacity reports .99999something)
+			if (!F5.isMobile()) {
+				setTimeout(function () {
+					that.el.style.opacity = 0.01;				
+				}, 100);				
+			}			
+		};
 	}	
 		
 	F5.Prototypes.Widgets.Menu = new Menu();
