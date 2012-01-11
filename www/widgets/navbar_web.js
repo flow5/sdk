@@ -126,7 +126,7 @@
 			configure.apply(this);
 		};
 	
-		this.syncSet = function (node) {
+		this.syncSelection = function (node) {
 			this.updateConfiguration(node);
 			configure.apply(this);
 		};

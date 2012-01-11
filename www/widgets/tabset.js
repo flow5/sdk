@@ -123,7 +123,7 @@
 		this.setAction = function (cb) {
 			this.action = cb;
 		};
-	
+			
 		this.select = function (selection) {
 			F5.forEach(this.tabs, function (id, tab) {
 				tab.widget.setState(selection === id);

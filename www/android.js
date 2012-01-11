@@ -69,7 +69,7 @@ F5.addF5ReadyListener(function () {
 			this.updateConfiguration(F5.Global.flow.root);
 		};
 
-		this.syncSet = function (node) {
+		this.syncSelection = function (node) {
 			this.updateConfiguration(node);
 		};
 

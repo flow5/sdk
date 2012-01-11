@@ -149,7 +149,7 @@
 			startSubflow: function () {
 				update();
 			},
-			syncSet: function (node) {
+			syncSelection: function (node) {
 				update();
 			},
 			completeSubflow: function () {

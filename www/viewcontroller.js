@@ -148,7 +148,7 @@
 		};
 		
 		// called in a WillBecomeActive context to conditionally pick a starting view
-		this.syncSet = function (node) {
+		this.syncSelection = function (node) {
 			F5.forEach(node.children, function (id, child) {
 				child.view.el.style.visibility = 'hidden';
 			});

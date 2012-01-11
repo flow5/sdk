@@ -54,6 +54,12 @@
 		// More concerning is that elements that have received "willBecomeActive" events will never
 		// actually be activated (or inactivated) because of a transition or selection away
 		function doLifecycleEventRecursive(event, node, cb) {	
+			
+			F5.lifecycleEvent = event;
+			function callback() {
+				delete F5.lifecycleEvent;
+				cb();
+			}
 
 			function doLifecycleEvent(observer) {
 				if (observer['node' + event]) {
@@ -63,12 +69,12 @@
 			
 			function subflowCallback(node) {
 				return function () {
+					flowObservers.forEach(doLifecycleEvent);
 					doLifecycleEventRecursive(event, node.selection, cb);
 				};
 			}
 					
 			while (node) {
-				flowObservers.forEach(doLifecycleEvent);	
 						
 				// only recurse when an async operation requires it
 				if (node.subflows && node.subflows[event]) {
@@ -76,6 +82,7 @@
 					break;					
 				} else {
 				// otherwise just iterate to keep the stack minimal
+					flowObservers.forEach(doLifecycleEvent);	
 					node = node.selection;
 				}	
 				
@@ -455,11 +462,11 @@
 							// for a flow, the string indicates a node to transition to
 							completionCb();							
 							that.doTransition(node, nextAction);																			
-						} else if (node.type === 'switcher') {
+						} else if (node.type === 'switcher' && F5.lifecycleEvent !== 'WillBecomeActive') {
 							// for a switcher, the string indicates a node to select
 							completionCb();							
 							that.doSelection(node, nextAction);
-						} else if (node.type === 'set') {
+						} else if (node.type === 'set' || node.type === 'switcher') {
 							// for a set, the string indicates a node to sync to
 							// NOTE: this should only occur in a WillBecomeActive context
 							if (node.selection.id !== nextAction) {
@@ -469,8 +476,8 @@
 								});
 								node.selection.active = true;
 								flowObservers.forEach(function (observer) {
-									if (observer.syncSet) {
-										observer.syncSet(node);
+									if (observer.syncSelection) {
+										observer.syncSelection(node);
 									}
 								});
 							} 
