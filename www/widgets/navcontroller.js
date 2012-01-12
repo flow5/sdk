@@ -73,8 +73,8 @@ F5.Prototypes.Widgets.NavController = {
 		if (config.left && !config.left.action) {
 			F5.assert(config.left.transition, 'Nav config must specify transition or action');
 			config.left.action = function () {
-				var transition = that.config.left.transition;
-				var node = that.config.left.node;
+				var transition = that.configuration.left.transition;
+				var node = that.configuration.left.node;
 				F5.Global.flowController.doTransition(node, transition, node.data);				
 			};
 		}
@@ -82,8 +82,8 @@ F5.Prototypes.Widgets.NavController = {
 		if (config.right && !config.right.action) {
 			F5.assert(config.right.transition, 'Nav config must specify transition or action');
 			config.right.action = function () {
-				var transition = that.config.right.transition;
-				var node = that.config.right.node;
+				var transition = that.configuration.right.transition;
+				var node = that.configuration.right.node;
 				F5.Global.flowController.doTransition(node, transition, node.data);				
 			};			
 		}

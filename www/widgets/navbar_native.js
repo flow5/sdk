@@ -51,10 +51,13 @@
 	
 		function gapify(configuration) {
 			var gapConfig = {
-				title: configuration.title,
 				id: configuration.node.path,
 				hide: configuration.hide
 			};
+			
+			if (configuration.title) {
+				gapConfig.title = configuration.title;
+			}			
 			if (configuration.left) {
 				gapConfig.left = {
 					label: configuration.left.label,
