@@ -251,23 +251,20 @@
 			// has to be defined on the node itself. should forward transitions also be allowed to
 			// climb scope as well? Haven't found a case where it's needed yet. . .
 			var backNode;
-			if (id === 'back') {
+			if (node.transitions && node.transitions[id]) {
+				container = node.transitions[id].to.parent;					
+			} else {
 				backNode = node;		
 				while (!backNode.back) {
 					backNode = backNode.parent;
 				}		
 				container = backNode.parent;
-			} else {
-				container = node.transitions[id].to.parent;											
 			}
 						
 			F5.assert(container.type === 'flow' || container.type === 'set', 
 				'Transition container is not a flow or set');
 				
-			// a set doesn't have any notion of a nav stack
-			// transitions can be from any node to any node
-			// the widget layer can still attach the back button to a transition
-			if (container.type === 'flow' && id !== 'back') {
+			if (id !== 'back') {
 				// find the correct back target
 				var back = node;
 				while (back.parent !== container) {
@@ -309,7 +306,7 @@
 						var oldSelection = container.selection;
 
 						nodeDidBecomeInactive(oldSelection, function () {
-							if (id === 'back') {
+							if (backNode) {
 								container.selection = backNode.back;
 								delete backNode.back;								
 								flowObservers.forEach(function (observer) {

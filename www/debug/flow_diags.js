@@ -180,7 +180,8 @@
 			}
 
 			function isCluster(node) {
-				return node.transitions || node.children || node.subflows || node.parent.type === 'switcher';
+				return node.transitions || node.children || node.subflows || 
+									(node.parent && node.parent.type === 'switcher');
 			}
 
 			function activeColorAttribute(attr) {
