@@ -32,54 +32,62 @@ F5.Prototypes.Widgets.NavController = {
 		while (node.selection) {
 			node = node.selection;
 		}
+		
+		function defined(value) {
+			return value !== undefined;
+		}
 					
 		var defaultTitle = node.id;
-		var configuration = {node: node};
-		while (node && (!configuration.left || !configuration.right || !configuration.title)) {
+		var config = {node: node};
+		while (node && (!defined(config.left) || !defined(config.right) || !defined(config.title))) {
 			var nodeConfiguration = node.view.getNavConfig();
 			if (nodeConfiguration) {
-				if (!configuration.title && nodeConfiguration.title) {
-					configuration.title = nodeConfiguration.title;
+				if (!defined(config.title) && defined(nodeConfiguration.title)) {
+					config.title = nodeConfiguration.title;
 				}
-				if (!configuration.left && nodeConfiguration.left) {
-					configuration.left = nodeConfiguration.left;
-					configuration.left.node = node;
+				if (!defined(config.left) && defined(nodeConfiguration.left)) {
+					config.left = nodeConfiguration.left;
+					if (config.left) {
+						config.left.node = node;						
+					}
 				}
-				if (!configuration.right && nodeConfiguration.right) {
-					configuration.right = nodeConfiguration.right;
-					configuration.right.node = node;
+				if (!defined(config.right) && defined(nodeConfiguration.right)) {
+					config.right = nodeConfiguration.right;
+					if (config.right) {
+						config.right.node = node;						
+					}
 				}	
 				if (nodeConfiguration.hide) {
-					configuration.hide = nodeConfiguration.hide;									
+					config.hide = nodeConfiguration.hide;									
 				}
 			}
 			
 			node = node.parent;
 		}
-		if (!configuration.title) {
-			configuration.title = defaultTitle;
+		if (!defined(config.title)) {
+			config.title = defaultTitle;
 		}
 		
 		var that = this;
 		
-		if (configuration.left && !configuration.left.action) {
-			F5.assert(configuration.left.transition, 'Nav config must specify transition or action')
-			configuration.left.action = function () {
-				var transition = that.configuration.left.transition;
-				var node = that.configuration.left.node;
+		if (config.left && !config.left.action) {
+			F5.assert(config.left.transition, 'Nav config must specify transition or action');
+			config.left.action = function () {
+				var transition = that.config.left.transition;
+				var node = that.config.left.node;
 				F5.Global.flowController.doTransition(node, transition, node.data);				
 			};
 		}
 		
-		if (configuration.right && !configuration.right.action) {
-			F5.assert(configuration.right.transition, 'Nav config must specify transition or action')			
-			configuration.right.action = function () {
-				var transition = that.configuration.right.transition;
-				var node = that.configuration.right.node;
+		if (config.right && !config.right.action) {
+			F5.assert(config.right.transition, 'Nav config must specify transition or action');
+			config.right.action = function () {
+				var transition = that.config.right.transition;
+				var node = that.config.right.node;
 				F5.Global.flowController.doTransition(node, transition, node.data);				
 			};			
 		}
 		
-		this.configuration = configuration;
+		this.configuration = config;
 	}
 };
