@@ -41,7 +41,9 @@
 			id = node.id;
 		}
 				
-		var instance = document.getElementById(id).cloneNode(true);
+		var template = document.getElementById(id);		
+		F5.assert(template, "No template with id: " + id);
+		var instance = template.cloneNode(true);
 		instance.removeAttribute('id');
 		
 		var widgetEls = [];
