@@ -153,6 +153,10 @@
 				child.view.el.style.visibility = 'hidden';
 			});
 			node.selection.view.el.style.visibility = '';
+			// TODO: not 100% happy about this. See corresponding hackage in SwitcherView.doSelection
+			if (node.view.el.widget && node.view.el.widget.select) {
+				node.view.el.widget.select(node.selection.id);
+			}			
 		};			
 		
 		this.startSubflow = function (subflow) {						
