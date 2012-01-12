@@ -35,7 +35,7 @@
 	-webkit-box-sizing: border-box;
 }
 
-.viewerframe {
+#viewerFrame {
 	width: 100%;
 	height: 100%;
 	display: -webkit-box;
@@ -47,7 +47,7 @@
 	font-size: 100px;			
 }
 
-.mobile .viewerFrame {
+.mobile #viewerFrame {
 	display: none;
 }
 
@@ -64,7 +64,7 @@
 	-webkit-box-pack: center;	
 }
 
-.viewerbutton {
+.viewerbutton.f5button {
 	position: absolute;
 	right: 0px;
 	margin: 11px;
@@ -98,7 +98,7 @@
 	-webkit-user-select: auto;				
 }
 
-.jsonbutton, .backbutton, .framesbutton, .resetbutton {
+#viewerFrame .f5button {
 	background-color: grey;
 	display: -webkit-box;
 	-webkit-box-pack: center;
@@ -111,27 +111,26 @@
 	font-family: sans-serif;
 }
 
-.jsonbutton, .framesbutton, .resetbutton {
+.jsonbutton .f5button-label, .framesbutton .f5button-label, .resetbutton .f5button-label {
 	font-size: .16em;	
 }
 
-.viewerframe .f5button-down, .viewerframe .f5button-press, .viewerbutton.f5button-down {
+#viewerFrame .f5button-down, #viewerFrame .f5button-press, .viewerbutton.f5button-down {
 	background-color: lightgrey;
 	border: 1px solid white;
 }
 
-.viewerframe .f5button-down .f5button-label, 
-.viewerframe .f5button-press .f5button-label, 
+#viewerFrame .f5button-down .f5button-label, 
+#viewerFrame .f5button-press .f5button-label, 
 .viewerbutton.f5button-down .f5button-label {
 	color: black;
 }
 
 
-.viewerframe .backbutton .f5button-label {
+#viewerFrame .backbutton .f5button-label {
 	font-size: .40em;
 	margin-top: -.24em;	
 }
-
 
 .arrow {
 	margin-top:-.20em;

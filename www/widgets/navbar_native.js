@@ -34,7 +34,10 @@
 			F5.addClass(navbarEl, 'navbar');
 			// FIX: should just be visibility: hidden to let underlying layer come throug
 			// part of the fullscreen content view change
-			navbarEl.style['background-color'] = 'transparent';
+			navbarEl.style['background-color'] = 'white';			
+			navbarEl.style.height = '44px';
+			navbarEl.style.position = 'absolute';
+			navbarEl.style.top = '0px';
 			this.el.insertBefore(navbarEl, this.el.firstChild);	
 			
 			// TODO: setup a persistent callback instead of relying on the sucess callback

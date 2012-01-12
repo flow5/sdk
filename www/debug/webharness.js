@@ -31,6 +31,7 @@
 		var appframeEl = document.getElementById('f5appframe');
 
 		var viewerframeEl = F5.Templates.loadTemplate('viewerframe');
+		viewerframeEl.id = 'viewerFrame';
 		document.body.appendChild(viewerframeEl);
 
 		var viewerbuttonEl = F5.Templates.loadTemplate('viewerbutton');

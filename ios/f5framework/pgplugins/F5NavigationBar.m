@@ -68,6 +68,8 @@
                                  
         [self.navigationBar setDelegate:self];
         
+        self.navigationBar.alpha = 0.0;
+        
         UIView *mainView = [appDelegate.viewController view];
         
         [mainView addSubview:self.navigationBar];
@@ -84,10 +86,14 @@
     
     if (self.navigationBar) {          
         if ([configuration valueForKey:@"hide"]) {
-            self.navigationBar.hidden = YES;
+            [[F5CommandQueue instance] queueCommand:^{                
+                [UIView animateWithDuration:0.15 delay:0.0 options: UIViewAnimationOptionCurveEaseIn
+                                 animations:^{
+                                     self.navigationBar.alpha = 0.0;
+                                 }
+                                 completion:nil];                          
+            }];            
         } else {
-            self.navigationBar.hidden = NO;
-
             NSArray *items;
             UINavigationItem *currentItem = [self.itemCache valueForKey:[configuration valueForKey:@"id"]];
             if (currentItem) {
@@ -118,7 +124,12 @@
             }
             
             [items retain];
-            [[F5CommandQueue instance] queueCommand:^{                
+            [[F5CommandQueue instance] queueCommand:^{
+                [UIView animateWithDuration:0.15 delay:0.0 options: UIViewAnimationOptionCurveEaseIn
+                                 animations:^{
+                                     self.navigationBar.alpha = 1.0;
+                                 }
+                                 completion:nil];
                 [self.navigationBar setItems:items animated:animated];  
                 [items release];
             }];            

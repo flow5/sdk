@@ -30,110 +30,172 @@
 			
 	function NavBar() {
 	
-		var navbarEl, leftButtonEl, leftButtonLabelEl, rightButtonEl, rightButtonLabelEl, titleEl;
-	
-		this.construct = function () {
+		var navbarEl;
+		var titleEl;
+		var buttons = {};
+			
+		this.construct = function (data) {
+			
+			var that = this;
+			
 			navbarEl = document.createElement('div');
 			F5.addClass(navbarEl, 'f5navbar');
+			navbarEl.style.opacity = 0;
 			this.el.appendChild(navbarEl);
-//			this.el.insertBefore(navbarEl, this.el.firstChild);	
-
-			leftButtonEl = document.createElement('div');
-			F5.addClass(leftButtonEl, 'f5leftbutton');
-			leftButtonEl.style.visibility = 'hidden';
-			navbarEl.appendChild(leftButtonEl);
-			leftButtonLabelEl = document.createElement('div');
-			F5.addClass(leftButtonLabelEl, 'f5label');
-			leftButtonEl.appendChild(leftButtonLabelEl);
 			
-
+			
+			function makeButtons(which) {												
+				buttons[which] = {a:{}, b:{}};
+				
+				function makeButton(which) {
+					var el = document.createElement('div');
+					F5.attachWidget(el, 'Button', data);					
+					F5.addClass(el, 'f5' + which + 'button');
+					el.style.opacity = 0;
+					
+					el.widget.setAction(function () {
+						that.configuration[which].action();						
+					});
+										
+					navbarEl.appendChild(el);																			
+					
+					return el					
+				}
+				buttons[which].a = makeButton(which);
+				buttons[which].b = makeButton(which);
+				buttons[which].active = buttons[which].a;								
+				buttons[which].inactive = buttons[which].b;								
+			}
+						
+			makeButtons('left');		
+			makeButtons('right');
+			
 			titleEl = document.createElement('div');
 			F5.addClass(titleEl, 'f5title');
 			navbarEl.appendChild(titleEl);
-
-			rightButtonEl = document.createElement('div');
-			F5.addClass(rightButtonEl, 'f5rightbutton');
-			rightButtonEl.style.visibility = 'hidden';
-			navbarEl.appendChild(rightButtonEl);
-			rightButtonLabelEl = document.createElement('div');
-			F5.addClass(rightButtonLabelEl, 'f5label');
-			rightButtonEl.appendChild(rightButtonLabelEl);
-			
-
-			var that = this;
-			
-			F5.addTapListener(leftButtonEl, function () {
-				that.configuration.left.action();
-			});																					
-
-			F5.addTapListener(rightButtonEl, function () {
-				that.configuration.right.action();
-			});		
-			
+						
 			F5.Global.flowController.addFlowObserver(this);			
 		};
-	
-		function configure() {								
 		
-			if (this.configuration.hide) {
-				navbarEl.style.visibility = 'hidden';
-				leftButtonEl.style['pointer-events'] = '';
-				rightButtonEl.style['pointer-events'] = '';				
-			} else {
-				navbarEl.style.visibility = '';
-				titleEl.innerHTML = this.configuration.title;																	
-				if (this.configuration.left) {
-					leftButtonEl.style.visibility = '';
-					leftButtonEl.style['pointer-events'] = '';
-					leftButtonLabelEl.innerText = this.configuration.left.label;					
-				} else {
-					leftButtonEl.style.visibility = 'hidden';					
-					leftButtonEl.style['pointer-events'] = 'none';
+		function chooseInactive(which) {
+			return buttons[which].active === buttons[which].a ? buttons[which].b : buttons[which].a;
+		}
+	
+		function setup() {			
+			var that = this;								
+		
+			buttons.left.inactive = chooseInactive('left');
+			buttons.right.inactive = chooseInactive('right');
+			
+			function setupButton(which) {
+				var currentLabel;
+				if (buttons[which].active) {
+					currentLabel = buttons[which].active.widget.getLabel();					
 				}
-				if (this.configuration.right) {
-					rightButtonEl.style.visibility = '';
-					rightButtonEl.style['pointer-events'] = '';				
-					rightButtonLabelEl.innerText = this.configuration.right.label;					
+				var value;
+				if (that.configuration[which]) {
+					value = that.configuration[which].label;
+				}
+				
+				if (currentLabel !== value) {
+					if (value) {
+						buttons[which].inactive.widget.setLabel(value);
+					} else {
+						buttons[which].inactive = null;						
+					}
+					buttons[which].doAnimate = true;
 				} else {
-					rightButtonEl.style.visibility = 'hidden';					
-					rightButtonEl.style['pointer-events'] = 'none';
-				}				
+					buttons[which].doAnimate = false;
+				}								
+			}
+
+			if (this.configuration.hide) {
+				buttons.left.inactive.style['pointer-events'] = '';
+				buttons.right.inactive.style['pointer-events'] = '';				
+			} else {
+				titleEl.innerHTML = this.configuration.title;	
+				setupButton('left');
+				setupButton('right');														
 			}				
+		}
+		
+		function animate(animation) {
+			var that = this;
+			
+			function swap(which) {
+				var button = buttons[which].inactive;
+				buttons[which].inactive = buttons[which].active;
+				buttons[which].active = button;
+			}
+			
+			function doAnimate(which) {
+				
+				if (that.configuration.hide) {
+					navbarEl.style.opacity = 0;
+				} else {
+					navbarEl.style.opacity = 1;					
+				}
+				var button = buttons[which];
+				if (button.doAnimate) {
+					if (button.inactive) {
+						button.inactive.style['-webkit-transition'] = 'opacity .15s';
+						button.inactive.style.opacity = 1;					
+						button.inactive.style['pointer-events'] = '';						
+					}
+					if (button.active) {
+						button.active.style['-webkit-transition'] = 'opacity .15s';
+						button.active.style.opacity = 0;					
+						button.active.style['pointer-events'] = 'none';						
+					}
+					swap(which);
+					button.doAnimate = false;					
+				}								
+			}
+			doAnimate('left');
+			doAnimate('right');
 		}
 			
 		this.start = function () {
 			this.updateConfiguration(F5.Global.flow.root);
-			configure.apply(this);
+			setup.apply(this);
 		};
 	
 		this.doSelection = function (node, id) {
 			this.updateConfiguration(node.children[id]);
-			configure.apply(this);
+			setup.apply(this);
 			
-			return function (cb) {cb();};
+			var that = this;
+			return function (cb) {
+				animate.apply(that, ['fade']);
+				cb();
+			};
 		};
 	
 		this.doTransition = function (container, id, to, animation) {
 			this.updateConfiguration(to);		
-			configure.apply(this);
+			setup.apply(this);
 			
-			return function (cb) {cb();};
+			var that = this;
+			return function (cb) {
+				animate.apply(that, [animation]);
+				cb();
+			};
 		};
 	
 		this.startSubflow = function () {
 			this.updateConfiguration(F5.Global.flow.root);
-			leftButtonEl.style.visibility = 'hidden';	
-			configure.apply(this);
+//			buttons.left.active.style.visibility = 'hidden';	
+			setup.apply(this);
 		};
 	
 		this.syncSelection = function (node) {
 			this.updateConfiguration(node);
-			configure.apply(this);
+			setup.apply(this);
 		};
 	
 		this.completeSubflow = function () {
 			this.updateConfiguration(F5.Global.flow.root);
-			configure.apply(this);
+			setup.apply(this);
 		};
 	}
 	NavBar.prototype = F5.Prototypes.Widgets.NavController;

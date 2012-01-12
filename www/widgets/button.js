@@ -50,6 +50,24 @@
 			}			
 		};	
 		
+		this.setLabel = function (label) {
+			if (!this.label) {
+				this.label = document.createElement('div');
+				F5.addClass(this.label, 'f5button-label');
+				this.el.appendChild(this.label);							
+			}
+
+			this.label.innerText = label;					
+		};
+		
+		this.getLabel = function () {
+			if (this.label) {
+				return this.label.innerText;
+			} else {
+				return null;
+			}
+		};
+		
 		this.setAction = function (cb) {
 			var that = this;
 			
@@ -199,10 +217,7 @@
 					maskMaskButton(resourceData.mask);
 				}
 				if (resourceData.label) {
-					that.label = document.createElement('div');
-					F5.addClass(that.label, 'f5button-label');
-					that.label.innerText = resourceData.label;					
-					that.el.appendChild(that.label);
+					that.setLabel(resourceData.label);
 				}				
 			}
 			

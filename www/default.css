@@ -47,6 +47,8 @@
 	-webkit-box-pack: center;	
 	background-color:grey;
 	-webkit-box-sizing: border-box;
+	z-index: 1000;
+	-webkit-transition: opacity .15s;	
 }
 
 .f5navbar .f5leftbutton, .f5navbar .f5rightbutton {
@@ -63,8 +65,13 @@
 	-webkit-box-sizing: border-box;
 }
 
-.f5navbar .f5leftbutton .f5label, .f5navbar .f5rightbutton .f5label {
+.f5navbar .f5leftbutton.f5button-press, .f5navbar .f5rightbutton.f5button-press {
+	background-color: grey;
+}
+
+.f5navbar .f5leftbutton .f5button-label, .f5navbar .f5rightbutton .f5button-label {
 	font-size: .16em;
+	color: black;
 }
 
 .f5navbar .f5leftbutton {
