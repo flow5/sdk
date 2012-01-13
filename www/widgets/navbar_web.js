@@ -60,6 +60,7 @@
 				
 				function makeButton(which) {
 					var el = document.createElement('div');
+					el.setAttribute('f5id', which);
 					F5.attachWidget(el, 'Button', data);					
 					F5.addClass(el, 'f5' + which + 'button');
 					el.style.opacity = 0;
@@ -112,12 +113,14 @@
 				}
 				var value;
 				if (that.configuration[which]) {
-					value = that.configuration[which].label;
+					value = that.configuration[which];
 				}
 				
 				if (currentLabel !== value) {
 					if (value) {
-						buttons[which].inactive.widget.setLabel(value);
+						var data = {};
+						data[which] = value;
+						buttons[which].inactive.widget.construct(data);
 					} else {
 						buttons[which].inactive = null;						
 					}

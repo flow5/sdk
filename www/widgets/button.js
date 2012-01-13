@@ -128,7 +128,7 @@
 		this.construct = function (data) {
 			
 			var that = this;
-			
+						
 			var container;
 			function makeContainer(tag) {
 				if (!container) {
@@ -203,6 +203,10 @@
 			}									
 			
 			function applyResourceData(resourceData) {
+				if (resourceData.className) {
+					that.className = resourceData.className;
+					F5.addClass(that.el, resourceData.className);
+				}
 				if (resourceData.image) {
 					if (resourceData.image.up) {
 						// simple button
@@ -227,7 +231,14 @@
 
 			/* label can be defined by putting it in the HTML */
 			var mergedResourceData = {label: this.el.innerText};
+			
+			// construct can be called more than once
 			this.el.innerHTML = '';
+			if (this.className) {
+				F5.removeClass(this.el, this.className);
+				delete this.className;
+			}
+			delete this.label;
 			
 			// first apply styles from the Button class
 			var className = this.el.getAttribute('f5class');
