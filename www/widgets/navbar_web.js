@@ -31,8 +31,9 @@
 	function NavBar() {
 	
 		var navbarEl;
-		var titleEl;
+		var title = {};
 		var buttons = {};
+		var containers = {};
 			
 		this.construct = function (data) {
 			
@@ -42,6 +43,16 @@
 			F5.addClass(navbarEl, 'f5navbar');
 			navbarEl.style.opacity = 0;
 			this.el.appendChild(navbarEl);
+						
+			containers.title = document.createElement('div');
+			F5.addClass(containers.title, 'f5titlecontainer');
+			navbarEl.appendChild(containers.title);
+
+			containers.left = document.createElement('div');
+			navbarEl.appendChild(containers.left);			
+
+			containers.right = document.createElement('div');
+			navbarEl.appendChild(containers.right);			
 			
 			
 			function makeButtons(which) {												
@@ -57,9 +68,9 @@
 						that.configuration[which].action();						
 					});
 										
-					navbarEl.appendChild(el);																			
+					containers[which].appendChild(el);																			
 					
-					return el					
+					return el;
 				}
 				buttons[which].a = makeButton(which);
 				buttons[which].b = makeButton(which);
@@ -70,22 +81,29 @@
 			makeButtons('left');		
 			makeButtons('right');
 			
-			titleEl = document.createElement('div');
-			F5.addClass(titleEl, 'f5title');
-			navbarEl.appendChild(titleEl);
+			function makeTitle() {
+				var titleEl = document.createElement('div');
+				F5.addClass(titleEl, 'f5title');
+				containers.title.appendChild(titleEl);
+				return titleEl;
+			}
+			title.a = makeTitle();
+			title.b = makeTitle();
+			title.active = title.a;
+			
 						
 			F5.Global.flowController.addFlowObserver(this);			
 		};
 		
 		function chooseInactive(which) {
-			return buttons[which].active === buttons[which].a ? buttons[which].b : buttons[which].a;
+			return which.active === which.a ? which.b : which.a;
 		}
 	
 		function setup() {			
 			var that = this;								
 		
-			buttons.left.inactive = chooseInactive('left');
-			buttons.right.inactive = chooseInactive('right');
+			buttons.left.inactive = chooseInactive(buttons.left);
+			buttons.right.inactive = chooseInactive(buttons.right);
 			
 			function setupButton(which) {
 				var currentLabel;
@@ -113,7 +131,15 @@
 				buttons.left.inactive.style['pointer-events'] = '';
 				buttons.right.inactive.style['pointer-events'] = '';				
 			} else {
-				titleEl.innerHTML = this.configuration.title;	
+				var currentTitle;
+				if (title.active) {
+					currentTitle = title.active.innerText;
+				}
+				if (currentTitle !== this.configuration.title) {
+					title.doAnimate = true;
+					title.inactive = chooseInactive(title);
+					title.inactive.innerText = this.configuration.title;						
+				}
 				setupButton('left');
 				setupButton('right');														
 			}				
@@ -123,36 +149,50 @@
 			var that = this;
 			
 			function swap(which) {
-				var button = buttons[which].inactive;
-				buttons[which].inactive = buttons[which].active;
-				buttons[which].active = button;
+				var tmp = which.inactive;
+				which.inactive = which.active;
+				which.active = tmp;
 			}
 			
-			function doAnimate(which) {
-				
-				if (that.configuration.hide) {
-					navbarEl.style.opacity = 0;
-				} else {
-					navbarEl.style.opacity = 1;					
-				}
+			function doAnimate(which) {				
 				var button = buttons[which];
 				if (button.doAnimate) {
 					if (button.inactive) {
-						button.inactive.style['-webkit-transition'] = 'opacity .15s';
+						button.inactive.style['-webkit-transition'] = 'opacity .25s';
 						button.inactive.style.opacity = 1;					
 						button.inactive.style['pointer-events'] = '';						
 					}
 					if (button.active) {
-						button.active.style['-webkit-transition'] = 'opacity .15s';
+						button.active.style['-webkit-transition'] = 'opacity .25s';
 						button.active.style.opacity = 0;					
 						button.active.style['pointer-events'] = 'none';						
 					}
-					swap(which);
+					swap(buttons[which]);
 					button.doAnimate = false;					
 				}								
 			}
 			doAnimate('left');
 			doAnimate('right');
+			
+			if (that.configuration.hide) {
+				navbarEl.style.opacity = 0;
+			} else {
+				navbarEl.style.opacity = 1;					
+			}				
+			
+			if (title.doAnimate) {
+				if (title.inactive) {
+					title.inactive.style['-webkit-transition'] = 'opacity .25s';						
+					title.inactive.style.opacity = 1;
+				}
+				if (title.active) {
+					title.active.style['-webkit-transition'] = 'opacity .25s';						
+					title.active.style.opacity = 0;
+				}
+				swap(title);
+				title.doAnimate = false;					
+			}
+			
 		}
 			
 		this.start = function () {

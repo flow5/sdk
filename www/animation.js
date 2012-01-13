@@ -95,8 +95,10 @@
 
 					// setting opacity causes flickering on Android (Gingerbread)
 //					if (F5.platform() !== 'android') {
-						oldEl.style.opacity = '';						
 						oldEl.style.visibility = 'hidden';
+						setTimeout(function () {
+							oldEl.style.opacity = '';													
+						});
 //					};
 
 					F5.removeTransitionEndListener(newEl);
@@ -105,7 +107,7 @@
 				}
 				
 				F5.addTransitionEndListener(newEl, completeFadeIn);				
-				newEl.style['-webkit-transition'] = 'opacity .15s';				
+				newEl.style['-webkit-transition'] = 'opacity .25s';				
 				newEl.style.opacity = 1;
 			};		
 		},
@@ -127,8 +129,10 @@
 
 					// setting opacity causes flickering on Android (Gingerbread)
 					if (F5.platform() !== 'android') {
-						oldEl.style.opacity = '';						
 						oldEl.style.visibility = 'hidden';
+						setTimeout(function () {
+							oldEl.style.opacity = '';													
+						});
 					}
 
 					F5.removeTransitionEndListener(oldEl);
@@ -137,7 +141,7 @@
 				}
 				
 				F5.addTransitionEndListener(oldEl, completeFadeOut);				
-				oldEl.style['-webkit-transition'] = 'opacity .15s';				
+				oldEl.style['-webkit-transition'] = 'opacity .25s';				
 				oldEl.style.opacity = 0;
 			};		
 		},
