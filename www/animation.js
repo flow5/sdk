@@ -67,6 +67,52 @@
 		};			
 	}
 	
+	function sheetVertical(container, el, distance) {
+		
+		if (distance < 0) {
+			el.style['-webkit-transform'] = 'translate3d(0px, 0px, 0px)';						
+		} else {
+			el.style['-webkit-transform'] = 'translate3d(0px, ' + -distance + 'px, 0px)';			
+		}
+		el.style.visibility = '';
+		el.style['z-index'] = 1;
+							
+		return function (cb) {
+			function complete() {
+
+				// Android pre-ICS: screen flashes if -webkit-transform is cleared while el is visible
+				if (F5.platform() !== 'android') {
+					el.style['-webkit-transform'] = '';					
+				}
+				el.style['-webkit-transition'] = '';
+				
+				if (distance < 0) {
+					el.style['z-index'] = '';					
+				}
+
+				F5.removeTransitionEndListener(el);			
+				
+				cb();
+			}			
+		
+			if (F5.platform() === 'android') {
+				// Android: transition stutters if the event listener is used
+				setTimeout(complete, 325);				
+			} else {
+				F5.addTransitionEndListener(el, complete);	
+			}
+			
+			var transition = '-webkit-transform ease-in .3s';
+			el.style['-webkit-transition'] = transition;
+			
+			if (distance < 0) {
+				el.style['-webkit-transform'] = 'translate3d(0px, ' + distance + 'px, 0px)';			
+			} else {
+				el.style['-webkit-transform'] = 'translate3d(0px, 0px, 0px)';						
+			}
+		};			
+	}
+	
 	F5.Animation = {
 		
 		cut: function (container, oldEl, newEl) {
@@ -153,6 +199,14 @@
 		pushRight: function (container, oldEl, newEl) {
 			return pushHorizontal(container, oldEl, newEl, -container.offsetWidth);						
 		},
+
+		sheetDown: function (container, oldEl, newEl) {
+			return sheetVertical(container, newEl, container.offsetHeight);						
+		},
+
+		sheetUp: function (container, oldEl, newEl) {
+			return sheetVertical(container, oldEl, -container.offsetHeight);						
+		},
 		
 		inverseAnimation: function(animation) {
 			var inverse;
@@ -171,6 +225,12 @@
 				break;
 			case 'pushLeft':
 				inverse = 'pushRight';
+				break;
+			case 'sheetDown':
+				inverse = 'sheetUp';
+				break;
+			case 'sheetUp':
+				inverse = 'sheetDown';
 				break;
 			}
 

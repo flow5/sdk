@@ -99,6 +99,32 @@
 		function chooseInactive(which) {
 			return which.active === which.a ? which.b : which.a;
 		}
+		
+		function different(a, b) {
+			if (typeof a === typeof b) {
+				if (typeof a === 'object') {
+					if (a.constructor !== Object) {
+						return a !== b;
+					} else {
+						var same = true;
+						F5.forEach(a, function (id, value) {
+							if (same && id !== 'action') {
+								if (id === 'node') {
+									same = a.node === b.node;
+								} else {
+									same = !different(value, b[id]);								
+								}
+							}
+						});						
+						return !same;
+					}
+				} else {
+					return a !== b;
+				}
+			} else {
+				return true;
+			}
+		}
 	
 		function setup() {			
 			var that = this;								
@@ -107,19 +133,19 @@
 			buttons.right.inactive = chooseInactive(buttons.right);
 			
 			function setupButton(which) {
-				var currentLabel;
+				var currentConfigData;
 				if (buttons[which].active) {
-					currentLabel = buttons[which].active.widget.getLabel();					
+					currentConfigData = buttons[which].active.widget.getData();					
 				}
-				var value;
+				var configData;
 				if (that.configuration[which]) {
-					value = that.configuration[which];
+					configData = that.configuration[which];
 				}
 				
-				if (currentLabel !== value) {
-					if (value) {
+				if (!currentConfigData && configData || currentConfigData && different(currentConfigData[which], configData)) {
+					if (configData) {
 						var data = {};
-						data[which] = value;
+						data[which] = configData;
 						buttons[which].inactive.widget.construct(data);
 					} else {
 						buttons[which].inactive = null;						

@@ -60,12 +60,8 @@
 			this.label.innerText = label;					
 		};
 		
-		this.getLabel = function () {
-			if (this.label) {
-				return this.label.innerText;
-			} else {
-				return null;
-			}
+		this.getData = function () {
+			return this.data;
 		};
 		
 		this.setAction = function (cb) {
@@ -225,13 +221,6 @@
 				}				
 			}
 			
-			this.state = false;				
-			F5.addClass(that.el, 'f5button-up');									
-			F5.addClass(this.el, 'f5button');			
-
-			/* label can be defined by putting it in the HTML */
-			var mergedResourceData = {label: this.el.innerText};
-			
 			// construct can be called more than once
 			this.el.innerHTML = '';
 			if (this.className) {
@@ -239,26 +228,34 @@
 				delete this.className;
 			}
 			delete this.label;
-			
+
+			this.data = data;
+			this.state = false;				
+			F5.addClass(that.el, 'f5button-up');									
+			F5.addClass(this.el, 'f5button');			
+
+			/* label can be defined by putting it in the HTML */
+			var mergedData = {label: this.el.innerText};
+						
 			// first apply styles from the Button class
 			var className = this.el.getAttribute('f5class');
 			if (className) {
 				var classData = data['.' + className];
 				if (typeof classData === 'string') {
-					mergedResourceData.label = classData;
+					mergedData.label = classData;
 				} else {					
-					F5.merge(classData, mergedResourceData);
+					F5.merge(classData, mergedData);
 				}
 			}
 			
 			var instanceData = data[this.el.getAttribute('f5id')];
 			if (typeof instanceData === 'string') {
-				mergedResourceData.label = instanceData;
+				mergedData.label = instanceData;
 			} else {
-				F5.merge(instanceData, mergedResourceData);				
+				F5.merge(instanceData, mergedData);				
 			}
 
-			applyResourceData(mergedResourceData);	
+			applyResourceData(mergedData);	
 		};
 	}	
 		
