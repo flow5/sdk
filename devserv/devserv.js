@@ -49,7 +49,9 @@ cli.parse({
 
 function compress(html, res) {
 		
-	var options = ['-jar', process.cwd() + '/devserv/htmlcompressor-1.5.2.jar', '--compress-css', '--compress-js'];
+	// Unfortunately, the compressor breaks on inlined CSS background images
+	var options = ['-jar', process.cwd() + '/devserv/htmlcompressor-1.5.2.jar', '--compress-js'];
+//	var options = ['-jar', process.cwd() + '/devserv/htmlcompressor-1.5.2.jar', '--compress-css', '--compress-js'];
 	var child = spawn('java', options);
 	
 	child.stdout.on('data', function (data) {

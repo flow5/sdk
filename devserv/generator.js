@@ -40,7 +40,7 @@ function forEach(obj, fn) {
 			}
 		}							
 	}
-};
+}
 
 var caches = [];
 function deleteCaches() {
@@ -207,7 +207,7 @@ exports.generateHtml = function(parsed) {
 	document.body.appendChild(templates);	
 
 	// places to stow parsed data
-	var styleWorkaround = '';
+	var styleBlock = '';
 	var resources = {};
 	var flowspec = {};			
 			
@@ -270,9 +270,28 @@ exports.generateHtml = function(parsed) {
 			elements.forEach(function (file) {
 				if (file.match('.css')) {
 					if (boolValue(query.inline)) {
-						// NOTE: JSDOM doesn't fully support style nodes yet. so do it manually below
-						// elementsDiv = document.createElement('style');
-						styleWorkaround += fs.readFileSync('www/' + path + file).toString();							
+						var style = fs.readFileSync('www/' + path + file).toString();
+						
+						var urls = {};
+						var statements = style.split(';');
+						var regExp = new RegExp(/url\(\'(.*)\'\)/);
+						statements.forEach(function (statement) {
+							var matches = regExp.exec(statement);
+							if (matches && matches.length > 1) {
+								urls[matches[1]] = true;
+							}
+						});
+						
+						var url;
+						for (url in urls) {
+							if (urls.hasOwnProperty(url)) {
+								var imageData = inlineImage(url);
+								style = style.replace(url, imageData);
+							}
+						}
+						
+						
+						styleBlock += style;							
 					} else {
 						injectLink('stylesheet', path + file, 'text/css');
 					}
@@ -386,7 +405,7 @@ exports.generateHtml = function(parsed) {
 			
 	deleteCaches();	
 	
-	return document.outerHTML.replace('<head>', '<head><style>' + styleWorkaround + '</style>');			
+	return document.outerHTML.replace('<head>', '<head><style>' + styleBlock + '</style>');			
 };
 
 }());
