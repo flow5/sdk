@@ -30,8 +30,18 @@
 	
 	function Picture() {
 		this.construct = function (data) {
+
 			var id = this.el.getAttribute('f5id');
+			// NOTE: valueFromId handles period delimited ids. probably going to get rid of this in favor of scoping
 			var value = F5.valueFromId(data, id);
+
+			if (!value) {
+				var className = this.el.getAttribute('f5class');
+				if (className) {
+					value = data['.' + className];
+				}								
+			}
+
 			if (value) {
 				var img = document.createElement('img');				
 				if (F5.ImagePreloader.isImagePreloader(value)) {

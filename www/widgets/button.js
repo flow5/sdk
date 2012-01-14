@@ -120,6 +120,15 @@
 				cb();
 			});			
 		};		
+		
+		this.reset = function () {
+			this.el.innerHTML = '';
+			if (this.className) {
+				F5.removeClass(this.el, this.className);
+				delete this.className;
+			}
+			delete this.label;			
+		};
 					
 		this.construct = function (data) {
 			
@@ -224,11 +233,6 @@
 			// construct can be called more than once
 			var label = this.el.innerText;
 			this.el.innerHTML = '';
-			if (this.className) {
-				F5.removeClass(this.el, this.className);
-				delete this.className;
-			}
-			delete this.label;
 
 			this.data = data;
 			this.state = false;				

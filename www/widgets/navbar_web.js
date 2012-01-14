@@ -142,10 +142,12 @@
 					configData = that.configuration[which];
 				}
 				
-				if (!currentConfigData && configData || currentConfigData && different(currentConfigData[which], configData)) {
+				if ((!currentConfigData && configData) || 
+					(currentConfigData && different(currentConfigData[which], configData))) {
 					if (configData) {
 						var data = {};
 						data[which] = configData;
+						buttons[which].inactive.widget.reset();
 						buttons[which].inactive.widget.construct(data);
 					} else {
 						buttons[which].inactive = null;						
