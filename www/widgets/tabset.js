@@ -100,15 +100,9 @@
 				that.tabs[id] = tab;
 
 				tab.widget.setAction(function (e) {
-					// do the action first. if it errors out, the state of the
-					// controls doesn't change
 					if (that.action) {
 						that.action(id);
 					}
-
-					F5.forEach(that.tabs, function (tabid, tab) {
-						tab.widget.setState(tabid === id);
-					});					
 				});				
 			});	
 			
@@ -126,14 +120,19 @@
 			
 		this.select = function (selection) {
 			var that = this;
-			F5.forEach(this.tabs, function (id, tab) {
-				tab.widget.setState(selection === id);
-				if (selection === id) {
-					F5.addClass(that.tabset, id);
-				} else {
-					F5.removeClass(that.tabset, id);
-				}
-			});
+			
+			// sync the tabset with the other deferred transition actions
+			F5.Global.flowController.addWaitTask(function (cb) {
+				F5.forEach(that.tabs, function (id, tab) {
+					tab.widget.setState(selection === id);
+					if (selection === id) {
+						F5.addClass(that.tabset, id);
+					} else {
+						F5.removeClass(that.tabset, id);
+					}
+				});	
+				cb();			
+			});			
 		};
 	}
 
