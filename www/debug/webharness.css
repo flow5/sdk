@@ -64,6 +64,10 @@
 	-webkit-box-pack: center;	
 }
 
+#viewerFrame .f5button {
+	width: .5em;
+}
+
 .viewerbutton.f5button {
 	position: absolute;
 	right: 0px;

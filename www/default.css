@@ -148,6 +148,11 @@
 	width: 100%;	
 }
 
+.f5button-container, .f5button-up, .f5button-down, .f5button img {
+	width: 100%;
+	height: 100%;
+}
+
 .f5tabset .f5button.f5button-up .f5button-label {
 	color: white;
 }

@@ -49,7 +49,8 @@ cli.parse({
 
 function compress(html, res) {
 		
-	// Unfortunately, the compressor breaks on inlined CSS background images
+	// CSS compression is done in generate() pre-image inlining. this is both for efficiency and
+	// because the inline images break the yuicompressor
 	var options = ['-jar', process.cwd() + '/devserv/htmlcompressor-1.5.2.jar', '--compress-js'];
 //	var options = ['-jar', process.cwd() + '/devserv/htmlcompressor-1.5.2.jar', '--compress-css', '--compress-js'];
 	var child = spawn('java', options);
