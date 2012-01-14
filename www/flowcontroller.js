@@ -280,9 +280,6 @@
 									
 			if (parameters) {
 				if (id === 'back') {
-					if (!target.data) {
-						target.data = {};
-					}					
 					F5.extend(target.data, parameters);
 				} else {
 					target.data = parameters;

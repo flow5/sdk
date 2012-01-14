@@ -119,10 +119,10 @@
 			var diameter = google.maps.geometry.spherical.computeDistanceBetween(bounds.getSouthWest(), southEast);
 			
 			return {
-				bounds: {
-					sw: {lat: bounds.getSouthWest().lat(), lng: bounds.getSouthWest().lng()}, 
-					ne: {lat: bounds.getNorthEast().lat(), lng: bounds.getNorthEast().lng()}
-				},
+//				bounds: {
+//					sw: {lat: bounds.getSouthWest().lat(), lng: bounds.getSouthWest().lng()}, 
+//					ne: {lat: bounds.getNorthEast().lat(), lng: bounds.getNorthEast().lng()}
+//				},
 				center: {lat: center.lat(), lng: center.lng()},
 				radius: 0.5 * diameter
 				

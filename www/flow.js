@@ -44,6 +44,7 @@
 								
 		function injectNodeRecursive(id, nodeSpec, parent) {										
 			var node = {id: id, 
+						data: {},
 						type: nodeSpec.type || 'flow', 
 						parent: parent,
 						viewDelegate: nodeSpec.viewDelegate,

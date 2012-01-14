@@ -222,6 +222,7 @@
 			}
 			
 			// construct can be called more than once
+			var label = this.el.innerText;
 			this.el.innerHTML = '';
 			if (this.className) {
 				F5.removeClass(this.el, this.className);
@@ -235,7 +236,7 @@
 			F5.addClass(this.el, 'f5button');			
 
 			/* label can be defined by putting it in the HTML */
-			var mergedData = {label: this.el.innerText};
+			var mergedData = {label: label};
 						
 			// first apply styles from the Button class
 			var className = this.el.getAttribute('f5class');
