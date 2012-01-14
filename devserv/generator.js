@@ -272,26 +272,19 @@ exports.generateHtml = function(parsed) {
 					if (boolValue(query.inline)) {
 						var style = fs.readFileSync('www/' + path + file).toString();
 						
-						var urls = {};
 						var statements = style.split(';');
 						var regExp = new RegExp(/url\(\'(.*)\'\)/);
-						statements.forEach(function (statement) {
-							var matches = regExp.exec(statement);
+
+						var i;
+						for (i = 0; i < statements.length; i += 1) {
+							var matches = regExp.exec(statements[i]);
 							if (matches && matches.length > 1) {
-								urls[matches[1]] = true;
-							}
-						});
-						
-						var url;
-						for (url in urls) {
-							if (urls.hasOwnProperty(url)) {
+								var url = matches[1];
 								var imageData = inlineImage(url);
-								style = style.replace(url, imageData);
+								statements[i] = statements[i].replace(url, imageData);
 							}
-						}
-						
-						
-						styleBlock += style;							
+						}														
+						styleBlock += statements.join(';');							
 					} else {
 						injectLink('stylesheet', path + file, 'text/css');
 					}
