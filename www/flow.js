@@ -101,8 +101,8 @@
 		function resolveTransitionsRecursive(node) {								
 			
 			if (node.spec.transitions) {
-				F5.assert(node.type === 'flow' || node.type === 'set', 
-							'A node with transitions must be of type flow or set');
+//				F5.assert(node.type === 'flow' || node.type === 'set', 
+//							'A node with transitions must be of type flow or set');
 				node.transitions = {};
 				F5.forEach(node.spec.transitions, function (transition) {
 					var id;

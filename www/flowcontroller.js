@@ -229,8 +229,8 @@
 		// use the transition on the node with the given id 
 		this.doTransition = function (node, id, parameters, cb) {
 			F5.assert(!lockout, 'Locked out');
-			F5.assert(node.type === 'flow' || node.type === 'set', 
-				'Can only doTransition on node of types flow or set');			
+//			F5.assert(node.type === 'flow' || node.type === 'set', 
+//				'Can only doTransition on node of types flow or set');			
 			F5.assert(id === 'back' || node.transitions, 'No transitions defined for node: ' + node.path);
 			F5.assert(id === 'back' || node.transitions[id], 'No transition with id: ' + id);
 					

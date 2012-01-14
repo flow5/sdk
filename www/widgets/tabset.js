@@ -125,8 +125,14 @@
 		};
 			
 		this.select = function (selection) {
+			var that = this;
 			F5.forEach(this.tabs, function (id, tab) {
 				tab.widget.setState(selection === id);
+				if (selection === id) {
+					F5.addClass(that.tabset, id);
+				} else {
+					F5.removeClass(that.tabset, id);
+				}
 			});
 		};
 	}
