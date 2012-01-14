@@ -27,7 +27,8 @@
 
 (function () {
 	
-var fs = require('fs');
+var fs = require('fs'),
+	cssmin = require('node-css-compressor').cssmin;
 
 function forEach(obj, fn) {
 	if (obj.constructor === Array) {
@@ -271,6 +272,10 @@ exports.generateHtml = function(parsed) {
 				if (file.match('.css')) {
 					if (boolValue(query.inline)) {
 						var style = fs.readFileSync('www/' + path + file).toString();
+						
+						if (boolValue(query.compress)) {
+							style = cssmin(style);
+						}
 						
 						var statements = style.split(';');
 						var regExp = new RegExp(/url\(\'(.*)\'\)/);
