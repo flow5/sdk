@@ -67,7 +67,9 @@
 		}
 		eventName = eventName || eventType;
 		
-		F5.assert(!el.F5.listeners[eventName], 'Already listening for: ' + eventName + ' on: ' + el.outerHTML);
+		// triggers a very expensive outerHTML call!
+//		F5.assert(!el.F5.listeners[eventName], 'Already listening for: ' + eventName + ' on: ' + el.outerHTML);
+		F5.assert(!el.F5.listeners[eventName], 'Already listening for: ' + eventName + ' on element with id: ' + el.id);
 		
 		el.F5.listeners[eventName] = function f5eventListenerWrapper(e) {
 			// TODO: check for transitioning for all event callbacks?
@@ -136,10 +138,14 @@
 	F5.maxClickTime = 1000;
 	
 	F5.addTapListener = function (el, cb) {
-		addEventListener(el, startEventName(), function (startEvent) {
+		addEventListener(el, startEventName(), function (startEvent) {						
+			startEvent.preventDefault();
+			
 			var startLoc = F5.eventLocation(startEvent);
 			removeEventListener(el, startEventName(), 'tap');
 			addEventListener(el, stopEventName(), function (stopEvent) {
+				stopEvent.preventDefault();
+				
 				var stopLoc = F5.eventLocation(stopEvent);
 				removeEventListener(el, stopEventName(), 'tap');
 				
