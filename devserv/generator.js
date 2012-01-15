@@ -60,11 +60,11 @@ function requireWrapper(path) {
 }
 
 // the image references are at the leaf nodes
-function handleImageResourcesRecursive(obj, handler) {
+function handleDataResourcesRecursive(obj, handler) {
 	forEach(obj, function (id, value) {
 		if (typeof value === 'object') {
-			handleImageResourcesRecursive(value, handler);
-		} else if (value.indexOf('.png') !== -1 || value.indexOf('.jpg') !== -1){
+			handleDataResourcesRecursive(value, handler);
+		} else if (value.match(/(\.png)|(\.jpg)|(\.ttf)/)) {
 			handler(obj, id, value);
 		}
 	});
@@ -147,7 +147,7 @@ exports.generateCacheManifest = function(query) {
 					if (type === 'resources') {
 						try {
 							var resources = requireWrapper(process.cwd() + '/' + path + file).resources;
-							handleImageResourcesRecursive(resources, function (obj, id, src) {
+							handleDataResourcesRecursive(resources, function (obj, id, src) {
 								checkDate(src);
 							});			
 						} catch (e) {
@@ -250,9 +250,15 @@ exports.generateHtml = function(parsed) {
 	
 	function injectManifest(path) {		
 		
-		function inlineImage(src) {
+		function inlineData(src) {
 			try {
-				var prefix = 'data:image/' + requireWrapper('path').extname(src).substring(1) + ';base64,';
+				var ext = requireWrapper('path').extname(src).substring(1);
+				var prefix;
+				if (ext === 'ttf') {
+					prefix = 'data:font/truetype;base64,';
+				} else {
+					prefix = 'data:image/' + ext + ';base64,';					
+				}
 				return prefix + fs.readFileSync('www/apps/' + query.app + '/' + src, 'base64');			
 			} catch (e) {
 				console.log(e.stack);
@@ -278,14 +284,15 @@ exports.generateHtml = function(parsed) {
 						}
 						
 						var statements = style.split(';');
-						var regExp = new RegExp(/url\(\'(.*)\'\)/);
+						var regExp = new RegExp(/url\(\'([^\']*)\'\)/);
 
 						var i;
 						for (i = 0; i < statements.length; i += 1) {
 							var matches = regExp.exec(statements[i]);
 							if (matches && matches.length > 1) {
 								var url = matches[1];
-								var imageData = inlineImage(url);
+								console.log(url);
+								var imageData = inlineData(url);
 								statements[i] = statements[i].replace(url, imageData);
 							}
 						}														
@@ -309,8 +316,8 @@ exports.generateHtml = function(parsed) {
 				try {
 					resources = requireWrapper(process.cwd() + '/www/' + path + file);	
 					if (boolValue(query.inline)) {
-						handleImageResourcesRecursive(resources, function (obj, id, src) {						
-							obj[id] = inlineImage(src);										
+						handleDataResourcesRecursive(resources, function (obj, id, src) {						
+							obj[id] = inlineData(src);										
 						});
 					}		
 				} catch (e) {
