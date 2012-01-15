@@ -62,7 +62,7 @@
 			var currentLocation = F5.locationService.getCurrentLocation();
 			if (currentLocation) {
 				// from http://www.movable-type.co.uk/scripts/latlong.html
-				el.innerText = distance(currentLocation, location) + 'mi';				
+				el.innerText = distance(currentLocation, location) + ' m';				
 			}			
 		}
 		
