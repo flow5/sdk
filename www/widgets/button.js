@@ -64,6 +64,10 @@
 			return this.data;
 		};
 		
+		this.unsetAction = function () {
+			F5.removeTouchEventListenersRecursive(this.el);
+		};
+		
 		this.setAction = function (cb) {
 			var that = this;
 			
@@ -115,9 +119,9 @@
 				F5.addTouchStopListener(that.el, stopListener);
 				F5.addTouchStopListener(document.body, stopListener);												
 			});
-			F5.addTapListener(this.el, function () {
+			F5.addTapListener(this.el, function (e) {
 				stopListener();
-				cb();
+				cb(e);
 			});			
 		};		
 		
