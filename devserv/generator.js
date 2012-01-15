@@ -291,7 +291,6 @@ exports.generateHtml = function(parsed) {
 							var matches = regExp.exec(statements[i]);
 							if (matches && matches.length > 1) {
 								var url = matches[1];
-								console.log(url);
 								var imageData = inlineData(url);
 								statements[i] = statements[i].replace(url, imageData);
 							}

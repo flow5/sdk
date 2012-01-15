@@ -27,10 +27,18 @@
 /*global F5*/
 
 (function () {	
+	
+	// experimental
+	// requires that all widget 'construct' methods can be called multiple times
+	F5.refreshTemplate = function(el, data) {
+		F5.forEach(el.querySelectorAll('[f5widget]'), function (el) {
+			el.widget.construct(data);
+		});
+	};
 			
 	// TODO: I think make this explicit with
 	// loadTemplateByName and loadTemplateForNode
-	function loadTemplate(arg1, arg2) {
+	F5.loadTemplate = function(arg1, arg2) {
 		
 		var id;
 		var node;
@@ -65,8 +73,6 @@
 		F5.addClass(instance, id);
 		
 		return instance;
-	}
+	};
 	
-	F5.Templates = {loadTemplate: loadTemplate};
-
 }());

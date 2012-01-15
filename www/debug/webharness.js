@@ -30,11 +30,11 @@
 	F5.addF5ReadyListener(function () {
 		var appframeEl = document.getElementById('f5appframe');
 
-		var viewerframeEl = F5.Templates.loadTemplate('viewerframe');
+		var viewerframeEl = F5.loadTemplate('viewerframe');
 		viewerframeEl.id = 'viewerFrame';
 		document.body.appendChild(viewerframeEl);
 
-		var viewerbuttonEl = F5.Templates.loadTemplate('viewerbutton');
+		var viewerbuttonEl = F5.loadTemplate('viewerbutton');
 		document.body.appendChild(viewerbuttonEl);
 
 		var viewerEl = F5.getElementById(viewerframeEl, 'viewer'),

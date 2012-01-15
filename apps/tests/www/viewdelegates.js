@@ -36,7 +36,7 @@
 		var url = "http://www.flow5.com";		
 		
 		this.initialize = function (el, node) {
-			el.appendChild(F5.Templates.loadTemplate(node));
+			el.appendChild(F5.loadTemplate(node));
 			
 			var buttonEl = F5.getElementById(el, 'wait');
 
