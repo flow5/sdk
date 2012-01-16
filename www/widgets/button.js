@@ -280,6 +280,8 @@
 			var that = this;
 			F5.addTouchStartListener(this.el, function touchStartListenerCB(e) {
 				e.stopPropagation();
+				e.preventDefault();
+				
 				that.setState(!that.state);
 				cb(that.state);
 			});			
