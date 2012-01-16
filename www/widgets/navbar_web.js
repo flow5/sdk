@@ -207,8 +207,10 @@
 			
 			if (that.configuration.hide) {
 				navbarEl.style.opacity = 0;
+				navbarEl.style['pointer-events'] = 'none';				
 			} else {
 				navbarEl.style.opacity = 1;					
+				navbarEl.style['pointer-events'] = '';
 			}				
 			
 			if (title.doAnimate) {

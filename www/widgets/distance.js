@@ -28,6 +28,7 @@
 
 (function () {
 	
+	// from http://www.movable-type.co.uk/scripts/latlong.html	
 	function distance(loc1, loc2) {
 		
 		//degrees to radians
@@ -58,20 +59,33 @@
 	
 	function Distance() {
 		
-		function updateLocation(el, location) {
+		function updateLocation(that, location) {
+			var distance = that.distanceFromCurrentLocation();
+			if (distance) {
+				that.el.innerText = distance + ' m';								
+			} else {
+				that.el.innerText = '';
+			}
+		}
+		
+		this.distanceFromCurrentLocation = function () {
 			var currentLocation = F5.locationService.getCurrentLocation();
 			if (currentLocation) {
 				// from http://www.movable-type.co.uk/scripts/latlong.html
-				el.innerText = distance(currentLocation, location) + ' m';				
-			}			
-		}
+				return distance(currentLocation, this.location);
+			} else {
+				return 0;
+			}
+		};
 		
 		this.construct = function (data) {
-			updateLocation(this.el, data.location);			
+			this.location = data.location;
+			
+			updateLocation(this, data.location);			
 			// TODO: setup a callback to update location when it changes
 			var that = this;
 			document.addEventListener('locationchanged', function () {
-				updateLocation(that.el, data.location);
+				updateLocation(that, data.location);
 			});
 		};
 	}
