@@ -301,10 +301,17 @@
 						
 			transform(this, this.staticOffset);
 		};
+		
+		this.widgetWillBecomeActive = function () {
+			if (!this.initialized) {
+				this.refresh();
+				this.initialized = true;				
+			}			
+		}
 				
 		this.widgetDidBecomeActive = function () {
 			window.addEventListener('orientationchange', this.refreshFunction);
-			this.refresh();
+			this.active = true;
 		};
 						
 		this.widgetWillBecomeInactive = function () {
@@ -312,12 +319,19 @@
 			finishScrolling(this);
 			window.removeEventListener('orientationchange', this.refreshFunction);			
 		};
+		
+		this.widgetDidBecomeInactive = function () {
+			this.active = false;
+		};
 				
 		// TODO: may run into the large div problem again in which case the content size
 		// may not be derivable from offsetHeight
 		this.refresh = function () {
 			this.container = F5.elementOffsetGeometry(this.el.parentElement);
 			this.minOffset = Math.min(this.container.height - this.el.offsetHeight, 0);
+			this.staticOffset = 0;
+			transform(this, 0);				
+			this.initialized = false;				
 		};
 	}
 
