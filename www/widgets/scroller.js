@@ -128,6 +128,8 @@
 	}		
 
 	function stopHandler(scroller, e) {	
+		
+		e.stopPropagation();
 
 		if (!scroller.tracking) {
 			return;
@@ -173,6 +175,8 @@
 	}	
 
 	function moveHandler(scroller, e) {
+		
+		e.stopPropagation();		
 
 		// browser compatibility
 		if (!scroller.tracking) {

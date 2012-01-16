@@ -45,6 +45,10 @@
 			resetbuttonEl = F5.getElementById(viewerframeEl, 'resetbutton'),
 			backbuttonEl = F5.getElementById(viewerframeEl, 'backbutton'),
 			jsonDiv = F5.getElementById(viewerframeEl, 'json');
+			
+			F5.addTouchStartListener(jsonDiv, function (e) {
+				e.stopPropagation();
+			});
 		
 		function updateJson() {
 			jsonDiv.innerHTML = '';
