@@ -41,8 +41,6 @@
 			
 			navbarEl = document.createElement('div');
 			F5.addClass(navbarEl, 'f5navbar');
-			navbarEl.style.opacity = 0;
-			navbarEl.style['pointer-events'] = 'none';
 			this.el.appendChild(navbarEl);
 						
 			containers.title = document.createElement('div');

@@ -58,10 +58,14 @@ function Form() {
 		return data;
 	};
 	
-	this.widgetWillBecomeActive = function () {
+	this.reset = function () {
 		F5.forEach(this.el.querySelectorAll('[f5widget=Input]'), function (el) {
 			el.widget.reset();
-		});
+		});		
+	};
+	
+	this.widgetWillBecomeActive = function () {
+		this.reset();
 	};
 	
 	this.widgetWillBecomeInactive = function () {
