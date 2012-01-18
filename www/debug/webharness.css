@@ -70,7 +70,7 @@
 
 .viewerbutton.f5button {
 	position: absolute;
-	right: 0px;
+	left: 0px;
 	margin: 11px;
 	height: 24px;
 	width: 24px;
@@ -115,11 +115,16 @@
 	font-family: sans-serif;
 }
 
+.viewerbutton.f5button.f5button-up {
+	background-color: grey;
+	border: 1px solid black;	
+}
+
 .jsonbutton .f5button-label, .framesbutton .f5button-label, .resetbutton .f5button-label {
 	font-size: .16em;	
 }
 
-#viewerFrame .f5button-down, #viewerFrame .f5button-press, .viewerbutton.f5button-down {
+#viewerFrame .f5button-down, #viewerFrame .f5button-press, .viewerbutton.f5button.f5button-down  {
 	background-color: lightgrey;
 	border: 1px solid white;
 }
