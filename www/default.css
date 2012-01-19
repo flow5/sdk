@@ -34,6 +34,14 @@
 }
 
 /***************************************/
+/*                Nodes                */
+/***************************************/
+
+.f5flow {
+	background-color: white;
+}
+
+/***************************************/
 /*              Nav Bar                */
 /***************************************/
 
@@ -201,8 +209,8 @@
 	-webkit-box-align: center;
 	-webkit-box-orient: vertical;
 	top: 25%;
-	left: 25%;
-	width: 50%;
+	left: 10%;
+	width: 80%;
 	height: 50%;
 	-webkit-transition: opacity .2s;
 	background-color: grey;
@@ -226,6 +234,7 @@
 	border-bottom: 1px solid black;	
 	padding:.06em;
 	width: 100%;
+	height: .30em;
 	-webkit-box-sizing: border-box;
 }
 
@@ -235,6 +244,11 @@
 
 .f5menuitem:last-child {
 	border-bottom: none;
+}
+
+.f5menuitem {
+	background-color: grey;
+	color: white;
 }
 
 .f5menuitem.f5button-press {
@@ -267,6 +281,7 @@
 	padding:.06em;
 	width: 100%;
 	-webkit-box-sizing: border-box;
+	height: .30em;
 }
 
 .f5dotransition:last-child, .f5dosubflow:last-child  {
