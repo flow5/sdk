@@ -44,6 +44,7 @@
 			framesbuttonEl = F5.getElementById(viewerframeEl, 'framesbutton'),
 			resetbuttonEl = F5.getElementById(viewerframeEl, 'resetbutton'),
 			backbuttonEl = F5.getElementById(viewerframeEl, 'backbutton'),
+			menubuttonEl = F5.getElementById(viewerframeEl, 'menubutton'),
 			jsonDiv = F5.getElementById(viewerframeEl, 'json');
 			
 			F5.addTouchStartListener(jsonDiv, function (e) {
@@ -173,6 +174,16 @@
 				console.log('Exception: ' + e.message);
 			}
 		});				
+		
+		if (F5.platform() === 'android') {
+			menubuttonEl.widget.setAction(function () {
+	            var e = document.createEvent('Events'); 
+	            e.initEvent('menubutton');
+	            document.dispatchEvent(e);
+			});			
+		} else {
+			menubuttonEl.style.display = 'none';
+		}
 
 		// TODO: show hide and update the jsonDiv rather than adding/removing
 		jsonbuttonEl.widget.setAction(function () {

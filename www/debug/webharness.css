@@ -65,7 +65,7 @@
 }
 
 #viewerFrame .f5button {
-	width: .5em;
+/*	width: .5em; */
 }
 
 .viewerbutton.f5button {
@@ -80,6 +80,7 @@
 	display: -webkit-box;
 	-webkit-box-align: center;
 	-webkit-box-pack: center;
+	-webkit-box-flex: 1.0;
 }
 
 .svgframe {
@@ -110,9 +111,8 @@
 	border: 1px solid black;
 	height: 30px;
 	margin: 6px;
-	padding-left: .6em;
-	padding-right: .6em;
 	font-family: sans-serif;
+	-webkit-box-flex: 1.0;
 }
 
 .viewerbutton.f5button.f5button-up {

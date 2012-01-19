@@ -43,6 +43,13 @@ function forEach(obj, fn) {
 	}
 }
 
+function extend(obj1, obj2) {
+	forEach(obj2, function (id, value) {
+		obj1[id] = value;
+	});
+}
+
+
 var caches = [];
 function deleteCaches() {
 	forEach(require.cache, function (id, cache) {
@@ -313,12 +320,13 @@ exports.generateHtml = function(parsed) {
 		function injectResources(resourceFiles) {
 			resourceFiles.forEach(function (file) {
 				try {
-					resources = requireWrapper(process.cwd() + '/www/' + path + file);	
+					var r = requireWrapper(process.cwd() + '/www/' + path + file);	
 					if (boolValue(query.inline)) {
-						handleDataResourcesRecursive(resources, function (obj, id, src) {						
+						handleDataResourcesRecursive(r, function (obj, id, src) {						
 							obj[id] = inlineData(src);										
 						});
-					}		
+					}
+					extend(resources, r);		
 				} catch (e) {
 					console.log(e.stack);
 				}				
