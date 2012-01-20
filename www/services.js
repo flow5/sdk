@@ -29,24 +29,6 @@
 
 (function () {	
 	
-	function yqlStatement(tableUrl, tableName, parameters) {
-		var statement = 'use "' + tableUrl + '" as ' + tableName + ';';
-
-		statement += 'select * from ' + tableName + ' where ';
-
-		var queryParameters = [];
-		F5.forEach(parameters, function (key, value) {
-			if (key !== 'appid') {
-				queryParameters.push(key + '="' + value + '"');				
-			}
-		});
-		statement += queryParameters.join(' and ');
-		
-		return statement;
-	}
-		
-	
-	// TODO: validate service configs against schema
 	F5.Services = {
 		foursquare: {
 			protocol: 'https',
@@ -80,55 +62,6 @@
 					return response.response.categories;
 				}								
 			}				
-		},
-		google: {
-			parameters: {
-//				key: <provided by client>
-			},				
-			places: {
-				protocol: 'https',
-				baseUrl: 'query.yahooapis.com/v1/public/yql',
-				method: 'GET',
-				search: {
-					tableUrl: 'http://www.flow5.com/service?app=jitc&name=yql&table=google.places.search',
-					tableName: 'search',
-					parameters: {
-					},
-					parameterSchema: {},
-					responseSchema: {},	
-					query: function (parameters) {
-						var statement = yqlStatement(this.tableUrl, this.tableName, parameters);
-						var appid = '';
-						if (parameters.appid) {
-							appid = '&appid='+parameters.appid;
-						}
-						return 'q=' + encodeURIComponent(statement) + '&format=json&diagnostics=true&debug=true' + appid;
-					},
-					postprocess: function (response) {
-						var results = JSON.parse(response.query.results.response);
-						if (!Array.isArray(results)) {
-							results = [results];
-						}
-						return results;
-					}				
-				},			
-				details: {
-					tableUrl: 'http://www.flow5.com/service?app=jitc&name=yql&table=google.places.details',
-					tableName: 'details',
-					parameters: {
-						// reference <provided by client>
-					},
-					parameterSchema: {},
-					responseSchema: {},	
-					query: function (parameters) {
-						var statement = yqlStatement(this.tableUrl, this.tableName, parameters);
-						return 'q=' + encodeURIComponent(statement) + '&format=json&diagnostics=true&debug=true';
-					},
-					postprocess: function (response) {
-						return response.query.results.response.json.result;
-					}				
-				}												
-			}
 		}
 	};		
 	
