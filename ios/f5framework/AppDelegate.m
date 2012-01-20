@@ -81,6 +81,7 @@
 @implementation AppDelegate
 
 @synthesize invokeString;
+@synthesize facebook;
 
 // f5
 + (NSString*) devservhost
@@ -105,10 +106,7 @@
 }
 
 - (id) init
-{	
-	/** If you need to do any extra app-specific initialization, you can do it here
-	 *  -jm
-	 **/
+{	    
     return [super init];
 }
 
@@ -160,6 +158,10 @@
 // only valid if ios.plist specifies a protocol to handle
 - (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url 
 {
+    if (self.facebook) {
+        [self.facebook handleOpenURL:url];        
+    }
+
     // must call super so all plugins will get the notification, and their handlers will be called 
 	// super also calls into javascript global function 'handleOpenURL'
     return [super application:application handleOpenURL:url];

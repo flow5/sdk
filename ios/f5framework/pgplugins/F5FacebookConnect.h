@@ -25,29 +25,18 @@
  
 ***********************************************************************************************************************/
 
-
-#import <UIKit/UIKit.h>
-#import "PhoneGapDelegate.h"
+#import "PGPlugin.h"
 #import "FBConnect.h"
 
-
-@class PluginResult;
-
-@interface AppDelegate : PhoneGapDelegate {
-
-	NSString* invokeString;
-    Facebook* facebook;        
+@interface F5FacebookConnect : PGPlugin<FBSessionDelegate> {
+    NSString *callbackID;
 }
 
-// invoke string is passed to your app on launch, this is only valid if you 
-// edit ios.plist to add a protocol
-// a simple tutorial can be found here : 
-// http://iphonedevelopertips.com/cocoa/launching-your-own-application-via-a-custom-url-scheme.html
+@property (nonatomic, copy) NSString* callbackID;
 
-@property (copy)  NSString* invokeString;
-@property (nonatomic, retain) Facebook* facebook;
+- (void)connect:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
-- (PluginResult*) executeSynchronous:(InvokedUrlCommand*)command;
+
 
 @end
 

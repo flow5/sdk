@@ -309,8 +309,14 @@
 			
 			// on iOS the window can be scrolled so that the location bar is clipped
 			// TODO: would love to be able to determine these sizes programtically but so far no luck
-			var portraitToolbar = 44;
-			var landscapeToolbar = 30;
+			var portraitToolbar = 0;
+			var landscapeToolbar = 0;
+			
+			// NOTE: this handles the ios webapp case. android still needs wo
+			if (window.innerHeight !== screen.availHeight) {
+				portraitToolbar = 44;
+				landscapeToolbar = 30;			
+			}
 			
 			style = document.createElement('style');			
 			style.innerHTML = '@media screen and (orientation: portrait)\n\

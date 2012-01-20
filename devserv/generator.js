@@ -370,8 +370,8 @@ exports.generateHtml = function(parsed) {
 	// ios webapp stuff
 	injectMeta({name: 'apple-mobile-web-app-status-bar-style', content: 'black'});
 	injectMeta({name: 'apple-mobile-web-app-capable', content: 'yes'});
-	injectLink('apple-touch-icon', 'apps/' + query.app + '/images/icon@114x114.png');
-	injectLink('apple-touch-startup-image', 'apps/' + query.app + '/images/splash@320x460.png');
+	injectLink('apple-touch-icon', 'apps/' + query.app + '/images/icon.png');
+	injectLink('apple-touch-startup-image', 'apps/' + query.app + '/images/splash.png');
 
 	// Android
 	injectMeta({name: 'viewport', content: 'target-densitydpi=device-dpi'});
@@ -410,8 +410,8 @@ exports.generateHtml = function(parsed) {
 	// TODO: enable/disable on device? need to expose mdns lookup on Android
 	if (false && boolValue(query.mobile) && boolValue(query.debug)) {
 		var weinre = document.createElement('script');
-//		weinre.src = 'http://' + require('os').hostname() + ':8081/target/target-script-min.js#anonymous';
-		weinre.src = 'http://10.0.1.5:8081/target/target-script-min.js#anonymous';
+		weinre.src = 'http://' + require('os').hostname() + ':8081/target/target-script-min.js#anonymous';
+//		weinre.src = 'http://10.0.1.5:8081/target/target-script-min.js#anonymous';
 		document.head.appendChild(weinre);			
 	}
 			

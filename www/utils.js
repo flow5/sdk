@@ -94,7 +94,7 @@
 		doXHR('POST', url, body, success, error, headers);
 	};
 	
-	F5.execService = function (name, option, parameters, cb) {
+	F5.execService = function (name, parameters, cb) {
 
 		var service = F5.Services;
 		var protocol, baseUrl, method;
@@ -103,9 +103,9 @@
 				service = service[component];				
 			}
 			
-			protocol = protocol || service.protocol;
-			baseUrl = baseUrl || service.baseUrl;
-			method = method || service.method;
+			protocol = service.protocol || protocol;
+			baseUrl = service.baseUrl || baseUrl;
+			method = service.method || method;
 			
 			if (service.parameters) {
 				F5.extend(parameters, service.parameters);
@@ -116,7 +116,7 @@
 		// TODO
 		// validate(parameters, service.parameterSchema);
 
-		var url = protocol + '://' + baseUrl + option;
+		var url = protocol + '://' + baseUrl;
 		if (method === 'GET') {
 			if (service.query) {
 				url += '?' + service.query(parameters);
