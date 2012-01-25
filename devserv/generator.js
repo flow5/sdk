@@ -145,8 +145,9 @@ exports.generateCacheManifest = function(query) {
 		checkDate('www/start.js');		
 		checkDate(__filename);
 
-		function checkManifest(path) {	
-			checkDate(path + 'manifest.json');
+		function checkManifest(path, manifestName) {	
+			manifestName = (manifestName || 'manifest') + '.json';			
+			checkDate(path + manifestName);
 
 			function checkDates(files, type) {
 				files.forEach(function (file) {
@@ -164,7 +165,7 @@ exports.generateCacheManifest = function(query) {
 				});				
 			}
 
-			var manifest = requireWrapper(process.cwd() + '/' + path + 'manifest.json');
+			var manifest = requireWrapper(process.cwd() + '/' + path + manifestName);
 
 			processManifest(manifest, query, 'scripts', checkDates);									
 			processManifest(manifest, query, 'elements', checkDates);									
@@ -173,7 +174,7 @@ exports.generateCacheManifest = function(query) {
 		}
 
 		checkManifest('www/');
-		checkManifest('www/apps/' + query.app + '/');
+		checkManifest('www/apps/' + query.app + '/', query.manifest);
 		
 		return latestDate;		
 	}
@@ -255,7 +256,8 @@ exports.generateHtml = function(parsed) {
 		return script;
 	}
 	
-	function injectManifest(path) {		
+	function injectManifest(path, manifestName) {		
+		manifestName = (manifestName || 'manifest') + '.json';
 		
 		function inlineData(src) {
 			try {
@@ -343,7 +345,7 @@ exports.generateHtml = function(parsed) {
 			});
 		}
 
-		var manifest = requireWrapper(process.cwd() + '/www/' + path + 'manifest.json');
+		var manifest = requireWrapper(process.cwd() + '/www/' + path + manifestName);
 
 		processManifest(manifest, query, 'scripts', injectScripts);									
 		processManifest(manifest, query, 'elements', injectElements);											
@@ -386,7 +388,7 @@ exports.generateHtml = function(parsed) {
 				
 	// process the manifests
 	injectManifest('');
-	injectManifest('apps/' + query.app + '/');	
+	injectManifest('apps/' + query.app + '/', query.manifest);	
 	
 	// inject the merged (and possibly inlined) resources
 	var resourcesScript = document.createElement('script');
