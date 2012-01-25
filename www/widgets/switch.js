@@ -30,21 +30,25 @@
 	
 	function Switch() {
 		this.construct = function () {
+			F5.addClass(this.el, 'f5switch');
+			
 			this.slider = document.createElement('div');
-			F5.addClass(this.slider, 'switch');												
+			F5.addClass(this.slider, 'f5slider');												
 			this.slider.setAttribute('f5constrain', 'horizontal');
 			F5.attachWidget(this.slider, 'Tracker');
 			
-/*			this.left = document.createElement('div')
+			this.left = document.createElement('div');
+			this.left.innerText = 'ON';
 			F5.addClass(this.left, 'left');
 			this.slider.appendChild(this.left);
 
-			this.right = document.createElement('div')
+			this.right = document.createElement('div');
+			this.right.innerText = 'OFF';
 			F5.addClass(this.right, 'right');
 			this.slider.appendChild(this.right);
-*/			
+			
 			this.control = document.createElement('div');
-			F5.addClass(this.control, 'control');			
+			F5.addClass(this.control, 'f5control');			
 			this.slider.appendChild(this.control);						
 			this.slider.widget.delegate = this;
 						
@@ -53,20 +57,18 @@
 		
 		this.widgetWillBecomeActive = function () {
 			this.control.style.width = this.control.offsetHeight;
-			this.el.style['border-radius'] = this.el.offsetHeight / 2 + 'px';
 			this.deadZone = this.el.offsetWidth / 5;
 			var paddingLeft = parseInt(window.getComputedStyle(this.slider)['padding-left'].replace('px', ''), 10);
 			var paddingRight = parseInt(window.getComputedStyle(this.slider)['padding-right'].replace('px', ''), 10);
 			this.maxThrow = this.el.offsetWidth - this.control.offsetWidth - (paddingLeft + paddingRight);	
 			
-			this.tippingPoint = this.maxThrow / 2;	
 			this.slider.style.width = this.el.offsetWidth * 2 - this.el.offsetHeight;
 			this.slider.style['margin-left'] = -(this.el.offsetWidth - this.el.offsetHeight);
 		};
 		
 		this.moveHandler = function (delta, start) {
 			
-			if (delta.x > start.x) {
+			if (delta.x > start.x || (delta.x === 0 && start.x === 0) || delta.x < 0) {
 				if (delta.x < this.deadZone) {
 					delta.x = 0;
 				} else {
@@ -91,13 +93,13 @@
 		
 		this.stopHandler = function (delta, start) {						
 			if (delta.x > start.x || (delta.x === 0 && start.x === 0)) {
-				if (delta.x < this.deadZone || delta.x > this.tippingPoint) {
+				if (delta.x < this.deadZone || delta.x > 3 * this.maxThrow / 4) {
 					delta.x = this.maxThrow;
 				} else {
 					delta.x = 0;
 				}
 			} else {
-				if (delta.x > this.maxThrow - this.deadZone || delta.x < this.maxThrow - this.tippingPoint) {
+				if (this.maxThrow + delta.x > this.maxThrow - this.deadZone || this.maxThrow + delta.x < this.maxThrow / 4) {
 					delta.x = 0;
 				} else {
 					delta.x = this.maxThrow;

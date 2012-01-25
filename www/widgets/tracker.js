@@ -55,7 +55,7 @@
 						that.delegate.moveHandler(delta, startTransform);
 					}
 					
-					that.el.style['-webkit-transform'] = 'translate3d(' + delta.x + 'px,' + delta.y + 'px, 0px)';							
+					that.el.style['-webkit-transform'] = 'translate3d(' + delta.x + 'px,' + delta.y + 'px, 0px)';	
 				}
 			}
 
@@ -92,8 +92,8 @@
 			});									
 		};
 		
-		this.animateTo = function (delta) {
-			this.el.style['-webkit-transition'] = '-webkit-transform .15s';
+		this.animateTo = function (delta, time) {
+			this.el.style['-webkit-transition'] = '-webkit-transform .25s';
 			this.el.style['-webkit-transform'] = 'translate3d(' + delta.x + 'px,' + delta.y + 'px, 0px)';			
 		};
 	}
