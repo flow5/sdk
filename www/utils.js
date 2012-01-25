@@ -198,9 +198,14 @@
 		F5.merge(userData, data);
 		
 		// then add all of the strings resources associated with this node and ancestors
-		while (node) {
-			F5.merge(F5.Resources[node.id], data);
-			node = node.parent;
+		var traverse = node;
+		while (traverse) {
+			F5.merge(F5.Resources[traverse.id], data);
+			traverse = traverse.parent;
+		}
+		
+		if (node){
+			F5.merge(node.data, data);			
 		}
 		
 		return data;
