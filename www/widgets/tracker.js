@@ -42,22 +42,42 @@
 			function moveHandler(e) {
 				var currentLocation = F5.eventLocation(e);
 				if (tracking) {
-					var deltaX = constrain === 'vertical' ? 0 : currentLocation.x - startLocation.x;
-					var deltaY = constrain === 'horizontal' ? 0 : currentLocation.y - startLocation.y;
-					that.el.style['-webkit-transform'] = 'translate3d(' + (deltaX + startTransform.x) +
-							'px,' + (deltaY + startTransform.y) + 'px, 0px)';	
-							
-					if (that.cb) {
-						that.cb({x: deltaX, y: deltaY}, currentLocation, startLocation);
+					var delta = {
+						x: constrain === 'vertical' ? 0 : currentLocation.x - startLocation.x,
+						y: constrain === 'horizontal' ? 0 : currentLocation.y - startLocation.y						
+					};
+					
+					delta.x += startTransform.x;
+					delta.y += startTransform.y;
+					
+					
+					if (that.delegate && that.delegate.moveHandler) {
+						that.delegate.moveHandler(delta, startTransform);
 					}
+					
+					that.el.style['-webkit-transform'] = 'translate3d(' + delta.x + 'px,' + delta.y + 'px, 0px)';							
 				}
 			}
 
 			function stopHandler(e) {
+				var currentLocation = F5.eventLocation(e);
+				var delta = {
+					x: constrain === 'vertical' ? 0 : currentLocation.x - startLocation.x,
+					y: constrain === 'horizontal' ? 0 : currentLocation.y - startLocation.y						
+				};				
 				tracking = false;
-				that.el.style['-webkit-transition'] = '';
+				
 				F5.removeTouchMoveListener(document.body, moveHandler);			
 				F5.removeTouchStopListener(document.body, stopHandler);						
+				
+				if (that.delegate && that.delegate.stopHandler) {
+					var transformMatrix = new WebKitCSSMatrix(that.el.style.webkitTransform);					
+					that.delegate.stopHandler(delta, startTransform);
+					
+					if (delta.x !== transformMatrix.m41 || delta.y !== transformMatrix.m42) {
+						that.animateTo(delta);						
+					}
+				}
 			}
 
 			F5.addTouchStartListener(this.el, function (e) {
@@ -65,15 +85,16 @@
 				startLocation = F5.eventLocation(e);
 				var transformMatrix = new WebKitCSSMatrix(that.el.style.webkitTransform);
 				startTransform = {x: transformMatrix.m41, y: transformMatrix.m42};
-				that.el.style['-webkit-transition'] = 'opacity 1s';	
+				that.el.style['-webkit-transition'] = '';
 
 				F5.addTouchMoveListener(document.body, moveHandler);	
 				F5.addTouchStopListener(document.body, stopHandler);										
 			});									
 		};
 		
-		this.setCallback = function (cb) {
-			this.cb = cb;
+		this.animateTo = function (delta) {
+			this.el.style['-webkit-transition'] = '-webkit-transform .15s';
+			this.el.style['-webkit-transform'] = 'translate3d(' + delta.x + 'px,' + delta.y + 'px, 0px)';			
 		};
 	}
 	

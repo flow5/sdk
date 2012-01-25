@@ -44,6 +44,7 @@
             "widgets/distance.js", 
             "widgets/menu.js", 
             "widgets/tracker.js", 
+            "widgets/switch.js", 
             "widgets/loader.js", 
             "widgets/scroller.js", 
             "widgets/input.js", 
