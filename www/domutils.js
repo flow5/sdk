@@ -396,7 +396,9 @@
 	
 	F5.getElementById = function (el, f5id) {
 		var result = el.querySelector('[f5id=' + f5id + ']');
-		F5.assert(result, 'Did not find element with f5id=' + f5id + ' in: ' + el.outerHTML);
+		if (!result) {
+			console.log('Did not find element with f5id=' + f5id + ' in element with id: ' + el.id);			
+		}
 		return result;
 	};
 	

@@ -49,7 +49,6 @@
             "widgets/scroller.js", 
             "widgets/input.js", 
             "widgets/form.js", 
-            "3p/Iuppiter.js", 
             "3p/bezier.js"
         ]
     }, 

@@ -28,7 +28,9 @@
 (function () {
 	
 var fs = require('fs'),
-	cssmin = require('node-css-compressor').cssmin;
+	cssmin = require('node-css-compressor').cssmin,
+	FFI = require("node-ffi"),
+	libc = new FFI.Library(null, {"system": ["int32", ["string"]]});	
 
 function forEach(obj, fn) {
 	if (obj.constructor === Array) {
@@ -254,21 +256,32 @@ exports.generateHtml = function(parsed) {
 			script.innerHTML = '//<!--\n' + fs.readFileSync('www/' + src).toString() + '\n//-->';
 		}
 		return script;
-	}
+	}			
 	
 	function injectManifest(path, manifestName) {		
 		manifestName = (manifestName || 'manifest') + '.json';
 		
-		function inlineData(src) {
+		function inlineData(src) {			
 			try {
 				var ext = requireWrapper('path').extname(src).substring(1);
+				var path = 'www/apps/' + query.app + '/' + src;
+
 				var prefix;
 				if (ext === 'ttf') {
 					prefix = 'data:font/truetype;base64,';
 				} else {
+					if (boolValue(query.crush)) {
+						var tmpPath = '/tmp/' + process.pid + Date.now() + '.png';
+						var cmd = 'optipng -o2 -out ' + tmpPath + ' ' + path;
+//						var cmd = 'convert -quality 05 ' + path + ' ' + tmpPath;
+						console.log(cmd)
+						libc.system(cmd);					
+						path = tmpPath;
+					}
 					prefix = 'data:image/' + ext + ';base64,';					
 				}
-				return prefix + fs.readFileSync('www/apps/' + query.app + '/' + src, 'base64');			
+			
+				return prefix + fs.readFileSync(path, 'base64');
 			} catch (e) {
 				console.log(e.stack);
 			}
