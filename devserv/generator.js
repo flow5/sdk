@@ -80,8 +80,8 @@ function handleDataResourcesRecursive(obj, handler) {
 }
 
 function boolValue(string) {
-	if (string !== 'true' && string !== 'false') {
-		throw 'Bad bool value';
+	if (string && string !== 'true' && string !== 'false') {
+		throw new Error('Bad bool value');
 	}
 	return string === 'true';	
 }
@@ -106,27 +106,28 @@ function processManifest(manifest, query, type, process) {
 	
 	function processSection(section) {
 		processIfExists(manifestEntry(manifest, section + '.' + type), type);
-		if (boolValue(query.debug)) {
-			processIfExists(manifestEntry(manifest, section + '.debug.' + type), type);
-		}	
+		
 		if (!boolValue(query.mobile)) {
 			processIfExists(manifestEntry(manifest, section + '.desktop.' + type), type);
-			if (boolValue(query.debug)) {
-				processIfExists(manifestEntry(manifest, section + '.desktop.debug.' + type), type);
-			}									
 		}						
-
+		
 		if (boolValue(query.native)) {
 			processIfExists(manifestEntry(manifest, section + '.app.' + type), type);
-			if (boolValue(query.debug)) {
-				processIfExists(manifestEntry(manifest, section + '.app.debug.' + type), type);
-			}			
 		} else {
 			processIfExists(manifestEntry(manifest, section + '.browser.' + type), type);
-			if (boolValue(query.debug)) {
-				processIfExists(manifestEntry(manifest, section + '.browser.debug.' + type), type);
-			}			
-		}		
+		}	
+		
+		if (boolValue(query.debug)) {
+			processIfExists(manifestEntry(manifest, section + '.debug.' + type), type);
+			if (!boolValue(query.mobile)) {
+				processIfExists(manifestEntry(manifest, section + '.desktop.debug.' + type), type);
+			}
+			if (boolValue(query.native)) {
+				processIfExists(manifestEntry(manifest, section + '.app.debug.' + type), type);				
+			} else {
+				processIfExists(manifestEntry(manifest, section + '.browser.debug.' + type), type);				
+			}
+		}				
 	}
 	
 	processSection('all');
@@ -161,7 +162,7 @@ exports.generateCacheManifest = function(query) {
 								checkDate(src);
 							});			
 						} catch (e) {
-							console.log(e.stack);
+							console.log('error:' + e.message);
 						}										
 					}
 				});				
@@ -169,10 +170,10 @@ exports.generateCacheManifest = function(query) {
 
 			var manifest = requireWrapper(process.cwd() + '/' + path + manifestName);
 
+			processManifest(manifest, query, 'flowspecs', checkDates);											
 			processManifest(manifest, query, 'scripts', checkDates);									
 			processManifest(manifest, query, 'elements', checkDates);									
 			processManifest(manifest, query, 'resources', checkDates);											
-			processManifest(manifest, query, 'flowspecs', checkDates);											
 		}
 
 		checkManifest('www/');
@@ -274,7 +275,7 @@ exports.generateHtml = function(parsed) {
 						var tmpPath = '/tmp/' + process.pid + Date.now() + '.png';
 						var cmd = 'optipng -o2 -out ' + tmpPath + ' ' + path;
 //						var cmd = 'convert -quality 05 ' + path + ' ' + tmpPath;
-						console.log(cmd)
+//						console.log('cmd:' + cmd)
 						libc.system(cmd);					
 						path = tmpPath;
 					}
@@ -283,7 +284,7 @@ exports.generateHtml = function(parsed) {
 			
 				return prefix + fs.readFileSync(path, 'base64');
 			} catch (e) {
-				console.log(e.stack);
+				console.log('error:' + e.message);
 			}
 		}		
 		
@@ -343,7 +344,7 @@ exports.generateHtml = function(parsed) {
 					}
 					extend(resources, r);		
 				} catch (e) {
-					console.log(e.stack);
+					console.log('error:' + e.message);
 				}				
 			});				
 		}
@@ -353,17 +354,17 @@ exports.generateHtml = function(parsed) {
 				try {
 					flowspec = requireWrapper(process.cwd() + '/www/' + path + file);						
 				} catch (e) {
-					console.log(e.stack);
+					console.log('error:' + e.message);
 				}
 			});
 		}
 
 		var manifest = requireWrapper(process.cwd() + '/www/' + path + manifestName);
 
+		processManifest(manifest, query, 'flowspecs', injectFlows);											
 		processManifest(manifest, query, 'scripts', injectScripts);									
 		processManifest(manifest, query, 'elements', injectElements);											
 		processManifest(manifest, query, 'resources', injectResources);											
-		processManifest(manifest, query, 'flowspecs', injectFlows);											
 	}	
 	
 	
@@ -405,12 +406,8 @@ exports.generateHtml = function(parsed) {
 	
 	// inject the merged (and possibly inlined) resources
 	var resourcesScript = document.createElement('script');
-	resourcesScript.innerHTML = "F5.Resources = " + JSON.stringify(resources);
-	document.head.appendChild(resourcesScript);
-
-	var flowspecScript = document.createElement('script');
-	flowspecScript.innerHTML = "F5.flowspec = " + JSON.stringify(flowspec);
-	document.head.appendChild(flowspecScript);
+	resourcesScript.innerHTML = "F5 = " + JSON.stringify({Resources: resources, flowspec: flowspec});
+	document.head.insertBefore(resourcesScript, document.head.firstChild);
 		
 	var appframeEl = document.createElement('div');
 	appframeEl.id = 'f5appframe';

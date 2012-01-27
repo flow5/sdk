@@ -28,7 +28,7 @@
 
 (function () {
 
-	F5.addF5ReadyListener(function f5ReadyListenerCb() {
+	F5.Global.flowController.addWaitTask(function(cb) {
 		
 		var flow = F5.Global.flow;
 				
@@ -69,7 +69,9 @@
 			F5.assert(!flow.diags.isSubflowActive(backNode), 'Cannot go back with a subflow active');
 			
 			doBack.apply(F5.Global.flowController);
-		};								
+		};	
+		
+		cb();							
 	});
 	
 }());

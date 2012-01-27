@@ -24,14 +24,14 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global F5*/
+/*global F5, PhoneGap*/
 
 (function () {
 
 /* setting up for android version specific css
    TODO: probably going to want to be more specific here */
 	
-F5.addF5ReadyListener(function () {
+F5.Global.flowController.addWaitTask(function (cb) {
 	if (navigator.userAgent.match(/Android 4.0/)) {
 		F5.addClass(document.body, 'f5ics');
 	} else {
@@ -182,6 +182,8 @@ F5.addF5ReadyListener(function () {
 	}	
 
 	F5.Prototypes.Widgets.AndroidSettingsMenu = new AndroidSettingsMenu();	
+	
+	cb();
 });
 	
 }());

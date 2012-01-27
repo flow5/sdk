@@ -27,7 +27,7 @@
 /*global define, F5, localStorage, JSONFormatter*/
 
 (function () {		
-	F5.addF5ReadyListener(function () {
+	F5.Global.flowController.addWaitTask(function (cb) {
 		var appframeEl = document.getElementById('f5appframe');
 
 		var viewerframeEl = F5.loadTemplate('viewerframe');
@@ -228,6 +228,8 @@
 			viewerframeEl.style.display = '';
 		} else {
 			viewerframeEl.style.display = 'none';
-		}		
+		}	
+		
+		cb();	
 	});	
 }());	

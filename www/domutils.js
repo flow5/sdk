@@ -174,10 +174,6 @@
 	
 	F5.removeTransitionEndListener = function (el) {
 		removeEventListener(el, 'webkitTransitionEnd');		
-	};
-	
-	F5.addF5ReadyListener = function (cb) {
-		document.addEventListener('f5ready', cb);
 	};	
 	
 	F5.eventLocation = function(event) {

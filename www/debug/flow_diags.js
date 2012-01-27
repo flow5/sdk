@@ -28,7 +28,7 @@
 
 (function () {
 
-	function instrument () {
+	function instrument (cb) {
 		var flow = F5.Global.flow;
 
 		flow.diags = {};		
@@ -88,6 +88,7 @@
 			}
 
 			function copyForPrettyPrintRecursive(obj) {
+				/* global HTMLDivElement */
 				if (obj.constructor === HTMLDivElement) {
 					console.log('div');
 				}
@@ -573,12 +574,14 @@
 
 			return result;			
 		};
+		
+		cb();
 	}
 	
 	if (typeof document === 'undefined') {
-		instrument();
+		instrument(function () {});
 	} else {
-		F5.addF5ReadyListener(instrument);
+		F5.Global.flowController.addWaitTask(instrument);
 	}
 	
 }());

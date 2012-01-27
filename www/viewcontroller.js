@@ -28,8 +28,8 @@
 
 (function () {	
 		
-	function ViewController(flow, screenFrame) {
-		
+	function ViewController(flow) {
+						
 		F5.Global.flowController.addFlowObserver(this);						
 		
 		function doLifecycleEvent(node, event) {			
@@ -68,7 +68,7 @@
 			if (!node.view) {
 				F5.objectFromPrototype(F5.Views[node.type]).initialize(node);
 				if (node === F5.Global.flow.root) {
-					screenFrame.appendChild(node.view.el);
+					this.screenFrame.appendChild(node.view.el);
 				} else {
 					// TODO: this is slightly ugly
 					node.parent.view.el.getElementsByClassName('f5container')[0].appendChild(node.view.el);												
@@ -78,8 +78,12 @@
 			doLifecycleEvent(node, 'WillBecomeActive');		
 		};				
 		
-		this.start = function () {	
-			// NOTE: the root node was already built by nodeWillBecomeActive
+		this.initialize = function () {
+			this.screenFrame = document.getElementById('f5screen');				
+		};
+		
+		this.start = function () {
+
 		};
 		
 		this.doSelection = function (node, id) {
@@ -172,6 +176,7 @@
 			subflow.menu.widget.dismiss();			
 		};				
 	}
-		
-	F5.ViewController = ViewController;	
+	
+	F5.Global.viewController = new ViewController(F5.Global.flow);
+	
 }());

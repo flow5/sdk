@@ -135,8 +135,10 @@
 			cb = cb || function () {
 				console.log('start complete');
 			};
-			
+						
 			F5.parseResources();
+			F5.Global.flow.parse();
+			F5.Global.viewController.initialize();
 			
 			nodeWillBecomeActive(flow.root, function () {				
 				// NOTE: cb executes here because nodeDidBecomeActive may pop a dialog
@@ -485,6 +487,6 @@
 		};												
 	}	
 	
-	F5.FlowController = FlowController;	
+	F5.Global.flowController = new FlowController(F5.Global.flow);	
 
 }());

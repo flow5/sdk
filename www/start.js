@@ -60,9 +60,7 @@
 
 	window.addEventListener('load', hideAddressBar, false);
 	window.addEventListener('touchstart', hideAddressBar, false);
-	
-	var screenEl = document.getElementById('f5screen');
-	
+		
 	F5.setupScreenGeometry(F5.isMobile(), F5.isNative());		
 
 	// TODO: use the device block of manifest to avoid the PhoneGap reference
@@ -84,17 +82,7 @@
 	listener.addEventListener(startEvent, function startHandler(e) {	
 		function startUp() {
 			try {
-				F5.Global.flow = new F5.Flow(F5.flowspec);
-				
-				F5.Global.flowController = new F5.FlowController(F5.Global.flow);
-				
-				F5.Global.viewController = new F5.ViewController(F5.Global.flow, screenEl);
-
 				F5.Global.flowController.start(function () {
-					var e = document.createEvent('Events'); 
-		            e.initEvent('f5ready');
-		            document.dispatchEvent(e);		            
-					
 					// TODO: extract
 					/*global PhoneGap*/
 					console.log('started');
