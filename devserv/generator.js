@@ -394,21 +394,17 @@ exports.generateHtml = function(parsed) {
 		
 	// f5.js comes first
 	document.head.appendChild(makeScript('f5.js'));
-	
-	// provide the query parameters
-	var queryScript = document.createElement('script');
-	queryScript.innerHTML = "F5.query = " + JSON.stringify(query);
-	document.head.appendChild(queryScript);
-				
+					
 	// process the manifests
 	injectManifest('');
 	injectManifest('apps/' + query.app + '/', query.manifest);	
 	
-	// inject the merged (and possibly inlined) resources
+	// inject the merged (and possibly inlined) resources, flowspec and query
 	var resourcesScript = document.createElement('script');
-	resourcesScript.innerHTML = "F5 = " + JSON.stringify({Resources: resources, flowspec: flowspec});
+	resourcesScript.innerHTML = "F5 = " + JSON.stringify({Resources: resources, flowspec: flowspec, query: query});
 	document.head.insertBefore(resourcesScript, document.head.firstChild);
 		
+	// create the essential divs
 	var appframeEl = document.createElement('div');
 	appframeEl.id = 'f5appframe';
 	var screenframeEl = document.createElement('div');
