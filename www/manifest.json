@@ -19,6 +19,16 @@
                 ]
             }
         }, 
+		"browser": {
+			"scripts": [
+				"facebook_web.js"
+			]
+		},
+		"app": {
+			"scripts": [
+				"facebook_native.js"
+			]
+		},	
         "elements": [
             "core.css", 
             "default.css"

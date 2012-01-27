@@ -291,7 +291,7 @@ exports.generateHtml = function(parsed) {
 		// javascript
 		function injectScripts(scripts) {
 			scripts.forEach(function (file) {
-				document.head.appendChild(makeScript(path + file));				
+				document.body.appendChild(makeScript(path + file));				
 			});				
 		}
 				
