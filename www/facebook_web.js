@@ -29,14 +29,6 @@
 (function () {
 	
 	window.fbAsyncInit = function() {
-	    FB.init({
-	      appId      : '311991002178373', // App ID
-//	      channelUrl : '//staging.juiceperks.com/channel.html', // Channel File TODO: NEEDED?
-	      status     : true, // check login status
-	      cookie     : true, // enable cookies to allow the server to access the session
-	      xfbml      : true  // parse XFBML
-	    });
-
 		console.log('hi there facebook');
 	    // Additional initialization code here
 	  };
@@ -56,6 +48,14 @@
 	}
 	
 	function connect(appId, cb) {
+	    FB.init({
+	      appId      : appId,
+//	      channelUrl : '//staging.juiceperks.com/channel.html', // Channel File TODO: NEEDED?
+	      status     : true, // check login status
+	      cookie     : true, // enable cookies to allow the server to access the session
+	      xfbml      : true  // parse XFBML
+	    });
+		
 		// TODO: make sure init is really complete
 		FB.login(function(response) {
 		   if (response.authResponse) {
