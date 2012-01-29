@@ -34,6 +34,15 @@
 @synthesize facebook;
 
 
+- (id)initWithWebView:(UIWebView*)webview {
+    self = [super initWithWebView:webview];
+    if (self) {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onResume) name:UIApplicationWillEnterForegroundNotification object:nil];
+    }
+    return self;
+}
+
+
 - (void)initialize:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
     NSString *appId = [options valueForKey:@"appId"];
@@ -141,6 +150,20 @@
             [self.facebook handleOpenURL:url];        
         }
 	}
+}
+
+- (void) handleResume
+{
+    if (self.callbackID) {
+        PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_NO_RESULT];  
+        [self writeJavascript: [pluginResult toErrorCallbackString:self.callbackID]];   
+        self.callbackID = nil;          
+    }
+}
+
+- (void) onResume
+{
+    [self performSelectorOnMainThread:@selector(handleResume) withObject:nil waitUntilDone:NO]; 
 }
 
 @end
