@@ -28,7 +28,19 @@
 
 (function () {
 	
-	function connect(appId, cb) {
+	F5.Global.flowController.addWaitTask(function (cb) {
+		PhoneGap.exec(		
+			function (result) { // success
+				console.log(result);
+				cb();
+			}, 
+			function (result) { // failure
+				console.log(result);
+				cb();
+			}, "com.flow5.facebookconnect", "initialize", [{appId: '311991002178373'}]);		
+	});
+	
+	function login(appId, cb) {
 		PhoneGap.exec(
 			function (result) { // success
 				cb(result);
@@ -36,10 +48,22 @@
 			function (result) { // failure
 				console.log(result);
 				cb(null);
-			}, "com.flow5.facebookconnect", "connect", [{appId: '311991002178373'}]);
+			}, "com.flow5.facebookconnect", "login", []);
 	} 
-		
+	
+	function logout(cb) {
+		PhoneGap.exec(
+			function (result) { // success
+				cb(result);
+			}, 
+			function (result) { // failure
+				console.log(result);
+				cb(null);
+			}, "com.flow5.facebookconnect", "logout", []);
+	}
+			
 	F5.facebook = {
-		connect: connect
+		login: login,
+		logout: logout
 	};
 }());

@@ -47,15 +47,19 @@
 		document.head.appendChild(js);		
 	}
 	
-	function connect(appId, cb) {
+	F5.Global.flowController.addWaitTask(function (cb) {
 	    FB.init({
-	      appId      : appId,
+	      appId      : '311991002178373',
 //	      channelUrl : '//staging.juiceperks.com/channel.html', // Channel File TODO: NEEDED?
 	      status     : true, // check login status
 	      cookie     : true, // enable cookies to allow the server to access the session
 	      xfbml      : true  // parse XFBML
 	    });
-		
+	
+		cb();
+	});
+	
+	function login(cb) {		
 		// TODO: make sure init is really complete
 		FB.login(function(response) {
 		   if (response.authResponse) {
@@ -73,8 +77,14 @@
 		 }, {scope: 'email'});
 	}
 	
+	function logout(cb) {
+		FB.logout();
+		cb();
+	}
+	
 	F5.facebook = {
-		connect: connect
+		login: login,
+		logout: logout
 	};
 	
 }());

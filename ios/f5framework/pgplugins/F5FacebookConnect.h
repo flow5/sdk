@@ -30,11 +30,15 @@
 
 @interface F5FacebookConnect : PGPlugin<FBSessionDelegate> {
     NSString *callbackID;
+    Facebook* facebook;            
 }
 
 @property (nonatomic, copy) NSString* callbackID;
+@property (nonatomic, retain) Facebook* facebook;
 
-- (void)connect:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void)initialize:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void)login:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void)logout:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
 
 

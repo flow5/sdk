@@ -31,29 +31,55 @@
 @implementation F5FacebookConnect
 
 @synthesize callbackID;
+@synthesize facebook;
 
-- (void)connect:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+
+- (void)initialize:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+    NSString *appId = [options valueForKey:@"appId"];
+    
+    self.facebook = [[[Facebook alloc] initWithAppId:appId andDelegate:self] autorelease];    
+    
+    PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];  
+    [self writeJavascript: [pluginResult toSuccessCallbackString:[arguments pop]]];      
+}
+
+
+- (void)login:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {    
     self.callbackID = [arguments pop];
     
-    NSString *appId = [options valueForKey:@"appId"];
-    
-    AppDelegate *appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-    
-    appDelegate.facebook = [[[Facebook alloc] initWithAppId:appId andDelegate:self] autorelease];    
+    NSArray *permissions = [NSArray arrayWithObjects:
+                                                     @"email", 
+                                                     @"user_location",
+                                                       @"publish_stream",
+                                                     @"offline_access",
+                                                     @"user_birthday",
+                                                     @"user_checkins",
+                                                     @"publish_checkins",
+                                                    nil];
+    permissions = nil;
+    [self.facebook authorize:permissions];    
+}
 
-    [appDelegate.facebook authorize:nil];    
+- (void)logout:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
+    self.callbackID = [arguments pop];
+    
+    [self.facebook logout];
 }
 
 /**
  * Called when the user successfully logged in.
  */
 - (void)fbDidLogin
-{
-    AppDelegate *appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-    
-    PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsString:appDelegate.facebook.accessToken];  
-    [self writeJavascript: [pluginResult toSuccessCallbackString:self.callbackID]];   
+{    
+    if (self.callbackID) {
+        PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsString:self.facebook.accessToken];  
+        [self writeJavascript: [pluginResult toSuccessCallbackString:self.callbackID]];   
+        self.callbackID = nil;        
+    } else {
+        NSLog(@"fbDidLogin called back but no callbackID to communicate to JS layer");
+    }
 }
 
 /**
@@ -83,7 +109,13 @@
  */
 - (void)fbDidLogout
 {
-    
+    if (self.callbackID) {
+        PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];  
+        [self writeJavascript: [pluginResult toSuccessCallbackString:self.callbackID]];   
+        self.callbackID = nil;        
+    } else {
+        NSLog(@"fbDidLogout called back but no callbackID to communicate to JS layer");
+    }    
 }
 
 /**
@@ -96,6 +128,19 @@
 - (void)fbSessionInvalidated
 {
     
+}
+
+- (void) handleOpenURL:(NSNotification*)notification
+{
+	// override to handle urls sent to your app
+	// register your url schemes in your App-Info.plist
+	
+	NSURL* url = [notification object];
+	if ([url isKindOfClass:[NSURL class]]) {
+        if (self.facebook) {
+            [self.facebook handleOpenURL:url];        
+        }
+	}
 }
 
 @end
