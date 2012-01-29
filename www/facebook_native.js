@@ -40,7 +40,7 @@
 			}, "com.flow5.facebookconnect", "initialize", [{appId: '311991002178373'}]);		
 	});
 	
-	function login(appId, cb) {
+	function login(cb) {
 		PhoneGap.exec(
 			function (result) { // success
 				cb(result);
