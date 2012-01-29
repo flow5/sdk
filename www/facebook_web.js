@@ -49,7 +49,7 @@
 	
 	F5.Global.flowController.addWaitTask(function (cb) {
 	    FB.init({
-	      appId      : '311991002178373',
+	      appId      : F5.facebook_appid,
 //	      channelUrl : '//staging.juiceperks.com/channel.html', // Channel File TODO: NEEDED?
 	      status     : true, // check login status
 	      cookie     : true, // enable cookies to allow the server to access the session

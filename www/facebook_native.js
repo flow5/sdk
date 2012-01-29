@@ -37,7 +37,7 @@
 			function (result) { // failure
 				console.log(result);
 				cb();
-			}, "com.flow5.facebookconnect", "initialize", [{appId: '311991002178373'}]);		
+			}, "com.flow5.facebookconnect", "initialize", [{appId: F5.facebook_appid}]);		
 	});
 	
 	function login(cb) {

@@ -221,7 +221,8 @@ exports.generateHtml = function(parsed) {
 	// places to stow parsed data
 	var styleBlock = '';
 	var resources = {};
-	var flowspec = {};			
+	var flowspec = {};	
+	var facebookId;		
 			
 	/* helper functions */
 	function injectMeta(properties) {
@@ -257,7 +258,16 @@ exports.generateHtml = function(parsed) {
 			script.innerHTML = '//<!--\n' + fs.readFileSync('www/' + src).toString() + '\n//-->';
 		}
 		return script;
-	}			
+	}		
+	
+	function getFacebookId() {
+		try {
+			var path = 'www/apps/' + query.app + '/facebook_appid.txt';
+			facebookId = fs.readFileSync(path).toString();
+		} catch (e) {
+			console.log('Could not find facebook_appid.txt');
+		}
+	}	
 	
 	function injectManifest(path, manifestName) {		
 		manifestName = (manifestName || 'manifest') + '.json';
@@ -399,9 +409,17 @@ exports.generateHtml = function(parsed) {
 	injectManifest('');
 	injectManifest('apps/' + query.app + '/', query.manifest);	
 	
+	// fetch a facebook id if there is one
+	// TODO: might not want this to be a firstclass feature. . .
+	getFacebookId();
+	
 	// inject the merged (and possibly inlined) resources, flowspec and query
 	var resourcesScript = document.createElement('script');
-	resourcesScript.innerHTML = "F5 = " + JSON.stringify({Resources: resources, flowspec: flowspec, query: query});
+	var F5 = {Resources: resources, flowspec: flowspec, query: query};
+	if (facebookId) {
+		F5.facebook_appid = facebookId;
+	}
+	resourcesScript.innerHTML = "F5 = " + JSON.stringify(F5);
 	document.head.insertBefore(resourcesScript, document.head.firstChild);
 		
 	// create the essential divs
