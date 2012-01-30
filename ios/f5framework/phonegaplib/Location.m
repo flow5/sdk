@@ -10,6 +10,9 @@
 #import "PhoneGapViewController.h"
 #import "PhoneGapDelegate.h"
 
+// Flow5: add FlurryAnalytics 
+#import "FlurryAnalytics.h"
+
 #pragma mark Constants
 
 #define kPGLocationErrorDomain          @"kPGLocationErrorDomain"
@@ -235,7 +238,13 @@
 							didUpdateToLocation:(CLLocation *)newLocation
 							fromLocation:(CLLocation *)oldLocation
 {
-	
+    // Flow5: Flurry integration
+    // TODO: might want to allow plugging in other analytics services rather than going tightly with Flurry
+	[FlurryAnalytics setLatitude:newLocation.coordinate.latitude
+                                    longitude:newLocation.coordinate.longitude 
+                                    horizontalAccuracy:newLocation.horizontalAccuracy 
+                                    verticalAccuracy:newLocation.verticalAccuracy];        
+    
     NSString* jsCallback = [NSString stringWithFormat:@"navigator.geolocation.setLocation(%@);", [newLocation JSONRepresentation]];
     [super writeJavascript:jsCallback];
 }

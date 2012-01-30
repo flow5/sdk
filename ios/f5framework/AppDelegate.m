@@ -31,7 +31,6 @@
 #import "InvokedUrlCommand.h"
 #import "PluginResult.h"
 #import "PGPlugin.h"
-#import "FlurryAnalytics.h"
 
 #import <QuartzCore/QuartzCore.h>
 
@@ -95,11 +94,6 @@
 	return [[[self class] getBundlePlist:@"f5"] objectForKey:@"appname"];
 }
 
-+ (NSString*) flurryId
-{
-    return [[[self class] getBundlePlist:@"f5"] objectForKey:@"flurryid"];
-}
-
 // f5
 + (NSString*) startPage
 {
@@ -108,12 +102,6 @@
 #else
     return [super startPage];        
 #endif
-}
-
-void uncaughtExceptionHandler(NSException *exception);
-void uncaughtExceptionHandler(NSException *exception) 
-{ 
-    [FlurryAnalytics logError:@"Uncaught" message:@"Crash!" exception:exception];
 }
 
 - (id) init
@@ -125,16 +113,7 @@ void uncaughtExceptionHandler(NSException *exception)
  * This is main kick off after the app inits, the views and Settings are setup here. (preferred - iOS4 and up)
  */
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-{
-    NSString *flurryId = [AppDelegate flurryId];
-    if (flurryId) {
-        [FlurryAnalytics setShowErrorInLogEnabled:YES];
-        [FlurryAnalytics startSession:flurryId];        
-        NSSetUncaughtExceptionHandler(&uncaughtExceptionHandler);
-    }
-    
-    
-    
+{            
 	NSArray *keyArray = [launchOptions allKeys];
 	if ([launchOptions objectForKey:[keyArray objectAtIndex:0]]!=nil) 
 	{

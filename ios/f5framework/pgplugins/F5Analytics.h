@@ -25,19 +25,12 @@
  
 ***********************************************************************************************************************/
 
-#import "F5Flurry.h"
-#import "FlurryAnalytics.h"
+#import "PGPlugin.h"
 
-@implementation F5Flurry
+@interface F5Analytics : PGPlugin
 
-- (void)logEvent:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
-{
-    NSString *callbackId = [arguments pop];
-    
-    [FlurryAnalytics logEvent:[arguments pop] withParameters:options];   
-    
-    PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];  
-    [self writeJavascript: [pluginResult toSuccessCallbackString:callbackId]];
-}
+- (void)logEvent:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
 @end
+
+
