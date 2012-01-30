@@ -114,7 +114,7 @@
 			};			
 		};
 	
-		this.doTransition = function (container, id, to, animation) {
+		this.doTransition = function (container, from, id, to, animation) {
 			this.updateConfiguration(to);				
 			configure.apply(this, [animation === 'pushLeft' || animation === 'pushRight']);
 			return function (cb) {

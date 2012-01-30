@@ -296,7 +296,7 @@
 					var tasks = [];
 					flowObservers.forEach(function (observer) {
 						if (observer.doTransition) {
-							that.addWaitTask(observer.doTransition(container, id, target, animation));
+							that.addWaitTask(observer.doTransition(container, node, id, target, animation));
 						}
 					});		
 					

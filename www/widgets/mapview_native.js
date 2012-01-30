@@ -84,7 +84,7 @@
 		};	
 				
 		// flow observer
-		this.doTransition = function (container, id, to, animation) {
+		this.doTransition = function (container, from, id, to, animation) {
 						
 			if (id === 'back') {
 				animation = F5.Animation.inverseAnimation(container.selection.animation);

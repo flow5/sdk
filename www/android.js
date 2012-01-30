@@ -60,7 +60,7 @@ F5.Global.flowController.addWaitTask(function (cb) {
 			return function (cb) {cb();};
 		};
 
-		this.doTransition = function (container, id, to, animation) {
+		this.doTransition = function (container, from, id, to, animation) {
 			this.updateConfiguration(to);				
 			return function (cb) {cb();};
 		};

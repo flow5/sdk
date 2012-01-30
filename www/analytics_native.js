@@ -36,9 +36,9 @@
 			return function (cb) {cb();};
 		},
 		
-		doTransition: function (container, id, to, animation) {
+		doTransition: function (container, from, id, to, animation) {
 			PhoneGap.exec(F5.noop, F5.noop, "com.flow5.analytics", "logEvent",					
-				['doTransition', {node: container.selection.id, to: to.id}]);
+				['doTransition', {node: from.id, to: to.id}]);
 
 			return function (cb) {cb();};
 		}

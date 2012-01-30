@@ -21,8 +21,7 @@
         }, 
 		"browser": {
 			"scripts": [
-				"facebook_web.js",
-				"analytics_native.js"
+				"facebook_web.js"
 			]
 		},
 		"app": {

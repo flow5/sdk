@@ -243,7 +243,7 @@
 			};
 		};
 	
-		this.doTransition = function (container, id, to, animation) {
+		this.doTransition = function (container, from, id, to, animation) {
 			this.updateConfiguration(to);		
 			setup.apply(this);
 			

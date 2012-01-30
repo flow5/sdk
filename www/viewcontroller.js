@@ -101,7 +101,7 @@
 			return F5.Animation.cut(node.view.el, oldEl, newEl);
 		};
 						
-		this.doTransition = function (container, id, to, animation) {
+		this.doTransition = function (container, from, id, to, animation) {
 			var that = this;
 
 			if (id === 'back') {
