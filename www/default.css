@@ -308,6 +308,75 @@
 }
 
 /***************************************/
+/*                Alerts               */
+/***************************************/
+.f5alert {
+	position: absolute;
+	display: -webkit-box;
+	-webkit-box-pack: center;
+	-webkit-box-align: center;
+	width: 100%;
+	height: 100%;
+	-webkit-transition: opacity .2s;
+	opacity: 0;	
+}
+
+.f5alertcontainer {
+	padding: .12em;
+	padding-bottom: .04em;
+	background-color: #1e2e56;
+	-webkit-box-sizing: border-box;
+	border-radius: .12em;
+	border: .03em solid white;
+	-webkit-box-shadow: inset 0px 0px 5px #333;
+	display: -webkit-box;
+	-webkit-box-pack: justify;
+	-webkit-box-align: center;
+	-webkit-box-orient: vertical;
+	min-width: 66%;	
+}
+
+.f5alerttitle {
+	font-size: .14em;
+	color: white;	
+}
+
+.f5alertmessage {
+	font-size: .12em;
+	font-weight: 400;
+	color: white;
+	padding-top: 1em;
+	padding-bottom: 1em;
+}
+
+.f5alertok  {	
+	-webkit-box-shadow: inset 0px 0px 3px #888
+}
+
+.f5alertok .f5button-label  {	
+	font-size: .14em;
+	font-weight: 400;
+}
+
+
+.f5alert .f5button.f5button-up {
+	background-image: -webkit-gradient(linear, center bottom, center top, 
+		from(#5c6786),
+			color-stop(0.525, #5c6786), 
+			color-stop(.555, #8a93a9),
+		to(#8a93a9));
+}
+
+.f5alert .f5button.f5button-up.f5button-press {
+	background-image: -webkit-gradient(linear, center bottom, center top, 
+		from(#49516a),
+			color-stop(0.525, #49516a), 
+			color-stop(.555, #636979),
+		to(#636979));
+		
+}
+
+/***************************************/
 /*                Menus                */
 /***************************************/
 

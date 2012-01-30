@@ -174,7 +174,12 @@
 	
 	F5.removeTransitionEndListener = function (el) {
 		removeEventListener(el, 'webkitTransitionEnd');		
-	};	
+	};
+	
+	F5.alert = function (title, message) {
+		var alert = F5.createWidget('Alert', {title: title, message: message});
+		alert.widget.present();
+	};
 	
 	F5.eventLocation = function(event) {
 		var x, y;

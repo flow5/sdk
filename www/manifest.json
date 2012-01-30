@@ -61,6 +61,7 @@
             "widgets/input.js", 
             "widgets/form.js", 
             "widgets/activity.js", 
+            "widgets/alert.js", 
             "3p/bezier.js"
         ]
     }, 
