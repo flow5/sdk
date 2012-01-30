@@ -60,6 +60,7 @@
             "widgets/scroller.js", 
             "widgets/input.js", 
             "widgets/form.js", 
+            "widgets/activity.js", 
             "3p/bezier.js"
         ]
     }, 

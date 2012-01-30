@@ -198,6 +198,115 @@
 	width: .20em;	
 }
 
+.f5activityspritecontainer {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	z-index: 1000;
+	height: 100%;
+	width: 100%;
+	display: -webkit-box;
+	-webkit-box-pack: center;
+	-webkit-box-align: center;
+	pointer-events: none;
+}
+
+.f5activityspritemask {
+	height: 25px;
+	width: 25px;
+	overflow: hidden;	
+}
+
+.f5activitysprite {
+	-webkit-animation-name: activitySprite;
+	-webkit-animation-duration: 1s;
+	-webkit-animation-iteration-count: infinite;
+	-webkit-animation-timing-function: linear;
+	height: 100px;
+	width: 75px;
+	background-size: 100% 100%;
+	
+}
+
+/* NOTE: the 50% is required for Safari. Chrome will do the rotate with just from and to */
+@-webkit-keyframes activitySprite {
+	from {
+		-webkit-transform: translate3d(0px, 0px, 0px);
+	}
+	8.33% {
+		-webkit-transform: translate3d(0px, 0px, 0px);
+	}
+	8.34% {
+		-webkit-transform: translate3d(-25px, 0px, 0px);
+	}
+	16.66% {
+		-webkit-transform: translate3d(-25px, 0px, 0px);
+	}
+	16.67% {
+		-webkit-transform: translate3d(-50px, 0px, 0px);
+	}
+	25% {
+		-webkit-transform: translate3d(-50px, 0px, 0px);
+	}
+	25.01% {
+		-webkit-transform: translate3d(0px, -25px, 0px);
+	}
+	33.33% {
+		-webkit-transform: translate3d(0px, -25px, 0px);
+	}
+	33.34% {
+		-webkit-transform: translate3d(-25px, -25px, 0px);
+	}
+	41.66% {
+		-webkit-transform: translate3d(-25px, -25px, 0px);
+	}
+	41.67% {
+		-webkit-transform: translate3d(-50px, -25px, 0px);
+	}
+	50% {
+		-webkit-transform: translate3d(-50px, -25px, 0px);
+	}
+	50.01% {
+		-webkit-transform: translate3d(0px, -50px, 0px);
+	}
+	58.33% {
+		-webkit-transform: translate3d(0px, -50px, 0px);
+	}
+	58.34% {
+		-webkit-transform: translate3d(-25px, -50px, 0px);
+	}
+	66.66% {
+		-webkit-transform: translate3d(-25px, -50px, 0px);
+	}
+	66.67% {
+		-webkit-transform: translate3d(-50px, -50px, 0px);
+	}
+	75% {
+		-webkit-transform: translate3d(-50px, -50px, 0px);
+	}
+	75.01% {
+		-webkit-transform: translate3d(0px, -75px, 0px);
+	}
+	83.33% {
+		-webkit-transform: translate3d(0px, -75px, 0px);
+	}
+	83.34% {
+		-webkit-transform: translate3d(-25px, -75px, 0px);
+	}
+	91.66% {
+		-webkit-transform: translate3d(-25px, -75px, 0px);
+	}
+	91.67% {
+		-webkit-transform: translate3d(-50px, -75px, 0px);
+	}
+	99.99% {
+		-webkit-transform: translate3d(-50px, -75px, 0px);
+	}
+	to {
+		-webkit-transform: translate3d(0px, 0px, 0px);
+	}
+}
+
 /***************************************/
 /*                Menus                */
 /***************************************/
