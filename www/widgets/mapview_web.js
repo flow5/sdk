@@ -43,7 +43,15 @@
 			};
 									
 			this.map = new google.maps.Map(this.el, options);		
-			this.markers = [];								
+			this.markers = [];		
+			
+			var that = this;
+			google.maps.event.addListener(this.map, 'center_changed', function() {
+				console.log('bounds changed')
+				if (that.boundsChangedAction) {
+					that.boundsChangedAction();
+				}
+			});									
 		};	
 		
 		this.removePins = function () {
@@ -135,7 +143,11 @@
 		
 		this.setCalloutActions = function (calloutActions) {
 			this.calloutActions = calloutActions;			
-		};		
+		};	
+		
+		this.setBoundsChangedAction = function (cb) {
+			this.boundsChangedAction = cb;
+		}	
 	}	
 	
 	F5.Prototypes.Widgets.MapView = new MapView();			
