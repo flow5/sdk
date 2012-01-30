@@ -21,12 +21,14 @@
         }, 
 		"browser": {
 			"scripts": [
-				"facebook_web.js"
+				"facebook_web.js",
+				"analytics_native.js"
 			]
 		},
 		"app": {
 			"scripts": [
-				"facebook_native.js"
+				"facebook_native.js",
+				"analytics_native.js"
 			]
 		},	
         "elements": [

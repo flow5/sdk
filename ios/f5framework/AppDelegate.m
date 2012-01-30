@@ -129,8 +129,8 @@ void uncaughtExceptionHandler(NSException *exception)
     NSString *flurryId = [AppDelegate flurryId];
     if (flurryId) {
         [FlurryAnalytics setShowErrorInLogEnabled:YES];
-        NSSetUncaughtExceptionHandler(&uncaughtExceptionHandler);
         [FlurryAnalytics startSession:flurryId];        
+        NSSetUncaughtExceptionHandler(&uncaughtExceptionHandler);
     }
     
     

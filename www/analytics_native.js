@@ -28,42 +28,19 @@
 
 (function () {
 	
-	F5.Global.flowController.addWaitTask(function (cb) {
-		PhoneGap.exec(		
-			function (result) { // success
-				console.log(result);
-				cb();
-			}, 
-			function (result) { // failure
-				console.log(result);
-				cb();
-			}, "com.flow5.facebookconnect", "initialize", [{appId: F5.facebook_appid}]);		
-	});
-	
-	function login(cb) {
-		PhoneGap.exec(
-			function (result) { // success
-				cb(result);
-			}, 
-			function (result) { // failure
-				console.log(result);
-				cb(null);
-			}, "com.flow5.facebookconnect", "login", []);
-	} 
-	
-	function logout(cb) {
-		PhoneGap.exec(
-			function (result) { // success
-				cb(result);
-			}, 
-			function (result) { // failure
-				console.log(result);
-				cb(null);
-			}, "com.flow5.facebookconnect", "logout", []);
-	}
-			
-	F5.facebook = {
-		login: login,
-		logout: logout
-	};
+	F5.Global.flowController.addFlowObserver({
+		doSelection: function (node, id) {
+			PhoneGap.exec(F5.noop, F5.noop, "com.flow5.analytics", "logEvent",					
+				['doSelection', {node: node.id, selection: id}]);
+										
+			return function (cb) {cb();};
+		},
+		
+		doTransition: function (container, id, to, animation) {
+			PhoneGap.exec(F5.noop, F5.noop, "com.flow5.analytics", "logEvent",					
+				['doTransition', {node: container.selection.id, to: to.id}]);
+
+			return function (cb) {cb();};
+		}
+	});			
 }());
