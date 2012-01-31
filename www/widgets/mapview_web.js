@@ -46,8 +46,7 @@
 			this.markers = [];		
 			
 			var that = this;
-			google.maps.event.addListener(this.map, 'center_changed', function() {
-				console.log('bounds changed')
+			google.maps.event.addListener(this.map, 'bounds_changed', function() {
 				if (that.boundsChangedAction) {
 					that.boundsChangedAction();
 				}
