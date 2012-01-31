@@ -71,7 +71,8 @@
 				var position = new google.maps.LatLng(pin.lat, pin.lng);
 				var markerImage; 
 				if (pin.markerImage) {
-					markerImage = new google.maps.MarkerImage(pin.markerImage, null, null, null, new google.maps.Size(24, 24));				
+					markerImage = new google.maps.MarkerImage(pin.markerImage, null, null, null, 
+													new google.maps.Size(24, 24));				
 				}
 				var marker = new google.maps.Marker({
 								      position: position,
@@ -137,7 +138,40 @@
 			};
 		};
 		
-		this.animateToRegion = function (cb) {
+		this.animateToRegion = function (region, cb) {
+
+			function toRad(value) {
+			    return value * Math.PI / 180;
+			}
+
+			function toDeg(value) {
+			    return value * 180 / Math.PI;
+			}
+
+			function destinationPoint(lat, lng, brng, dist) {		
+			  dist = dist/6371;  // convert dist to angular distance in radians, km
+			  brng = toRad(brng);  // 
+			  var lat1 = toRad(lat), lon1 = toRad(lng);
+
+			  var lat2 = Math.asin( Math.sin(lat1)*Math.cos(dist) + 
+			                        Math.cos(lat1)*Math.sin(dist)*Math.cos(brng) );
+			  var lon2 = lon1 + Math.atan2(Math.sin(brng)*Math.sin(dist)*Math.cos(lat1), 
+			                               Math.cos(dist)-Math.sin(lat1)*Math.sin(lat2));
+			  lon2 = (lon2+3*Math.PI) % (2*Math.PI) - Math.PI;  // normalise to -180..+180º
+
+			  return {lat: toDeg(lat2), lng: toDeg(lon2)};
+			}
+			
+			var n = destinationPoint(region.center.lat, region.center.lng, 0, region.radius/1000);
+			var s = destinationPoint(region.center.lat, region.center.lng, 180, region.radius/1000);
+			var e = destinationPoint(region.center.lat, region.center.lng, 90, region.radius/1000);
+			var w = destinationPoint(region.center.lat, region.center.lng, 270, region.radius/1000);
+			
+			var sw = new google.maps.LatLng(s.lat, w.lng);
+			var ne = new google.maps.LatLng(n.lat, e.lng);
+			
+			this.map.fitBounds(new google.maps.LatLngBounds(sw, ne));
+			
 			cb();
 		};
 		
@@ -147,7 +181,11 @@
 		
 		this.setBoundsChangedAction = function (cb) {
 			this.boundsChangedAction = cb;
-		}	
+		};
+		
+		this.setMaskRegion = F5.noop;
+		
+		this.clearMaskRegion = F5.noop;
 	}	
 	
 	F5.Prototypes.Widgets.MapView = new MapView();			

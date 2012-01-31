@@ -33,11 +33,13 @@
 @class F5MKMapView;
 
 @interface F5MapView : PGPlugin <MKMapViewDelegate> {
-    NSString* callbackID;     
+    NSString* callbackID;   
+    NSString *regionChangeCallbackID;
     F5MKMapView* mapView;    
 }
 
 @property (nonatomic, copy) NSString* callbackID;
+@property (nonatomic, copy) NSString* regionChangeCallbackID;
 @property (nonatomic, retain) F5MKMapView* mapView;
 
 // synchronous methods
@@ -52,6 +54,8 @@
 
 - (void)setMaskRegion:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void)clearMaskRegion:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+
+- (void)setRegionChangedCallback:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
 - (void)queue_pushLeft:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void)queue_pushRight:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;

@@ -148,6 +148,7 @@ static char base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123
 
 @synthesize mapView;
 @synthesize callbackID;
+@synthesize regionChangeCallbackID;
 
 - (void)create:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)bounds {
     
@@ -245,9 +246,12 @@ static char base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123
     
     NSString *callbackId = [arguments pop];
     
-    CLLocationCoordinate2D coordinate = {[[location valueForKey:@"lat"] floatValue], [[location valueForKey:@"lng"] floatValue]};
+    NSDictionary *center = [location valueForKey:@"center"];
     
-    [self.mapView setRegion:MKCoordinateRegionMakeWithDistance(coordinate, 3000, 3000) animated:YES];  
+    CLLocationCoordinate2D coordinate = {[[center valueForKey:@"lat"] floatValue], [[center valueForKey:@"lng"] floatValue]};
+    NSNumber *radius = [location valueForKey:@"radius"];
+    
+    [self.mapView setRegion:MKCoordinateRegionMakeWithDistance(coordinate, [radius floatValue] * 2, [radius floatValue] * 2) animated:YES];  
     
     PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];    
     [self writeJavascript: [pluginResult toSuccessCallbackString:callbackId]];            
@@ -411,6 +415,20 @@ static char base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123
   
     // not required if map bounds are used to do search
 //    [self.mapView zoomToFitMapAnnotations];
+}
+
+- (void)setRegionChangedCallback:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
+    self.regionChangeCallbackID = [arguments pop];    
+}
+
+
+- (void)mapView:(MKMapView *)mapView regionDidChangeAnimated:(BOOL)animated {
+    if (self.regionChangeCallbackID) {
+        PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];   
+        [pluginResult setKeepCallbackAsBool:YES];
+        [self writeJavascript: [pluginResult toSuccessCallbackString:self.regionChangeCallbackID]];        
+    }
+//    NSLog(@"region changed");
 }
 
 - (void)mapView:(MKMapView *)mapView annotationView:(MKAnnotationView *)view calloutAccessoryControlTapped:(UIControl *)control {

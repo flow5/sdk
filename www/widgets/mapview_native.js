@@ -70,8 +70,7 @@
 			
 			PhoneGap.exec(
 				function (result) { // success
-					console.log('dropPins');
-					
+					console.log('dropPins');					
 					that.calloutActions[result.button](result.index);
 				console.log(result);
 			}, function (result) { // failure
@@ -141,7 +140,7 @@
 			return F5.callBridgeSynchronous('com.flow5.mapview', 'getMapGeometry');
 		};
 		
-		this.animateToRegion = function (cb) {
+		this.animateToRegion = function (region, cb) {
 			PhoneGap.exec(
 				function (result) { // success
 					console.log('animateToRegion');
@@ -150,8 +149,35 @@
 			}, function (result) { // failure
 				console.log(result);
 				cb();
-			}, "com.flow5.mapview", "animateToRegion", [F5.locationService.getCurrentLocation()]);										
+			}, "com.flow5.mapview", "animateToRegion", [region]);										
 		};
+		
+		this.setBoundsChangedAction = function (cb) {
+			PhoneGap.exec(
+				function (result) { // success
+//					console.log('regionChanged');
+					cb();
+			}, function (result) { // failure
+				console.log(result);
+			}, "com.flow5.mapview", "setRegionChangedCallback", []);										
+		};	
+		
+		this.setMaskRegion = function (region) {
+			PhoneGap.exec(
+				function (result) { // success
+			}, function (result) { // failure
+				console.log(result);
+			}, "com.flow5.mapview", "setMaskRegion", [region]);						
+		};
+		
+		this.clearMaskRegion = function () {
+			PhoneGap.exec(
+				function (result) { // success
+			}, function (result) { // failure
+				console.log(result);
+			}, "com.flow5.mapview", "clearMaskRegion", []);			
+		};
+			
 	}	
 	
 	F5.Prototypes.Widgets.MapView = new MapView();	
