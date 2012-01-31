@@ -66,18 +66,17 @@ typedef void (^CommandBlock)();
 
 - (void)flush:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
     
+    NSLog(@"F5CommandQueue.flush");
+    PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];        
+    [self writeJavascript: [pluginResult toSuccessCallbackString:[arguments pop]]];      
+
     NSEnumerator *enumerator = [self.queue objectEnumerator];
     F5Command *command;
     while (command = [enumerator nextObject]) {
         command.block();
         Block_release(command.block);
     }  
-    [self.queue removeAllObjects];
-    
-    NSLog(@"F5CommandQueue.flush");
-    PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];        
-    [self writeJavascript: [pluginResult toSuccessCallbackString:[arguments pop]]];      
-    
+    [self.queue removeAllObjects];        
 }
 
 @end

@@ -303,6 +303,8 @@ static char base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123
 - (void)queue_pushRight:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
     NSLog(@"F5MapView.pushRight");
     
+    AppDelegate *appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];                
+    
     animateWithDuration:delay:options:animations:completion:
     
     [[F5CommandQueue instance] queueCommand:^{                
@@ -310,7 +312,7 @@ static char base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123
                             options: UIViewAnimationOptionCurveEaseIn
                          animations:^{
                              CGPoint center = self.mapView.center;
-                             center.x += self.mapView.bounds.size.width;
+                             center.x += [appDelegate.viewController view].bounds.size.width;
                              self.mapView.center = center;
                          }
                          completion:nil];                                       
@@ -320,12 +322,14 @@ static char base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123
 - (void)queue_pushLeft:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
     NSLog(@"F5MapView.pushLeft");
     
+    AppDelegate *appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];                    
+    
     [[F5CommandQueue instance] queueCommand:^{                    
         [UIView animateWithDuration:0.3 delay:0.0
                             options: UIViewAnimationOptionCurveEaseIn
                          animations:^{
                              CGPoint center = self.mapView.center;
-                             center.x -= self.mapView.bounds.size.width;
+                             center.x -= [appDelegate.viewController view].bounds.size.width;
                              self.mapView.center = center;
                          }
                          completion:nil];

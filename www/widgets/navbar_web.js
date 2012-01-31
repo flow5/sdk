@@ -249,7 +249,14 @@
 			
 			var that = this;
 			return function (cb) {
-				animate.apply(that, [animation]);
+				// NOTE: unfortunately, setting opacity introduces latency
+				// and messes up native/html5 layer sync transitions
+				// so delay the animation of the navbar further since opacity is less sensitive
+				// to sync than translate
+				// TODO: when translate is needed in navbar, do *that* inline since it plays nice
+				setTimeout(function () {
+					animate.apply(that, [animation]);					
+				}, 0);
 				cb();
 			};
 		};

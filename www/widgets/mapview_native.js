@@ -34,7 +34,33 @@
 			
 			var that = this;
 			
-			F5.Global.flowController.addFlowObserver(this);
+			// allows native push animations in sync with web transitions
+			this.flowObserver = {
+				doTransition: function (container, from, id, to, animation) {
+					if (id === 'back') {
+						animation = F5.Animation.inverseAnimation(container.selection.animation);
+					}			
+					if (!animation)  {
+						animation = 'pushLeft'; // default
+					}			
+					if (that.shown && animation.match('push')) {
+						// queue the transition. will be processed before js level transitions are executed
+						PhoneGap.exec(
+						function (result) { // success						
+							console.log(result);
+						}, 
+						function (result) { // failure
+							console.log(result);
+						}, "com.flow5.mapview", 'queue_' + animation, []);					
+					}
+
+					return function (cb) {								
+						cb();
+					};
+				}
+			};					
+			
+			F5.Global.flowController.addFlowObserver(this.flowObserver);
 						
 			this.shown = true;						
 		};
@@ -48,12 +74,7 @@
 			}, function (result) { // failure
 				console.log(result);
 			}, "com.flow5.mapview", "setMaskRegion", [region]);			
-		};
-		
-		this.release = function () {
-			F5.Global.flowController.removeFlowObserver(this);
-		};
-
+		};		
 
 		this.removePins = function (pins) {
 			var that = this;
@@ -80,32 +101,7 @@
 		
 		this.setCalloutActions = function (calloutActions) {
 			this.calloutActions = calloutActions;
-		};	
-				
-		// flow observer
-		this.doTransition = function (container, from, id, to, animation) {
-						
-			if (id === 'back') {
-				animation = F5.Animation.inverseAnimation(container.selection.animation);
-			}			
-			if (!animation)  {
-				animation = 'pushLeft'; // default
-			}			
-			if (this.shown && animation.match('push')) {
-				// queue the transition. will be processed before js level transitions are executed
-				PhoneGap.exec(
-				function (result) { // success						
-					console.log(result);
-				}, 
-				function (result) { // failure
-					console.log(result);
-				}, "com.flow5.mapview", 'queue_' + animation, []);					
-			}
-			
-			return function (cb) {								
-				cb();
-			};
-		};		
+		};						
 		
 		this.widgetWillBecomeActive = function () {
 			if (!this.created) {
@@ -138,6 +134,10 @@
 				
 		this.getMapGeometry = function () {
 			return F5.callBridgeSynchronous('com.flow5.mapview', 'getMapGeometry');
+		};
+		
+		this.release = function () {
+			F5.Global.flowController.removeFlowObserver(this);							
 		};
 		
 		this.animateToRegion = function (region, cb) {
