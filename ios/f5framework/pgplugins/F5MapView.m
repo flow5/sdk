@@ -149,6 +149,7 @@ static char base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123
 @synthesize mapView;
 @synthesize callbackID;
 @synthesize regionChangeCallbackID;
+@synthesize animateToRegionCallbackID;
 
 - (void)create:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)bounds {
     
@@ -244,17 +245,14 @@ static char base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123
 
 - (void)animateToRegion:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)location {
     
-    NSString *callbackId = [arguments pop];
+    self.animateToRegionCallbackID = [arguments pop];
     
     NSDictionary *center = [location valueForKey:@"center"];
     
     CLLocationCoordinate2D coordinate = {[[center valueForKey:@"lat"] floatValue], [[center valueForKey:@"lng"] floatValue]};
     NSNumber *radius = [location valueForKey:@"radius"];
     
-    [self.mapView setRegion:MKCoordinateRegionMakeWithDistance(coordinate, [radius floatValue] * 2, [radius floatValue] * 2) animated:YES];  
-    
-    PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];    
-    [self writeJavascript: [pluginResult toSuccessCallbackString:callbackId]];            
+    [self.mapView setRegion:MKCoordinateRegionMakeWithDistance(coordinate, [radius floatValue] * 2, [radius floatValue] * 2) animated:YES];      
 }
 
 - (PluginResult*)getMapGeometry:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
@@ -423,6 +421,12 @@ static char base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123
 
 
 - (void)mapView:(MKMapView *)mapView regionDidChangeAnimated:(BOOL)animated {
+    if (self.animateToRegionCallbackID) {
+        PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];    
+        [self writeJavascript: [pluginResult toSuccessCallbackString:self.animateToRegionCallbackID]];   
+        self.animateToRegionCallbackID = nil;
+    }
+
     if (self.regionChangeCallbackID) {
         PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];   
         [pluginResult setKeepCallbackAsBool:YES];

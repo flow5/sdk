@@ -35,11 +35,13 @@
 @interface F5MapView : PGPlugin <MKMapViewDelegate> {
     NSString* callbackID;   
     NSString *regionChangeCallbackID;
+    NSString *animateToRegionCallbackID;
     F5MKMapView* mapView;    
 }
 
 @property (nonatomic, copy) NSString* callbackID;
 @property (nonatomic, copy) NSString* regionChangeCallbackID;
+@property (nonatomic, copy) NSString* animateToRegionCallbackID;
 @property (nonatomic, retain) F5MKMapView* mapView;
 
 // synchronous methods

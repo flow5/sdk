@@ -171,7 +171,7 @@
 			
 			this.map.fitBounds(new google.maps.LatLngBounds(sw, ne));
 			
-			cb();
+			setTimeout(cb, 0);
 		};
 		
 		this.setCalloutActions = function (calloutActions) {
