@@ -318,7 +318,7 @@ exports.generateHtml = function(parsed) {
 							style = cssmin(style);
 						}
 						
-						var statements = style.split(';');
+						var statements = style.split(/(;)|(})/);
 						var regExp = new RegExp(/url\(\'([^\']*)\'\)/);
 
 						var i;
@@ -330,7 +330,7 @@ exports.generateHtml = function(parsed) {
 								statements[i] = statements[i].replace(url, imageData);
 							}
 						}														
-						styleBlock += statements.join(';');							
+						styleBlock += statements.join('');							
 					} else {
 						injectLink('stylesheet', path + file, 'text/css');
 					}
