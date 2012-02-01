@@ -419,6 +419,7 @@
 		function isImageResource(resource) {
 			return resource.indexOf('.png') !== -1 || 
 					resource.indexOf('.jpg') !== -1 ||
+					resource.indexOf('.svg') !== -1 ||
 					resource.indexOf('data:image') !== -1;
 		}
 		

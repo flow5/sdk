@@ -73,7 +73,7 @@ function handleDataResourcesRecursive(obj, handler) {
 	forEach(obj, function (id, value) {
 		if (typeof value === 'object') {
 			handleDataResourcesRecursive(value, handler);
-		} else if (value.match(/(\.png)|(\.jpg)|(\.ttf)/)) {
+		} else if (value.match(/(\.png)|(\.jpg)|(\.ttf)|(\.svg)/)) {
 			handler(obj, id, value);
 		}
 	});
@@ -280,6 +280,8 @@ exports.generateHtml = function(parsed) {
 				var prefix;
 				if (ext === 'ttf') {
 					prefix = 'data:font/truetype;base64,';
+				} else if (ext === 'svg') {
+					prefix = 'data:image/svg+xml;base64,';
 				} else {
 					if (boolValue(query.crush)) {
 						var tmpPath = '/tmp/' + process.pid + Date.now() + '.png';
