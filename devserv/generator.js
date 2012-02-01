@@ -277,11 +277,13 @@ exports.generateHtml = function(parsed) {
 				var ext = requireWrapper('path').extname(src).substring(1);
 				var path = 'www/apps/' + query.app + '/' + src;
 
-				var prefix;
+				var data;
 				if (ext === 'ttf') {
-					prefix = 'data:font/truetype;base64,';
+					data = 'data:font/truetype;base64,' + fs.readFileSync(path, 'base64');
 				} else if (ext === 'svg') {
-					prefix = 'data:image/svg+xml;base64,';
+					// jsdom doesn't like the non-b64 encoded svg :(
+//					data = 'data:image/svg+xml;utf8,' + fs.readFileSync(path).toString().replace(/(\r\n|\n|\r)/gm, '');	
+					data = 'data:image/svg+xml;base64,' + fs.readFileSync(path, 'base64');
 				} else {
 					if (boolValue(query.crush)) {
 						var tmpPath = '/tmp/' + process.pid + Date.now() + '.png';
@@ -291,10 +293,10 @@ exports.generateHtml = function(parsed) {
 						libc.system(cmd);					
 						path = tmpPath;
 					}
-					prefix = 'data:image/' + ext + ';base64,';					
+					data = 'data:image/' + ext + ';base64,' + fs.readFileSync(path, 'base64');				
 				}
 			
-				return prefix + fs.readFileSync(path, 'base64');
+				return data;
 			} catch (e) {
 				console.log('error:' + e.message);
 			}
@@ -318,7 +320,7 @@ exports.generateHtml = function(parsed) {
 							style = cssmin(style);
 						}
 						
-						var statements = style.split(/(;)|(})/);
+						var statements = style.split(/(;)|(\})/);
 						var regExp = new RegExp(/url\(\'([^\']*)\'\)/);
 
 						var i;
@@ -375,7 +377,7 @@ exports.generateHtml = function(parsed) {
 
 		processManifest(manifest, query, 'flowspecs', injectFlows);											
 		processManifest(manifest, query, 'scripts', injectScripts);									
-		processManifest(manifest, query, 'elements', injectElements);											
+		processManifest(manifest, query, 'elements', injectElements);	
 		processManifest(manifest, query, 'resources', injectResources);											
 	}	
 	
@@ -410,7 +412,7 @@ exports.generateHtml = function(parsed) {
 	// process the manifests
 	injectManifest('');
 	injectManifest('apps/' + query.app + '/', query.manifest);	
-	
+		
 	// fetch a facebook id if there is one
 	// TODO: might not want this to be a firstclass feature. . .
 	getFacebookId();
@@ -433,7 +435,7 @@ exports.generateHtml = function(parsed) {
 	appframeEl.appendChild(screenframeEl);
 	document.body.appendChild(appframeEl);
 				
-	document.body.appendChild(makeScript('start.js'));		
+	document.body.appendChild(makeScript('start.js'));				
 	
 	// TODO: enable/disable on device? need to expose mdns lookup on Android
 	if (false && boolValue(query.mobile) && boolValue(query.debug)) {
@@ -445,7 +447,8 @@ exports.generateHtml = function(parsed) {
 			
 	deleteCaches();	
 	
-	return document.outerHTML.replace('<head>', '<head><style>' + styleBlock + '</style>');			
+	var html = document.outerHTML.replace('<head>', '<head><style>' + styleBlock + '</style>');		
+	return html;
 };
 
 }());
