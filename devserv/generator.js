@@ -28,7 +28,7 @@
 (function () {
 				
 var fs = require('fs'),
-	cssmin = require('node-css-compressor').cssmin,
+	cssmin = require('css-compressor').cssmin,
 	FFI = require("node-ffi"),
 	libc = new FFI.Library(null, {"system": ["int32", ["string"]]}),
 	minify = require('./minify.js').minify;	
