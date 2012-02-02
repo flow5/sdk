@@ -92,7 +92,11 @@
 		
 			F5.forEach(findTabs(this.el), function (el) {
 				var id = el.getAttribute('f5tab');
-			
+				
+				
+				if (!data[id]) {
+					data[id] = id;
+				}				
 				var tab = F5.createWidget('_TabButton', data, id);
 												
 				F5.addClass(tab, 'f5tab');

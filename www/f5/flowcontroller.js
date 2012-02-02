@@ -68,8 +68,7 @@
 			}
 			
 			function subflowCallback(node) {
-				return function () {
-					flowObservers.forEach(doLifecycleEvent);
+				return function () {					
 					doLifecycleEventRecursive(event, node.selection, cb);
 				};
 			}
@@ -78,6 +77,7 @@
 						
 				// only recurse when an async operation requires it
 				if (node.subflows && node.subflows[event]) {
+					flowObservers.forEach(doLifecycleEvent);
 					that.doSubflow(node, event, subflowCallback(node));		
 					break;					
 				} else {

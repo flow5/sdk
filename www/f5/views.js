@@ -77,13 +77,6 @@
 			if (!this.delegate) {
 				var template = F5.loadTemplate(node);
 				if (template) {
-					template.style.position = 'absolute';
-					template.style.top = '0px';
-					template.style.left = '0px';
-					template.style.width = '100%';
-					template.style.height = '100%';
-					template.style['pointer-events'] = 'none';
-					template.style.opacity = .5;
 					el.appendChild(template);
 				}				
 			}
@@ -157,7 +150,9 @@
 	}
 	var ViewPrototype = new View();
 	
-	function FlowView() {		
+	function FlowView() {	
+		// default behavior is to create navigation controls
+		// override by defining a view delegate for this node	
 		this.initialize = function (node) {
 			this.initializeView(node);	
 			
@@ -165,6 +160,10 @@
 				this.delegate.initialize(this.el, this.node);					
 			} else {										
 				// default navigation controls
+				var navControls = document.createElement('div');
+				F5.addClass(navControls, 'f5navcontrols');
+				this.el.appendChild(navControls);
+				
 				if (node.subflows) {
 					var subflowsEl = document.createElement('div');
 					F5.addClass(subflowsEl, 'f5subflows');
@@ -185,14 +184,14 @@
 					});	
 
 					if (showSubflows) {
-						this.el.insertBefore(subflowsEl, this.el.firstChild);												
+						navControls.appendChild(subflowsEl);
 					}
 				}
 
 				if (node.transitions) {
 					var transitionsEl = document.createElement('div');
 					F5.addClass(transitionsEl, 'f5transitions');
-					this.el.insertBefore(transitionsEl, this.el.firstChild);
+					navControls.appendChild(transitionsEl);
 
 					F5.forEach(node.transitions, function (id, transition) {
 
@@ -211,6 +210,8 @@
 	FlowView.prototype = ViewPrototype;
 		
 	function SwitcherView() {
+		// default behavior is to create a bottom tab set
+		// override by defining a view delegate for this node			
 		this.initialize = function (node) {
 			this.initializeView(node);
 

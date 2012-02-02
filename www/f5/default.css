@@ -139,6 +139,15 @@
 	white-space: nowrap;
 	position: relative;
 	color: white;
+	font-size: .12em;
+}
+
+.f5button.f5button-up {
+	background-color: grey;
+}
+
+.f5button.f5button-down, .f5button.f5button-press {
+	background-color: black;
 }
 
 /***************************************/
@@ -170,7 +179,7 @@
 }
 
 .f5tabset .f5button.f5button-up .f5button-label {
-	color: grey;
+	color: white;
 }
 
 .f5tab {
@@ -517,6 +526,14 @@
 /***************************************/
 /*      default navigation elements    */
 /***************************************/
+
+.f5navcontrols {
+	position: absolute;
+	opacity: .5;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+}
 
 .f5transitions .f5button-label, .f5subflows .f5button-label {
 	overflow: hidden;
