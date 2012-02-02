@@ -140,18 +140,21 @@
 			F5.Global.flow.parse();
 			F5.Global.viewController.initialize();
 			
-			flowObservers.forEach(function (observer) {
-				if (observer.start) {
-					observer.start();
-				}
-			});					
+			// flush any tasks that were waiting on init
+			flushWaitTasks(function () {
 
-			flushWaitTasks(cb);		
-
-			nodeWillBecomeActive(flow.root, function () {				
-				nodeDidBecomeActive(flow.root, function () {
-				});
-			});									
+				flowObservers.forEach(function (observer) {
+					if (observer.start) {
+						observer.start();
+					}
+				});					
+				
+				nodeWillBecomeActive(flow.root, function () {				
+					nodeDidBecomeActive(flow.root, function () {
+						cb();
+					});
+				});													
+			});		
 		};
 		
 		// cancel out of any current subflow
