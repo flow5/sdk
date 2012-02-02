@@ -145,7 +145,7 @@ exports.generateCacheManifest = function(query) {
 			}
 		}
 
-		checkDate('www/start.js');		
+		checkDate('www/f5/start.js');		
 		checkDate(__filename);
 
 		function checkManifest(path, manifestName) {	
@@ -176,7 +176,7 @@ exports.generateCacheManifest = function(query) {
 			processManifest(manifest, query, 'resources', checkDates);											
 		}
 
-		checkManifest('www/');
+		checkManifest('www/f5/');
 		checkManifest('www/apps/' + query.app + '/', query.manifest);
 		
 		return latestDate;		
@@ -407,10 +407,10 @@ exports.generateHtml = function(parsed) {
 	injectMeta({name: 'viewport', content: 'target-densitydpi=device-dpi'});
 		
 	// f5.js comes first
-	document.head.appendChild(makeScript('f5.js'));
+	document.head.appendChild(makeScript('f5/f5.js'));
 					
 	// process the manifests
-	injectManifest('');
+	injectManifest('f5/');
 	injectManifest('apps/' + query.app + '/', query.manifest);	
 		
 	// fetch a facebook id if there is one
@@ -435,7 +435,7 @@ exports.generateHtml = function(parsed) {
 	appframeEl.appendChild(screenframeEl);
 	document.body.appendChild(appframeEl);
 				
-	document.body.appendChild(makeScript('start.js'));				
+	document.body.appendChild(makeScript('f5/start.js'));				
 	
 	// TODO: enable/disable on device? need to expose mdns lookup on Android
 	if (false && boolValue(query.mobile) && boolValue(query.debug)) {
