@@ -140,18 +140,16 @@
 			F5.Global.flow.parse();
 			F5.Global.viewController.initialize();
 			
+			flowObservers.forEach(function (observer) {
+				if (observer.start) {
+					observer.start();
+				}
+			});					
+
+			flushWaitTasks(cb);		
+
 			nodeWillBecomeActive(flow.root, function () {				
-				// NOTE: cb executes here because nodeDidBecomeActive may pop a dialog
-				// so this is the right time to flush any native side tasks that got queued
-				// during startup
-				flushWaitTasks(cb);		
-				
 				nodeDidBecomeActive(flow.root, function () {
-					flowObservers.forEach(function (observer) {
-						if (observer.start) {
-							observer.start();
-						}
-					});					
 				});
 			});									
 		};
