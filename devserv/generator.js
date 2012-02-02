@@ -26,11 +26,12 @@
 ***********************************************************************************************************************/
 
 (function () {
-	
+				
 var fs = require('fs'),
 	cssmin = require('node-css-compressor').cssmin,
 	FFI = require("node-ffi"),
-	libc = new FFI.Library(null, {"system": ["int32", ["string"]]});	
+	libc = new FFI.Library(null, {"system": ["int32", ["string"]]}),
+	minify = require('./minify.js').minify;	
 
 function forEach(obj, fn) {
 	if (obj.constructor === Array) {
@@ -51,21 +52,11 @@ function extend(obj1, obj2) {
 	});
 }
 
-
-var caches = [];
-function deleteCaches() {
-	forEach(require.cache, function (id, cache) {
-		if (caches.indexOf(cache.exports) !== -1) {
-			delete require.cache[id];			
-		}
-	});	
-	caches = [];
-}
-
-function requireWrapper(path) {
-	var exports = require(path);
-	caches.push(exports);
-	return exports;
+function parseJSON(path) {
+	// strip out commments		
+	var json = minify(fs.readFileSync(path).toString());
+	console.log(json)
+	return JSON.parse(json);
 }
 
 // the image references are at the leaf nodes
@@ -157,7 +148,7 @@ exports.generateCacheManifest = function(query) {
 					checkDate(path + file);
 					if (type === 'resources') {
 						try {
-							var resources = requireWrapper(process.cwd() + '/' + path + file).resources;
+							var resources = parseJSON(process.cwd() + '/' + path + file);
 							handleDataResourcesRecursive(resources, function (obj, id, src) {
 								checkDate(src);
 							});			
@@ -168,7 +159,7 @@ exports.generateCacheManifest = function(query) {
 				});				
 			}
 
-			var manifest = requireWrapper(process.cwd() + '/' + path + manifestName);
+			var manifest = parseJSON(process.cwd() + '/' + path + manifestName);
 
 			processManifest(manifest, query, 'flowspecs', checkDates);											
 			processManifest(manifest, query, 'scripts', checkDates);									
@@ -192,8 +183,6 @@ exports.generateCacheManifest = function(query) {
 	cacheManifest += '#' + getModDate() + '\n';
 	
 //	console.log(cacheManifest)
-	
-	deleteCaches();
 	
 	return cacheManifest;
 };
@@ -274,7 +263,7 @@ exports.generateHtml = function(parsed) {
 		
 		function inlineData(src) {			
 			try {
-				var ext = requireWrapper('path').extname(src).substring(1);
+				var ext = require('path').extname(src).substring(1);
 				var path = 'www/apps/' + query.app + '/' + src;
 
 				var data;
@@ -350,7 +339,7 @@ exports.generateHtml = function(parsed) {
 		function injectResources(resourceFiles) {
 			resourceFiles.forEach(function (file) {
 				try {
-					var r = requireWrapper(process.cwd() + '/www/' + path + file);	
+					var r = parseJSON(process.cwd() + '/www/' + path + file);	
 					if (boolValue(query.inline)) {
 						handleDataResourcesRecursive(r, function (obj, id, src) {						
 							obj[id] = inlineData(src);										
@@ -366,14 +355,14 @@ exports.generateHtml = function(parsed) {
 		function injectFlows(flowFiles) {
 			flowFiles.forEach(function (file) {
 				try {
-					flowspec = requireWrapper(process.cwd() + '/www/' + path + file);						
+					flowspec = parseJSON(process.cwd() + '/www/' + path + file);						
 				} catch (e) {
 					console.log('error:' + e.message);
 				}
 			});
 		}
 
-		var manifest = requireWrapper(process.cwd() + '/www/' + path + manifestName);
+		var manifest = parseJSON(process.cwd() + '/www/' + path + manifestName);
 
 		processManifest(manifest, query, 'flowspecs', injectFlows);											
 		processManifest(manifest, query, 'scripts', injectScripts);									
@@ -445,8 +434,6 @@ exports.generateHtml = function(parsed) {
 		document.head.appendChild(weinre);			
 	}
 			
-	deleteCaches();	
-	
 	var html = document.outerHTML.replace('<head>', '<head><style>' + styleBlock + '</style>');		
 	return html;
 };
