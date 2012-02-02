@@ -26,7 +26,22 @@ Setup the html5 app:
 
 5) ln -s <path-to-myApp/www> myApp
 
+Now you can run your app from devserv:
 
+
+
+
+6) build out your flow spec
+
+	auto generated UI will be created for navigating the flow in browser
+
+7) add elements and scripts blocks to the manifest for
+
+	templates.html
+	templates.css
+	viewdelegates.js
+	
+	(names can be anything but these are descriptive)
 
 
 

@@ -71,6 +71,23 @@
 				this.delegate.el = el;
 			}
 			
+			// if there's no view delegate, look for an html template
+			// and load it into the view. this allows quick building of wireframes
+			// navigation elements will be overlayed
+			if (!this.delegate) {
+				var template = F5.loadTemplate(node);
+				if (template) {
+					template.style.position = 'absolute';
+					template.style.top = '0px';
+					template.style.left = '0px';
+					template.style.width = '100%';
+					template.style.height = '100%';
+					template.style['pointer-events'] = 'none';
+					template.style.opacity = .5;
+					el.appendChild(template);
+				}				
+			}
+			
 			if (!node.active) {
 				el.style.visibility = 'hidden';
 			}		

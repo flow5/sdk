@@ -50,7 +50,10 @@
 		}
 				
 		var template = document.getElementById(id);		
-		F5.assert(template, "No template with id: " + id);
+		if (!template) {
+			console.log("No template with id: " + id);
+			return null;
+		}
 		var instance = template.cloneNode(true);
 		instance.removeAttribute('id');
 		

@@ -55,7 +55,6 @@ function extend(obj1, obj2) {
 function parseJSON(path) {
 	// strip out commments		
 	var json = minify(fs.readFileSync(path).toString());
-	console.log(json)
 	return JSON.parse(json);
 }
 
@@ -202,10 +201,14 @@ exports.generateHtml = function(parsed) {
 	
 
 	// templates container
-	var templates = document.createElement('div');
-	templates.id = 'f5_templates';
-	templates.setAttribute('style', 'display:none;');			
-	document.body.appendChild(templates);	
+	var templatesEl = document.createElement('div');
+	templatesEl.id = 'f5templates';
+	templatesEl.setAttribute('style', 'display:none;');			
+	document.body.appendChild(templatesEl);	
+	
+	var scriptsEl = document.createElement('div');
+	scriptsEl.id = 'f5scripts';
+	document.body.appendChild(scriptsEl);
 
 	// places to stow parsed data
 	var styleBlock = '';
@@ -294,7 +297,7 @@ exports.generateHtml = function(parsed) {
 		// javascript
 		function injectScripts(scripts) {
 			scripts.forEach(function (file) {
-				document.body.appendChild(makeScript(path + file));				
+				scriptsEl.appendChild(makeScript(path + file));				
 			});				
 		}
 				
@@ -330,7 +333,7 @@ exports.generateHtml = function(parsed) {
 					elementsDiv.innerHTML = fs.readFileSync('www/' + path + file).toString();
 					elementsDiv.id = file;				
 
-					templates.appendChild(elementsDiv);
+					templatesEl.appendChild(elementsDiv);
 				}
 			});
 		}	
@@ -396,7 +399,7 @@ exports.generateHtml = function(parsed) {
 	injectMeta({name: 'viewport', content: 'target-densitydpi=device-dpi'});
 		
 	// f5.js comes first
-	document.head.appendChild(makeScript('f5/f5.js'));
+	scriptsEl.appendChild(makeScript('f5/f5.js'));
 					
 	// process the manifests
 	injectManifest('f5/');
@@ -424,7 +427,7 @@ exports.generateHtml = function(parsed) {
 	appframeEl.appendChild(screenframeEl);
 	document.body.appendChild(appframeEl);
 				
-	document.body.appendChild(makeScript('f5/start.js'));				
+	scriptsEl.appendChild(makeScript('f5/start.js'));				
 	
 	// TODO: enable/disable on device? need to expose mdns lookup on Android
 	if (false && boolValue(query.mobile) && boolValue(query.debug)) {

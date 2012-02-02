@@ -50,9 +50,14 @@ body.f5mobile {
 	height:460px;
 }
 
+#f5screen {
+	background-color: white;
+}
+
 .f5mobile #f5screen, .f5mobile #f5appframe {
 	width: 100%;
 	height: 100%;
+	background-color: transparent;
 }
 
 #f5appframe {
