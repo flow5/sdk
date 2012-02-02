@@ -151,7 +151,8 @@
 				
 				nodeWillBecomeActive(flow.root, function () {				
 					nodeDidBecomeActive(flow.root, function () {
-						cb();
+						// flush any tasks that were queued up during lifecycle events
+						flushWaitTasks(cb);
 					});
 				});													
 			});		
