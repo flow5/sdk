@@ -118,7 +118,7 @@ function showRequest(req, printHeaders) {
 
 // http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
 cli.main(function (args, options) {
-
+	
 	options.port = options.port || 8008;
 
 	http.createServer(function (req, res) {
@@ -145,7 +145,27 @@ cli.main(function (args, options) {
 			assert(isBool(query.mobile), 'Bad parameter "mobile" = ' + query.mobile);
 			assert(isPlatform(query.platform), 'Bad parameter "platform" = ' + query.platform);
 			assert(query.app, 'Bad parameter "app" = ' + query.app);
-		}		
+		}	
+		
+		function doGenerate(parsed, res) {
+			try {
+				verifyQueryParameters(parsed.query);
+				var html = generator.generateHtml(parsed);
+				if (parsed.query.compress === 'false') {
+					res.writeHead(200, {'Content-Type': 'text/html'});
+					res.write(html);
+					res.end();					
+				} else {
+					compress(html, res);					
+				}					
+			} catch (e2) {
+				console.log('error:' + e2.message);
+				// TODO: would be nice to return 404 if the appname is bad
+				res.writeHead(500);
+				res.end();					
+			}		
+		}
+			
 		
 //		showRequest(req, true);
 		
@@ -157,7 +177,9 @@ cli.main(function (args, options) {
 				
 		switch (req.method) {
 		case 'POST':
-			if (req.url.indexOf('dot2svg') !== -1) {
+			if (req.url.indexOf('generate?') !== -1) {
+				doGenerate(parsed, res);
+			} else if (req.url.indexOf('dot2svg') !== -1) {
 				dot2svg(req, res);	
 			} else if (req.url.indexOf('service?') !== -1) {
 				try {
@@ -192,22 +214,7 @@ cli.main(function (args, options) {
 			break;		
 		case 'GET':
 			if (req.url.indexOf('generate?') !== -1) {
-				try {
-					verifyQueryParameters(parsed.query);
-					var html = generator.generateHtml(parsed);
-					if (parsed.query.compress === 'false') {
-						res.writeHead(200, {'Content-Type': 'text/html'});
-						res.write(html);
-						res.end();					
-					} else {
-						compress(html, res);					
-					}					
-				} catch (e2) {
-					console.log('error:' + e2.message);
-					// TODO: would be nice to return 404 if the appname is bad
-					res.writeHead(500);
-					res.end();					
-				}
+				doGenerate(parsed, res);
 			} else if (req.url.match('cache.manifest')) {
 //				res.writeHead(404);
 				res.writeHead(200, {'Content-Type': 'text/cache-manifest'});
