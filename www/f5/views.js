@@ -74,7 +74,7 @@
 			// if there's no view delegate, look for an html template
 			// and load it into the view. this allows quick building of wireframes
 			// navigation elements will be overlayed
-			if (!this.delegate) {
+			if (!this.delegate || !this.delegate.initialize) {
 				var template = F5.loadTemplate(node);
 				if (template) {
 					el.appendChild(template);
