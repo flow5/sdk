@@ -55,6 +55,13 @@ ios)
 
 android)
 	create a folder myApp/android
+	
+	
+	
+Facebook
+
+1) create a file called facebook_appid.txt in myApp/www
+2) call F5.facebook.login(function result()) to connect using facebook
 
 
 

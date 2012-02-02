@@ -258,7 +258,7 @@ exports.generateHtml = function(parsed) {
 			facebookId = fs.readFileSync(path).toString();
 		} catch (e) {
 			console.log('Could not find facebook_appid.txt');
-		}
+		}		
 	}	
 	
 	function injectManifest(path, manifestName) {		
