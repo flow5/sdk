@@ -62,7 +62,8 @@
             "widgets/form.js", 
             "widgets/activity.js", 
             "widgets/alert.js", 
-            "3p/bezier.js"
+            "3p/bezier.js",
+			"3p/b64.js"
         ]
     }, 
     "android": {

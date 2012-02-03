@@ -60,7 +60,8 @@
 	});
 	
 	if (F5.query.body) {
-		console.log(F5.query.body);
+		var json = F5.Base64.decode(F5.query.body.split('.'));
+		console.log(json);
 	}
 	
 	function login(cb) {		
