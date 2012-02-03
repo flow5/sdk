@@ -31,8 +31,7 @@
 			]
 		},	
         "elements": [
-            "core.css", 
-            "default.css"
+            "core.css"            
         ], 
         "scripts": [
             "utils.js", 

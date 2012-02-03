@@ -54,7 +54,7 @@ function extend(obj1, obj2) {
 
 function parseJSON(path) {
 	// strip out commments		
-	var json = minify(fs.readFileSync(path).toString());
+	var json = minify(fs.readFileSync('www/' + path).toString());
 	return JSON.parse(json);
 }
 
@@ -129,9 +129,13 @@ exports.generateCacheManifest = function(query) {
 	function getModDate() {
 		var latestDate;
 		function checkDate(path) {
-			var modDate = new Date(fs.statSync(path).mtime);
-			if (!latestDate || modDate > latestDate) {
-				latestDate = modDate;
+			try {
+				var modDate = new Date(fs.statSync(path).mtime);
+				if (!latestDate || modDate > latestDate) {
+					latestDate = modDate;
+				}				
+			} catch (e) {
+				console.log('error: ' + e.stack);
 			}
 		}
 
@@ -140,25 +144,31 @@ exports.generateCacheManifest = function(query) {
 
 		function checkManifest(path, manifestName) {	
 			manifestName = (manifestName || 'manifest') + '.json';			
-			checkDate(path + manifestName);
+			checkDate('www/' + path + manifestName);
 
 			function checkDates(files, type) {
 				files.forEach(function (file) {
-					checkDate(path + file);
+					var resolvedPath;
+					if (file[0] === '/') {
+						resolvedPath = 'f5/' + file.substring(1);
+					} else {
+						resolvedPath = path + file;
+					}
+					checkDate('www/' + resolvedPath);
 					if (type === 'resources') {
 						try {
-							var resources = parseJSON(process.cwd() + '/' + path + file);
+							var resources = parseJSON(resolvedPath);
 							handleDataResourcesRecursive(resources, function (obj, id, src) {
-								checkDate(src);
+								checkDate('www/' + src);
 							});			
 						} catch (e) {
-							console.log('error:' + e.message);
+							console.log('error:' + e.stack);
 						}										
 					}
 				});				
 			}
 
-			var manifest = parseJSON(process.cwd() + '/' + path + manifestName);
+			var manifest = parseJSON(path + manifestName);
 
 			processManifest(manifest, query, 'flowspecs', checkDates);											
 			processManifest(manifest, query, 'scripts', checkDates);									
@@ -166,8 +176,8 @@ exports.generateCacheManifest = function(query) {
 			processManifest(manifest, query, 'resources', checkDates);											
 		}
 
-		checkManifest('www/f5/');
-		checkManifest('www/apps/' + query.app + '/', query.manifest);
+		checkManifest('f5/');
+		checkManifest('apps/' + query.app + '/', query.manifest);
 		
 		return latestDate;		
 	}
@@ -261,13 +271,20 @@ exports.generateHtml = function(parsed) {
 		}		
 	}	
 	
-	function injectManifest(path, manifestName) {		
+	function resolvePath(path, base) {		
+		if (path[0] === '/') {
+			return 'f5/' + path;
+		} else {
+			return base + path;
+		}
+	}
+	
+	function injectManifest(base, manifestName) {		
 		manifestName = (manifestName || 'manifest') + '.json';
 		
-		function inlineData(src) {			
+		function inlineData(path) {			
 			try {
-				var ext = require('path').extname(src).substring(1);
-				var path = 'www/apps/' + query.app + '/' + src;
+				var ext = require('path').extname(path).substring(1);
 
 				var data;
 				if (ext === 'ttf') {
@@ -275,7 +292,7 @@ exports.generateHtml = function(parsed) {
 				} else if (ext === 'svg') {
 					// jsdom doesn't like the non-b64 encoded svg :(
 //					data = 'data:image/svg+xml;utf8,' + fs.readFileSync(path).toString().replace(/(\r\n|\n|\r)/gm, '');	
-					data = 'data:image/svg+xml;base64,' + fs.readFileSync(path, 'base64');
+					data = 'data:image/svg+xml;base64,' + fs.readFileSync('www/' + path, 'base64');
 				} else {
 					if (boolValue(query.crush)) {
 						var tmpPath = '/tmp/' + process.pid + Date.now() + '.png';
@@ -285,19 +302,19 @@ exports.generateHtml = function(parsed) {
 						libc.system(cmd);					
 						path = tmpPath;
 					}
-					data = 'data:image/' + ext + ';base64,' + fs.readFileSync(path, 'base64');				
+					data = 'data:image/' + ext + ';base64,' + fs.readFileSync('www/' + path, 'base64');				
 				}
 			
 				return data;
 			} catch (e) {
-				console.log('error:' + e.message);
+				console.log('error:' + e.stack);
 			}
 		}		
 		
 		// javascript
 		function injectScripts(scripts) {
 			scripts.forEach(function (file) {
-				scriptsEl.appendChild(makeScript(path + file));				
+				scriptsEl.appendChild(makeScript(resolvePath(file, base)));				
 			});				
 		}
 				
@@ -306,7 +323,10 @@ exports.generateHtml = function(parsed) {
 			elements.forEach(function (file) {
 				if (file.match('.css')) {
 					if (boolValue(query.inline)) {
-						var style = fs.readFileSync('www/' + path + file).toString();
+						console.log(file);
+						var resolvedPath = resolvePath(file, base);
+						console.log(resolvedPath)
+						var style = fs.readFileSync('www/' + resolvedPath).toString();
 						
 						if (boolValue(query.compress)) {
 							style = cssmin(style);
@@ -320,17 +340,25 @@ exports.generateHtml = function(parsed) {
 							var matches = regExp.exec(statements[i]);
 							if (matches && matches.length > 1) {
 								var url = matches[1];
-								var imageData = inlineData(url);
+								var imageData = inlineData(resolvePath(url, base));
 								statements[i] = statements[i].replace(url, imageData);
 							}
 						}														
 						styleBlock += statements.join('');							
 					} else {
-						injectLink('stylesheet', path + file, 'text/css');
+						injectLink('stylesheet', resolvePath(file, base), 'text/css');
 					}
 				} else {
 					var elementsDiv = document.createElement('div');
-					elementsDiv.innerHTML = fs.readFileSync('www/' + path + file).toString();
+					try {
+						console.log('--------')
+						console.log(file + ',' + base);
+						console.log(resolvePath(file, base));						
+						console.log('--------')
+						elementsDiv.innerHTML = fs.readFileSync('www/' + resolvePath(file, base)).toString();						
+					} catch (e) {
+						console.log(e.stack);
+					}
 					elementsDiv.id = file;				
 
 					templatesEl.appendChild(elementsDiv);
@@ -342,15 +370,15 @@ exports.generateHtml = function(parsed) {
 		function injectResources(resourceFiles) {
 			resourceFiles.forEach(function (file) {
 				try {
-					var r = parseJSON(process.cwd() + '/www/' + path + file);	
+					var r = parseJSON(resolvePath(file, base));	
 					if (boolValue(query.inline)) {
 						handleDataResourcesRecursive(r, function (obj, id, src) {						
-							obj[id] = inlineData(src);										
+							obj[id] = inlineData(resolvePath(src, base));										
 						});
 					}
 					extend(resources, r);		
 				} catch (e) {
-					console.log('error:' + e.message);
+					console.log('error:' + e.stack);
 				}				
 			});				
 		}
@@ -358,14 +386,14 @@ exports.generateHtml = function(parsed) {
 		function injectFlows(flowFiles) {
 			flowFiles.forEach(function (file) {
 				try {
-					flowspec = parseJSON(process.cwd() + '/www/' + path + file);						
+					flowspec = parseJSON(resolvePath(file, base));						
 				} catch (e) {
-					console.log('error:' + e.message);
+					console.log('error:' + e.stack);
 				}
 			});
 		}
 
-		var manifest = parseJSON(process.cwd() + '/www/' + path + manifestName);
+		var manifest = parseJSON(base + manifestName);
 
 		processManifest(manifest, query, 'flowspecs', injectFlows);											
 		processManifest(manifest, query, 'scripts', injectScripts);									

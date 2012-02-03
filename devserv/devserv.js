@@ -238,7 +238,7 @@ cli.main(function (args, options) {
 					verifyQueryParameters(parsed.query);					
 					res.write(generator.generateCacheManifest(parsed.query));					
 				} catch (e) {
-					console.log('error:' + e.message);
+					console.log('error:' + e.stack);
 				}
 				res.end();				
 			} else if (req.url.indexOf('service?') !== -1) {
