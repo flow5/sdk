@@ -30,9 +30,7 @@
 	
 	window.fbAsyncInit = function() {
 		console.log('hi there facebook');
-	    // Additional initialization code here
-	
-		FB.Canvas.setSize();
+	    // Additional initialization code here	
 	  };
 
 	  // Load the SDK Asynchronously
@@ -57,6 +55,8 @@
 	      cookie     : true, // enable cookies to allow the server to access the session
 	      xfbml      : true  // parse XFBML
 	    });
+	
+		FB.Canvas.setSize();
 	
 		cb();
 	});
