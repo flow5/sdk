@@ -31,6 +31,8 @@
 	window.fbAsyncInit = function() {
 		console.log('hi there facebook');
 	    // Additional initialization code here
+	
+		FB.Canvas.setSize();
 	  };
 
 	  // Load the SDK Asynchronously
@@ -60,6 +62,8 @@
 	});
 	
 	if (F5.query.body) {
+		// TODO: should also verify the SHA signature
+		// http://developers.facebook.com/docs/authentication/signed_request/
 		try {
 			var json = JSON.parse(F5.Base64.decode(F5.query.body.split('.')[1]));
 			// TODO: need to formalize use of localStorage. there are dependencies on this value
