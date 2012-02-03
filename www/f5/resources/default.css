@@ -127,6 +127,8 @@
 	-webkit-box-pack: center;
 	-webkit-box-align: center;	
 	font-family: arial;	
+	height: .30em;	
+	border-radius: .04em;	
 }
 
 .f5button-container, .f5button-container .f5button-up {
