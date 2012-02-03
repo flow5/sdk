@@ -61,7 +61,11 @@
 	
 	if (F5.query.body) {
 		var json = F5.Base64.decode(F5.query.body.split('.')[1]);
-		console.log(json);
+		// TODO: need to formalize use of localStorage. there are dependencies on this value
+		// in client layer code
+		if (json.oauth_token) {
+			localStorage.fbToken = json.oauth_token;
+		}
 	}
 	
 	function login(cb) {		
