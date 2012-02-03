@@ -59,6 +59,10 @@
 		cb();
 	});
 	
+	if (F5.query.body) {
+		console.log(F5.query.body);
+	}
+	
 	function login(cb) {		
 		// TODO: make sure init is really complete
 		FB.login(function(response) {

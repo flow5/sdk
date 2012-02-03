@@ -72,6 +72,18 @@ function compress(html, res) {
 	child.stdin.end();		
 }
 
+function getMessageBody(req, cb) {
+	var body = '';
+	
+	req.on('data', function (chunk) {
+		body += chunk;
+	});
+	
+	req.on('end', function () {
+		cb(body);
+	});
+}
+
 
 function dot2svg(req, res) {	
 	/*global Iuppiter*/
@@ -178,7 +190,11 @@ cli.main(function (args, options) {
 		switch (req.method) {
 		case 'POST':
 			if (req.url.indexOf('generate?') !== -1) {
-				doGenerate(parsed, res);
+				getMessageBody(req, function (body) {
+					// assume that the body is a facebook signed request
+					parsed.query.body = body;
+					doGenerate(parsed, res);					
+				});
 			} else if (req.url.indexOf('dot2svg') !== -1) {
 				dot2svg(req, res);	
 			} else if (req.url.indexOf('service?') !== -1) {
