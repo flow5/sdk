@@ -1,0 +1,84 @@
+<html>
+<head>
+	<style>
+	body {
+		display: -webkit-box;
+		-webkit-box-align: center;
+		-webkit-box-pack: center;
+		background-color: black;
+	}
+	.container {
+		width: 320px;
+		height: 320px;		
+	}
+	.swatch {
+		position: absolute;		
+		opacity: .5;
+		border: 1px solid #004;
+		-webkit-box-shadow: inset 0px 0px 5px 5px #004, 0px -0.9px 300px 50px #004;
+		border-radius: 160px;
+		width: 320px;
+		height: 320px;
+		background: -webkit-gradient(linear, 0 100%, 100% 0%, 
+								from(rgba(0,0,255,.0)), 
+									color-stop(.5, rgba(255,0,255,.5)), 
+									color-stop(.5, rgba(0,0,255,.5)), 
+								to(rgba(0,0,255,0))), 
+							-webkit-gradient(radial, 48% 52%, 50, 57% 50%, 102, 
+								from(rgba(0,255,0,.25)), 
+									color-stop(.25, rgba(255,255,255,.95)), 
+								to(rgba(100,100,100,.5))),
+							-webkit-gradient(radial, 50% 50%, 30, 30% 50%, 80, 
+									from(rgba(0,0,0,0)), 
+										color-stop(.5, rgba(255,255,0,.75)), 
+									to(rgba(255,255,255,0))),
+							-webkit-gradient(linear, 100% 0%, 0% 100%, 
+								from(rgba(0,255,0,.0)), 
+									color-stop(.5, rgba(0,255,0,.75)), 
+								to(rgba(0,255,0,0)));
+		background-size: 1px 2px, 75% 66%, 75% 90%, 6px 6px;		
+	}
+	
+	.one {
+		-webkit-animation-duration: 100s;		
+	}
+
+	.two {
+		-webkit-animation-duration: 200s;		
+	}
+
+	.three {
+		-webkit-animation-duration: 300s;		
+	}
+	
+	.rotate {
+		-webkit-animation-name: rotate;
+		-webkit-animation-iteration-count: infinite;
+		-webkit-animation-timing-function: linear;	
+	}
+
+	/* NOTE: the 50% is required for Safari. Chrome will do the rotate with just from and to */
+	@-webkit-keyframes rotate {
+		from {
+			-webkit-transform: rotate3d(0, 0, -1, 0deg);
+		}
+		50% {
+			-webkit-transform: rotate3d(0, 0, -1, 180deg);	
+		}
+		to {
+			-webkit-transform: rotate3d(0, 0, -1, 360deg);
+		}
+	}
+	
+	</style
+</head>
+
+<body>
+<div class='container'>
+	<div class='swatch rotate one'></div>
+	<div class='swatch rotate two'></div>
+	<div class='swatch rotate three'></div>
+</div>
+</body>
+
+</html>
