@@ -39,8 +39,10 @@
 			
 			var that = this;
 			
+			F5.addClass(this.el, 'f5navbar');
+			
 			navbarEl = document.createElement('div');
-			F5.addClass(navbarEl, 'f5navbar');
+			F5.addClass(navbarEl, 'f5navbarcontainer');
 			this.el.appendChild(navbarEl);
 						
 			containers.title = document.createElement('div');

@@ -222,7 +222,7 @@
 			if (this.delegate && this.delegate.initialize) {
 				this.delegate.initialize();					
 			} else {
-				F5.attachTabset(this.el, node, 'bottom');
+				F5.attachTabset(this.el, node, 'bottom', 'f5default');
 			}				
 		};
 		

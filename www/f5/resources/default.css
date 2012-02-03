@@ -78,7 +78,7 @@
 	background-color: grey;
 }
 
-.f5navbar .f5titlecontainer {
+.f5navbar .f5titlecontainer, .f5navbar .f5navbarcontainer {
 	width: 100%;
 	height: 100%;
 	position: relative;
@@ -126,6 +126,7 @@
 	display: -webkit-box;
 	-webkit-box-pack: center;
 	-webkit-box-align: center;	
+	font-family: arial;	
 }
 
 .f5button-container, .f5button-container .f5button-up {
@@ -185,7 +186,6 @@
 .f5tab {
 	-webkit-box-align: center;
 	-webkit-box-pack: center;
-	font-family: arial;
 }
 
 /***************************************/

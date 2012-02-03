@@ -28,6 +28,9 @@
 /* ios.css contains styles that can be used with f5 widgets to create ios native look */
 
 
+/**************** Default Bottom Tabs ******************/
+/* use a mask and label for the buttons to create standard ios-style bottom tabs */
+
 .f5default.f5tabset .f5tab.f5button-up .f5button-label  {
 	color: #666;
 }
@@ -113,5 +116,47 @@
 
 .f5default.f5tabset .f5tab.f5button {
 	background-color: transparent
+}
+
+
+/**************** Default Navigation Bar ******************/
+
+.f5default.f5navbar {
+	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#fefefe), color-stop(100%,#d6d8da));
+	background-size: 100%;
+}
+
+.f5default.f5navbar .f5button .f5button-label {
+	color: white;
+	text-shadow: 0px -.25px 1px #444;				
+}
+
+.f5default.f5navbar .f5button {
+	border: none;	
+	-webkit-box-shadow: inset 0px 0px 3px #888
+}
+
+.f5default.f5navbar .f5button.f5button-up {
+	background-image: -webkit-gradient(linear, center bottom, center top, 
+		from(#838383),
+			color-stop(0.525, #838383),
+			color-stop(.555, #d6d6d6),
+		to(#d6d6d6));
+}
+
+.f5default.f5navbar .f5button.f5button-up.f5button-press {
+	background-image: -webkit-gradient(linear, center bottom, center top, 
+		from(#676767),
+			color-stop(0.525, #676767),
+			color-stop(.555, #aaaaaa),
+		to(#aaaaaa));
+}
+
+.f5default.f5navbar .f5title {
+	color: grey;
+	text-shadow: 1px 1px 1px white;			
+	font-weight: 700;
+	font-size: .18em;
+	font-family: arial;
 }
 
