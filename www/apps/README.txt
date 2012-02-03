@@ -18,6 +18,9 @@ Setup the html5 app:
 
 {
 	"all": {
+		"elements": [
+			"/resources/default.css" /* default styling for f5 widgets */
+		],
 		"flowspecs": [
 			"flowspec.json"
 		]

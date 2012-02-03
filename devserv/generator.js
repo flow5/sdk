@@ -273,7 +273,7 @@ exports.generateHtml = function(parsed) {
 	
 	function resolvePath(path, base) {		
 		if (path[0] === '/') {
-			return 'f5/' + path;
+			return 'f5' + path;
 		} else {
 			return base + path;
 		}
@@ -288,7 +288,7 @@ exports.generateHtml = function(parsed) {
 
 				var data;
 				if (ext === 'ttf') {
-					data = 'data:font/truetype;base64,' + fs.readFileSync(path, 'base64');
+					data = 'data:font/truetype;base64,' + fs.readFileSync('www/' + path, 'base64');
 				} else if (ext === 'svg') {
 					// jsdom doesn't like the non-b64 encoded svg :(
 //					data = 'data:image/svg+xml;utf8,' + fs.readFileSync(path).toString().replace(/(\r\n|\n|\r)/gm, '');	
@@ -323,9 +323,7 @@ exports.generateHtml = function(parsed) {
 			elements.forEach(function (file) {
 				if (file.match('.css')) {
 					if (boolValue(query.inline)) {
-						console.log(file);
 						var resolvedPath = resolvePath(file, base);
-						console.log(resolvedPath)
 						var style = fs.readFileSync('www/' + resolvedPath).toString();
 						
 						if (boolValue(query.compress)) {
@@ -340,7 +338,11 @@ exports.generateHtml = function(parsed) {
 							var matches = regExp.exec(statements[i]);
 							if (matches && matches.length > 1) {
 								var url = matches[1];
-								var imageData = inlineData(resolvePath(url, base));
+								
+								// resolve the url relative to the css base
+								var cssBase = require('path').dirname(resolvedPath);
+								
+								var imageData = inlineData(cssBase + '/' + url);
 								statements[i] = statements[i].replace(url, imageData);
 							}
 						}														
@@ -351,10 +353,6 @@ exports.generateHtml = function(parsed) {
 				} else {
 					var elementsDiv = document.createElement('div');
 					try {
-						console.log('--------')
-						console.log(file + ',' + base);
-						console.log(resolvePath(file, base));						
-						console.log('--------')
 						elementsDiv.innerHTML = fs.readFileSync('www/' + resolvePath(file, base)).toString();						
 					} catch (e) {
 						console.log(e.stack);
