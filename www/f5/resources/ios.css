@@ -28,14 +28,23 @@
 /* ios.css contains styles that can be used with f5 widgets to create ios native look */
 
 
-/**************** Default Bottom Tabs ******************/
-/* use a mask and label for the buttons to create standard ios-style bottom tabs */
-
-.f5default.f5tabset .f5tab.f5button-up .f5button-label  {
-	color: #666;
+.f5default .f5button-up .f5button-label,
+.f5default.f5button-up .f5button-label  {
+	color: white;
 }
 
-.f5default.f5tabset .f5tab.f5button-down .f5button-label  {
+.f5default .f5button-down .f5button-label,
+.f5default.f5button-down .f5button-label, 
+.f5default .f5button-up.f5button-press .f5button-label,
+.f5default.f5button-up.f5button-press .f5button-label {
+	color: #AAA;
+}
+
+.f5default.f5tabset .f5button-up .f5button-label {
+	color: #AAA;
+}
+
+.f5default.f5tabset .f5button-down .f5button-label {
 	color: white;
 }
 
@@ -58,19 +67,18 @@
 	background-color: transparent;
 }
 
+.f5default.f5button .f5button-down .f5mask, 
+.f5default.f5navbar .f5button .f5button-down .f5mask,
 .f5default.f5tabset .f5button .f5button-down .f5mask {
-        background-image: -webkit-gradient(linear, 55% 100% , 45% 0%,
-                        from(#A5F5FF), 
-                                color-stop(.58, #3595FF), 
-                                color-stop(.61, #90BDFF), 
-                        to(#C0EDFF));
+	background-image: -webkit-gradient(linear, 55% 100% , 45% 0%,
+	                from(#A5F5FF), 
+	                        color-stop(.58, #3595FF), 
+	                        color-stop(.61, #90BDFF), 
+	                to(#C0EDFF));
 }
 
-.f5default.f5tabset .f5button .f5button-up .f5Mask {
-        background-image: -webkit-gradient(linear, 50% 80%, center top, from(#383838), to(#B0B0B0));
-}
-
-
+.f5default.f5button .f5button-down, 
+.f5default.f5navbar .f5button .f5button-down,
 .f5default.f5tabset .f5button .f5button-down {
 	border-radius: .03em;	
 	background-image: -webkit-gradient(linear, center bottom, center top, 
@@ -80,32 +88,46 @@
 			to(#505050));
 }
 
-.f5default.f5tabset .f5button .f5button-down .f5mask {
+
+.f5default.f5tabset .f5button .f5button-up .f5Mask {
+	background-image: -webkit-gradient(linear, 50% 80%, center top, from(#383838), to(#B0B0B0));
+}
+
+.f5default.f5button .f5button-down .f5mask, 
+.f5default.f5navbar .f5button .f5button-down .f5mask {
 	color: white;
 }
 
-.f5default.f5tabset .f5button .f5button-up .f5Mask {
+.f5default..f5button .f5button-up .f5Mask {
 	color: grey;
 }
 
-.f5default.f5tabset .f5button .f5mask, .f5button .f5mask-shadow {
+.f5default.f5navbar .f5button .f5mask, 
+.f5default.f5navbar .f5button .f5mask-shadow,
+.f5default.f5tabset .f5button .f5mask,
+.f5default.f5tabset .f5button .f5mask-shadow {
 	position: absolute;
 	-webkit-mask-origin: border-box;
 	-webkit-mask-repeat: no-repeat;
 	-webkit-mask-size: .30em .30em;
 	-webkit-mask-position: center .01em;
-	width: 100%;
 	height: 100%;
+	width: 100%;
 }
 
+.f5default.f5button .f5button-down .f5mask-shadow,
+.f5default.f5navbar .f5button .f5button-down .f5mask-shadow,
+.f5default.f5tabset .f5button .f5button-down .f5mask-shadow {
+	background-color:black;
+}
+
+.f5default.f5button .f5mask-shadow,
+.f5default.f5navbar .f5tab .f5mask-shadow,
 .f5default.f5tabset .f5tab .f5mask-shadow {
 	top: .01em;
 	left: .01em;
 }
 
-.f5default.f5tabset .f5button .f5button-down .f5mask-shadow {
-	background-color:black;
-}
 
 .f5default.f5tabset .f5button {
 	margin-top: .03em;
@@ -119,15 +141,12 @@
 }
 
 
-/**************** Default Navigation Bar ******************/
-
 .f5default.f5navbar {
 	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#fefefe), color-stop(100%,#d6d8da));
 	background-size: 100%;
 }
 
 .f5default.f5navbar .f5button .f5button-label {
-	color: white;
 	text-shadow: 0px -.25px 1px #444;				
 }
 
@@ -136,6 +155,7 @@
 	-webkit-box-shadow: inset 0px 0px 3px #888
 }
 
+.f5default.f5button.f5button-up,
 .f5default.f5navbar .f5button.f5button-up {
 	background-image: -webkit-gradient(linear, center bottom, center top, 
 		from(#838383),
@@ -144,6 +164,7 @@
 		to(#d6d6d6));
 }
 
+.f5default.f5button.f5button-up.f5button-press,
 .f5default.f5navbar .f5button.f5button-up.f5button-press {
 	background-image: -webkit-gradient(linear, center bottom, center top, 
 		from(#676767),

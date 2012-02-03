@@ -53,7 +53,7 @@
 	padding-left: 2px;
 	-webkit-box-align: center;
 	-webkit-box-pack: center;	
-	background-color:grey;
+	background-color:lightgrey;
 	-webkit-box-sizing: border-box;
 	z-index: 1000;
 	-webkit-transition: opacity .25s;	
@@ -62,20 +62,12 @@
 .f5navbar .f5leftbutton, .f5navbar .f5rightbutton {
 	position: absolute;
 	top: .06em;
-	height: .30em;
-	padding-left: .12em;
-	padding-right: .12em;
 	display: -webkit-box;
 	-webkit-box-pack: center;
 	-webkit-box-align: center;
-	border: 1px solid black;
 	background-color: white;	
 	-webkit-box-sizing: border-box;
 	max-width: 25%;
-}
-
-.f5navbar .f5leftbutton.f5button-press, .f5navbar .f5rightbutton.f5button-press {
-	background-color: grey;
 }
 
 .f5navbar .f5titlecontainer, .f5navbar .f5navbarcontainer {
@@ -99,9 +91,8 @@
 	-webkit-box-pack: center;
 }
 
-.f5navbar .f5button-label, .f5navbar .f5button-label {
+.f5navbar .f5button-label {
 	font-size: .16em;
-	color: black;
 }
 
 .f5navbar .f5leftbutton {
@@ -129,6 +120,13 @@
 	font-family: arial;	
 	height: .30em;	
 	border-radius: .04em;	
+	padding-left: .12em;
+	padding-right: .12em;	
+}
+
+.f5tab.f5button {
+	border-radius: 0px;	
+	height: 49px;	
 }
 
 .f5button-container, .f5button-container .f5button-up {
