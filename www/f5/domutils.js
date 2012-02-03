@@ -403,10 +403,13 @@
 		return result;
 	};
 	
-	F5.attachTabset = function (el, node, position) {
+	F5.attachTabset = function (el, node, position, className) {
 		el.setAttribute('f5tabsetposition', position);						
 		F5.attachWidget(el, 'Tabset', F5.getNodeData(node));
 		F5.addClass(el.widget.tabset, node.id);
+		if (className) {
+			F5.addClass(el.widget.tabset, className);			
+		}
 		
 		el.widget.setAction(function selectionChangeCb(id) {
 			F5.Global.flowController.doSelection(node, id);					
