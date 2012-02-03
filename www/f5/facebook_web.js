@@ -60,7 +60,7 @@
 	});
 	
 	if (F5.query.body) {
-		var json = F5.Base64.decode(F5.query.body.split('.'));
+		var json = F5.Base64.decode(F5.query.body.split('.')[1]);
 		console.log(json);
 	}
 	
