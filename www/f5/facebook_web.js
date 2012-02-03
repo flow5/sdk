@@ -65,6 +65,7 @@
 		// in client layer code
 		if (json.oauth_token) {
 			localStorage.fbToken = json.oauth_token;
+			console.log(localStorage)
 		}
 	}
 	
