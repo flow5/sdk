@@ -127,7 +127,10 @@
 	};
 	
 	F5.addTouchMoveListener = function (el, cb) {
-		addEventListener(el, moveEventName(), cb);
+		addEventListener(el, moveEventName(), function (e) {
+			e.preventDefault();
+			cb(e);
+		});
 	};
 	
 	F5.removeTouchMoveListener = function (el) {
