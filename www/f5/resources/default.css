@@ -104,6 +104,7 @@
 }
 
 .f5navbar .f5title {
+	font-family: arial;
 	font-size: .16em;
 	padding:.16em;
 }
@@ -452,31 +453,17 @@
 	width: 70px;
 	display: -webkit-box;
 	-webkit-box-align: center;
-	-webkit-box-shadow: inset 0px 1px 2px .5px #000;
-	overflow: hidden;	
-	border-radius: 15px;
-	
-	/* workaround for: https://bugs.webkit.org/show_bug.cgi?id=67950 
-	   border radius doesn't clip the transformed slider. so apply an svg mask */
-	-webkit-mask-box-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 70 30"><g><path d="m 15,30 40,0 c 8.2843,0 15,-6.7157 15,-15 l 0,0 c 0,-8.2843 -6.7157,-15 -15,-15 l -40,0 c -8.2843,0 -15,6.7157 -15,15 0,0 0,0 0,0 l 0,0 c 0,8.2843 6.7157,15 15,15 z"/></g></svg>');
+	overflow: hidden;		
 }
 
 .f5slider .f5control {
 	height: 100%;
-	border-radius: 50%;
 	background-color: lightgrey;
-	-webkit-box-shadow: 0px 0px 1px 1px #666;	
-	-webkit-box-sizing: border-box;
-	border: 1px solid #FFF;
-	background-image: -webkit-gradient(linear, center bottom, center top, 
-		from(#FFF),
-		to(#d0d0d0));
 	position: relative;
 }
 
 .f5slider {
 	height: 100%;	
-	padding: 1px;
 	-webkit-box-sizing: border-box;		
 	display: -webkit-box;
 	-webkit-box-pack: center;
@@ -498,28 +485,19 @@
 }
 
 .f5slider .left {
-	background-color: rgba(0,127,234,0.75);
-	/*	background-color: #007fea; */
+	background-color: #007fea;
 	left: 0px;
-	padding-right: 8px;
+	padding-right: 14px;
 	-webkit-box-sizing: border-box;
 	color: rgba(255,255,255,1.0);
-	border-top-left-radius: 15px;	
-	border-bottom-left-radius: 15px;	
-	-webkit-box-shadow: inset 0px 1px 2px .5px #444;	
 }
 
 .f5slider .right {
-	background-color: rgba(238,238,238,0.5);
-/*	background-color: #eeeeee; */
+	background-color: #eeeeee;
 	right: 0px;
-	padding-left: 10px;
+	padding-left: 15px;
 	-webkit-box-sizing: border-box;
-	color: rgba(127,127,127,1.0);
-	border-top-right-radius: 15px;	
-	border-bottom-right-radius: 15px;	
-	-webkit-box-shadow: inset 0px 1px 2px .5px #777;	
-	
+	color: rgba(127,127,127,1.0);	
 }
 
 

@@ -181,3 +181,39 @@
 	font-family: arial;
 }
 
+.f5default.f5switch {
+	-webkit-box-shadow: inset 0px 1px 2px .5px #000;
+	border-radius: 15px;
+	/* workaround for: https://bugs.webkit.org/show_bug.cgi?id=67950 
+	   border radius doesn't clip the transformed slider. so apply an svg mask */
+	-webkit-mask-box-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 70 30"><g><path d="m 15,30 40,0 c 8.2843,0 15,-6.7157 15,-15 l 0,0 c 0,-8.2843 -6.7157,-15 -15,-15 l -40,0 c -8.2843,0 -15,6.7157 -15,15 0,0 0,0 0,0 l 0,0 c 0,8.2843 6.7157,15 15,15 z"/></g></svg>');
+}
+
+.f5default .f5slider {
+	padding: 1px;
+}
+
+.f5default .f5slider .f5control {
+	-webkit-box-sizing: border-box;
+	border-radius: 50%;
+	-webkit-box-shadow: 0px 0px 1px 1px #666;	
+	border: 1px solid #FFF;
+	background-image: -webkit-gradient(linear, center bottom, center top, 
+		from(#FFF),
+		to(#d0d0d0));
+}
+
+.f5default .f5slider .left {
+	padding-right: 8px;	
+	border-top-left-radius: 15px;	
+	border-bottom-left-radius: 15px;	
+	-webkit-box-shadow: inset 0px 1px 2px .5px #444;	
+}
+
+.f5default .f5slider .right {
+	padding-left: 10px;	
+	border-top-right-radius: 15px;	
+	border-bottom-right-radius: 15px;	
+	-webkit-box-shadow: inset 0px 1px 2px .5px #777;		
+}
+
