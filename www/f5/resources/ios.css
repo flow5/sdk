@@ -48,8 +48,12 @@
 	color: white;
 }
 
-.f5default .f5button-label {
-	text-shadow: 0px -.25px 1px #444;	
+.f5default .f5button-label {	
+	text-shadow: 0px 0px 1px white;	
+}
+
+.f5default .f5button-press .f5button-label {	
+	text-shadow: none;	
 }
 
 .f5default.f5navbar .f5button, .f5default.f5button {
@@ -100,8 +104,8 @@
 .f5default.f5navbar .f5button.f5button-up {
 	background-image: -webkit-gradient(linear, center bottom, center top, 
 		from(#838383),
-			color-stop(0.525, #838383),
-			color-stop(.555, #d6d6d6),
+			color-stop(0.48, #838383),
+			color-stop(.52, #d6d6d6),
 		to(#d6d6d6));
 }
 
@@ -109,8 +113,8 @@
 .f5default.f5navbar .f5button.f5button-up.f5button-press {
 	background-image: -webkit-gradient(linear, center bottom, center top, 
 		from(#676767),
-			color-stop(0.525, #676767),
-			color-stop(.555, #aaaaaa),
+			color-stop(0.48, #676767),
+			color-stop(.52, #aaaaaa),
 		to(#aaaaaa));
 }
 
