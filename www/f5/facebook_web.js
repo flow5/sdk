@@ -97,7 +97,9 @@
 	}
 	
 	function logout(cb) {
-		FB.logout();
+		if (typeof FB !== 'undefined') {
+			FB.logout();			
+		}
 		cb();
 	}
 	

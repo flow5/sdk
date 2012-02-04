@@ -96,6 +96,25 @@
 			to(#505050));
 }
 
+.f5default.f5button.f5button-up,
+.f5default.f5navbar .f5button.f5button-up {
+	background-image: -webkit-gradient(linear, center bottom, center top, 
+		from(#838383),
+			color-stop(0.525, #838383),
+			color-stop(.555, #d6d6d6),
+		to(#d6d6d6));
+}
+
+.f5default.f5button.f5button-up.f5button-press,
+.f5default.f5navbar .f5button.f5button-up.f5button-press {
+	background-image: -webkit-gradient(linear, center bottom, center top, 
+		from(#676767),
+			color-stop(0.525, #676767),
+			color-stop(.555, #aaaaaa),
+		to(#aaaaaa));
+}
+
+
 
 .f5default.f5tabset .f5button.f5button-up .f5Mask {
 	background-image: -webkit-gradient(linear, 50% 80%, center top, from(#383838), to(#B0B0B0));
@@ -152,24 +171,6 @@
 .f5default.f5navbar {
 	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#fefefe), color-stop(100%,#d6d8da));
 	background-size: 100%;
-}
-
-.f5default.f5button.f5button-up,
-.f5default.f5navbar .f5button.f5button-up {
-	background-image: -webkit-gradient(linear, center bottom, center top, 
-		from(#838383),
-			color-stop(0.525, #838383),
-			color-stop(.555, #d6d6d6),
-		to(#d6d6d6));
-}
-
-.f5default.f5button.f5button-up.f5button-press,
-.f5default.f5navbar .f5button.f5button-up.f5button-press {
-	background-image: -webkit-gradient(linear, center bottom, center top, 
-		from(#676767),
-			color-stop(0.525, #676767),
-			color-stop(.555, #aaaaaa),
-		to(#aaaaaa));
 }
 
 .f5default.f5navbar .f5title {
