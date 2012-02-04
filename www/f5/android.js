@@ -51,8 +51,12 @@ F5.Global.flowController.addWaitTask(function (cb) {
 	   this is just to illustrate the navbar-less style in Android */
 	function MenuHelper() {
 
-		this.start = function () {
-			this.updateConfiguration(F5.Global.flow.root);
+		this.start = function () {			
+			var that = this;
+			F5.Global.flowController.addWaitTask(function (cb) {
+				that.updateConfiguration(F5.Global.flow.root);				
+				cb();
+			});			
 		};
 
 		this.doSelection = function (node, id) {
