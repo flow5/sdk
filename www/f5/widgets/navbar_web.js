@@ -34,6 +34,11 @@
 		var title = {};
 		var buttons = {};
 		var containers = {};
+
+		// make space for the navbar
+		this.widgetWillBecomeActive = function () {
+			this.el.parentElement.style['padding-top'] = this.el.offsetHeight + 'px';
+		};
 			
 		this.construct = function (data) {
 			

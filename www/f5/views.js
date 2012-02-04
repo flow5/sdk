@@ -160,9 +160,14 @@
 				this.delegate.initialize(this.el, this.node);					
 			} else {										
 				// default navigation controls
+				var div = document.createElement('div');
+				div.style.position = 'relative';
+				div.style['z-index'] = 1;
+				this.el.insertBefore(div, this.el.firstChild);
+				
 				var navControls = document.createElement('div');
 				F5.addClass(navControls, 'f5navcontrols');
-				this.el.appendChild(navControls);
+				div.appendChild(navControls);
 				
 				if (node.subflows) {
 					var subflowsEl = document.createElement('div');

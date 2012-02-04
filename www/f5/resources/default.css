@@ -57,6 +57,7 @@
 	-webkit-box-sizing: border-box;
 	z-index: 1000;
 	-webkit-transition: opacity .25s;	
+	box-shadow: 0px 1px 3px #888;
 }
 
 .f5navbar .f5leftbutton, .f5navbar .f5rightbutton {
@@ -511,6 +512,10 @@
 	top: 0px;
 	left: 0px;
 	width: 100%;
+}
+
+.f5transitions .f5button {
+	border-radius: 0px;
 }
 
 .f5transitions .f5button-label, .f5subflows .f5button-label {

@@ -46,12 +46,6 @@ function forEach(obj, fn) {
 	}
 }
 
-function extend(obj1, obj2) {
-	forEach(obj2, function (id, value) {
-		obj1[id] = value;
-	});
-}
-
 function parseJSON(path) {
 	// strip out commments		
 	var json = minify(fs.readFileSync('www/' + path).toString());
@@ -364,6 +358,8 @@ exports.generateHtml = function(parsed) {
 			});
 		}	
 		
+		
+		
 		// resource files
 		function injectResources(resourceFiles) {
 			resourceFiles.forEach(function (file) {
@@ -374,7 +370,21 @@ exports.generateHtml = function(parsed) {
 							obj[id] = inlineData(resolvePath(src, base));										
 						});
 					}
+
+					function extend(obj1, obj2) {
+						forEach(obj2, function (id, value) {
+							if (!obj1[id]) {
+								obj1[id] = value;
+							} else if (typeof value === 'object') {
+								extend(obj1[id], value);
+							} else {
+								console.log('Resource shadowed: ' + id);
+								obj1[id] = value;								
+							}
+						});
+					}
 					extend(resources, r);		
+					
 				} catch (e) {
 					console.log('error:' + e.stack);
 				}				
