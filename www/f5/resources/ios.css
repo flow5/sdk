@@ -75,9 +75,9 @@
 	background-color: transparent;
 }
 
-.f5default.f5button .f5button-down .f5mask, 
-.f5default.f5navbar .f5button .f5button-down .f5mask,
-.f5default.f5tabset .f5button .f5button-down .f5mask {
+.f5default.f5button.f5button-down .f5mask, 
+.f5default.f5navbar .f5button.f5button-down .f5mask,
+.f5default.f5tabset .f5button.f5button-down .f5mask {
 	background-image: -webkit-gradient(linear, 55% 100% , 45% 0%,
 	                from(#A5F5FF), 
 	                        color-stop(.58, #3595FF), 
@@ -85,28 +85,28 @@
 	                to(#C0EDFF));
 }
 
-.f5default.f5button .f5button-down, 
-.f5default.f5navbar .f5button .f5button-down,
-.f5default.f5tabset .f5button .f5button-down {
+.f5default.f5button.f5button-down, 
+.f5default.f5navbar .f5button.f5button-down,
+.f5default.f5tabset .f5button.f5button-down {
 	border-radius: .03em;	
 	background-image: -webkit-gradient(linear, center bottom, center top, 
 			from(#202020), 
-				color-stop(0.525, #202020), 
-				color-stop(.555, #3A3A3A),
+				color-stop(0.50, #202020), 
+				color-stop(.52, #3A3A3A),
 			to(#505050));
 }
 
 
-.f5default.f5tabset .f5button .f5button-up .f5Mask {
+.f5default.f5tabset .f5button.f5button-up .f5Mask {
 	background-image: -webkit-gradient(linear, 50% 80%, center top, from(#383838), to(#B0B0B0));
 }
 
-.f5default.f5button .f5button-down .f5mask, 
-.f5default.f5navbar .f5button .f5button-down .f5mask {
+.f5default.f5button.f5button-down .f5mask, 
+.f5default.f5navbar .f5button.f5button-down .f5mask {
 	color: white;
 }
 
-.f5default..f5button .f5button-up .f5Mask {
+.f5default.f5button.f5button-up .f5Mask {
 	color: grey;
 }
 
@@ -123,9 +123,9 @@
 	width: 100%;
 }
 
-.f5default.f5button .f5button-down .f5mask-shadow,
-.f5default.f5navbar .f5button .f5button-down .f5mask-shadow,
-.f5default.f5tabset .f5button .f5button-down .f5mask-shadow {
+.f5default.f5button.f5button-down .f5mask-shadow,
+.f5default.f5navbar .f5button.f5button-down .f5mask-shadow,
+.f5default.f5tabset .f5button.f5button-down .f5mask-shadow {
 	background-color:black;
 }
 
