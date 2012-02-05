@@ -25,18 +25,4 @@
 
 ***********************************************************************************************************************/
 
-#f5appframe {
-	font-size: 100px;
-}
-
-.f5navbar {
-	height: 44px;
-}
-
-.f5tabset {
-	height: 48px;
-}
-
-.splash {
-	top: -20px;
-}
+/* the place to put any ios specific quirks. for ios native styles use /packages/ios.css *?

@@ -46,6 +46,7 @@
 /***************************************/
 
 .f5navbar {
+	height: .44em;	
 	position: absolute;
 	top: 0px;
 	display: -webkit-box;
@@ -179,6 +180,7 @@
 /***************************************/
 
 .f5tabset {
+	height: .49em;	
 	width: 100%;
 	display: -webkit-box;	
 }
