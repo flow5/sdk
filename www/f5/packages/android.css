@@ -25,4 +25,54 @@
 
 ***********************************************************************************************************************/
 
-/* ios.css contains styles that can be used with f5 widgets to create android native look */
+/* android.css contains styles that can be used with f5 widgets to create android native look */
+
+
+.f5tabset {
+	padding-top: 2px;
+	background-color: black;
+}
+
+.f5tabset .f5button {
+	-webkit-box-sizing: border-box;	
+	background-color: black;	
+}
+
+.f5tabset .f5button.f5button-down {
+	border-bottom: 6px solid #33b5e5;	
+}
+
+.f5tabset .f5button  {
+	border-bottom: 2px solid #33b5e5;		
+	margin-right: 1px;
+	border-right: 1px solid #2e3031;
+}
+
+.f5tabset .f5button:last-child {
+	border-right: none;
+	margin-right: 0px;
+}
+
+.f5tabset .f5button .f5button-label {
+	margin-bottom: -3px;
+}
+
+.f5tabset .f5button.f5button-down .f5button-label {
+	margin-bottom: -7px;
+}
+
+.f5tabset .f5button.f5button-press {
+	background-color: #1d5e77;
+}
+
+.f5tabset .f5button-label {
+	color: lightgrey;
+}
+
+.f5button.f5button-up {
+	background-color: lightgrey;
+}
+
+.f5button.f5button-press {
+	background-color: darkgrey;	
+}

@@ -159,7 +159,6 @@
 	left: .01em;
 }
 
-
 .f5default.f5tabset .f5button {
 	margin-top: .03em;
 	margin-bottom: .03em;
@@ -171,6 +170,16 @@
 	background-color: transparent
 }
 
+.f5default.f5tabset .f5button {
+	-webkit-box-align: end;	
+}
+
+.f5default.f5tabset .f5button-label {
+	font-family: Arial;
+	font-size: .08em;
+	font-weight:800;
+	padding: 0px;
+}
 
 .f5default.f5navbar {
 	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#fefefe), color-stop(100%,#d6d8da));

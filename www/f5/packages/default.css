@@ -153,6 +153,27 @@
 	background-color: black;
 }
 
+.f5button .f5mask {
+	position: absolute;
+	-webkit-mask-origin: border-box;
+	-webkit-mask-repeat: no-repeat;
+	-webkit-mask-size: .24em .24em;
+	-webkit-mask-position: center center;
+	width: 100%;
+	height: 100%;	
+}
+
+.f5button.f5button-up .f5mask {
+	background-image: none;
+	background-color: white;
+}
+
+.f5button.f5button-up.f5button-press .f5mask {
+	background-image: none;
+	background-color: grey;
+}
+
+
 /***************************************/
 /*              Tab Set                */
 /***************************************/
