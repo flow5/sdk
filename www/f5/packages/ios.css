@@ -57,7 +57,7 @@
 }
 
 .f5default.f5navbar .f5button, .f5default.f5button {
-	-webkit-box-shadow: inset 0px 0px 3px #888	
+	-webkit-box-shadow: inset 0px 0px .03em #888	
 }
 
 /* -webkit-linear-gradient is easier to use, but only iOS 5 */
@@ -71,7 +71,7 @@
 			color-stop(.985, #606060), 
 			color-stop(.985, #000000), 
 		to(#000000));
-	height: 49px;
+	height: .49em;
 	background-size: 100%;
 }
 
@@ -195,8 +195,8 @@
 }
 
 .f5default.f5switch {
-	-webkit-box-shadow: inset 0px 1px 2px .5px #000;
-	border-radius: 15px;
+	-webkit-box-shadow: inset 0px 1px .02em .5px #000;
+	border-radius: .15em;
 	/* workaround for: https://bugs.webkit.org/show_bug.cgi?id=67950 
 	   border radius doesn't clip the transformed slider. so apply an svg mask */
 	-webkit-mask-box-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 70 30"><g><path d="m 15,30 40,0 c 8.2843,0 15,-6.7157 15,-15 l 0,0 c 0,-8.2843 -6.7157,-15 -15,-15 l -40,0 c -8.2843,0 -15,6.7157 -15,15 0,0 0,0 0,0 l 0,0 c 0,8.2843 6.7157,15 15,15 z"/></g></svg>');
@@ -217,16 +217,16 @@
 }
 
 .f5default .f5slider .left {
-	padding-right: 8px;	
-	border-top-left-radius: 15px;	
-	border-bottom-left-radius: 15px;	
-	-webkit-box-shadow: inset 0px 1px 2px .5px #444;	
+	padding-right: .08em;	
+	border-top-left-radius: .15em;	
+	border-bottom-left-radius: .15em;	
+	-webkit-box-shadow: inset 0px 1px .02em .5px #444;	
 }
 
 .f5default .f5slider .right {
-	padding-left: 10px;	
-	border-top-right-radius: 15px;	
-	border-bottom-right-radius: 15px;	
-	-webkit-box-shadow: inset 0px 1px 2px .5px #777;		
+	padding-left: .10em;	
+	border-top-right-radius: .15em;	
+	border-bottom-right-radius: .15em;	
+	-webkit-box-shadow: inset 0px 1px .02em .5px #777;		
 }
 

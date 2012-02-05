@@ -38,14 +38,22 @@
 			F5.attachWidget(this.slider, 'Tracker');
 			
 			this.left = document.createElement('div');
-			this.left.innerText = 'ON';
 			F5.addClass(this.left, 'left');
 			this.slider.appendChild(this.left);
 
+			var on = document.createElement('div');
+			on.innerText = 'ON';
+			F5.addClass(on, 'f5label');
+			this.left.appendChild(on);
+
 			this.right = document.createElement('div');
-			this.right.innerText = 'OFF';
 			F5.addClass(this.right, 'right');
 			this.slider.appendChild(this.right);
+			
+			var off = document.createElement('div');
+			off.innerText = 'OFF';
+			F5.addClass(off, 'f5label');
+			this.right.appendChild(off);
 			
 			this.control = document.createElement('div');
 			F5.addClass(this.control, 'f5control');			
