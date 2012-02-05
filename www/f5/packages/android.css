@@ -27,10 +27,6 @@
 
 /* android.css contains styles that can be used with f5 widgets to create android native look */
 
-#f5appframe {
-	font-size: 150px;	
-}
-
 .f5tabset {
 	background-color: black;
 	height: .30em;	
@@ -70,34 +66,4 @@
 
 .f5button.f5button-press {
 	background-color: darkgrey;	
-}
-
-.f5androidsettingsmenu {
-	display: -webkit-box;
-	-webkit-box-orient: vertical;
-	-webkit-box-align: center;
-	-webkit-box-pack: end;
-	position: absolute;
-	bottom: 0px;
-	width: 100%;
-	height: 100%;	
-}
-
-.f5androidsettingscontainer {
-	-webkit-box-shadow: 0 0 10px 1px #000;	
-	opacity: 0;
-	-webkit-transform: scale(.9);
-	-webkit-transform-origin: 50% 100%;
-	-webkit-transition-property: opacity, -webkit-transform;
-	-webkit-transition-duration: .15s, .15s;	
-	width: 75%;
-}
-
-.f5androidsetting {
-	border-bottom: 1px solid #4F4F4F;	
-	padding: .5em;
-	-webkit-box-sizing: border-box;	
-	font-size: .18em;
-	background-color: #303030;
-	color: #EEE;
 }

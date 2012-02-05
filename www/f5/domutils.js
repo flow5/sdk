@@ -409,7 +409,7 @@
 	F5.attachTabset = function (el, node, position, className) {
 		el.setAttribute('f5tabsetposition', position);						
 		F5.attachWidget(el, 'Tabset', F5.getNodeData(node));
-		F5.addClass(el.widget.tabset, node.id);
+		F5.addClass(el.widget.tabset, node.id + '-tabset');
 		if (className) {
 			F5.addClass(el.widget.tabset, className);			
 		}

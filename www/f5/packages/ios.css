@@ -169,10 +169,6 @@
 	background-color: transparent
 }
 
-.f5default.f5tabset .f5button {
-	-webkit-box-align: end;	
-}
-
 .f5default.f5tabset .f5button-label {
 	font-family: Arial;
 	font-size: .08em;

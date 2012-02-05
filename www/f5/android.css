@@ -25,12 +25,17 @@
 
 ***********************************************************************************************************************/
 
-/* workarounds for Android quirks. always included. for Android native styles use /packages/android.css */
+/* mainly workarounds for Android quirks. always included. for Android native styles use /packages/android.css */
 
 /* override default tap highlighting on webview content */
 body {
 	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);	
 }
+
+#f5appframe {
+	font-size: 150px;	
+}
+
 
 /* unclear on why this is required for Android */
 .f5mobile #f5screen {
@@ -51,3 +56,36 @@ body {
 		zoom: 2;
 	}	
 }
+
+/* default presentation for the android settings menu */
+
+.f5androidsettingsmenu {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-box-align: center;
+	-webkit-box-pack: end;
+	position: absolute;
+	bottom: 0px;
+	width: 100%;
+	height: 100%;	
+}
+
+.f5androidsettingscontainer {
+	-webkit-box-shadow: 0 0 10px 1px #000;	
+	opacity: 0;
+	-webkit-transform: scale(.9);
+	-webkit-transform-origin: 50% 100%;
+	-webkit-transition-property: opacity, -webkit-transform;
+	-webkit-transition-duration: .15s, .15s;	
+	width: 75%;
+}
+
+.f5androidsetting {
+	border-bottom: 1px solid #4F4F4F;	
+	padding: .5em;
+	-webkit-box-sizing: border-box;	
+	font-size: .18em;
+	background-color: #303030;
+	color: #EEE;
+}
+
