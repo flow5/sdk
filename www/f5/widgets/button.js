@@ -197,6 +197,8 @@
 				makeContainer('up');	
 				makeContainer('down');	
 				
+				F5.addClass(that.el, 'f5maskbutton');
+				
 				var div = document.createElement('div');
 				F5.addClass(div, 'f5mask');
 				div.style['-webkit-mask-image'] = 'url("' + value.src() + '")';

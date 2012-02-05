@@ -38,12 +38,13 @@
 }
 
 .f5tabset .f5button.f5button-down {
+	padding-top: .10em;
 	border-bottom: .04em solid #33b5e5;	
 }
 
 .f5tabset .f5button  {
+	padding-top: .08em;
 	border-bottom: .02em solid #33b5e5;		
-	margin-right: 1px;
 	border-right: 1px solid #2e3031;
 }
 
@@ -52,17 +53,33 @@
 	margin-right: 0px;
 }
 
-.f5tabset .f5button.f5button-press {
+.f5tabset .f5button.f5button-up.f5button-press,
+.f5tabset .f5button.f5button-down.f5button-press {
 	background-color: #1d5e77;
-}
-
-.f5tabset .f5button-label {
-	color: lightgrey;
 }
 
 .f5button.f5button-up {
 	background-color: lightgrey;
 }
+
+.f5tabset .f5button.f5button-up {
+	background-color: black;
+}
+
+.f5tabset .f5button.f5button-up .f5button-label {
+	color: lightgrey;
+}
+
+/*
+.f5tabset .f5button.f5button-up .f5button-label {
+	padding-top: .75em;
+}
+
+.f5tabset .f5button.f5button-down .f5button-label {
+	padding-top: 1.25em;
+}
+*/
+
 
 .f5button.f5button-press {
 	background-color: darkgrey;	

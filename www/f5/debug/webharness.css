@@ -120,7 +120,11 @@
 	border: 1px solid black;	
 }
 
-.jsonbutton .f5button-label, .framesbutton .f5button-label, .resetbutton .f5button-label {
+.jsonbutton .f5button-label, 
+.framesbutton .f5button-label, 
+.resetbutton .f5button-label,
+.menubutton .f5button-label
+{
 	font-size: .16em;	
 }
 

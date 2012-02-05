@@ -168,7 +168,7 @@
 	background-color: grey;
 }
 
-.f5default.f5tabset .f5button {
+.f5default.f5tabset .f5button.f5maskbutton {
 	-webkit-box-align: end;	
 }
 
