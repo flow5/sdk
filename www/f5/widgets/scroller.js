@@ -31,30 +31,37 @@
 	var standardBounceDistance = 40;		
 	var flickVelocityThreshold = 0.05;		
 	var bounceBackDuration = 500;
-			
+	
+	// see below
+	var useAndroidTransformWorkaround = false;			
 	function doTransform(scroller, offset, duration, bezierValues) {	
-		if (duration) {
-			var bezier = 'cubic-bezier(' + bezierValues.join(',') + ')';
-			scroller.el.style['-webkit-transition'] = '-webkit-transform ' + duration + 's ' + bezier;				
-		} else {
-			scroller.el.style['-webkit-transition'] = '';
-		}
 		var transform;
 		if (scroller.horizontal) {
-			// NOTE: translate3d is flaky on ICS and sometimes doesn't "take"
+			transform = 'translate3d(' + offset + 'px, 0px, 0px)';				
+		} else {
+			transform = 'translate3d(0px, ' + offset + 'px, 0px)';				
+		}
+		scroller.el.style['-webkit-transform'] = transform;		
+
+		if (duration) {
+			var bezier = 'cubic-bezier(' + bezierValues.join(',') + ')';
+			scroller.el.style['-webkit-transition'] = '-webkit-transform ' + duration + 's ' + bezier;	
+			
 			if (F5.platform() === 'android') {
-				transform = 'translateX(' + offset + 'px)';				
-			} else {
-				transform = 'translate3d(' + offset + 'px, 0px, 0px)';				
+				useAndroidTransformWorkaround = true;
 			}
 		} else {
-			if (F5.platform() === 'android') {
-				transform = 'translateY(' + offset + 'px)';				
+			// Android has varous bugs where operations don't "take" during an animation if the operation
+			// isn't also executing in the animation context
+			// in this case, the change to -webkit-transform is ignored (sometimes) unless there
+			// is still a transition in place
+			if (useAndroidTransformWorkaround) {
+				scroller.el.style['-webkit-transition'] = '-webkit-transform .0001s linear';				
+				useAndroidTransformWorkaround = false;
 			} else {
-				transform = 'translate3d(0px, ' + offset + 'px, 0px)';				
+				scroller.el.style['-webkit-transition'] = '';				
 			}
 		}
-		scroller.el.style['-webkit-transform'] = transform;
 	}
 	
 	function pinOffset(scroller, offset, margin) {
