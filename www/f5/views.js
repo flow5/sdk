@@ -215,8 +215,6 @@
 	FlowView.prototype = ViewPrototype;
 		
 	function SwitcherView() {
-		// default behavior is to create a bottom tab set
-		// override by defining a view delegate for this node			
 		this.initialize = function (node) {
 			this.initializeView(node);
 
@@ -226,9 +224,15 @@
 
 			if (this.delegate && this.delegate.initialize) {
 				this.delegate.initialize();					
-			} else {
-				F5.attachTabset(this.el, node, 'bottom', 'f5default');
-			}				
+			} 
+
+			// attach the tabset. styling is defined by resources
+			F5.attachWidget(this.el, 'Tabset', F5.getNodeData(node));
+			F5.addClass(this.el.widget.tabset, node.id + '-tabset');
+			this.el.widget.setAction(function selectionChangeCb(id) {
+				F5.Global.flowController.doSelection(node, id);					
+			});
+			this.el.widget.select(node.selection.id);		
 		};
 		
 		this.doSelection = function (node, id) {

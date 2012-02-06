@@ -87,6 +87,11 @@
 		
 			this.tabset = document.createElement('div');
 			F5.addClass(this.tabset, 'f5tabset');
+			
+			var className = data['f5tabsetclass'];
+			if (className) {
+				F5.addClass(this.tabset, className);
+			}
 								
 			that.tabs = {};
 		
@@ -110,7 +115,7 @@
 				});				
 			});	
 			
-			var position = that.el.getAttribute('f5tabsetposition');
+			var position = data['f5tabsetposition'];
 			if (position && position === 'top') {
 				that.el.insertBefore(this.tabset, that.el.childNodes[0]);
 			} else {

@@ -41,7 +41,16 @@
 		} else {
 			transform = 'translate3d(0px, ' + offset + 'px, 0px)';				
 		}
-		scroller.el.style['-webkit-transform'] = transform;		
+		// Android sometimes drops the animation on the ground if there isn't
+		// a delay between the time that -webkit-transition is setup and when
+		// the transform is set
+		if (F5.platform() === 'android' && duration) {
+			setTimeout(function () {
+				scroller.el.style['-webkit-transform'] = transform;									
+			}, 10);
+		} else {
+			scroller.el.style['-webkit-transform'] = transform;					
+		}
 
 		if (duration) {
 			var bezier = 'cubic-bezier(' + bezierValues.join(',') + ')';
@@ -155,7 +164,7 @@
 		if (!scroller.tracking) {
 			return;
 		}		
-
+		
 		scroller.staticOffset = scroller.currentOffset;				
 		scroller.tracking = false;		
 		
@@ -165,7 +174,7 @@
 		}
 
 		var velocity = updateVelocity(scroller, e);	
-		if (Math.abs(velocity) > flickVelocityThreshold && !overDragged(velocity)) {						
+		if (Math.abs(velocity) > flickVelocityThreshold && !overDragged(velocity)) {	
 			velocity = pinVelocity(velocity);
 
 			// based on http://code.google.com/mobile/articles/webapp_fixed_ui.html

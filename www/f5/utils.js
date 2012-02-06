@@ -200,7 +200,17 @@
 		// then add all of the strings resources associated with this node and ancestors
 		var traverse = node;
 		while (traverse) {
-			F5.merge(F5.Resources[traverse.id], data);
+			var resourceData = {};
+			F5.merge(F5.Resources[traverse.id], resourceData);
+						
+			if (traverse !== node) {
+				F5.forEach(resourceData, function (id, value) {
+					if (id[0] !== '.') {
+						delete resourceData[id];
+					}
+				});
+			}
+			F5.merge(resourceData, data);
 			traverse = traverse.parent;
 		}
 		
