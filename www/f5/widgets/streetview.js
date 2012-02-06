@@ -31,12 +31,14 @@
 	function StreetView() {
 		
 		this.construct = function (data) {
-			this.streetView = new google.maps.StreetViewPanorama(this.el, {pano:data.pano});
-						
+			try {
+				this.streetView = new google.maps.StreetViewPanorama(this.el, {pano:data.pano});
+			} catch (e) {
+				console.log(e.message);
+			}
 			this.closeButton = F5.createWidget('Button', data, 'closeButton');
 			F5.addClass(this.closeButton, 'f5closebutton');
-			
-			this.el.appendChild(this.closeButton);															
+			this.el.appendChild(this.closeButton);																						
 		};	
 		
 		this.setCloseAction = function (action) {
