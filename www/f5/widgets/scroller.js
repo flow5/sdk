@@ -32,15 +32,29 @@
 	var flickVelocityThreshold = 0.05;		
 	var bounceBackDuration = 500;
 			
-	function transform(scroller, offset, duration, bezierValues) {	
+	function doTransform(scroller, offset, duration, bezierValues) {	
 		if (duration) {
 			var bezier = 'cubic-bezier(' + bezierValues.join(',') + ')';
 			scroller.el.style['-webkit-transition'] = '-webkit-transform ' + duration + 's ' + bezier;				
 		} else {
 			scroller.el.style['-webkit-transition'] = '';
 		}
-		scroller.el.style['-webkit-transform'] = scroller.horizontal ? 'translate3d(' + offset + 'px,0px,0px)' : 
-																'translate3d(0px,' + offset + 'px,0px)';				
+		var transform;
+		if (scroller.horizontal) {
+			// NOTE: translate3d is flaky on ICS and sometimes doesn't "take"
+			if (F5.platform() === 'android') {
+				transform = 'translateX(' + offset + 'px)';				
+			} else {
+				transform = 'translate3d(' + offset + 'px, 0px, 0px)';				
+			}
+		} else {
+			if (F5.platform() === 'android') {
+				transform = 'translateY(' + offset + 'px)';				
+			} else {
+				transform = 'translate3d(0px, ' + offset + 'px, 0px)';				
+			}
+		}
+		scroller.el.style['-webkit-transform'] = transform;
 	}
 	
 	function pinOffset(scroller, offset, margin) {
@@ -63,7 +77,7 @@
 	
 	function stopScrollingAt(scroller, offset) {
 		scroller.staticOffset = scroller.currentOffset = offset;
-		transform(scroller, scroller.staticOffset);
+		doTransform(scroller, scroller.staticOffset);
 	}
 		
 	function eventPosition(scroller, e) {
@@ -105,7 +119,7 @@
 			} else {
 				bezier = scroller.curves.softSnap;
 			}
-			transform(scroller, offset, 0.5, bezier);
+			doTransform(scroller, offset, 0.5, bezier);
 
 			scroller.currentOffset = scroller.staticOffset = offset;
 		}	
@@ -164,7 +178,7 @@
 				finishScrolling(scroller);
 			});						
 
-			transform(scroller, pinnedOffset, scrollDuration/1000, scroller.curves.flick);
+			doTransform(scroller, pinnedOffset, scrollDuration/1000, scroller.curves.flick);
 
 			scroller.staticOffset = pinnedOffset;	
 			// also update the currentOffset since we're animating a move				
@@ -237,7 +251,7 @@
 
 		scroller.currentOffset = constrainDrag(scroller.staticOffset, delta);
 
-		transform(scroller, scroller.currentOffset);
+		doTransform(scroller, scroller.currentOffset);
 	}	
 		
 	function Scroller(el) {
@@ -299,7 +313,7 @@
 				F5.addTouchMoveListener(that.el, moveHandlerWrapper);
 			});
 						
-			transform(this, this.staticOffset);
+			doTransform(this, this.staticOffset);
 		};
 		
 		this.widgetWillBecomeActive = function () {
@@ -307,7 +321,7 @@
 				this.refresh();
 				this.initialized = true;				
 			}			
-		}
+		};
 				
 		this.widgetDidBecomeActive = function () {
 			window.addEventListener('orientationchange', this.refreshFunction);
@@ -330,7 +344,7 @@
 			this.container = F5.elementOffsetGeometry(this.el.parentElement);
 			this.minOffset = Math.min(this.container.height - this.el.offsetHeight, 0);
 			this.staticOffset = 0;
-			transform(this, 0);				
+			doTransform(this, 0);				
 			this.initialized = false;				
 		};
 	}
