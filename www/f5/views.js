@@ -227,12 +227,14 @@
 			} 
 
 			// attach the tabset. styling is defined by resources
-			F5.attachWidget(this.el, 'Tabset', F5.getNodeData(node));
-			F5.addClass(this.el.widget.tabset, node.id + '-tabset');
-			this.el.widget.setAction(function selectionChangeCb(id) {
-				F5.Global.flowController.doSelection(node, id);					
-			});
-			this.el.widget.select(node.selection.id);		
+			if (Object.keys(node.children).length > 1) {
+				F5.attachWidget(this.el, 'Tabset', F5.getNodeData(node));
+				F5.addClass(this.el.widget.tabset, node.id + '-tabset');
+				this.el.widget.setAction(function selectionChangeCb(id) {
+					F5.Global.flowController.doSelection(node, id);					
+				});
+				this.el.widget.select(node.selection.id);						
+			}
 		};
 		
 		this.doSelection = function (node, id) {
