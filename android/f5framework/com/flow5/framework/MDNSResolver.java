@@ -7,6 +7,7 @@ import java.net.MulticastSocket;
 import org.xbill.DNS.*;
 
 import android.app.Activity;
+import android.os.SystemClock;
 
 
 public class MDNSResolver {
@@ -32,36 +33,39 @@ public class MDNSResolver {
 			InetAddress group = InetAddress.getByName("224.0.0.251");
 			socket.joinGroup(group);
 			
-			// create a dns query
-			Record rec = Record.newRecord(name, Type.A, DClass.IN);
-			Message query = Message.newQuery(rec);
+			final long cTimeoutMS = 1000;
+			long startMS = SystemClock.elapsedRealtime();
+		
+			while (answer == null && (SystemClock.elapsedRealtime() - startMS) < cTimeoutMS) {			
+				// create a dns query
+				Record rec = Record.newRecord(name, Type.A, DClass.IN);
+				Message query = Message.newQuery(rec);
+				
+				// serialize and send
+				byte [] out = query.toWire(Message.MAXLENGTH);
+				DatagramPacket packet = new DatagramPacket(out, out.length, group, 5353);
+				socket.send(packet);
 			
-			// serialize and send
-			byte [] out = query.toWire(Message.MAXLENGTH);
-			DatagramPacket packet = new DatagramPacket(out, out.length, group, 5353);
-			socket.send(packet);
-			
-			// wait for an answer
-				while (answer == null) {
-					byte[] in = new byte[512];
-			 	    packet = new DatagramPacket(in, in.length);
-			 	    socket.receive(packet);        	    
-			 	                 		
-					Message response =  new Message(in);
-					Record records[] = response.getSectionArray(Section.ANSWER);
-					if (records != null) {
-						for (int i=0; i<records.length; ++i) {
-							if (records[i].getName().equals(name)) {
-								answer = records[i];
-							}
+				// wait for an answer
+				byte[] in = new byte[512];
+		 	    packet = new DatagramPacket(in, in.length);
+		 	    socket.receive(packet);        	    
+		 	                 		
+				Message response =  new Message(in);
+				Record records[] = response.getSectionArray(Section.ANSWER);
+				if (records != null) {
+					for (int i=0; i<records.length; ++i) {
+						if (records[i].getName().equals(name)) {
+							answer = records[i];
 						}
-					}   			
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			} finally {
-			    lock.release();  
+					}
+				}   			
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+		    lock.release();  
+		}
 		 
 		if (answer != null) {
 			 result = ((ARecord)answer).getAddress().getHostAddress();			
