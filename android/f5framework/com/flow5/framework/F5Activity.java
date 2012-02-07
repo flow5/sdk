@@ -56,7 +56,7 @@ public class F5Activity extends DroidGap {
 						}
 									
 						LOG.d("F5", url);
-		                activity.loadUrl(url);					
+		                activity.loadUrl(url);				                		               
 					}
                 	
                 });				

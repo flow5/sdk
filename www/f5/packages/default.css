@@ -210,6 +210,15 @@
 	-webkit-box-pack: center;
 }
 
+.f5button-label {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	width: 100%;
+	display: -webkit-box;
+	-webkit-box-pack: center;		
+}
+
 /***************************************/
 /*             Miscellany              */
 /***************************************/

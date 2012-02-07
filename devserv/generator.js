@@ -407,9 +407,7 @@ exports.generateHtml = function(parsed) {
 		processManifest(manifest, query, 'scripts', injectScripts);									
 		processManifest(manifest, query, 'elements', injectElements);	
 		processManifest(manifest, query, 'resources', injectResources);											
-	}	
-	
-	
+	}			
 	
 	/***********************************/
 	/************** BUILD **************/
@@ -464,15 +462,7 @@ exports.generateHtml = function(parsed) {
 	document.body.appendChild(appframeEl);
 				
 	scriptsEl.appendChild(makeScript('f5/start.js'));				
-	
-	// TODO: enable/disable on device? need to expose mdns lookup on Android
-	if (false && boolValue(query.mobile) && boolValue(query.debug)) {
-		var weinre = document.createElement('script');
-		weinre.src = 'http://' + require('os').hostname() + ':8081/target/target-script-min.js#anonymous';
-//		weinre.src = 'http://10.0.1.5:8081/target/target-script-min.js#anonymous';
-		document.head.appendChild(weinre);			
-	}
-			
+				
 	var html = document.outerHTML.replace('<head>', '<head><style>' + styleBlock + '</style>');		
 	return html;
 };
