@@ -162,7 +162,6 @@ cli.main(function (args, options) {
 		function doGenerate(parsed, req, res) {
 			try {
 				var agent = req.headers['user-agent'];
-				console.log(agent);
 				if (!parsed.query.platform) {
 					if (agent.match(/android/i)) {
 						parsed.query.platform = 'android';
