@@ -159,8 +159,25 @@ cli.main(function (args, options) {
 			assert(query.app, 'Bad parameter "app" = ' + query.app);
 		}	
 		
-		function doGenerate(parsed, res) {
+		function doGenerate(parsed, req, res) {
 			try {
+				var agent = req.headers['user-agent'];
+				console.log(agent);
+				if (!parsed.query.platform) {
+					if (agent.match(/android/i)) {
+						parsed.query.platform = 'android';
+					} else {
+						parsed.query.platform = 'ios';						
+					}
+				}
+				if (!parsed.query.mobile) {
+					if (agent.match(/(iphone)|(android)/i)) {
+						parsed.query.mobile = 'true';
+					} else {
+						parsed.query.mobile = 'false';
+					}
+				}
+				
 				verifyQueryParameters(parsed.query);
 				var html = generator.generateHtml(parsed);
 				if (parsed.query.compress === 'false') {
@@ -193,7 +210,7 @@ cli.main(function (args, options) {
 				getMessageBody(req, function (body) {
 					// assume that the body is a facebook signed request
 					parsed.query.body = body;
-					doGenerate(parsed, res);					
+					doGenerate(parsed, req, res);					
 				});
 			} else if (req.url.indexOf('dot2svg') !== -1) {
 				dot2svg(req, res);	
@@ -230,7 +247,7 @@ cli.main(function (args, options) {
 			break;		
 		case 'GET':
 			if (req.url.indexOf('generate?') !== -1) {
-				doGenerate(parsed, res);
+				doGenerate(parsed, req, res);
 			} else if (req.url.match('cache.manifest')) {
 //				res.writeHead(404);
 				res.writeHead(200, {'Content-Type': 'text/cache-manifest'});
