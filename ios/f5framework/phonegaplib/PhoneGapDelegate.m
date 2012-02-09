@@ -682,9 +682,6 @@ BOOL gSplashScreenShown = NO;
         [self flushCommandQueue];
         return NO;
      }
-    /*
-     * If a URL is being loaded that's a file/http/https URL, just load it internally
-     */
     else if ([url isFileURL])
     {
         return YES;

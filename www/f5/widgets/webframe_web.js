@@ -27,26 +27,22 @@
 /*global F5, PhoneGap*/
 
 (function () {
-	function call(number) {
-		var cleanNumber = number.replace(/[^0-9]/g, '');
-		if (typeof PhoneGap !== 'undefined') {
-			PhoneGap.exec(
-				function (result) { // success
-					console.log(result);
-				}, 
-				function (result) { // failure
-					console.log(result);
-				}, 
-				'com.flow5.phonecall', // the plugin name
-				'call', // the method
-				[{number: cleanNumber}]
-			);								
-		} else {
-			window.open('tel:' + cleanNumber, '_blank');
-		}		
-	}
+	
+	function WebFrame() {
 		
-	F5.phone = {
-		call: call
-	};
+		this.construct = function () {
+			
+		};
+		
+		this.open = function (url) {
+			
+									
+		};
+		
+		this.close = function () {								
+			
+		};
+	}
+	
+	F5.Prototypes.Widgets.WebFrame = new WebFrame();	
 }());

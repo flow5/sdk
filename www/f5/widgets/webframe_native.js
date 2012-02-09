@@ -27,9 +27,30 @@
 /*global F5, PhoneGap*/
 
 (function () {
-	function call(number) {
-		var cleanNumber = number.replace(/[^0-9]/g, '');
-		if (typeof PhoneGap !== 'undefined') {
+	
+	function WebFrame() {
+		
+		this.construct = function () {
+			
+		};
+		
+		this.open = function (url, referrer) {
+			
+			var bounds = F5.elementOffsetGeometry(this.el);			
+			var position = F5.elementAbsolutePosition(this.el);
+			
+			bounds.left = position.x;
+			bounds.top = position.y;
+			
+			var parameters = {
+				bounds: bounds,
+				url: url
+			};
+			if (referrer) {
+				parameters.referrer = referrer;
+			}
+			
+			
 			PhoneGap.exec(
 				function (result) { // success
 					console.log(result);
@@ -37,16 +58,27 @@
 				function (result) { // failure
 					console.log(result);
 				}, 
-				'com.flow5.phonecall', // the plugin name
-				'call', // the method
-				[{number: cleanNumber}]
-			);								
-		} else {
-			window.open('tel:' + cleanNumber, '_blank');
-		}		
-	}
+				'com.flow5.webview', // the plugin name
+				'open', // the method
+				[parameters]
+			);											
+		};
 		
-	F5.phone = {
-		call: call
-	};
+		this.close = function () {
+			PhoneGap.exec(
+				function (result) { // success
+					console.log(result);
+				}, 
+				function (result) { // failure
+					console.log(result);
+				}, 
+				'com.flow5.webview', // the plugin name
+				'close', // the method
+				[]
+			);											
+			
+		};
+	}
+	
+	F5.Prototypes.Widgets.WebFrame = new WebFrame();	
 }());
