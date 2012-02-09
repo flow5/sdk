@@ -32,3 +32,13 @@
 #f5appframe {
 	font-size: 100px;
 }
+
+/* pre iOS 5.0, there is a bug in rendering image masks where if the image mask doesn't fill the
+   frame it leaves an unmasked border. see the corresponding code in widgets/button.js where a 
+   tranparent gradient is added as a second image mask image and sized here to 100% */
+.f5default.f5navbar .f5button .f5mask, 
+.f5default.f5navbar .f5button .f5mask-shadow,
+.f5default.f5tabset .f5button .f5mask,
+.f5default.f5tabset .f5button .f5mask-shadow {
+	-webkit-mask-size: .30em .30em, 100% 100%;
+}

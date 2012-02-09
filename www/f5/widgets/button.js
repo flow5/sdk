@@ -199,19 +199,25 @@
 				
 				F5.addClass(that.el, 'f5maskbutton');
 				
+				// see f5/ios.css for explanation
+				var ios43maskworkaround = '';
+				if (F5.platform() === 'ios') {
+					ios43maskworkaround = ', -webkit-gradient(linear, left bottom, right top, from(rgba(0,0,0,0)), to(rgba(0,0,0,0)))';					
+				}
+				
 				var div = document.createElement('div');
 				F5.addClass(div, 'f5mask');
-				div.style['-webkit-mask-image'] = 'url("' + value.src() + '")';
+				div.style['-webkit-mask-image'] = 'url("' + value.src() + '")' + ios43maskworkaround;
 				that.up.appendChild(div);
 
 				div = document.createElement('div');
 				F5.addClass(div, 'f5mask-shadow');
-				div.style['-webkit-mask-image'] = 'url("' + value.src() + '")';						
+				div.style['-webkit-mask-image'] = 'url("' + value.src() + '")' + ios43maskworkaround;						
 				that.down.appendChild(div);
 
 				div = document.createElement('div');
 				F5.addClass(div, 'f5mask');
-				div.style['-webkit-mask-image'] = 'url("' + value.src() + '")';						
+				div.style['-webkit-mask-image'] = 'url("' + value.src() + '")' + ios43maskworkaround;						
 				that.down.appendChild(div);
 			}									
 			
