@@ -30,9 +30,11 @@
 @interface F5WebView : PGPlugin<UIWebViewDelegate> {
     UIWebView *overlayWebView;
     NSString *callbackID;    
+    NSNumber *zoom;
 }
 
 @property (nonatomic, copy) NSString* callbackID;
+@property (nonatomic, copy) NSNumber* zoom;
 @property (nonatomic, readwrite, retain) UIWebView *overlayWebView;
 
 - (void)open:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;

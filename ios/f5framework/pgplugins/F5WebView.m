@@ -42,6 +42,7 @@
 
 @synthesize overlayWebView;
 @synthesize callbackID;
+@synthesize zoom;
 
 - (id)initWithWebView:(UIWebView*)webview {
     self = [super initWithWebView:webview];
@@ -83,8 +84,12 @@
         [self.overlayWebView.layer setMasksToBounds:YES];        
     }
     
+    // TODO: configurable
     [self.overlayWebView.layer setBorderColor: [[UIColor blackColor] CGColor]];
     [self.overlayWebView.layer setBorderWidth: 2.0];
+    
+    self.zoom = [options objectForKey:@"zoom"];
+    
     
     NSString *url = [options objectForKey:@"url"];
     
@@ -105,29 +110,42 @@
                      animations:^{
                          self.overlayWebView.alpha = 0;
                      }
-                     completion:nil];
+                     completion:^(BOOL finished){
+                        self.overlayWebView.hidden = YES;
+                     }];
     
-    self.overlayWebView.hidden = YES;        
+            
+}
+
+- (void)webViewDidStartLoad:(UIWebView *)webView {      
+    [UIView animateWithDuration:.15 delay:0.0
+                        options: UIViewAnimationOptionCurveEaseIn
+                     animations:^{
+                         self.overlayWebView.alpha = 0;
+                     }
+                     completion:nil];            
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView
 {        
+
+    if (self.zoom) {
+        NSString *zoomString = [NSString stringWithFormat:@"document.body.style.zoom = %@;", self.zoom];    
+        [self.overlayWebView stringByEvaluatingJavaScriptFromString:zoomString];              
+    }
     NSString *html = [self.overlayWebView stringByEvaluatingJavaScriptFromString:@"document.body.innerHTML"];
-    
-    NSString *zoom = [NSString stringWithFormat:@"document.body.style.zoom = %f/document.body.offsetWidth", self.overlayWebView.bounds.size.width];    
-    [self.overlayWebView stringByEvaluatingJavaScriptFromString:zoom];  
+        
+    PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsString:html];  
+    [pluginResult setKeepCallbackAsBool:YES];    
+    [self writeJavascript: [pluginResult toSuccessCallbackString:self.callbackID]];
     
     self.overlayWebView.hidden = NO;        
     [UIView animateWithDuration:.25 delay:0.0
                         options: UIViewAnimationOptionCurveEaseIn
-                        animations:^{
-                             self.overlayWebView.alpha = 1;
-                        }
-                        completion:nil];
-    
-    PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsString:html];  
-    [pluginResult setKeepCallbackAsBool:YES];    
-    [self writeJavascript: [pluginResult toSuccessCallbackString:self.callbackID]];
+                     animations:^{
+                         self.overlayWebView.alpha = 1;
+                     }
+                     completion:nil];        
 }
 
 

@@ -34,7 +34,7 @@
 			
 		};
 		
-		this.open = function (url, referrer, cb) {
+		this.open = function (url, referrer, options, cb) {
 			
 			var bounds = F5.elementOffsetGeometry(this.el);			
 			var position = F5.elementAbsolutePosition(this.el);
@@ -54,6 +54,8 @@
 			if (radius) {
 				parameters.radius = radius.replace('px', '');
 			}
+			
+			F5.extend(parameters, options);
 						
 			PhoneGap.exec(
 				function (result) { // success
