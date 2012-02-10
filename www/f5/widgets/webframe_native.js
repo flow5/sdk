@@ -34,14 +34,14 @@
 			
 		};
 		
-		this.open = function (url, referrer) {
+		this.open = function (url, referrer, cb) {
 			
 			var bounds = F5.elementOffsetGeometry(this.el);			
 			var position = F5.elementAbsolutePosition(this.el);
 			
 			bounds.left = position.x;
 			bounds.top = position.y;
-			
+						
 			var parameters = {
 				bounds: bounds,
 				url: url
@@ -50,10 +50,16 @@
 				parameters.referrer = referrer;
 			}
 			
-			
+			var radius = window.getComputedStyle(this.el)['border-top-left-radius'];
+			if (radius) {
+				parameters.radius = radius.replace('px', '');
+			}
+						
 			PhoneGap.exec(
 				function (result) { // success
-					console.log(result);
+					if (cb) {
+						cb(result);						
+					}
 				}, 
 				function (result) { // failure
 					console.log(result);

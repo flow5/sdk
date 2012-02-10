@@ -27,6 +27,8 @@
 
 #import "F5WebView.h"
 #import "AppDelegate.h"
+#import <QuartzCore/QuartzCore.h>
+
 
 @interface F5OverlayWebview : UIWebView 
 
@@ -38,22 +40,23 @@
 
 @implementation F5WebView
 
-@synthesize webView;
+@synthesize overlayWebView;
 @synthesize callbackID;
 
 - (id)initWithWebView:(UIWebView*)webview {
     self = [super initWithWebView:webview];
     if (self) {
         CGRect webViewBounds = [ [ UIScreen mainScreen ] bounds ];
-        self.webView = [[ [ F5OverlayWebview alloc ] initWithFrame:webViewBounds] autorelease]; 
-        self.webView.hidden = YES;
-        self.webView.delegate = self;
+        self.overlayWebView = [[ [ F5OverlayWebview alloc ] initWithFrame:webViewBounds] autorelease]; 
+        self.overlayWebView.hidden = YES;
+        self.overlayWebView.delegate = self;
         
         
         AppDelegate *appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];                
         UIView *mainView = [appDelegate.viewController view];
         
-        [mainView addSubview:self.webView];        
+        [mainView addSubview:self.overlayWebView];   
+        self.overlayWebView.alpha = 0;
     }
     return self;
 }
@@ -70,7 +73,18 @@
                                   [[bounds objectForKey:@"width"] floatValue],
                                   [[bounds objectForKey:@"height"] floatValue]);
     
-    [self.webView setFrame:viewBounds];        
+    
+    
+    [self.overlayWebView setFrame:viewBounds];     
+    
+    NSNumber *radius = [options objectForKey:@"radius"];
+    if (radius) {
+        [self.overlayWebView.layer setCornerRadius:[radius floatValue]];
+        [self.overlayWebView.layer setMasksToBounds:YES];        
+    }
+    
+    [self.overlayWebView.layer setBorderColor: [[UIColor blackColor] CGColor]];
+    [self.overlayWebView.layer setBorderWidth: 2.0];
     
     NSString *url = [options objectForKey:@"url"];
     
@@ -81,22 +95,39 @@
         [request setValue:referrer forHTTPHeaderField: @"Referer"];        
     }
     
-    [self.webView loadRequest:request];
-    
-    self.webView.hidden = NO;    
-    
+    [self.overlayWebView loadRequest:request];        
 }
 
 - (void)close:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options 
 {
-    self.webView.hidden = YES;        
+    [UIView animateWithDuration:0.25 delay:0.0
+                        options: UIViewAnimationOptionCurveEaseIn
+                     animations:^{
+                         self.overlayWebView.alpha = 0;
+                     }
+                     completion:nil];
+    
+    self.overlayWebView.hidden = YES;        
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView
-{
-    NSLog(@"loaded");    
+{        
+    NSString *html = [self.overlayWebView stringByEvaluatingJavaScriptFromString:@"document.body.innerHTML"];
     
-    NSString *html = [webView stringByEvaluatingJavaScriptFromString:@"document.body.innerHTML"];
+    NSString *zoom = [NSString stringWithFormat:@"document.body.style.zoom = %f/document.body.offsetWidth", self.overlayWebView.bounds.size.width];    
+    [self.overlayWebView stringByEvaluatingJavaScriptFromString:zoom];  
+    
+    self.overlayWebView.hidden = NO;        
+    [UIView animateWithDuration:.25 delay:0.0
+                        options: UIViewAnimationOptionCurveEaseIn
+                        animations:^{
+                             self.overlayWebView.alpha = 1;
+                        }
+                        completion:nil];
+    
+    PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsString:html];  
+    [pluginResult setKeepCallbackAsBool:YES];    
+    [self writeJavascript: [pluginResult toSuccessCallbackString:self.callbackID]];
 }
 
 

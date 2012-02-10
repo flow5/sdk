@@ -28,12 +28,12 @@
 #import "PGPlugin.h"
 
 @interface F5WebView : PGPlugin<UIWebViewDelegate> {
-    UIWebView *webView;
+    UIWebView *overlayWebView;
     NSString *callbackID;    
 }
 
 @property (nonatomic, copy) NSString* callbackID;
-@property (nonatomic, readwrite, retain) UIWebView *webView;
+@property (nonatomic, readwrite, retain) UIWebView *overlayWebView;
 
 - (void)open:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void)close:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
