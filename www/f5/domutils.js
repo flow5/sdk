@@ -389,11 +389,14 @@
 		widget.construct(data);		
 	};	
 	
-	F5.createWidget = function(f5widget, data, f5id) {
+	F5.createWidget = function(f5widget, data, f5id, f5class) {
 		var el = document.createElement('div');
 		if (f5id) {
 			el.setAttribute('f5id', f5id);			
 		}
+		if (f5class) {
+			el.setAttribute('f5class', f5class);			
+		}		
 		F5.attachWidget(el, f5widget, data);
 		return el;		
 	};

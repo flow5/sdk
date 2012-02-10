@@ -30,8 +30,12 @@
 	
 	function WebFrame() {
 		
-		this.construct = function () {
+		this.construct = function (data) {
 			
+		};
+
+		this.setCloseAction = function (cb) {
+			this.closeAction = cb;
 		};
 		
 		this.open = function (url, referrer, options, cb) {
@@ -83,7 +87,10 @@
 				'com.flow5.webview', // the plugin name
 				'close', // the method
 				[]
-			);											
+			);	
+			if (this.closeAction) {
+				this.closeAction();
+			}										
 			
 		};
 	}

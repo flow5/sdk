@@ -36,7 +36,7 @@
 			} catch (e) {
 				console.log(e.message);
 			}
-			this.closeButton = F5.createWidget('Button', data, 'closeButton');
+			this.closeButton = F5.createWidget('Button', data, 'closeButton', 'closeButton');
 			F5.addClass(this.closeButton, 'f5closebutton');
 			this.el.appendChild(this.closeButton);																						
 		};	

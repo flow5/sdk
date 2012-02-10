@@ -30,17 +30,56 @@
 	
 	function WebFrame() {
 		
-		this.construct = function () {
+		this.construct = function (data) {
+			this.el.style.position = 'relative';
+			this.el.style['z-index'] = 2;
+			this.el.style.border = 'none';
+			this.el.style.display = 'none';	
+			this.el.style['background-color'] = 'black';
+
+			this.frame = document.createElement('iframe');
+			this.frame.style.border = 'none';
+			this.frame.scrolling = 'no';
+						
+			this.el.appendChild(this.frame);
 			
+			var closeButton = F5.createWidget('Button', data, 'closeButton', 'closeButton');
+			F5.addClass(closeButton, 'f5closebutton');
+			this.el.appendChild(closeButton);																																					
+			
+			var that = this;
+			closeButton.widget.setAction(function () {
+				that.close();
+			});
 		};
 		
-		this.open = function (url) {
-			
-									
+		this.setCloseAction = function (cb) {
+			this.closeAction = cb;
 		};
 		
-		this.close = function () {								
-			
+		this.open = function (url, referrer, options, cb) {
+			var radius = window.getComputedStyle(this.el)['border-top-left-radius'];
+			if (radius) {
+				this.frame.style['border-radius'] = radius;
+			}
+			if (options.zoom) {
+//				this.frame.style.zoom = options.zoom;
+				this.frame.style['-webkit-transform'] = 'scale(' + options.zoom + ')';
+				this.frame.style['-webkit-transform-origin'] = '0% 0%';
+				this.frame.width = 100/options.zoom + '%';
+				this.frame.height = 100/options.zoom + '%';				
+			}
+						
+			this.frame.src = url;
+			this.el.style.display = '';
+		};
+		
+		this.close = function () {	
+			this.frame.src = null;						
+			this.el.style.display = 'none';
+			if (this.closeAction) {
+				this.closeAction();
+			}
 		};
 	}
 	
