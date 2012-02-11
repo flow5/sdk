@@ -45,7 +45,6 @@ body.f5mobile {
 	margin-right:30px;
 	overflow: hidden;
 	position: relative;
-/*	zoom: 2; */
 	width:320px;
 	height:460px;
 }
@@ -76,7 +75,6 @@ body.f5mobile {
 }
 
 .f5mobile #f5screen {
-	zoom: 1;
 	margin-left:0px;
 	margin-right:0px;
 }

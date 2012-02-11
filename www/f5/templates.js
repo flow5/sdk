@@ -64,7 +64,7 @@
 		}
 
 		F5.forEach(instance.querySelectorAll('[f5widget]'), function (el) {
-			widgetEls.push(el);			
+			widgetEls.unshift(el);			
 		});
 		
 		var data = F5.getNodeData(node, arg2);							

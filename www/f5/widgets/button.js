@@ -112,6 +112,7 @@
 			
 			F5.addTouchStartListener(this.el, function touchStartListenerCB(e) {
 				e.preventDefault();
+				e.stopPropagation();
 				
 				that.savedState = that.state;
 				that.startLoc = F5.eventLocation(e);

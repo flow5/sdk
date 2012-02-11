@@ -148,9 +148,26 @@
 					cb(null);
 				});
 		} 
-//		else {
-			// insert parameters into post body
-//		}		
+		else if (method === 'POST'){			
+			F5.post(url, JSON.stringify(parameters),
+				function success(response) {
+					try {
+//						console.log(response);
+						var obj = JSON.parse(response);
+						if (service.postprocess) {
+							obj = service.postprocess(obj);
+						}
+						cb(obj);
+						// TODO: validateSchema(response, service.responseSchema);						
+					} catch (e) {
+						console.log(e.message);
+						cb(null);
+					}
+				}, function error(response) {
+					console.log('Error from ' + url + ' : ' + response);
+					cb(null);
+				});							
+		}		
 	};	
 	
 	// TODO: need a unit test for this one
