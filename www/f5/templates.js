@@ -31,7 +31,17 @@
 	// experimental
 	// requires that all widget 'construct' methods can be called multiple times
 	F5.refreshTemplate = function(el, data) {
+		var widgetEls = [];
+		
+		if (el.hasAttribute('f5widget')) {
+			widgetEls.push(el);
+		}
+
 		F5.forEach(el.querySelectorAll('[f5widget]'), function (el) {
+			widgetEls.unshift(el);			
+		});
+		
+		F5.forEach(widgetEls, function (el) {
 			el.widget.construct(data);
 		});
 	};

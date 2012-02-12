@@ -88,7 +88,7 @@
 			}
 
 			function copyForPrettyPrintRecursive(obj) {
-				/* global HTMLDivElement */
+				/*global HTMLDivElement */
 				if (obj.constructor === HTMLDivElement) {
 					console.log('div');
 				}
