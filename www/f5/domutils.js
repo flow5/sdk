@@ -179,8 +179,9 @@
 		removeEventListener(el, 'webkitTransitionEnd');		
 	};
 	
-	F5.alert = function (title, message) {
+	F5.alert = function (title, message, action) {
 		var alert = F5.createWidget('Alert', {title: title, message: message});
+		alert.widget.setAction(action);
 		alert.widget.present();
 	};
 

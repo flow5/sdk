@@ -373,21 +373,24 @@
 .f5alertcontainer {
 	padding: .12em;
 	padding-bottom: .04em;
-	background-color: #1e2e56;
+	background-color: rgba(30, 46, 86, .95);
 	-webkit-box-sizing: border-box;
 	border-radius: .12em;
-	border: .03em solid white;
-	-webkit-box-shadow: inset 0px 0px .05em #333;
+	border: .02em solid #DDD;
+	-webkit-box-shadow: inset 0px 0px 1px 1.5px rgba(0,0,0,.35), 0px 0px 1px 1px rgba(0,0,0,.5);
 	display: -webkit-box;
 	-webkit-box-pack: justify;
 	-webkit-box-align: center;
 	-webkit-box-orient: vertical;
 	min-width: 66%;	
+	position: relative;
+	overflow: hidden;
 }
 
 .f5alerttitle {
 	font-size: .14em;
 	color: white;	
+	position: relative;
 }
 
 .f5alertmessage {
@@ -396,38 +399,47 @@
 	color: white;
 	padding-top: 1em;
 	padding-bottom: 1em;
+	position: relative;
 }
 
 .f5alertbuttoncontainer {
 	display: -webkit-box;
+	position: relative;
+}
+
+.f5alerthighlight {
+	height: .2em;
+	background-image: -webkit-gradient(linear, center bottom, center top, 
+							from(rgba(83,95,126,.8)), to(rgba(143,149,168,.8)));	
+	width: 100%;
+	position: absolute;
+	left: 0px;
+	border-top-left-radius: .1em;
+	border-top-right-radius: .1em;
+	border-bottom-left-radius: 25%;
+	border-bottom-right-radius: 25%;
+	top: 0px;
 }
 
 .f5alertbutton  {	
-	-webkit-box-shadow: inset 0px 0px .03em #888;
+	-webkit-box-shadow: inset 0px 0px 1px .11px #888, 0px .5px .25px .25px rgba(255,255,255,.25);
+	border: .5px solid rgba(0,0,0,.75); 
 	margin: .06em;
 }
 
 .f5alertbutton .f5button-label  {	
 	font-size: .14em;
-	font-weight: 400;
+	font-weight: 600;
+	text-shadow: -0px -.5px black;
 }
 
 
 .f5alert .f5button.f5button-up {
-	background-image: -webkit-gradient(linear, center bottom, center top, 
-		from(#5c6786),
-			color-stop(0.525, #5c6786), 
-			color-stop(.555, #8a93a9),
-		to(#8a93a9));
+	background-image: -webkit-gradient(linear, center bottom, center top, from(#3E4C70), color-stop(0.5, #697490), color-stop(.5, #B0B6C5), color-stop(.99, b0b6c5), to(white));
 }
 
 .f5alert .f5button.f5button-up.f5button-press {
-	background-image: -webkit-gradient(linear, center bottom, center top, 
-		from(#49516a),
-			color-stop(0.525, #49516a), 
-			color-stop(.555, #636979),
-		to(#636979));
-		
+	background-image: -webkit-gradient(linear, center bottom, center top, from(#3E4C70), color-stop(0.5, #697490), color-stop(.5, #B0B6C5), color-stop(.99, b0b6c5), to(white));		
 }
 
 /***************************************/

@@ -38,6 +38,10 @@
 			var containerEl = document.createElement('div');
 			F5.addClass(containerEl, 'f5alertcontainer');
 			that.el.appendChild(containerEl);
+			
+			var highlightEl = document.createElement('div');
+			F5.addClass(highlightEl, 'f5alerthighlight');
+			containerEl.appendChild(highlightEl);									
 
 			var titleEl = document.createElement('div');
 			F5.addClass(titleEl, 'f5alerttitle');
@@ -100,6 +104,9 @@
 			this.buttonsEl.appendChild(dismissEl);
 
 			dismissEl.widget.setAction(function () {
+				if (that.action) {
+					that.action();
+				}				
 				that.dismiss();
 			});														
 		};		
@@ -134,11 +141,7 @@
 				}
 				that.dismiss();
 			});														
-		};	
-		
-		this.setAction = function (cb) {
-			this.action = cb;
-		};	
+		};			
 	}
 	Confirm.prototype = new Dialog();	
 		
