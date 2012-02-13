@@ -31,7 +31,7 @@
 	function WebFrame() {
 		
 		this.construct = function (data) {
-			
+			this.el.style.position = 'relative';			
 		};
 
 		this.setCloseAction = function (cb) {
@@ -39,6 +39,8 @@
 		};
 		
 		this.open = function (url, referrer, options, cb) {
+			
+			this.el.style.display = '';
 			
 			var bounds = F5.elementOffsetGeometry(this.el);			
 			var position = F5.elementAbsolutePosition(this.el);
@@ -88,6 +90,7 @@
 				'close', // the method
 				[]
 			);	
+			this.el.style.display = 'none';
 			if (this.closeAction) {
 				this.closeAction();
 			}										

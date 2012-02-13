@@ -58,6 +58,8 @@
 		};
 		
 		this.open = function (url, referrer, options, cb) {
+			this.el.style.display = '';
+			
 			var radius = window.getComputedStyle(this.el)['border-top-left-radius'];
 			if (radius) {
 				this.frame.style['border-radius'] = radius;
@@ -71,7 +73,6 @@
 			}
 						
 			this.frame.src = url;
-			this.el.style.display = '';
 		};
 		
 		this.close = function () {	

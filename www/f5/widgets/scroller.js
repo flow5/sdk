@@ -142,6 +142,10 @@
 	}
 		
 	function startHandler(scroller, e) {
+		if (!scroller.enabled) {
+			return;
+		}
+		
 		scroller.tracking = true;					
 		scroller.touchLoc = eventPosition(scroller, e);
 		scroller.startLoc = scroller.touchLoc;
@@ -281,7 +285,7 @@
 		};
 
 		this.maxVelocity = 5.0;
-		
+		this.enabled = true;
 		
 		this.construct = function () {
 			var that = this;
@@ -352,6 +356,20 @@
 		
 		this.widgetDidBecomeInactive = function () {
 			this.active = false;
+		};
+		
+		this.stopScrolling = function () {
+			var transformMatrix = new WebKitCSSMatrix(window.getComputedStyle(this.el)['-webkitTransform']);			
+			stopScrollingAt(this, this.horizontal ? transformMatrix.m41 : transformMatrix.m42);	
+			this.tracking = false;				
+		};
+		
+		this.disable = function () {
+			this.enabled = false;
+		};
+
+		this.enable = function () {
+			this.enabled = true;
 		};
 				
 		// TODO: may run into the large div problem again in which case the content size
