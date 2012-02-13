@@ -435,11 +435,21 @@
 
 
 .f5alert .f5button.f5button-up {
-	background-image: -webkit-gradient(linear, center bottom, center top, from(#3E4C70), color-stop(0.5, #697490), color-stop(.5, #B0B6C5), color-stop(.99, b0b6c5), to(white));
+	background-image: -webkit-gradient(linear, center bottom, center top, 
+		from(#3E4C70), 
+			color-stop(0.5, #697490), 
+			color-stop(.5, #B0B6C5), 
+			color-stop(.99, #B0B6C5), 
+		to(white));
 }
 
 .f5alert .f5button.f5button-up.f5button-press {
-	background-image: -webkit-gradient(linear, center bottom, center top, from(#3E4C70), color-stop(0.5, #697490), color-stop(.5, #B0B6C5), color-stop(.99, b0b6c5), to(white));		
+	background-image: -webkit-gradient(linear, center bottom, center top, 
+		from(#364261), 
+			color-stop(0.5, #606a83), 
+			color-stop(.5, #a3a8b6), 
+			color-stop(.99, #a3a8b6), 
+		to(white));		
 }
 
 /***************************************/
