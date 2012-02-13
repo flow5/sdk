@@ -398,11 +398,16 @@
 	padding-bottom: 1em;
 }
 
-.f5alertok  {	
-	-webkit-box-shadow: inset 0px 0px .03em #888
+.f5alertbuttoncontainer {
+	display: -webkit-box;
 }
 
-.f5alertok .f5button-label  {	
+.f5alertbutton  {	
+	-webkit-box-shadow: inset 0px 0px .03em #888;
+	margin: .06em;
+}
+
+.f5alertbutton .f5button-label  {	
 	font-size: .14em;
 	font-weight: 400;
 }

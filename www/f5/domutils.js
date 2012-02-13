@@ -183,6 +183,12 @@
 		var alert = F5.createWidget('Alert', {title: title, message: message});
 		alert.widget.present();
 	};
+
+	F5.confirm = function (title, message, action) {
+		var confirm = F5.createWidget('Confirm', {title: title, message: message});
+		confirm.widget.setAction(action);
+		confirm.widget.present();
+	};
 	
 	F5.eventLocation = function(event) {
 		var x, y;

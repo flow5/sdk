@@ -26,10 +26,10 @@
 ***********************************************************************************************************************/
 /*global F5*/
 
-(function () {
+(function () {	
 	
-	function Alert() {
-		this.construct = function (data) {	
+	function Dialog() {
+		this.constructDialog = function (data) {	
 			
 			var that = this;
 			
@@ -43,20 +43,15 @@
 			F5.addClass(titleEl, 'f5alerttitle');
 			titleEl.innerHTML = data.title;
 			containerEl.appendChild(titleEl);
-
 					
 			var messageEl = document.createElement('div');
 			F5.addClass(messageEl, 'f5alertmessage');
 			messageEl.innerHTML = data.message;
-			containerEl.appendChild(messageEl);
-			
-			var dismissEl = F5.createWidget('Button', {label: 'OK'}, 'label');
-			F5.addClass(dismissEl, 'f5alertok');
-			containerEl.appendChild(dismissEl);
+			containerEl.appendChild(messageEl);			
 
-			dismissEl.widget.setAction(function () {
-				that.dismiss();
-			});														
+			this.buttonsEl = document.createElement('div');
+			F5.addClass(this.buttonsEl, 'f5alertbuttoncontainer');
+			containerEl.appendChild(this.buttonsEl);			
 		};
 		
 		this.setAction = function (cb) {
@@ -92,7 +87,62 @@
 			}			
 		};
 	}	
+	
+	function Alert() {
+		this.construct = function (data) {	
+			
+			this.constructDialog(data);
+			
+			var that = this;
+			
+			var dismissEl = F5.createWidget('Button', {label: 'OK'}, 'label');
+			F5.addClass(dismissEl, 'f5alertbutton');
+			this.buttonsEl.appendChild(dismissEl);
+
+			dismissEl.widget.setAction(function () {
+				that.dismiss();
+			});														
+		};		
+	}
+	Alert.prototype = new Dialog();
+	
+	function Confirm() {
+		this.construct = function (data) {	
+			
+			this.constructDialog(data);
+			
+			var that = this;
+			
+			var okEl = F5.createWidget('Button', {label: 'OK'}, 'label');
+			F5.addClass(okEl, 'f5alertbutton');
+			this.buttonsEl.appendChild(okEl);
+
+			okEl.widget.setAction(function () {
+				if (that.action) {
+					that.action(true);
+				}
+				that.dismiss();				
+			});														
+
+			var cancelEl = F5.createWidget('Button', {label: 'Cancel'}, 'label');
+			F5.addClass(cancelEl, 'f5alertbutton');
+			this.buttonsEl.appendChild(cancelEl);
+
+			cancelEl.widget.setAction(function () {
+				if (that.action) {
+					that.action(false);
+				}
+				that.dismiss();
+			});														
+		};	
+		
+		this.setAction = function (cb) {
+			this.action = cb;
+		};	
+	}
+	Confirm.prototype = new Dialog();	
 		
 	F5.Prototypes.Widgets.Alert = new Alert();
+	F5.Prototypes.Widgets.Confirm = new Confirm();
 	
 }());
