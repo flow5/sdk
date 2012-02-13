@@ -31,12 +31,10 @@
 	function WebFrame() {
 		
 		this.construct = function (data) {
-			this.el.style.position = 'relative';
-			this.el.style['z-index'] = 2;
-			this.el.style.border = 'none';
+			F5.addClass(this.el, 'f5webframe');
 			this.el.style.display = 'none';	
-			this.el.style['background-color'] = 'black';
-
+			this.el.style.opacity = 0;
+			
 			this.frame = document.createElement('iframe');
 			this.frame.style.border = 'none';
 			this.frame.scrolling = 'no';
@@ -59,7 +57,9 @@
 		
 		this.open = function (url, referrer, options, cb) {
 			this.el.style.display = '';
-			
+			this.el.style.opacity = 0;			
+			var that = this;
+		
 			var radius = window.getComputedStyle(this.el)['border-top-left-radius'];
 			if (radius) {
 				this.frame.style['border-radius'] = radius;
@@ -72,12 +72,23 @@
 				this.frame.height = 100/options.zoom + '%';				
 			}
 						
+			this.frame.onload = function () {
+				that.el.style.opacity = 1;												
+			}
 			this.frame.src = url;
 		};
 		
 		this.close = function () {	
-			this.frame.src = null;						
-			this.el.style.display = 'none';
+			this.el.style.opacity = 0;
+			
+			var that = this;
+			function hide() {
+				that.frame.src = null;						
+				that.el.style.display = 'none';
+				F5.removeTransitionEndListener(that.el, hide);				
+			}
+			
+			F5.addTransitionEndListener(this.el, hide);
 			if (this.closeAction) {
 				this.closeAction();
 			}
