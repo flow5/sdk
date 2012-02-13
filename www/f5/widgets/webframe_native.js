@@ -31,7 +31,8 @@
 	function WebFrame() {
 		
 		this.construct = function (data) {
-			this.el.style.position = 'relative';			
+			this.el.style.position = 'relative';	
+			this.el.style.display = 'none';						
 		};
 
 		this.setCloseAction = function (cb) {
