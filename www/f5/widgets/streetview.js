@@ -42,7 +42,7 @@
 		};	
 		
 		this.setCloseAction = function (action) {
-			F5.addTouchStartListener(this.closeButton, function() {
+			this.closeButton.widget.setAction(function() {
 				action();
 			});						
 		};
