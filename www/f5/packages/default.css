@@ -383,6 +383,7 @@
 	-webkit-box-align: center;
 	-webkit-box-orient: vertical;
 	min-width: 66%;	
+	max-width: 80%;	
 	position: relative;
 	overflow: hidden;
 }

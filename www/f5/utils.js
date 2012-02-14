@@ -32,6 +32,9 @@
 	function doXHR(method, url, body, success, error, headers) {
 		var xhr = new XMLHttpRequest();
 		xhr.open(method, url, true);
+		if (method === 'POST' || method === 'PUT') {
+			xhr.setRequestHeader("Content-Type", "application/json; charset=utf-8");					
+		}
 
 		if (headers) {
 			F5.forEach(headers, function (id, value) {
@@ -67,7 +70,7 @@
 					}
 				} else {
 					if (error) {
-						error(xhr.responseText);
+						error(xhr.responseText, xhr.status);
 					}
 				}
 //				console.log('XMLHttpRequest.LOADING');
@@ -117,6 +120,17 @@
 		// validate(parameters, service.parameterSchema);
 
 		var url = protocol + '://' + baseUrl;
+		
+		function handleErrorResponse(response, status) {
+			console.log('Error from ' + url + ' : ' + response);
+			try {
+				var json = JSON.parse(response);
+				cb(json, status);
+			} catch (e) {
+				cb(null, status);
+			}
+		}
+		
 		if (method === 'GET') {
 			if (service.query) {
 				url += '?' + service.query(parameters);
@@ -137,15 +151,14 @@
 						if (service.postprocess) {
 							obj = service.postprocess(obj);
 						}
-						cb(obj);
+						cb(obj, 200);
 						// TODO: validateSchema(response, service.responseSchema);						
 					} catch (e) {
 						console.log(e.message);
-						cb(null);
+						cb(null, 200);
 					}
-				}, function error(response) {
-					console.log('Error from ' + url + ' : ' + response);
-					cb(null);
+				}, function error(response, status) {
+					handleErrorResponse(response, status);
 				});
 		} 
 		else if (method === 'POST'){			
@@ -157,15 +170,14 @@
 						if (service.postprocess) {
 							obj = service.postprocess(obj);
 						}
-						cb(obj);
+						cb(obj, 200);
 						// TODO: validateSchema(response, service.responseSchema);						
 					} catch (e) {
 						console.log(e.message);
-						cb(null);
+						cb(null, 200);
 					}
-				}, function error(response) {
-					console.log('Error from ' + url + ' : ' + response);
-					cb(null);
+				}, function error(response, status) {
+					handleErrorResponse(response, status);
 				});							
 		}		
 	};	

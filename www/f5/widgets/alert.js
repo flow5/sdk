@@ -50,7 +50,7 @@
 					
 			var messageEl = document.createElement('div');
 			F5.addClass(messageEl, 'f5alertmessage');
-			messageEl.innerHTML = data.message;
+			messageEl.innerHTML = data.message.replace(/,[^ ]/g, ', '); // make commas wrap
 			containerEl.appendChild(messageEl);			
 
 			this.buttonsEl = document.createElement('div');
