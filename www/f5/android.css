@@ -32,11 +32,6 @@ body {
 	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);	
 }
 
-#f5appframe {
-	font-size: 150px;	
-}
-
-
 /* unclear on why this is required for Android */
 .f5mobile #f5screen {
 	position: static;

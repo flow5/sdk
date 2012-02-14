@@ -61,8 +61,6 @@
 	window.addEventListener('load', hideAddressBar, false);
 	window.addEventListener('touchstart', hideAddressBar, false);
 		
-	F5.setupScreenGeometry(F5.isMobile(), F5.isNative());		
-
 	// TODO: use the device block of manifest to avoid the PhoneGap reference
 	var startEvent, listener;
 	if (F5.isNative()) {
@@ -81,6 +79,8 @@
 
 	listener.addEventListener(startEvent, function startHandler(e) {	
 		function startUp() {
+			F5.setupScreenGeometry(F5.isMobile(), F5.isNative());		
+			
 			try {
 				F5.Global.flowController.start(function () {
 					// TODO: extract

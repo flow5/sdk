@@ -295,15 +295,15 @@
 	F5.setupScreenGeometry = function (isMobile, isNative) {
 		var geometry = F5.query.geometry;
 		
-		var style;
+		var style, width, height;
 		if (geometry) {
 			var size = geometry.split('x');
+			width = size[0];
+			height = size[1];
 			style = document.createElement('style');
-			var zoom = size[1] > 480 ? 1 : 2;
-			style.innerHTML = '#f5screen {width:' + size[0] + 'px; height:' + size[1] + 'px; zoom: ' + zoom + ';';
+			style.innerHTML = '#f5screen {width:' + width + 'px; height:' + height + 'px;}';
 			document.head.appendChild(style);
 		} else if (isMobile && !isNative) {
-			var width, height;
 			if (window.innerWidth > window.innerHeight) {
 				width = window.innerHeight;
 				height = window.innerWidth;
@@ -344,15 +344,29 @@
 										height:' + (screen.width - (statusbar + landscapeToolbar)) + 'px;\n\
 									}\n\
 								}';
-			document.head.appendChild(style);
+			document.head.appendChild(style);						
 
 			document.addEventListener('orientationchange', function () {
 				setTimeout(function () {
 					window.scrollTo(0, 1);
 				}, 0);			
 			});		
+		} else {
+			var screen = document.getElementById('f5screen');
+			height = screen.offsetHeight;
+			width = screen.offsetWidth;
 		}
-		// otherwise should get the dimensions from the url parameters		
+		
+		/* for resolution independence, sizes should be expressed in em */
+		/* by specifying a default size of 100px
+		   em = px * 100. default sizes are based on iOS screen densities */
+		var metric = height;
+		if (width > height) {
+			metric = width;
+		}
+		// default is based on iPhone height
+		metric /= 460;
+		document.getElementById('f5appframe').style['font-size'] = metric*100 + 'px';		
 	};	
 		
 	F5.elementOffsetGeometry = function (el) {

@@ -45,6 +45,8 @@ function Input() {
 	
 		this.input = document.createElement('input');			
 		this.input.name = id;	
+		this.input.autocorrect = 'off';
+		this.input.autocapitalize = 'off';
 		
 		this.input.setAttribute('readonly', 'readonly');
 		
