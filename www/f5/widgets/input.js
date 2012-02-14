@@ -36,8 +36,12 @@ function Input() {
 		
 		this.label = document.createElement('div');
 		this.label.innerText = F5.valueFromId(data, id);		
-		F5.addClass(this.label, 'label');
+		F5.addClass(this.label, 'f5label');
 		this.el.appendChild(this.label);
+		
+		this.error = document.createElement('div');
+		F5.addClass(this.error, 'f5inputerror');
+		this.el.appendChild(this.error);
 	
 		this.input = document.createElement('input');			
 		this.input.name = id;	
@@ -51,6 +55,7 @@ function Input() {
 			
 		this.input.onkeypress = function () {
 			that.label.style.display = 'none';
+			that.error.innerText = '';
 		};
 				
 		this.el.appendChild(this.input);
@@ -58,7 +63,12 @@ function Input() {
 		
 	this.reset = function () {
 		this.input.value = '';
+		this.error.innerText = '';
 		this.label.style.display = '';
+	};
+	
+	this.showError = function (message) {
+		this.error.innerText = message;
 	};
 }
 

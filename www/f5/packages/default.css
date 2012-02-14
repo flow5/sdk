@@ -223,6 +223,14 @@
 /*             Miscellany              */
 /***************************************/
 
+.f5inputerror {
+	color: red;
+	position: absolute;
+	top: -.25em;
+	font-size: .7em;
+	font-style: italic;
+}
+
 .f5webframe {
 	position: relative;
 	z-index: 2;

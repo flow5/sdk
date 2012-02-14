@@ -28,8 +28,7 @@
 		"app": {
 			"scripts": [
 				"facebook_native.js",
-				"analytics_native.js",
-                "widgets/webframe_native.js"				
+				"analytics_native.js"
 			]
 		},	
         "elements": [
@@ -91,7 +90,8 @@
         "scripts": [
             "android.js", 
             "widgets/navbar_web.js", 
-            "widgets/mapview_web.js"
+            "widgets/mapview_web.js",
+            "widgets/webframe_web.js"
         ]
     }, 
     "ios": {
@@ -101,7 +101,8 @@
                 "widgets/navbar_web.js", 
                 "widgets/mapview_native.js", 
                 "udp.js", 
-                "3p/phonegap-1.1.0.js"
+                "3p/phonegap-1.1.0.js",
+                "widgets/webframe_native.js"
             ]
         }, 
         "browser": {

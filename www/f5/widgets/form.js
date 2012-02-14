@@ -64,6 +64,14 @@ function Form() {
 		});		
 	};
 	
+	this.showErrors = function (errors) {
+		var that = this;
+		F5.forEach(errors, function (id, value) {
+			var input = F5.getElementById(that.el, id);
+			input.widget.showError(value);
+		});
+	};
+	
 	this.widgetWillBecomeActive = function () {
 		this.reset();
 	};
