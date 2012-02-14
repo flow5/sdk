@@ -79,18 +79,20 @@
 		};
 		
 		this.close = function () {	
-			this.el.style.opacity = 0;
-			
-			var that = this;
-			function hide() {
-				that.frame.src = null;						
-				that.el.style.display = 'none';
-				F5.removeTransitionEndListener(that.el, hide);				
-			}
-			
-			F5.addTransitionEndListener(this.el, hide);
-			if (this.closeAction) {
-				this.closeAction();
+			if (!this.el.style.display) {
+				this.el.style.opacity = 0;
+
+				var that = this;
+				function hide() {
+					that.frame.src = null;						
+					that.el.style.display = 'none';
+					F5.removeTransitionEndListener(that.el, hide);				
+				}
+
+				F5.addTransitionEndListener(this.el, hide);
+				if (this.closeAction) {
+					this.closeAction();
+				}				
 			}
 		};
 	}
