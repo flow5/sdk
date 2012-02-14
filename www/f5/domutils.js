@@ -360,12 +360,8 @@
 		/* for resolution independence, sizes should be expressed in em */
 		/* by specifying a default size of 100px
 		   em = px * 100. default sizes are based on iOS screen densities */
-		var metric = height;
-		if (width > height) {
-			metric = width;
-		}
 		// default is based on iPhone height
-		metric /= 460;
+		var metric = width/320;
 		document.getElementById('f5appframe').style['font-size'] = metric*100 + 'px';		
 	};	
 		
