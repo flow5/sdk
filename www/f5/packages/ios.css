@@ -36,7 +36,7 @@
 .f5default.f5button-down .f5button-label, 
 .f5default .f5button-up.f5button-press .f5button-label,
 .f5default.f5button-up.f5button-press .f5button-label {
-	color: #AAA;
+	color: white;
 }
 
 .f5default.f5tabset .f5button-up .f5button-label {
@@ -56,7 +56,7 @@
 }
 
 .f5default.f5navbar .f5button, .f5default.f5button {
-	-webkit-box-shadow: inset 0px 0px .03em #888	
+	-webkit-box-shadow: inset 0px 0px 1px #666, inset 0px 1px 1px #666, 0px 1px #FFF	
 }
 
 /* -webkit-linear-gradient is easier to use, but only iOS 5 */
@@ -78,6 +78,11 @@
 	background-color: transparent;
 }
 
+.f5default.f5navbar .f5button-label {	
+	text-shadow: 0px 0px 1px #888, 0px 1px 2px rgba(255, 255, 255, .5)	
+}
+
+
 .f5default.f5button.f5button-down .f5mask, 
 .f5default.f5navbar .f5button.f5button-down .f5mask,
 .f5default.f5tabset .f5button.f5button-down .f5mask {
@@ -88,8 +93,6 @@
 	                to(#C0EDFF));
 }
 
-.f5default.f5button.f5button-down, 
-.f5default.f5navbar .f5button.f5button-down,
 .f5default.f5tabset .f5button.f5button-down {
 	border-radius: .03em;	
 	background-image: -webkit-gradient(linear, center bottom, center top, 
@@ -102,19 +105,23 @@
 .f5default.f5button.f5button-up,
 .f5default.f5navbar .f5button.f5button-up {
 	background-image: -webkit-gradient(linear, center bottom, center top, 
-		from(#838383),
-			color-stop(0.48, #838383),
-			color-stop(.52, #d6d6d6),
+		from(#505050),
+			color-stop(0.49, #838383),
+			color-stop(.51, #909090),
+			color-stop(.75, #AAAAAA),
 		to(#d6d6d6));
 }
 
 .f5default.f5button.f5button-up.f5button-press,
-.f5default.f5navbar .f5button.f5button-up.f5button-press {
+.f5default.f5navbar .f5button.f5button-up.f5button-press,
+.f5default.f5button.f5button-down, 
+.f5default.f5navbar .f5button.f5button-down {
 	background-image: -webkit-gradient(linear, center bottom, center top, 
-		from(#676767),
-			color-stop(0.48, #676767),
-			color-stop(.52, #aaaaaa),
-		to(#aaaaaa));
+		from(#303030),
+			color-stop(0.49, #737373),
+			color-stop(.51, #808080),
+			color-stop(.75, #999999),
+		to(#b6b6b6));
 }
 
 

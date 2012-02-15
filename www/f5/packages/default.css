@@ -57,13 +57,13 @@
 
 .f5navbar .f5leftbutton, .f5navbar .f5rightbutton {
 	position: absolute;
-	top: .06em;
+	top: .08em;
 	display: -webkit-box;
 	-webkit-box-pack: center;
 	-webkit-box-align: center;
 	background-color: white;	
 	-webkit-box-sizing: border-box;
-	max-width: 25%;
+	max-width: 30%;
 }
 
 .f5navbar .f5titlecontainer, .f5navbar .f5navbarcontainer {
@@ -137,7 +137,7 @@
 	white-space: nowrap;
 	position: relative;
 	color: white;
-	font-size: .12em;
+	font-size: .16em;
 }
 
 .f5button.f5button-up {
