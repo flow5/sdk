@@ -223,6 +223,15 @@
 /*             Miscellany              */
 /***************************************/
 
+.f5form {	
+	-webkit-transition: top .25s;
+	position: absolute;
+}
+
+.f5form .f5label {
+	pointer-events: none;
+}
+
 .f5inputerror {
 	color: red;
 	position: absolute;

@@ -47,9 +47,7 @@ function Input() {
 		this.input.name = id;	
 		this.input.autocorrect = 'off';
 		this.input.autocapitalize = 'off';
-		
-		this.input.setAttribute('readonly', 'readonly');
-		
+				
 		// TODO: can flesh this out a bit more
 		this.input.type = id.match('password') ? 'password' : 'text';	
 		
@@ -59,7 +57,7 @@ function Input() {
 			that.label.style.display = 'none';
 			that.error.innerText = '';
 		};
-				
+		
 		this.el.appendChild(this.input);
 	};		
 		
@@ -68,7 +66,7 @@ function Input() {
 		this.error.innerText = '';
 		this.label.style.display = '';
 	};
-	
+		
 	this.showError = function (message) {
 		this.error.innerText = message;
 	};

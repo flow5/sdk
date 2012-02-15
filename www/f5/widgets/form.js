@@ -27,27 +27,32 @@
 /*global F5*/
 
 (function () {
-	
-function Form() {
-
-	this.construct = function () {
-		var that = this;
-		// workaround for annoying iOS form/keyboard flakiness
-		// which causes the keyboard to appear even though though an input doesn't
-		// really have focus
-		// TODO: move this to a Form widget
-		function enableAllInputs() {
-			F5.forEach(that.el.querySelectorAll('[f5widget=Input]'), function (el) {
-				el.widget.input.removeAttribute('readonly');
-			});
-		}
 		
+function Form() {
+	
+	this.construct = function () {
+		var that = this;		
+		F5.addClass(this.el, 'f5form');
+						
 		F5.forEach(this.el.querySelectorAll('[f5widget=Input]'), function (el) {
-			F5.addTouchStartListener(el, function (e) {
-				enableAllInputs();
-				el.widget.input.focus();										
-			});				
-		});				
+
+			if (navigator.userAgent.match(/OS 5/)) {
+				F5.addTouchStopListener(el, function (e) {
+					el.widget.input.focus();	
+				});				
+				el.widget.input.style['pointer-events'] = 'none';				
+			} else {
+				el.addEventListener('click', function (e) {
+					el.widget.input.focus();	
+				});				
+			}
+						
+			el.widget.input.onfocus = function () {
+				that.el.style.top = -el.offsetTop + 'px';
+				window.scrollTo(0, 0);
+				document.body.scrollTop = 0;			
+			};
+		});			
 	};
 	
 	this.getFormData = function () {
