@@ -49,7 +49,7 @@ function Form() {
 			
 			el.widget.input.onblur = function () {
 				that.el.style.top = '';
-			}
+			};
 						
 			el.widget.input.onfocus = function () {
 				// disable scrolling
@@ -57,7 +57,8 @@ function Form() {
 				document.body.scrollTop = 0;	
 									
 				// do the scrolling ourselves		
-				that.el.style.top = (-el.offsetTop + parseInt(window.getComputedStyle(that.el)['padding-top'].replace('px', ''), 10)) + 'px';											
+				that.el.style.top = (-el.offsetTop + 
+						parseInt(window.getComputedStyle(that.el)['padding-top'].replace('px', ''), 10)) + 'px';
 			};
 		});			
 	};
@@ -78,7 +79,7 @@ function Form() {
 			input.setAttribute('tabindex', -1);
 		});
 		
-	}
+	};
 	
 	this.activate = function () {
 		F5.forEach(this.el.querySelectorAll('[f5widget=Input]'), function (el) {
@@ -102,7 +103,7 @@ function Form() {
 	};
 		
 	this.widgetWillBecomeInactive = function () {
-		this.clear();
+		this.deactivate();
 	};
 }
 
