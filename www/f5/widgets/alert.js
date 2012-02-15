@@ -120,6 +120,17 @@
 			
 			var that = this;
 			
+			var cancelEl = F5.createWidget('Button', {label: 'Cancel'}, 'label');
+			F5.addClass(cancelEl, 'f5alertbutton');
+			this.buttonsEl.appendChild(cancelEl);
+
+			cancelEl.widget.setAction(function () {
+				if (that.action) {
+					that.action(false);
+				}
+				that.dismiss();
+			});	
+			
 			var okEl = F5.createWidget('Button', {label: 'OK'}, 'label');
 			F5.addClass(okEl, 'f5alertbutton');
 			this.buttonsEl.appendChild(okEl);
@@ -130,17 +141,7 @@
 				}
 				that.dismiss();				
 			});														
-
-			var cancelEl = F5.createWidget('Button', {label: 'Cancel'}, 'label');
-			F5.addClass(cancelEl, 'f5alertbutton');
-			this.buttonsEl.appendChild(cancelEl);
-
-			cancelEl.widget.setAction(function () {
-				if (that.action) {
-					that.action(false);
-				}
-				that.dismiss();
-			});														
+																
 		};			
 	}
 	Confirm.prototype = new Dialog();	
