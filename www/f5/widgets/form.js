@@ -33,24 +33,31 @@ function Form() {
 	this.construct = function () {
 		var that = this;		
 		F5.addClass(this.el, 'f5form');
-						
+								
 		F5.forEach(this.el.querySelectorAll('[f5widget=Input]'), function (el) {
 
 			if (navigator.userAgent.match(/OS 5/)) {
 				F5.addTouchStopListener(el, function (e) {
-					el.widget.input.focus();	
+					el.widget.input.focus();						
 				});				
 				el.widget.input.style['pointer-events'] = 'none';				
 			} else {
 				el.addEventListener('click', function (e) {
-					el.widget.input.focus();	
+					el.widget.input.focus();						
 				});				
+			}
+			
+			el.widget.input.onblur = function () {
+				that.el.style.top = '';
 			}
 						
 			el.widget.input.onfocus = function () {
-				that.el.style.top = -el.offsetTop + 'px';
+				// disable scrolling
 				window.scrollTo(0, 0);
-				document.body.scrollTop = 0;			
+				document.body.scrollTop = 0;	
+									
+				// do the scrolling ourselves		
+				that.el.style.top = (-el.offsetTop + parseInt(window.getComputedStyle(that.el)['padding-top'].replace('px', ''), 10)) + 'px';											
 			};
 		});			
 	};
@@ -63,10 +70,27 @@ function Form() {
 		return data;
 	};
 	
-	this.reset = function () {
+	this.deactivate = function () {
+		F5.forEach(this.el.querySelectorAll('input'), function (input) {
+			input.blur();
+		});
+		F5.forEach(this.el.querySelectorAll('input'), function (input) {
+			input.setAttribute('tabindex', -1);
+		});
+		
+	}
+	
+	this.activate = function () {
 		F5.forEach(this.el.querySelectorAll('[f5widget=Input]'), function (el) {
 			el.widget.reset();
 		});		
+		this.el.style.top = '';
+		
+		var index = 1;
+		F5.forEach(this.el.querySelectorAll('input'), function (input) {
+			input.setAttribute('tabindex', index);
+			index += 1;
+		});
 	};
 	
 	this.showErrors = function (errors) {
@@ -76,15 +100,9 @@ function Form() {
 			input.widget.showError(value);
 		});
 	};
-	
-	this.widgetWillBecomeActive = function () {
-		this.reset();
-	};
-	
+		
 	this.widgetWillBecomeInactive = function () {
-		F5.forEach(this.el.querySelectorAll('input'), function (input) {
-			input.blur();
-		});
+		this.clear();
 	};
 }
 

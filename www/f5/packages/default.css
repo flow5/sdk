@@ -224,7 +224,8 @@
 /***************************************/
 
 .f5form {	
-	-webkit-transition: top .25s;
+/* would be nice, but the caret doesn't keep up */
+/* 	-webkit-transition: top .25s; */
 	position: absolute;
 }
 

@@ -45,11 +45,12 @@ function Input() {
 	
 		this.input = document.createElement('input');			
 		this.input.name = id;	
-		this.input.autocorrect = 'off';
-		this.input.autocapitalize = 'off';
+		this.input.tabindex = -1;
+		this.input.setAttribute('tabindex', -1);
 				
-		// TODO: can flesh this out a bit more
-		this.input.type = id.match('password') ? 'password' : 'text';	
+		this.input.type = this.el.getAttribute('type');
+		
+		this.input.setAttribute('autocorrect', this.el.getAttribute('autocorrect'));
 		
 		var that = this;
 			
