@@ -192,12 +192,12 @@
 				
 		function assign(id, value) {
 			if (!dst[id]) {
-				if (isSimpleObject(value)) {
+				if (value && isSimpleObject(value)) {
 					dst[id] = {};
 				}
 			} 
 
-			if (isSimpleObject(value)) {
+			if (value && isSimpleObject(value)) {
 				F5.assert(typeof dst[id] === 'object', 'mismatched data schema');
 				F5.forEach(value, function (valueid, value) {
 					if (dst[id][valueid]) {
