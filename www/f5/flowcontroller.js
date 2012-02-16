@@ -130,6 +130,14 @@
 				});
 			}, 0);
 		}	
+		
+		this.refresh = function () {
+			flowObservers.forEach(function (observer) {
+				if (observer.refresh) {
+					observer.refresh();
+				}
+			});							
+		};
 			
 		this.start = function (cb) {	
 			cb = cb || function () {

@@ -233,6 +233,12 @@
 			}
 			
 		}
+		
+		this.refresh = function () {
+			this.updateConfiguration(F5.Global.flow.root);
+			setup.apply(this);
+			animate.apply(this, ['fade']);
+		};
 			
 		this.start = function () {
 			this.updateConfiguration(F5.Global.flow.root);

@@ -76,6 +76,7 @@ function Form() {
 	this.deactivate = function () {
 		F5.forEach(this.el.querySelectorAll('input'), function (input) {
 			input.blur();
+			input.setAttribute('readonly', 'true');
 		});
 		F5.forEach(this.el.querySelectorAll('input'), function (input) {
 			input.setAttribute('tabindex', -1);
@@ -83,9 +84,18 @@ function Form() {
 		
 	};
 	
-	this.activate = function () {
+	this.reset = function () {
 		F5.forEach(this.el.querySelectorAll('[f5widget=Input]'), function (el) {
 			el.widget.reset();
+		});				
+	};
+	
+	this.activate = function () {
+		this.reset();
+		
+		F5.forEach(this.el.querySelectorAll('[f5widget=Input]'), function (el) {
+			el.widget.reset();
+			el.widget.input.removeAttribute('readonly');			
 		});		
 		this.el.style.top = '';
 		
