@@ -92,6 +92,7 @@
 //		     });
 		   } else {
 		     console.log('User cancelled login or did not fully authorize.');
+			 cb(null);
 		   }
 		 }, {scope: 'email'});
 	}
