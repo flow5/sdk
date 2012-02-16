@@ -33,33 +33,42 @@ function Input() {
 	this.construct = function (data) {
 		
 		var id = this.el.getAttribute('f5id');
+
+		if (!this.label) {
+			this.label = document.createElement('div');
+			this.el.appendChild(this.label);
+			F5.addClass(this.label, 'f5label');			
+		}
+
+		var labelText = F5.valueFromId(data, id);
+		if (labelText) {
+			this.label.innerText = labelText;			
+		}
 		
-		this.label = document.createElement('div');
-		this.label.innerText = F5.valueFromId(data, id);		
-		F5.addClass(this.label, 'f5label');
-		this.el.appendChild(this.label);
-		
-		this.error = document.createElement('div');
-		F5.addClass(this.error, 'f5inputerror');
-		this.el.appendChild(this.error);
+		if (!this.error) {
+			this.error = document.createElement('div');
+			F5.addClass(this.error, 'f5inputerror');
+			this.el.appendChild(this.error);			
+		}
 	
-		this.input = document.createElement('input');			
-		this.input.name = id;	
-		this.input.tabindex = -1;
-		this.input.setAttribute('tabindex', -1);
-				
-		this.input.type = this.el.getAttribute('type');
-		
-		this.input.setAttribute('autocorrect', this.el.getAttribute('autocorrect'));
-		
-		var that = this;
-			
-		this.input.onkeypress = function () {
-			that.label.style.display = 'none';
-			that.error.innerText = '';
-		};
-		
-		this.el.appendChild(this.input);
+		if (!this.input) {
+			this.input = document.createElement('input');			
+			this.input.name = id;	
+			this.input.tabindex = -1;
+			this.input.setAttribute('tabindex', -1);
+
+			this.input.type = this.el.getAttribute('type');
+
+			this.input.setAttribute('autocorrect', this.el.getAttribute('autocorrect'));			
+			var that = this;
+
+			this.input.onkeypress = function () {
+				that.label.style.display = 'none';
+				that.error.innerText = '';
+			};
+
+			this.el.appendChild(this.input);
+		}		
 	};		
 		
 	this.reset = function () {

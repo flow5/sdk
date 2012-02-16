@@ -56,7 +56,7 @@
 }
 
 .f5default.f5navbar .f5button, .f5default.f5button {
-	-webkit-box-shadow: inset 0px 0px 1px #666, inset 0px 1px 1px #666, 0px 1px #FFF	
+	-webkit-box-shadow: inset 0px 0px .01em #666, inset 0px .01em .01em #666, 0px .01em #FFF	
 }
 
 /* -webkit-linear-gradient is easier to use, but only iOS 5 */
@@ -105,8 +105,8 @@
 .f5default.f5button.f5button-up,
 .f5default.f5navbar .f5button.f5button-up {
 	background-image: -webkit-gradient(linear, center bottom, center top, 
-		from(#505050),
-			color-stop(0.49, #838383),
+		from(#656565),
+			color-stop(0.49, #707070),
 			color-stop(.51, #909090),
 			color-stop(.75, #AAAAAA),
 		to(#d6d6d6));
@@ -178,7 +178,7 @@
 
 .f5default.f5tabset .f5button-label {
 	font-family: Arial;
-	font-size: .08em;
+	font-size: .09em;
 	font-weight:800;
 	padding: 0px;
 }
@@ -197,7 +197,7 @@
 }
 
 .f5default.f5switch {
-	-webkit-box-shadow: inset 0px 1px .02em .5px #000;
+	-webkit-box-shadow: inset 0px .01em .02em .005em #000;
 	border-radius: .15em;
 	/* workaround for: https://bugs.webkit.org/show_bug.cgi?id=67950 
 	   border radius doesn't clip the transformed slider. so apply an svg mask */
@@ -212,7 +212,7 @@
 	-webkit-box-sizing: border-box;
 	border-radius: .15em; /*50%; doesn't work pre iOS 5*/
 	-webkit-box-shadow: 0px 0px 1px 1px #666;	
-	border: 1px solid #FFF;
+	border: .01em solid #FFF;
 	background-image: -webkit-gradient(linear, center bottom, center top, 
 		from(#FFF),
 		to(#d0d0d0));
@@ -222,13 +222,13 @@
 	padding-right: .08em;	
 	border-top-left-radius: .15em;	
 	border-bottom-left-radius: .15em;	
-	-webkit-box-shadow: inset 0px 1px .02em .5px #444;	
+	-webkit-box-shadow: inset 0px .01em .02em .005em #444;	
 }
 
 .f5default .f5slider .right {
 	padding-left: .10em;	
 	border-top-right-radius: .15em;	
 	border-bottom-right-radius: .15em;	
-	-webkit-box-shadow: inset 0px 1px .02em .5px #777;		
+	-webkit-box-shadow: inset 0px .01em .02em .005em #777;		
 }
 

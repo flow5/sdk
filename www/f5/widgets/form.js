@@ -32,35 +32,37 @@ function Form() {
 	
 	this.construct = function () {
 		var that = this;		
-		F5.addClass(this.el, 'f5form');
-								
-		F5.forEach(this.el.querySelectorAll('[f5widget=Input]'), function (el) {
+		if (!F5.hasClass(this.el, 'f5form')) {
+			F5.addClass(this.el, 'f5form');
 
-			if (navigator.userAgent.match(/OS 5/)) {
-				F5.addTouchStopListener(el, function (e) {
-					el.widget.input.focus();						
-				});				
-				el.widget.input.style['pointer-events'] = 'none';				
-			} else {
-				el.addEventListener('click', function (e) {
-					el.widget.input.focus();						
-				});				
-			}
-			
-			el.widget.input.onblur = function () {
-				that.el.style.top = '';
-			};
-						
-			el.widget.input.onfocus = function () {
-				// disable scrolling
-				window.scrollTo(0, 0);
-				document.body.scrollTop = 0;	
-									
-				// do the scrolling ourselves		
-				that.el.style.top = (-el.offsetTop + 
-						parseInt(window.getComputedStyle(that.el)['padding-top'].replace('px', ''), 10)) + 'px';
-			};
-		});			
+			F5.forEach(this.el.querySelectorAll('[f5widget=Input]'), function (el) {
+
+				if (navigator.userAgent.match(/OS 5/)) {
+					F5.addTouchStopListener(el, function (e) {
+						el.widget.input.focus();						
+					});				
+					el.widget.input.style['pointer-events'] = 'none';				
+				} else {
+					el.addEventListener('click', function (e) {
+						el.widget.input.focus();						
+					});				
+				}
+
+				el.widget.input.onblur = function () {
+					that.el.style.top = '';
+				};
+
+				el.widget.input.onfocus = function () {
+					// disable scrolling
+					window.scrollTo(0, 0);
+					document.body.scrollTop = 0;	
+
+					// do the scrolling ourselves		
+					that.el.style.top = (-el.offsetTop + 
+							parseInt(window.getComputedStyle(that.el)['padding-top'].replace('px', ''), 10)) + 'px';
+				};
+			});						
+		}
 	};
 	
 	this.getFormData = function () {
