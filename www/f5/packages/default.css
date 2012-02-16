@@ -449,8 +449,11 @@
 }
 
 .f5alertbutton  {	
-	-webkit-box-shadow: inset 0px .01em .01em rgba(255, 255, 255, .75), 0px .01em .01em rgba(255, 255, 255, .25);
-	border: .01em solid rgba(0, 0, 0, .8);
+	-webkit-box-shadow: 
+		inset 0px .01em .01em rgba(255, 255, 255, .75), 
+		0px -.5px 1px rgba(0, 0, 0, .5), 
+		0px .01em .01em rgba(255, 255, 255, .25);
+	border: .01em solid rgba(0, 0, 0, 1);
 	margin: .04em;
 	margin-bottom: .02em;
 	width: 100%;

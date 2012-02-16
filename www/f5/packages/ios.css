@@ -105,10 +105,10 @@
 .f5default.f5button.f5button-up,
 .f5default.f5navbar .f5button.f5button-up {
 	background-image: -webkit-gradient(linear, center bottom, center top, 
-		from(#656565),
-			color-stop(0.49, #707070),
-			color-stop(.51, #909090),
-			color-stop(.75, #AAAAAA),
+		from(#666666),
+			color-stop(0.48, #727272),
+			color-stop(.52, #909090),
+			color-stop(.70, #AAAAAA),
 		to(#d6d6d6));
 }
 
@@ -117,11 +117,11 @@
 .f5default.f5button.f5button-down, 
 .f5default.f5navbar .f5button.f5button-down {
 	background-image: -webkit-gradient(linear, center bottom, center top, 
-		from(#303030),
+		from(#505050),
 			color-stop(0.49, #737373),
-			color-stop(.51, #808080),
+			color-stop(.51, #858585),
 			color-stop(.75, #999999),
-		to(#b6b6b6));
+		to(#c6c6c6));
 }
 
 
