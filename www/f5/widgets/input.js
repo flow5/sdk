@@ -58,13 +58,23 @@ function Input() {
 			this.input.setAttribute('tabindex', -1);
 
 			this.input.type = this.el.getAttribute('type');
+			if (this.input.type === 'number') {
+				this.input.setAttribute('pattern', '[0-9]*');
+				this.input.type = 'text';
+			}
 
 			this.input.setAttribute('autocorrect', this.el.getAttribute('autocorrect'));			
 			var that = this;
-
-			this.input.onkeypress = function () {
+			
+			this.input.onkeypress = function (e) {
 				that.label.style.display = 'none';
-				that.error.innerText = '';
+				that.error.innerText = '';					
+			};
+
+			this.input.onkeyup = function () {
+				if (!that.input.value) {
+					that.label.style.display = '';					
+				}
 			};
 
 			this.el.appendChild(this.input);
