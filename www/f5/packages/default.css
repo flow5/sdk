@@ -470,22 +470,26 @@
 
 .f5alert .f5button.f5button-up {
 	background-image: -webkit-gradient(linear, center bottom, center top, 
-		from(rgba(62, 76, 112, .75)), 
-			color-stop(0.5, rgba(105, 116, 144, .75)), 
-			color-stop(.51, rgba(147, 152, 165, .75)), 
-			color-stop(.98, rgba(209, 216, 234, .75)), 
-			color-stop(.99, rgba(255, 255, 255, .75)), 
-		to(rgba(255, 255, 255, .75)));
+		from(rgba(102, 113, 141, .85)), 
+			color-stop(0.5, rgba(87, 99, 131, .85)), 
+			color-stop(0.5, rgba(108, 118, 146, .85)), 
+		to(rgba(181, 186, 201, .75)));
+}
+
+.f5alert .f5button.f5button-up.f5not-default {
+	background-image: -webkit-gradient(linear, center bottom, center top, 
+		from(rgba(52, 65, 101, .85)), 
+			color-stop(0.5, rgba(31, 46, 86, .85)), 
+			color-stop(0.5, rgba(54, 68, 104, .85)), 
+		to(rgba(132, 140, 163, .75)));
 }
 
 .f5alert .f5button.f5button-up.f5button-press {
 	background-image: -webkit-gradient(linear, center bottom, center top, 
-		from(rgba(62, 76, 112, .65)), 
-			color-stop(0.5, rgba(105, 116, 144, .65)), 
-			color-stop(.51, rgba(147, 152, 165, .65)), 
-			color-stop(.98, rgba(209, 216, 234, .65)), 
-			color-stop(.99, rgba(255, 255, 255, .25)), 
-		to(rgba(255, 255, 255, .25)));
+		from(rgba(32, 39, 56, .85)), 
+			color-stop(0.5, rgba(20, 26, 42, .85)), 
+			color-stop(0.5, rgba(50, 56, 72, .85)), 
+		to(rgba(118, 122, 132, .75)));
 }
 
 /***************************************/

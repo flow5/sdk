@@ -56,7 +56,11 @@
 }
 
 .f5default.f5navbar .f5button, .f5default.f5button {
-	-webkit-box-shadow: inset 0px 0px .01em #666, inset 0px .01em .01em #666, 0px .01em #FFF	
+	-webkit-box-shadow: 
+				inset 0px 0px .02em #555, 
+				inset 0px .01em .01em #555, 
+				0px 0px .01em rgba(0,0,0,.5), /* softens the edge just a little */
+				0px .01em .01em rgba(255, 255, 255, .75)	
 }
 
 /* -webkit-linear-gradient is easier to use, but only iOS 5 */
@@ -106,9 +110,8 @@
 .f5default.f5navbar .f5button.f5button-up {
 	background-image: -webkit-gradient(linear, center bottom, center top, 
 		from(#666666),
-			color-stop(0.48, #727272),
-			color-stop(.52, #909090),
-			color-stop(.70, #AAAAAA),
+			color-stop(0.5, #727272),
+			color-stop(0.5, #909090),
 		to(#d6d6d6));
 }
 
@@ -117,11 +120,10 @@
 .f5default.f5button.f5button-down, 
 .f5default.f5navbar .f5button.f5button-down {
 	background-image: -webkit-gradient(linear, center bottom, center top, 
-		from(#505050),
-			color-stop(0.49, #737373),
-			color-stop(.51, #858585),
-			color-stop(.75, #999999),
-		to(#c6c6c6));
+		from(#444444),
+			color-stop(0.5, #525252),
+			color-stop(0.5, #707070),
+		to(#b6b6b6));
 }
 
 

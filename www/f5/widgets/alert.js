@@ -122,6 +122,7 @@
 			
 			var cancelEl = F5.createWidget('Button', {label: 'Cancel'}, 'label');
 			F5.addClass(cancelEl, 'f5alertbutton');
+			F5.addClass(cancelEl, 'f5not-default')
 			this.buttonsEl.appendChild(cancelEl);
 
 			cancelEl.widget.setAction(function () {
