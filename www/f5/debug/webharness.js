@@ -84,7 +84,7 @@
 			updateJson();
 			
 			sequenceNumber += 1;						
-			F5.post('dot2svg', F5.Global.flow.diags.toDOT(), function (response, headers) {
+			F5.upload('POST', 'dot2svg', F5.Global.flow.diags.toDOT(), function (response, headers) {
 
 				if (parseInt(headers['sequence-number'], 10) !== sequenceNumber) {
 					return;

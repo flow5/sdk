@@ -93,8 +93,8 @@
 		doXHR('GET', url, null, success, error, headers);		
 	};
 		
-	F5.post = function(url, body, success, error, headers) {
-		doXHR('POST', url, body, success, error, headers);
+	F5.upload = function(method, url, body, success, error, headers) {
+		doXHR(method, url, body, success, error, headers);
 	};
 	
 	F5.execService = function (name, parameters, cb) {
@@ -161,8 +161,8 @@
 					handleErrorResponse(response, status);
 				});
 		} 
-		else if (method === 'POST'){			
-			F5.post(url, JSON.stringify(parameters),
+		else if (method === 'POST' || method === 'PUT'){			
+			F5.upload(method, url, JSON.stringify(parameters),
 				function success(response) {
 					try {
 //						console.log(response);

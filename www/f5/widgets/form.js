@@ -91,10 +91,7 @@ function Form() {
 	};
 	
 	this.activate = function () {
-		this.reset();
-		
 		F5.forEach(this.el.querySelectorAll('[f5widget=Input]'), function (el) {
-			el.widget.reset();
 			el.widget.input.removeAttribute('readonly');			
 		});		
 		this.el.style.top = '';

@@ -40,7 +40,7 @@ function Input() {
 			F5.addClass(this.label, 'f5label');			
 		}
 
-		var labelText = F5.valueFromId(data, id);
+		var labelText = F5.valueFromId(data.labels, id);
 		if (labelText) {
 			this.label.innerText = labelText;			
 		}
@@ -78,7 +78,16 @@ function Input() {
 			};
 
 			this.el.appendChild(this.input);
-		}		
+		}	
+		
+		var valueText = F5.valueFromId(data.values, id);
+		if (valueText) {
+			this.input.value = valueText;			
+			this.label.style.display = 'none';
+		} else {
+			this.input.value = '';
+			this.label.style.display = '';
+		}			
 	};		
 		
 	this.reset = function () {
