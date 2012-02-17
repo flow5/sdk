@@ -99,6 +99,10 @@ function Input() {
 	this.showError = function (message) {
 		this.error.innerText = message;
 	};
+	
+	this.clearError = function () {
+		this.error.innerText = '';
+	}
 }
 
 F5.Prototypes.Widgets.Input = new Input();

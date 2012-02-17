@@ -29,12 +29,14 @@
 
 (function () {
 	
-	function doXHR(method, url, body, success, error, headers) {
+	function doXHR(method, url, body, success, error, headers, user, password) {
 		var xhr = new XMLHttpRequest();
-		xhr.open(method, url, true);
+		xhr.open(method, url, true, user, password);
 		if (method === 'POST' || method === 'PUT') {
-			xhr.setRequestHeader("Content-Type", "application/json; charset=utf-8");					
+			xhr.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
 		}
+		
+//		xhr.setRequestHeader("Authorization", 'Basic c3ByaW50Omp1MWN5anUxYzM=');
 
 		if (headers) {
 			F5.forEach(headers, function (id, value) {
@@ -89,18 +91,18 @@
 		}, 0);		
 	}
 	
-	F5.get = function(url, success, error, headers) {
-		doXHR('GET', url, null, success, error, headers);		
+	F5.get = function(url, success, error, headers, user, password) {
+		doXHR('GET', url, null, success, error, headers, user, password);		
 	};
 		
-	F5.upload = function(method, url, body, success, error, headers) {
-		doXHR(method, url, body, success, error, headers);
+	F5.upload = function(method, url, body, success, error, headers, user, password) {
+		doXHR(method, url, body, success, error, headers, user, password);
 	};
 	
 	F5.execService = function (name, parameters, cb) {
 
 		var service = F5.Services;
-		var protocol, baseUrl, method;
+		var protocol, baseUrl, method, user, password;
 		F5.forEach(name.split('.'), function (component) {
 			if (service) {
 				service = service[component];				
@@ -109,6 +111,9 @@
 			protocol = service.protocol || protocol;
 			baseUrl = service.baseUrl || baseUrl;
 			method = service.method || method;
+			
+			user = service.user || user;
+			password = service.password || password;
 			
 			if (service.parameters) {
 				F5.extend(parameters, service.parameters);
@@ -159,7 +164,7 @@
 					}
 				}, function error(response, status) {
 					handleErrorResponse(response, status);
-				});
+				}, null, user, password);
 		} 
 		else if (method === 'POST' || method === 'PUT'){			
 			F5.upload(method, url, JSON.stringify(parameters),
@@ -178,7 +183,7 @@
 					}
 				}, function error(response, status) {
 					handleErrorResponse(response, status);
-				});							
+				}, null, user, password);							
 		}		
 	};	
 	

@@ -74,6 +74,10 @@ function Form() {
 	};
 	
 	this.deactivate = function () {
+		F5.forEach(this.el.querySelectorAll('[f5widget=Input]'), function (el) {
+			el.style['pointer-events'] = 'none';
+			el.widget.clearError();
+		});						
 		F5.forEach(this.el.querySelectorAll('input'), function (input) {
 			input.blur();
 			input.setAttribute('readonly', 'true');
@@ -92,6 +96,7 @@ function Form() {
 	
 	this.activate = function () {
 		F5.forEach(this.el.querySelectorAll('[f5widget=Input]'), function (el) {
+			el.style['pointer-events'] = '';			
 			el.widget.input.removeAttribute('readonly');			
 		});		
 		this.el.style.top = '';
