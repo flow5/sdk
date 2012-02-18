@@ -102,7 +102,7 @@
 	F5.execService = function (name, parameters, cb) {
 
 		var service = F5.Services;
-		var protocol, baseUrl, method, user, password, query;
+		var protocol, baseUrl, method, user, password, urlParameterKeys;
 		F5.forEach(name.split('.'), function (component) {
 			if (service) {
 				service = service[component];				
@@ -111,7 +111,8 @@
 			protocol = service.protocol || protocol;
 			baseUrl = service.baseUrl || baseUrl;
 			method = service.method || method;
-			query = service.query || query;
+			// which parameters should go into the URL for POST/PUT
+			urlParameterKeys = service.urlParameterKeys || urlParameterKeys;
 			
 			user = service.user || user;
 			password = service.password || password;
@@ -137,27 +138,24 @@
 			}
 		}
 		
-		// TODO: this is a bit messy. need to make combinations of body + url params easier
-		if (method === 'GET') {
+		function formatUrlParameters(parameters, keys) {
 			var urlParameters = [];
 			F5.forEach(parameters, function (id, value) {
-				urlParameters.push(id + '=' + encodeURIComponent(value));
+				if (!keys || keys.indexOf(id) !== -1) {
+					urlParameters.push(id + '=' + encodeURIComponent(value));					
+				}
 			});
 			if (urlParameters.length) {
-				url += '?' + urlParameters.join('&');				
-			}
+				return '?' + urlParameters.join('&');				
+			} else {
+				return '';
+			}			
+		}
+		
+		// TODO: this is a bit messy. need to make combinations of body + url params easier
+		if (method === 'GET') {			
+			url += formatUrlParameters(parameters);
 			
-			if (query) {
-				var append = query(parameters);
-				if (append) {
-					if (urlParameters.length) {
-						url += '&' + append;				
-					} else {
-						url += '?' + append;
-					}					
-				}
-			}		
-
 //			console.log(url);	
 			F5.get(url, 
 				function success(response) {
@@ -178,13 +176,17 @@
 				}, null, user, password);
 		} 
 		else if (method === 'POST' || method === 'PUT'){	
-			if (query) {
-				var append = query(parameters);
-				if (append) {
-					url += '?' + append;					
+			
+			url += formatUrlParameters(parameters, urlParameterKeys);
+			
+			var bodyParameters = {};
+			F5.forEach(parameters, function (id, value) {
+				if (!urlParameterKeys || urlParameterKeys.indexOf(id) === -1) {
+					bodyParameters[id] = value;
 				}
-			}		
-			F5.upload(method, url, JSON.stringify(parameters),
+			});
+			
+			F5.upload(method, url, JSON.stringify(bodyParameters),
 				function success(response) {
 					try {
 //						console.log(response);
