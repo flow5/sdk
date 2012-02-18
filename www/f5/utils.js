@@ -102,7 +102,7 @@
 	F5.execService = function (name, parameters, cb) {
 
 		var service = F5.Services;
-		var protocol, baseUrl, method, user, password;
+		var protocol, baseUrl, method, user, password, query;
 		F5.forEach(name.split('.'), function (component) {
 			if (service) {
 				service = service[component];				
@@ -111,6 +111,7 @@
 			protocol = service.protocol || protocol;
 			baseUrl = service.baseUrl || baseUrl;
 			method = service.method || method;
+			query = service.query || query;
 			
 			user = service.user || user;
 			password = service.password || password;
@@ -136,16 +137,26 @@
 			}
 		}
 		
+		// TODO: this is a bit messy. need to make combinations of body + url params easier
 		if (method === 'GET') {
-			if (service.query) {
-				url += '?' + service.query(parameters);
-			} else {
-				var query = [];
-				F5.forEach(parameters, function (id, value) {
-					query.push(id + '=' + encodeURIComponent(value));
-				});
-				url += '?' + query.join('&');				
+			var urlParameters = [];
+			F5.forEach(parameters, function (id, value) {
+				urlParameters.push(id + '=' + encodeURIComponent(value));
+			});
+			if (urlParameters.length) {
+				url += '?' + urlParameters.join('&');				
 			}
+			
+			if (query) {
+				var append = query(parameters);
+				if (append) {
+					if (urlParameters.length) {
+						url += '&' + append;				
+					} else {
+						url += '?' + append;
+					}					
+				}
+			}		
 
 //			console.log(url);	
 			F5.get(url, 
@@ -166,7 +177,13 @@
 					handleErrorResponse(response, status);
 				}, null, user, password);
 		} 
-		else if (method === 'POST' || method === 'PUT'){			
+		else if (method === 'POST' || method === 'PUT'){	
+			if (query) {
+				var append = query(parameters);
+				if (append) {
+					url += '?' + append;					
+				}
+			}		
 			F5.upload(method, url, JSON.stringify(parameters),
 				function success(response) {
 					try {

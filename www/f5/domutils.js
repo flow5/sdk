@@ -437,7 +437,7 @@
 		
 		function preloadImagesRecursive(resources) {
 			F5.forEach(resources, function (id, resource) {
-				if (typeof resource === 'object') {
+				if (typeof resource === 'object' && resource.constructor !== Array) {
 					preloadImagesRecursive(resource);
 				} else if (isImageResource(resource)){
 					resources[id] = F5.objectFromPrototype(F5.ImagePreloader);

@@ -56,7 +56,9 @@ function parseJSON(path) {
 function handleDataResourcesRecursive(obj, handler) {
 	forEach(obj, function (id, value) {
 		if (typeof value === 'object') {
-			handleDataResourcesRecursive(value, handler);
+			if (value.constructor !== Array) {
+				handleDataResourcesRecursive(value, handler);				
+			}
 		} else if (value.match(/(\.png)|(\.jpg)|(\.ttf)|(\.svg)/)) {
 			handler(obj, id, value);
 		}

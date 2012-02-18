@@ -39,53 +39,44 @@ function Form() {
 
 				if (navigator.userAgent.match(/OS 5/)) {
 					F5.addTouchStopListener(el, function (e) {
-						el.widget.input.focus();						
+						el.widget.focus();
 					});				
-					el.widget.input.style['pointer-events'] = 'none';				
 				} else {
 					el.addEventListener('click', function (e) {
-						el.widget.input.focus();						
+						el.widget.focus();						
 					});				
 				}
+				
+				el.widget.setOnBlur( function () {
+										that.el.style.top = '';
+									});
 
-				el.widget.input.onblur = function () {
-					that.el.style.top = '';
-				};
+				el.widget.setOnFocus(
+					function () {
+						// disable scrolling
+						window.scrollTo(0, 0);
+						document.body.scrollTop = 0;	
 
-				el.widget.input.onfocus = function () {
-					// disable scrolling
-					window.scrollTo(0, 0);
-					document.body.scrollTop = 0;	
-
-					// do the scrolling ourselves		
-					that.el.style.top = (-el.offsetTop + 
-							parseInt(window.getComputedStyle(that.el)['padding-top'].replace('px', ''), 10)) + 'px';
-				};
+						// do the scrolling ourselves		
+						that.el.style.top = (-el.offsetTop + 
+								parseInt(window.getComputedStyle(that.el)['padding-top'].replace('px', ''), 10)) + 'px';
+					});
 			});						
 		}
 	};
 	
 	this.getFormData = function () {
 		var data = {};
-		F5.forEach(this.el.querySelectorAll('input'), function (input) {
-			data[input.getAttribute('name')] = input.value;
+		F5.forEach(this.el.querySelectorAll('[f5widget=Input]'), function (el) {
+			data[el.getAttribute('f5id')] = el.widget.getValue();
 		});
 		return data;
 	};
 	
 	this.deactivate = function () {
 		F5.forEach(this.el.querySelectorAll('[f5widget=Input]'), function (el) {
-			el.style['pointer-events'] = 'none';
-			el.widget.clearError();
-		});						
-		F5.forEach(this.el.querySelectorAll('input'), function (input) {
-			input.blur();
-			input.setAttribute('readonly', 'true');
-		});
-		F5.forEach(this.el.querySelectorAll('input'), function (input) {
-			input.setAttribute('tabindex', -1);
-		});
-		
+			el.widget.deactivate();
+		});								
 	};
 	
 	this.reset = function () {
@@ -95,17 +86,12 @@ function Form() {
 	};
 	
 	this.activate = function () {
-		F5.forEach(this.el.querySelectorAll('[f5widget=Input]'), function (el) {
-			el.style['pointer-events'] = '';			
-			el.widget.input.removeAttribute('readonly');			
-		});		
-		this.el.style.top = '';
-		
 		var index = 1;
-		F5.forEach(this.el.querySelectorAll('input'), function (input) {
-			input.setAttribute('tabindex', index);
+		F5.forEach(this.el.querySelectorAll('[f5widget=Input]'), function (el) {
+			el.widget.activate(index);
 			index += 1;
-		});
+		});		
+		this.el.style.top = '';		
 	};
 	
 	this.showErrors = function (errors) {
