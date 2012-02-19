@@ -352,9 +352,9 @@
 				}, 0);			
 			});		
 		} else {
-			var screen = document.getElementById('f5screen');
-			height = screen.offsetHeight;
-			width = screen.offsetWidth;
+			var screenEl = document.getElementById('f5screen');
+			height = screenEl.offsetHeight;
+			width = screenEl.offsetWidth;
 		}
 		
 		/* for resolution independence, sizes should be expressed in em */
@@ -446,6 +446,24 @@
 			});			
 		}
 		preloadImagesRecursive(F5.Resources);		
+	};
+	
+	F5.startActivity = function (el) {
+		var activityEl = el.querySelector('[f5widget=Activity]');
+		if (!activityEl) {
+			activityEl = document.createElement('div');
+			F5.attachWidget(activityEl, 'Activity');			
+		}
+		el.appendChild(activityEl);
+		
+		return el;
+	};
+	
+	F5.stopActivity = function (el) {
+		var activityEl = el.querySelector('[f5widget=Activity]');
+		if (activityEl) {
+			activityEl.parentElement.removeChild(activityEl);			
+		}
 	};
 		
 }());

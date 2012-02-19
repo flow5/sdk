@@ -118,7 +118,7 @@ function Input() {
 			}			
 			this.input.style['pointer-events'] = 'none';
 
-			if (navigator.userAgent.match(/iPhone OS 4/)) {
+			if (navigator.userAgent.match(/OS 4/)) {
 				this.el.addEventListener('click', function (e) {
 					that.focus();	
 				});					
