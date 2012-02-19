@@ -45,8 +45,17 @@
 			window.open('tel:' + cleanNumber, '_blank');
 		}		
 	}
+	
+	function canMakeCall() {
+		if (typeof PhoneGap !== 'undefined') {
+			return F5.callBridgeSynchronous('com.flow5.phonecall', 'canMakeCall');					
+		} else {
+			return false;
+		}
+	}
 		
 	F5.phone = {
-		call: call
+		call: call,
+		canMakeCall: canMakeCall
 	};
 }());

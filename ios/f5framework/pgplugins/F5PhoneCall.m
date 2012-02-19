@@ -34,4 +34,10 @@
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:phoneNumber]];    
 }
 
+- (PluginResult*)canMakeCall:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
+    BOOL canMakeCall = [[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"tel:+11111"]];
+        
+    return [PluginResult resultWithStatus:PGCommandStatus_OK messageAsInt:canMakeCall];    
+}
+
 @end

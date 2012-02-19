@@ -31,5 +31,7 @@
 @interface F5PhoneCall : PGPlugin
 
 - (void)call:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (PluginResult*)canMakeCall:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+
 
 @end
