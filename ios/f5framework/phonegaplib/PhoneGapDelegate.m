@@ -274,6 +274,7 @@ static NSString *gapVersion;
                 break;
             case UIDeviceOrientationPortraitUpsideDown:
             {
+                screenBounds.size.height += 20;
                 orientedLaunchImageFile = [NSString stringWithFormat:@"%@-Portrait", launchImageFile];
                 startupImageTransform = CGAffineTransformMakeRotation(degreesToRadian(180));
             } 
@@ -281,6 +282,7 @@ static NSString *gapVersion;
             case UIDeviceOrientationPortrait:
             default:
             {
+                screenBounds.size.height += 20;
                 orientedLaunchImageFile = [NSString stringWithFormat:@"%@-Portrait", launchImageFile];
                 startupImageTransform = CGAffineTransformIdentity;
             }
@@ -301,12 +303,8 @@ static NSString *gapVersion;
     
     self.imageView = [[[UIImageView alloc] initWithImage:launchImage] autorelease];    
     self.imageView.tag = 1;
-    if (isIPad) {
-        // oddly, screenBounds doesn't seem to include the status bar on iPad. . .
-        self.imageView.center = CGPointMake((screenBounds.size.width / 2), ((screenBounds.size.height + 20) / 2));                
-    } else {
-        self.imageView.center = CGPointMake((screenBounds.size.width / 2), (screenBounds.size.height / 2));        
-    }
+
+    self.imageView.center = CGPointMake((screenBounds.size.width / 2), (screenBounds.size.height / 2));        
     
     self.imageView.autoresizingMask = (UIViewAutoresizingFlexibleWidth & UIViewAutoresizingFlexibleHeight & UIViewAutoresizingFlexibleLeftMargin & UIViewAutoresizingFlexibleRightMargin);    
     [self.imageView setTransform:startupImageTransform];
