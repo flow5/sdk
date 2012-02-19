@@ -118,13 +118,12 @@ function Input() {
 			this.input.style['pointer-events'] = 'none';
 
 			if (navigator.userAgent.match(/OS 5/)) {
-				F5.addTouchStopListener(this.el, function (e) {
+				F5.addTapListener(this.el, function (e) {
 					that.focus();
 				});				
 				// if the touch start event propagates, the input gets it and we scroll
 				F5.addTouchStartListener(this.el, function (e) {
 					e.preventDefault();
-					e.stopPropagation();
 				});	
 			} else {
 				this.el.addEventListener('click', function (e) {
