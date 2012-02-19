@@ -42,8 +42,12 @@ function Form() {
 				// which causes a jump. So only reset to top if we're not focusing another element
 				el.widget.setOnBlur(function () {
 					blurTimeout = setTimeout(function () {
-						that.el.style.top = '';	
-						blurTimeout = null;					
+						blurTimeout = null;		
+						if (that.onBlur) {
+							that.onBlur();
+						} else {
+							that.el.style.top = '';
+						}
 					}, 100);
 				});
 
@@ -58,8 +62,12 @@ function Form() {
 						document.body.scrollTop = 0;	
 												
 						// do the scrolling ourselves		
-						that.el.style.top = (-el.offsetTop + 
+						that.el.style.top = (-el.offsetTop +
 								parseInt(window.getComputedStyle(that.el)['padding-top'].replace('px', ''), 10)) + 'px';							
+								
+						if (that.onFocus) {
+							that.onFocus();
+						}
 					});
 			});						
 		}
@@ -78,6 +86,14 @@ function Form() {
 			el.widget.deactivate();
 		});	
 		this.el.style.top = '';							
+	};
+	
+	this.setOnBlur = function (cb) {
+		this.onBlur = cb;
+	};
+
+	this.setOnFocus = function (cb) {
+		this.onFocus = cb;
 	};
 	
 	this.reset = function () {
