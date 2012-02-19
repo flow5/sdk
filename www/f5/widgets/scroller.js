@@ -162,6 +162,9 @@
 	}		
 
 	function stopHandler(scroller, e) {	
+		if (!scroller.enabled) {
+			return;
+		}
 		
 		e.stopPropagation();
 
@@ -209,9 +212,12 @@
 	}	
 
 	function moveHandler(scroller, e) {
+		if (!scroller.enabled) {
+			return;
+		}
 		
-		e.stopPropagation();		
-
+		e.stopPropagation();	
+			
 		// browser compatibility
 		if (!scroller.tracking) {
 			return;
@@ -379,7 +385,12 @@
 		};
 		
 		this.scrollTo = function (offset) {
-			doTransform(this, offset);							
+			this.staticOffset = offset;					
+			doTransform(this, offset);		
+		};
+		
+		this.finishScrolling = function () {
+			finishScrolling(this);
 		};
 				
 		// TODO: may run into the large div problem again in which case the content size

@@ -33,6 +33,8 @@ function Input() {
 	this.construct = function (data) {
 		var that = this;
 		
+		F5.addClass(this.el, 'f5input');
+		
 		var id = this.el.getAttribute('f5id');
 
 		if (!this.label) {
@@ -83,7 +85,6 @@ function Input() {
 				});
 			} else {
 				this.input = document.createElement('input');
-				F5.addClass(this.input, 'f5input');			
 				this.input.setAttribute('tabindex', -1);
 
 				this.input.pattern = this.el.getAttribute('pattern');
@@ -147,6 +148,10 @@ function Input() {
 		this.input.removeAttribute('readonly');			
 		this.input.setAttribute('tabindex', index);					
 	};
+	
+	this.blur = function () {
+		this.input.blur();
+	}
 
 	this.deactivate = function () {
 		this.el.style['pointer-events'] = 'none';

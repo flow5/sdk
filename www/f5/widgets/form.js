@@ -31,23 +31,46 @@
 function Form() {
 		
 	this.construct = function () {
-		var that = this;		
-		if (!F5.hasClass(this.el, 'f5form')) {
+		var that = this;	
+		
+		Form.prototype.construct.call(this);	
+		
+		function onBlur() {
+			var offset = that.el.style.top.replace('px', '');
+			if (offset) {
+				that.scrollTo(offset);	
+				that.el.style.top = '';			
+			}				
+			that.enable();					
+			setTimeout(function () {
+				that.finishScrolling();				
+			}, 0);
+		}
+		
+		function onFocus() {
+			var offset = that.el.style.top.replace('px', '');
+			if (!offset) {
+				that.el.style.top = that.staticOffset + 'px';
+			}				
+			that.scrollTo(0);					
+			that.disable();	
+			
+			if (that.onFocus) {
+				that.onFocus();
+			}							
+		}
+					
+		if (!F5.hasClass(this.el, 'f5form')) {									
 			F5.addClass(this.el, 'f5form');
-						
+									
 			var blurTimeout;
-			F5.forEach(this.el.querySelectorAll('[f5widget=Input]'), function (el) {
-				
+			F5.forEach(this.el.querySelectorAll('[f5widget=Input]'), function (el) {				
 				// NOTE: on iOS 4.3, there's a gap between the blur() and focus() calls
 				// which causes a jump. So only reset to top if we're not focusing another element
 				el.widget.setOnBlur(function () {
 					blurTimeout = setTimeout(function () {
 						blurTimeout = null;		
-						if (that.onBlur) {
-							that.onBlur();
-						} else {
-							that.el.style.top = '';
-						}
+						onBlur();
 					}, 100);
 				});
 
@@ -65,12 +88,14 @@ function Form() {
 						that.el.style.top = (-el.offsetTop +
 								parseInt(window.getComputedStyle(that.el)['padding-top'].replace('px', ''), 10)) + 'px';							
 								
-						if (that.onFocus) {
-							that.onFocus();
-						}
+						onFocus();
 					});
 			});						
 		}
+	};
+	
+	this.widgetWillBecomeActive = function () {
+		this.refresh();						
 	};
 	
 	this.getFormData = function () {
@@ -88,10 +113,13 @@ function Form() {
 		this.el.style.top = '';							
 	};
 	
-	this.setOnBlur = function (cb) {
-		this.onBlur = cb;
+	this.blur = function () {
+		F5.forEach(this.el.querySelectorAll('[f5widget=Input]'), function (el) {
+			el.widget.blur();
+		});	
+		
 	};
-
+	
 	this.setOnFocus = function (cb) {
 		this.onFocus = cb;
 	};
@@ -117,12 +145,10 @@ function Form() {
 			var input = F5.getElementById(that.el, id);
 			input.widget.showError(value);
 		});
-	};
-		
-	this.widgetWillBecomeInactive = function () {
-		this.deactivate();
-	};
+	};		
 }
+Form.prototype = F5.Prototypes.Widgets.Scroller;
+
 
 F5.Prototypes.Widgets.Form = new Form();
 	

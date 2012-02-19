@@ -352,10 +352,12 @@
 	F5.forEach = function (obj, fn) {
 		/*global NodeList*/
 		if (typeof NodeList !== 'undefined' && obj.constructor === NodeList) {
+			var list = [];
 			var i;
 			for (i = 0; i < obj.length; i += 1) {
-				fn(obj[i]);
+				list.push(obj.item(i));
 			}
+			list.forEach(fn);
 
 		} else if (obj.constructor === Array) {
 			obj.forEach(fn);
