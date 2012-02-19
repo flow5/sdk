@@ -290,6 +290,12 @@
 		this.construct = function () {
 			var that = this;
 			
+			// for template refresh
+			if (this.contructed) {
+				return;
+			}
+			this.contructed = true;
+			
 			stopScrollingAt(this, 0);
 			
 			// TODO: let this do x/y with constraint to one or the other axis
@@ -371,14 +377,21 @@
 		this.enable = function () {
 			this.enabled = true;
 		};
+		
+		this.scrollTo = function (offset) {
+			doTransform(this, offset);							
+		};
 				
 		// TODO: may run into the large div problem again in which case the content size
 		// may not be derivable from offsetHeight
 		this.refresh = function () {
 			this.container = F5.elementOffsetGeometry(this.el.parentElement);
+			var oldMinOffset = this.minOffset;
 			this.minOffset = Math.min(this.container.height - this.el.offsetHeight, 0);
-			this.staticOffset = 0;
-			doTransform(this, 0);				
+			if (oldMinOffset != this.minOffset) {
+				this.staticOffset = 0;
+				doTransform(this, 0);				
+			}
 			this.initialized = false;				
 		};
 	}
