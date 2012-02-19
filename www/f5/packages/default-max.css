@@ -27,7 +27,3 @@
 
 /* default.css contains rules which are optimized for a native build (large images etc.) */
 
-.f5activitysprite {
-	background-image: url('images/activitysprite.png');
-}
-
