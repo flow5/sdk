@@ -51,6 +51,12 @@
 	document.body.addEventListener('click', function (e) {
 		e.preventDefault();
 	});	
+	
+	if (F5.isMobile()) {
+		window.onscroll = function () {
+			document.body.scrollTop = 0;
+		};		
+	}
 
 	function hideAddressBar() {
 		setTimeout(function () {

@@ -29,37 +29,37 @@
 (function () {
 		
 function Form() {
-	
+		
 	this.construct = function () {
 		var that = this;		
 		if (!F5.hasClass(this.el, 'f5form')) {
 			F5.addClass(this.el, 'f5form');
-
+						
+			var blurTimeout;
 			F5.forEach(this.el.querySelectorAll('[f5widget=Input]'), function (el) {
-
-				if (navigator.userAgent.match(/OS 5/)) {
-					F5.addTouchStopListener(el, function (e) {
-						el.widget.focus();
-					});				
-				} else {
-					el.addEventListener('click', function (e) {
-						el.widget.focus();						
-					});				
-				}
 				
-				el.widget.setOnBlur( function () {
-										that.el.style.top = '';
-									});
+				// NOTE: on iOS 4.3, there's a gap between the blur() and focus() calls
+				// which causes a jump. So only reset to top if we're not focusing another element
+				el.widget.setOnBlur(function () {
+					blurTimeout = setTimeout(function () {
+						that.el.style['top'] = '';	
+						blurTimeout = null;					
+					}, 100);
+				});
 
 				el.widget.setOnFocus(
-					function () {
+					function () {	
+						if (blurTimeout) {
+							clearTimeout(blurTimeout);
+							blurTimeout = null;
+						}					
 						// disable scrolling
 						window.scrollTo(0, 0);
 						document.body.scrollTop = 0;	
-
+												
 						// do the scrolling ourselves		
-						that.el.style.top = (-el.offsetTop + 
-								parseInt(window.getComputedStyle(that.el)['padding-top'].replace('px', ''), 10)) + 'px';
+						that.el.style['top'] = (-el.offsetTop + 
+								parseInt(window.getComputedStyle(that.el)['padding-top'].replace('px', ''), 10)) + 'px';							
 					});
 			});						
 		}
@@ -76,7 +76,8 @@ function Form() {
 	this.deactivate = function () {
 		F5.forEach(this.el.querySelectorAll('[f5widget=Input]'), function (el) {
 			el.widget.deactivate();
-		});								
+		});	
+		this.el.style.top = '';							
 	};
 	
 	this.reset = function () {
@@ -91,7 +92,7 @@ function Form() {
 			el.widget.activate(index);
 			index += 1;
 		});		
-		this.el.style.top = '';		
+		this.el.style['top'] = '';		
 	};
 	
 	this.showErrors = function (errors) {

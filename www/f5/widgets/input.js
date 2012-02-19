@@ -55,11 +55,11 @@ function Input() {
 		function clearErrorAndLabel() {
 			that.label.style.display = 'none';
 			that.error.innerText = '';									
-		}		
-	
-		var type = this.el.getAttribute('type');
-		if (type === 'menu') {
-			if (!this.input) {
+		}			
+					
+		this.type = this.el.getAttribute('type');
+		if (!this.input) {
+			if (this.type === 'menu') {
 				this.input = document.createElement('select');
 				var options = F5.valueFromId(data.options, id);
 				if (options) {
@@ -69,22 +69,19 @@ function Input() {
 						that.input.appendChild(optionEl);						
 					});
 				}
-								
+
 				this.el.appendChild(this.input);
-				this.input.style.opacity = 0;
 				this.input.style.position = 'absolute';
-				
-				this.display = document.createElement('div');
-				F5.addClass(this.display, 'f5input');
-				this.el.appendChild(this.display);
-				
-				this.input.addEventListener('blur', function () {
-					that.display.innerText = that.input.value;
+
+				this.input.addEventListener('focus', function () {
 					clearErrorAndLabel();
 				});
-			}
-		} else {
-			if (!this.input) {
+				this.input.addEventListener('blur', function () {
+					if (!that.input.value) {
+						that.label.style.display = '';					
+					}
+				});
+			} else {
 				this.input = document.createElement('input');
 				F5.addClass(this.input, 'f5input');			
 				this.input.setAttribute('tabindex', -1);
@@ -118,9 +115,25 @@ function Input() {
 
 				this.el.appendChild(this.input);
 			}			
+			this.input.style['pointer-events'] = 'none';
+
+			if (navigator.userAgent.match(/OS 5/)) {
+				F5.addTouchStopListener(this.el, function (e) {
+					that.focus();
+				});				
+				// if the touch start event propagates, the input gets it and we scroll
+				F5.addTouchStartListener(this.el, function (e) {
+					e.preventDefault();
+					e.stopPropagation();
+				});	
+			} else {
+				this.el.addEventListener('click', function (e) {
+					that.focus();	
+				});					
+			}	
 		}
-		
-		var valueText = F5.valueFromId(data.values, id);
+				
+		var valueText = F5.valueFromId(data.values, id);				
 		if (valueText) {
 			this.setValue(valueText);
 			this.label.style.display = 'none';
@@ -145,9 +158,14 @@ function Input() {
 	};	
 	
 	this.setValue = function (value) {
-		this.input.value = value;	
-		if (this.display) {
-			this.display.innerText = value;
+		if (this.type === 'menu') {
+			F5.forEach(this.input.querySelectorAll('option'), function (option) {
+				if (option.innerText === value) {
+					option.selected = true;
+				}
+			});
+		} else {
+			this.input.value = value;				
 		}
 	};
 	
@@ -156,15 +174,11 @@ function Input() {
 	};
 	
 	this.setOnBlur = function (cb) {
-		this.input.onblur = function () {
-			cb();
-		};		
+		this.input.onblur = cb;		
 	};
 	
 	this.setOnFocus = function (cb) {
-		this.input.onfocus = function () {
-			cb();
-		};		
+		this.input.onfocus = cb;		
 	};
 	
 	this.focus = function () {
@@ -175,9 +189,6 @@ function Input() {
 		this.error.innerText = '';
 		this.label.style.display = '';
 		this.input.value = '';
-		if (this.display) {
-			this.display.innerText = '';
-		}			
 	};
 		
 	this.showError = function (message) {

@@ -118,12 +118,13 @@
 	height: .30em;	
 	border-radius: .06em;	
 	padding-left: .12em;
-	padding-right: .12em;	
+	padding-right: .12em;
 }
 
 .f5tab.f5button {
 	border-radius: 0px;	
-	height: auto;	
+	height: auto;
+	padding: 0px;	
 }
 
 .f5button-container, .f5button-container .f5button-up {
