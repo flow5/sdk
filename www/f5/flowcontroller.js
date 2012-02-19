@@ -140,7 +140,6 @@
 		};
 		
 		this.release = function (node) {
-			console.log('releasing: ' + node.id);
 			node.data = {};
 			var that = this;
 			if (node.children) {
