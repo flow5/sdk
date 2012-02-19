@@ -118,7 +118,11 @@ function Input() {
 			}			
 			this.input.style['pointer-events'] = 'none';
 
-			if (navigator.userAgent.match(/OS 5/)) {
+			if (navigator.userAgent.match(/iPhone OS 4/)) {
+				this.el.addEventListener('click', function (e) {
+					that.focus();	
+				});					
+			} else {
 				F5.addTapListener(this.el, function (e) {
 					that.focus();
 				});				
@@ -126,10 +130,6 @@ function Input() {
 				F5.addTouchStartListener(this.el, function (e) {
 					e.preventDefault();
 				});	
-			} else {
-				this.el.addEventListener('click', function (e) {
-					that.focus();	
-				});					
 			}	
 		}
 				
@@ -151,7 +151,7 @@ function Input() {
 	
 	this.blur = function () {
 		this.input.blur();
-	}
+	};
 
 	this.deactivate = function () {
 		this.el.style['pointer-events'] = 'none';
