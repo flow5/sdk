@@ -47,7 +47,7 @@ function Form() {
 		function onBlur() {
 			var offset = that.el.style.top.replace('px', '');
 			if (offset) {
-				that.scrollTo(offset);	
+				that.jumpTo(offset);	
 				that.el.style.top = '';			
 			}				
 			that.enable();					
@@ -61,7 +61,7 @@ function Form() {
 			if (!offset) {
 				that.el.style.top = that.staticOffset + 'px';
 			}				
-			that.scrollTo(0);					
+			that.jumpTo(0);					
 			that.disable();	
 			
 			if (that.onFocus) {

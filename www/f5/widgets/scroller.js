@@ -384,7 +384,7 @@
 			this.enabled = true;
 		};
 		
-		this.scrollTo = function (offset) {
+		this.jumpTo = function (offset) {
 			this.staticOffset = offset;					
 			doTransform(this, offset);		
 		};
