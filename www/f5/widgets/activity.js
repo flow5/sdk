@@ -31,22 +31,16 @@
 	
 	function Activity() {
 		
-		this.construct = function () {
-			
-			if (!this.initialized) {
-				F5.addClass(this.el, 'f5activityspritecontainer');
+		this.construct = function () {			
+			F5.addClass(this.el, 'f5activityspritecontainer');
 
-				var mask = document.createElement('div');
-				F5.addClass(mask, 'f5activityspritemask');
-				this.el.appendChild(mask);
+			var mask = document.createElement('div');
+			F5.addClass(mask, 'f5activityspritemask');
+			this.el.appendChild(mask);
 
-				var sprite = document.createElement('div');
-				F5.addClass(sprite, 'f5activitysprite');
-				mask.appendChild(sprite);
-				
-				this.initialized = true;				
-			}
-			
+			var sprite = document.createElement('div');
+			F5.addClass(sprite, 'f5activitysprite');
+			mask.appendChild(sprite);							
 		};
 	}
 	

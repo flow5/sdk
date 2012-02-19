@@ -60,21 +60,43 @@ function Input() {
 		}			
 					
 		this.type = this.el.getAttribute('type');
-		if (!this.input) {
-			if (this.type === 'menu') {
-				this.input = document.createElement('select');
-				var options = F5.valueFromId(data.options, id);
-				if (options) {
-					options.forEach(function (option) {
-						var optionEl = document.createElement('option');
-						optionEl.innerText = option;
-						that.input.appendChild(optionEl);						
-					});
+		if (this.type === 'menu') {
+			this.input = document.createElement('select');
+			var options = F5.valueFromId(data.options, id);
+			if (options) {
+				options.forEach(function (option) {
+					var optionEl = document.createElement('option');
+					optionEl.innerText = option;
+					that.input.appendChild(optionEl);						
+				});
+			}
+
+			this.el.appendChild(this.input);
+			this.input.style.position = 'absolute';
+
+			this.input.addEventListener('focus', function () {
+				clearErrorAndLabel();
+			});
+			this.input.addEventListener('blur', function () {
+				if (!that.input.value) {
+					that.label.style.display = '';					
 				}
+			});
+		} else {
+			this.input = document.createElement('input');
+			this.input.setAttribute('tabindex', -1);
 
-				this.el.appendChild(this.input);
-				this.input.style.position = 'absolute';
+			this.input.pattern = this.el.getAttribute('pattern');
+			this.input.type = this.el.getAttribute('type');
+			this.input.setAttribute('maxlength', this.el.getAttribute('maxlength'));			
 
+			this.input.setAttribute('autocorrect', this.el.getAttribute('autocorrect'));			
+
+			this.input.onkeypress = function (e) {
+				clearErrorAndLabel();
+			};
+
+			if (this.input.type === 'date') {
 				this.input.addEventListener('focus', function () {
 					clearErrorAndLabel();
 				});
@@ -83,64 +105,45 @@ function Input() {
 						that.label.style.display = '';					
 					}
 				});
-			} else {
-				this.input = document.createElement('input');
-				this.input.setAttribute('tabindex', -1);
+			}
 
-				this.input.pattern = this.el.getAttribute('pattern');
-				this.input.type = this.el.getAttribute('type');
-				this.input.setAttribute('maxlength', this.el.getAttribute('maxlength'));			
-
-				this.input.setAttribute('autocorrect', this.el.getAttribute('autocorrect'));			
-
-				this.input.onkeypress = function (e) {
-					clearErrorAndLabel();
-				};
-
-				if (this.input.type === 'date') {
-					this.input.addEventListener('focus', function () {
-						clearErrorAndLabel();
-					});
-					this.input.addEventListener('blur', function () {
-						if (!that.input.value) {
-							that.label.style.display = '';					
-						}
-					});
+			this.input.onkeyup = function () {
+				if (!that.input.value) {
+					that.label.style.display = '';					
 				}
+			};
 
-				this.input.onkeyup = function () {
-					if (!that.input.value) {
-						that.label.style.display = '';					
-					}
-				};
+			this.el.appendChild(this.input);
+		}			
+		this.input.style['pointer-events'] = 'none';
 
-				this.el.appendChild(this.input);
-			}			
-			this.input.style['pointer-events'] = 'none';
-
-			if (navigator.userAgent.match(/OS 4/)) {
-				this.el.addEventListener('click', function (e) {
-					that.focus();	
-				});					
-			} else {
-				F5.addTapListener(this.el, function (e) {
-					that.focus();
-				});				
-				// if the touch start event propagates, the input gets it and we scroll
-				F5.addTouchStartListener(this.el, function (e) {
-					e.preventDefault();
-				});	
-			}	
-		}
-				
-		var valueText = F5.valueFromId(data.values, id);				
+		if (navigator.userAgent.match(/OS 4/)) {
+			this.el.addEventListener('click', function (e) {
+				that.focus();	
+			});					
+		} else {
+			F5.addTapListener(this.el, function (e) {
+				that.focus();
+			});				
+			// if the touch start event propagates, the input gets it and we scroll
+			F5.addTouchStartListener(this.el, function (e) {
+				e.preventDefault();
+			});	
+		}	
+		
+		this.refresh(data);		
+	};
+	
+	// TODO: might want to be able to make menu options dynamic also
+	this.refresh = function (data) {
+		var valueText = F5.valueFromId(data.values, this.el.getAttribute('f5id'));				
 		if (valueText) {
 			this.setValue(valueText);
 			this.label.style.display = 'none';
 		} else {
 			this.setValue('');
 			this.label.style.display = '';
-		}			
+		}					
 	};
 	
 	this.activate = function (index) {

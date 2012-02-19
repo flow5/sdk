@@ -42,7 +42,9 @@
 		});
 		
 		F5.forEach(widgetEls, function (el) {
-			el.widget.construct(data);
+			if (el.widget.refresh) {
+				el.widget.refresh(data);				
+			}
 		});
 	};
 			

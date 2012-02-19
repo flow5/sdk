@@ -154,7 +154,7 @@
 						var data = {};
 						data[which] = configData;
 						buttons[which].inactive.widget.reset();
-						buttons[which].inactive.widget.construct(data);
+						buttons[which].inactive.widget.refresh(data);
 					} else {
 						buttons[which].inactive = null;						
 					}

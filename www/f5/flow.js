@@ -108,8 +108,12 @@
 					F5.forEach(node.spec.transitions, function (transition) {
 						var id;
 						if (typeof transition === 'object') {
-							id = transition.to;
-							node.transitions[id] = {to: findNodeUp(node, id), animation: transition.animation};
+							if (transition.id) {
+								id = transition.id;
+							} else {
+								id = transition.to;								
+							}
+							node.transitions[id] = {to: findNodeUp(node, transition.to), animation: transition.animation};
 						} else {
 							id = transition;
 							node.transitions[id] = {to: findNodeUp(node, id)};						

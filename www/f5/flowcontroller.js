@@ -138,6 +138,17 @@
 				}
 			});							
 		};
+		
+		this.release = function (node) {
+			console.log('releasing: ' + node.id);
+			node.data = {};
+			var that = this;
+			if (node.children) {
+				F5.forEach(node.children, function (id, child) {
+					that.release(child);
+				});				
+			}
+		};
 			
 		this.start = function (cb) {	
 			cb = cb || function () {
@@ -240,6 +251,8 @@
 				
 		// use the transition on the node with the given id 
 		this.doTransition = function (node, id, parameters, cb) {
+			var that = this;
+			
 			F5.assert(!lockout, 'Locked out');
 //			F5.assert(node.type === 'flow' || node.type === 'set', 
 //				'Can only doTransition on node of types flow or set');			
@@ -287,7 +300,10 @@
 			
 			cancelSubflowRecursive(node);		
 			
-			var target = id === 'back' ? backNode.back : node.transitions[id].to;
+			// TODO: clean this up. the logic around backNode is confusing
+			// sets allow transition with 'back' semantics (cleanup views) where the
+			// state is set in lifecycle call so there's no backNode
+			var target = id === 'back' && backNode ? backNode.back : node.transitions[id].to;
 			var animation = node.transitions && node.transitions[id] ? node.transitions[id].animation : null;
 									
 			if (parameters) {
@@ -315,12 +331,18 @@
 						var oldSelection = container.selection;
 
 						nodeDidBecomeInactive(oldSelection, function () {
-							if (backNode) {
-								container.selection = backNode.back;
-								delete backNode.back;								
+							if (id === 'back') {
+								if (backNode) {
+									delete backNode.back;									
+								}
+
+								var oldNode = container.selection;
+								container.selection = target;
+								
+								that.release(oldNode);
 								flowObservers.forEach(function (observer) {
 									if (observer.release) {
-										observer.release(node);
+										observer.release(oldNode);
 									}
 								});
 							} else {

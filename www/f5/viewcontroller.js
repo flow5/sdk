@@ -104,7 +104,7 @@
 		this.doTransition = function (container, from, id, to, animation) {
 			var that = this;
 
-			if (id === 'back') {
+			if (!animation && id === 'back') {
 				animation = F5.Animation.inverseAnimation(container.selection.animation);
 			}			
 			if (!animation)  {

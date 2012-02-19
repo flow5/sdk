@@ -69,38 +69,36 @@ function Form() {
 			}							
 		}
 					
-		if (!F5.hasClass(this.el, 'f5form')) {									
-			F5.addClass(this.el, 'f5form');
-									
-			var blurTimeout;
-			F5.forEach(this.el.querySelectorAll('[f5widget=Input]'), function (el) {				
-				// NOTE: on iOS 4.3, there's a gap between the blur() and focus() calls
-				// which causes a jump. So only reset to top if we're not focusing another element
-				el.widget.setOnBlur(function () {
-					blurTimeout = setTimeout(function () {
-						blurTimeout = null;		
-						onBlur();
-					}, 100);
-				});
-
-				el.widget.setOnFocus(
-					function () {	
-						if (blurTimeout) {
-							clearTimeout(blurTimeout);
-							blurTimeout = null;
-						}					
-						// disable scrolling
-						window.scrollTo(0, 0);
-						document.body.scrollTop = 0;	
-												
-						// do the scrolling ourselves		
-						that.el.style.top = (-el.offsetTop +
-								parseInt(window.getComputedStyle(that.el)['padding-top'].replace('px', ''), 10)) + 'px';							
+		F5.addClass(this.el, 'f5form');
 								
-						onFocus();
-					});
-			});						
-		}
+		var blurTimeout;
+		F5.forEach(this.el.querySelectorAll('[f5widget=Input]'), function (el) {				
+			// NOTE: on iOS 4.3, there's a gap between the blur() and focus() calls
+			// which causes a jump. So only reset to top if we're not focusing another element
+			el.widget.setOnBlur(function () {
+				blurTimeout = setTimeout(function () {
+					blurTimeout = null;		
+					onBlur();
+				}, 100);
+			});
+
+			el.widget.setOnFocus(
+				function () {	
+					if (blurTimeout) {
+						clearTimeout(blurTimeout);
+						blurTimeout = null;
+					}					
+					// disable scrolling
+					window.scrollTo(0, 0);
+					document.body.scrollTop = 0;	
+											
+					// do the scrolling ourselves		
+					that.el.style.top = (-el.offsetTop +
+							parseInt(window.getComputedStyle(that.el)['padding-top'].replace('px', ''), 10)) + 'px';							
+							
+					onFocus();
+				});
+		});						
 	};
 	
 	this.widgetWillBecomeActive = function () {

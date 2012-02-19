@@ -29,10 +29,7 @@
 (function () {
 	
 	function Picture() {
-		this.construct = function (data) {
-			
-			this.el.innerHTML = '';
-
+		this.construct = function (data) {			
 			var id = this.el.getAttribute('f5id');
 			// NOTE: valueFromId handles period delimited ids. probably going to get rid of this in favor of scoping
 			var value = F5.valueFromId(data, id);

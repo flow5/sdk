@@ -137,10 +137,13 @@
 			delete this.label;			
 		};
 					
-		this.construct = function (data) {
-			
+		this.construct = function (data) {									
+			this.refresh(data);
+		};
+		
+		this.refresh = function (data) {
 			var that = this;
-						
+
 			var container;
 			function makeContainer(tag) {
 				if (!container) {
@@ -275,8 +278,8 @@
 				F5.merge(instanceData, mergedData);				
 			}
 
-			applyResourceData(mergedData);	
-		};
+			applyResourceData(mergedData);			
+		}
 	}	
 		
 	F5.Prototypes.Widgets.Button = new Button();	

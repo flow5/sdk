@@ -295,13 +295,7 @@
 		
 		this.construct = function () {
 			var that = this;
-			
-			// for template refresh
-			if (this.contructed) {
-				return;
-			}
-			this.contructed = true;
-			
+						
 			stopScrollingAt(this, 0);
 			
 			// TODO: let this do x/y with constraint to one or the other axis
@@ -399,7 +393,7 @@
 			this.container = F5.elementOffsetGeometry(this.el.parentElement);
 			var oldMinOffset = this.minOffset;
 			this.minOffset = Math.min(this.container.height - this.el.offsetHeight, 0);
-			if (oldMinOffset != this.minOffset) {
+			if (oldMinOffset !== this.minOffset) {
 				this.staticOffset = 0;
 				doTransform(this, 0);				
 			}
