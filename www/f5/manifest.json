@@ -47,7 +47,7 @@
             "location.js", 
 			"phone.js",
 			"imagepreloader.js",
-            "widgets/button.js", 
+            "widgets/buttons.js", 
             "widgets/statictext.js", 
             "widgets/picture.js", 
             "widgets/tabset.js", 
@@ -62,7 +62,7 @@
             "widgets/input.js", 
             "widgets/form.js", 
             "widgets/activity.js", 
-            "widgets/alert.js", 
+            "widgets/dialogs.js", 
             "3p/bezier.js",
 			"3p/b64.js"
         ]

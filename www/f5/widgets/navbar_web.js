@@ -236,29 +236,29 @@
 		
 		this.refresh = function () {
 			this.updateConfiguration(F5.Global.flow.root);
-			setup.apply(this);
-			animate.apply(this, ['fade']);
+			setup.call(this);
+			animate.call(this, 'fade');
 		};
 			
 		this.start = function () {
 			this.updateConfiguration(F5.Global.flow.root);
-			setup.apply(this);
+			setup.call(this);
 		};
 	
 		this.doSelection = function (node, id) {
 			this.updateConfiguration(node.children[id]);
-			setup.apply(this);
+			setup.call(this);
 			
 			var that = this;
 			return function (cb) {
-				animate.apply(that, ['fade']);
+				animate.call(that, 'fade');
 				cb();
 			};
 		};
 	
 		this.doTransition = function (container, from, id, to, animation) {
 			this.updateConfiguration(to);		
-			setup.apply(this);
+			setup.call(this);
 			
 			var that = this;
 			return function (cb) {
@@ -268,7 +268,7 @@
 				// to sync than translate
 				// TODO: when translate is needed in navbar, do *that* inline since it plays nice
 				setTimeout(function () {
-					animate.apply(that, [animation]);					
+					animate.call(that, animation);					
 				}, 0);
 				cb();
 			};
@@ -277,17 +277,17 @@
 		this.startSubflow = function () {
 			this.updateConfiguration(F5.Global.flow.root);
 //			buttons.left.active.style.visibility = 'hidden';	
-			setup.apply(this);
+			setup.call(this);
 		};
 	
 		this.syncSelection = function (node) {
 			this.updateConfiguration(node);
-			setup.apply(this);
+			setup.call(this);
 		};
 	
 		this.completeSubflow = function () {
 			this.updateConfiguration(F5.Global.flow.root);
-			setup.apply(this);
+			setup.call(this);
 		};
 	}
 	NavBar.prototype = F5.Prototypes.Widgets.NavController;

@@ -102,12 +102,12 @@
 	
 		this.start = function () {
 			this.updateConfiguration(F5.Global.flow.root);
-			configure.apply(this, [false]);			
+			configure.call(this, false);			
 		};
 	
 		this.doSelection = function (node, id) {
 			this.updateConfiguration(node.children[id]);						
-			configure.apply(this, [false]);
+			configure.call(this, false);
 			
 			return function (cb) {
 				cb();
@@ -116,7 +116,7 @@
 	
 		this.doTransition = function (container, from, id, to, animation) {
 			this.updateConfiguration(to);				
-			configure.apply(this, [animation === 'pushLeft' || animation === 'pushRight']);
+			configure.call(this, animation === 'pushLeft' || animation === 'pushRight');
 			return function (cb) {
 				cb();
 			};									
@@ -124,17 +124,17 @@
 	
 		this.startSubflow = function () {
 			this.updateConfiguration(F5.Global.flow.root);			
-			configure.apply(this, [false]);					
+			configure.call(this, false);					
 		};
 	
 		this.syncSelection = function (node) {
 			this.updateConfiguration(node);
-			configure.apply(this, [false]);				
+			configure.call(this, false);				
 		};
 	
 		this.completeSubflow = function () {
 			this.updateConfiguration(F5.Global.flow.root);
-			configure.apply(this, [false]);				
+			configure.call(this, false);
 		};		
 	}
 	NavBar.prototype = F5.Prototypes.Widgets.NavController;

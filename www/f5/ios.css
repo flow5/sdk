@@ -28,7 +28,7 @@
 /* the place to put any ios specific quirks. for ios native styles use /packages/ios.css */
 
 /* pre iOS 5.0, there is a bug in rendering image masks where if the image mask doesn't fill the
-   frame it leaves an unmasked border. see the corresponding code in widgets/button.js where a 
+   frame it leaves an unmasked border. see the corresponding code in widgets/buttons.js where a 
    tranparent gradient is added as a second image mask image and sized here to 100% */
 .f5default.f5navbar .f5button .f5mask, 
 .f5default.f5navbar .f5button .f5mask-shadow,

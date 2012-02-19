@@ -389,9 +389,9 @@
 			}
 
 			if (delegateMethod) {
-				delegateMethod.apply(delegate, [function subflowChoiceCb(choice) {
+				delegateMethod.call(delegate, function subflowChoiceCb(choice) {
 					that.doSubflowChoice(node, choice);
-				}]);
+				});
 			} else {
 				// handle missing delegate method gracefully
 				if (!subflow.userInput) {
@@ -423,7 +423,7 @@
 					delegateMethod = delegate ? delegate[name] : null;
 				}
 				if (delegateMethod) {
-					delegateMethod.apply(delegate, [id]);
+					delegateMethod.call(delegate, id);
 				}
 			}								
 

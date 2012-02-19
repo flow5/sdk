@@ -35,6 +35,15 @@ function Form() {
 		
 		Form.prototype.construct.call(this);	
 		
+		// NOTE: on iOS (and mabye Android?) the text input controls are not tied into the -webkit-transform
+		// system very well. so if the form is animated using -webkit-transform while the caret is visible, it
+		// gets out of sync with the form. annoying. the sync is pretty good when using top for positioning
+		// although even with top, the caret will not follow closely enough
+		// so the technique here is to enable smooth scrolling when there are no elements focused
+		// when an element focues, then switch to discrete steps using top
+		// on blur, switch back to smooth scrolling. this ends up feeling pretty good. not quite
+		// as nice as a fully native form, but close. sigh.
+		
 		function onBlur() {
 			var offset = that.el.style.top.replace('px', '');
 			if (offset) {
