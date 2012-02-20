@@ -116,9 +116,17 @@ function Input() {
 			this.el.appendChild(this.input);
 		}			
 
-		// Can do a bit better on iOS if we take closer control over the events
-		if (F5.platform() !== 'android') {
-			this.input.style['pointer-events'] = 'none';							
+		// take control of the touch events
+		this.input.style['pointer-events'] = 'none';
+		if (F5.platform() === 'android') {
+			this.el.addEventListener('click', function (e) {
+				that.focus();						
+				e.stopPropagation();
+				e.preventDefault();
+			});									
+		} else {
+			// TODO: doesn't seem to be a way to prevent inputs from being selected on
+			// touch down						
 			if (navigator.userAgent.match(/OS 4/)) {
 				this.el.addEventListener('click', function (e) {
 					that.focus();	
@@ -192,13 +200,14 @@ function Input() {
 		return this.input.value;			
 	};
 	
+	// Android seems to sometimes produce extra blur events
+	// only process on blur event after a focus
 	this.setOnBlur = function (cb) {
 		var that = this;
 		this.onblur = function () {
 			cb();
 			that.input.onblur = null;
 		};
-//		this.input.onblur = cb;
 	};
 	
 	this.setOnFocus = function (cb) {
