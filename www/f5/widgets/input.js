@@ -120,7 +120,12 @@ function Input() {
 		this.input.style['pointer-events'] = 'none';
 		if (F5.platform() === 'android') {
 			this.el.addEventListener('click', function (e) {
-				that.focus();						
+				// if the form is scrolling when the click comes in
+				// the input will end up in the wrong place
+				// so toss out click events while moving
+				if (!that.form.el.style['-webkit-transform']) {
+					that.focus();					
+				}
 				e.stopPropagation();
 				e.preventDefault();
 			});									
@@ -149,8 +154,7 @@ function Input() {
 		this.input.addEventListener('click', function (e) {
 			e.stopPropagation();
 		});
-		
-		
+				
 		this.refresh(data);		
 	};
 	

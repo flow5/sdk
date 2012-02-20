@@ -98,6 +98,9 @@ function Form() {
 							
 					onFocus();
 				});
+			
+			// let the input know about the form
+			el.widget.form = that;
 		});	
 
 		this.el.addEventListener('click', function () {
