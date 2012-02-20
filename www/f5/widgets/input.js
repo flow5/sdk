@@ -115,30 +115,30 @@ function Input() {
 
 			this.el.appendChild(this.input);
 		}			
-		this.input.style['pointer-events'] = 'none';
 
-		if (F5.platform() === 'android') {
-			this.input.style['pointer-events'] = '';						
-			F5.addTouchStartListener(this.input, function (e) {
-				e.stopPropagation();						
-				that.focus();				
-			});
-			F5.addTouchStopListener(this.input, function (e) {
-				e.stopPropagation();
-			});
-		} else if (navigator.userAgent.match(/OS 4/)) {
-			this.el.addEventListener('click', function (e) {
-				that.focus();	
-			});					
-		} else {
-			F5.addTapListener(this.el, function (e) {
-				that.focus();
-			});				
-			// if the touch start event propagates, the input gets it and we scroll
-			F5.addTouchStartListener(this.el, function (e) {
-				e.preventDefault();
-			});	
-		}	
+		// Can do a bit better on iOS if we take closer control over the events
+		if (F5.platform() !== 'android') {
+			this.input.style['pointer-events'] = 'none';
+			
+			if (navigator.userAgent.match(/OS 4/)) {
+				this.input.addEventListener('click', function (e) {
+					that.focus();	
+				});					
+			} else {
+				F5.addTapListener(this.el, function (e) {
+					that.focus();
+				});				
+				F5.addTouchStartListener(this.el, function (e) {
+					e.preventDefault();
+				});	
+			}
+		}
+		
+		// Form listens for click to blur the fields. so catch it in the input
+		this.input.addEventListener('click', function (e) {
+			e.stopPropagation();
+		});
+		
 		
 		this.refresh(data);		
 	};
@@ -190,11 +190,11 @@ function Input() {
 	};
 	
 	this.setOnBlur = function (cb) {
-		this.input.onblur = cb;		
+		this.input.onblur = cb;
 	};
 	
 	this.setOnFocus = function (cb) {
-		this.input.onfocus = cb;		
+		this.input.onfocus = cb;
 	};
 	
 	this.focus = function () {

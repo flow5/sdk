@@ -36,12 +36,7 @@
 	} else {
 		F5.imageServerHost = '';
 	}
-	
-	// browser: prevent image drag
-	document.body.addEventListener('mousedown', function (e) {
-		e.preventDefault();
-	});
-	
+		
 	// prevent scrolling
 	document.body.addEventListener('touchmove', function (e) {
 		e.preventDefault();

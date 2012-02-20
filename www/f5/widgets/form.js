@@ -33,11 +33,9 @@ function Form() {
 	this.construct = function () {
 		var that = this;	
 		
-		if (F5.platform() !== 'android') {
-			Form.prototype.construct.call(this);				
-		}
-		
-		// NOTE: on iOS (and mabye Android?) the text input controls are not tied into the -webkit-transform
+		Form.prototype.construct.call(this);				
+
+		// NOTE: on iOS and Android the text input controls are not tied into the -webkit-transform
 		// system very well. so if the form is animated using -webkit-transform while the caret is visible, it
 		// gets out of sync with the form. annoying. the sync is pretty good when using top for positioning
 		// although even with top, the caret will not follow closely enough
@@ -47,28 +45,24 @@ function Form() {
 		// as nice as a fully native form, but close. sigh.
 		
 		function onBlur() {
-			if (F5.platform() !== 'android') {
-				var offset = that.el.style.top.replace('px', '');
-				if (offset) {
-					that.jumpTo(offset);	
-					that.el.style.top = '';			
-				}				
-				that.enable();					
+			var offset = that.el.style.top.replace('px', '');
+			if (offset) {
+				that.jumpTo(offset);	
+				that.el.style.top = '';			
 				setTimeout(function () {
 					that.finishScrolling();				
 				}, 0);				
-			}
+			}				
+			that.enable();					
 		}
 		
 		function onFocus() {
-			if (F5.platform() !== 'android') {
-				var offset = that.el.style.top.replace('px', '');
-				if (!offset) {
-					that.el.style.top = that.staticOffset + 'px';
-				}				
-				that.jumpTo(0);					
-				that.disable();					
-			}
+			var offset = that.el.style.top.replace('px', '');
+			if (!offset) {
+				that.el.style.top = that.staticOffset + 'px';
+			}				
+			that.jumpTo(0);					
+			that.disable();					
 			
 			if (that.onFocus) {
 				that.onFocus();
@@ -79,13 +73,13 @@ function Form() {
 								
 		var blurTimeout;
 		F5.forEach(this.el.querySelectorAll('[f5widget=Input]'), function (el) {				
-			// NOTE: on iOS 4.3, there's a gap between the blur() and focus() calls
-			// which causes a jump. So only reset to top if we're not focusing another element
+			// NOTE: on iOS 4.3 and Android, executing the blur logic when switching fields
+			// causes problems. so delay so that a subsequent focus call can abort
 			el.widget.setOnBlur(function () {
 				blurTimeout = setTimeout(function () {
 					blurTimeout = null;		
 					onBlur();
-				}, 100);
+				}, 100);					
 			});
 
 			el.widget.setOnFocus(
@@ -94,25 +88,25 @@ function Form() {
 						clearTimeout(blurTimeout);
 						blurTimeout = null;
 					}	
-					if (F5.platform() !== 'android') {
-						// disable scrolling
-						window.scrollTo(0, 0);
-						document.body.scrollTop = 0;	
+					// disable scrolling
+					window.scrollTo(0, 0);
+					document.body.scrollTop = 0;	
 
-						// do the scrolling ourselves		
-						that.el.style.top = (-el.offsetTop +
-								parseInt(window.getComputedStyle(that.el)['padding-top'].replace('px', ''), 10)) + 'px';						
-					}				
+					// do the scrolling ourselves		
+					that.el.style.top = (-el.offsetTop +
+							parseInt(window.getComputedStyle(that.el)['padding-top'].replace('px', ''), 10)) + 'px';						
 							
 					onFocus();
 				});
-		});						
+		});	
+
+		this.el.addEventListener('click', function () {
+			that.blur();
+		})		
 	};
 	
 	this.widgetWillBecomeActive = function () {
-		if (F5.platform() !== 'android') {
-			this.refresh();			
-		}
+		this.refresh();			
 	};
 	
 	this.getFormData = function () {
@@ -174,10 +168,7 @@ function Form() {
 		});
 	};		
 }
-if (F5.platform() !== 'android') {
-	Form.prototype = F5.Prototypes.Widgets.Scroller;	
-}
-
+Form.prototype = F5.Prototypes.Widgets.Scroller;	
 
 F5.Prototypes.Widgets.Form = new Form();
 	

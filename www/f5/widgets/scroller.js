@@ -49,7 +49,14 @@
 				scroller.el.style['-webkit-transform'] = transform;									
 			}, 10);
 		} else {
-			scroller.el.style['-webkit-transform'] = transform;					
+			// Android misbehaves if -webkit-transform is left on elements when not required
+			// at application layer this means using a combination of animation and 
+			// positioning to manage element location
+			if (F5.platform() === 'android' && offset === 0) {
+				scroller.el.style['-webkit-transform'] = '';
+			} else {
+				scroller.el.style['-webkit-transform'] = transform;									
+			}
 		}
 
 		if (duration) {
@@ -380,7 +387,7 @@
 		
 		this.jumpTo = function (offset) {
 			this.staticOffset = offset;					
-			doTransform(this, offset);		
+			doTransform(this, offset);	
 		};
 		
 		this.finishScrolling = function () {
