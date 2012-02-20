@@ -117,7 +117,16 @@ function Input() {
 		}			
 		this.input.style['pointer-events'] = 'none';
 
-		if (navigator.userAgent.match(/OS 4/)) {
+		if (F5.platform() === 'android') {
+			this.input.style['pointer-events'] = '';						
+			F5.addTouchStartListener(this.input, function (e) {
+				e.stopPropagation();						
+				that.focus();				
+			});
+			F5.addTouchStopListener(this.input, function (e) {
+				e.stopPropagation();
+			});
+		} else if (navigator.userAgent.match(/OS 4/)) {
 			this.el.addEventListener('click', function (e) {
 				that.focus();	
 			});					

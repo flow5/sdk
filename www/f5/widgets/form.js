@@ -33,7 +33,9 @@ function Form() {
 	this.construct = function () {
 		var that = this;	
 		
-		Form.prototype.construct.call(this);	
+		if (F5.platform() !== 'android') {
+			Form.prototype.construct.call(this);				
+		}
 		
 		// NOTE: on iOS (and mabye Android?) the text input controls are not tied into the -webkit-transform
 		// system very well. so if the form is animated using -webkit-transform while the caret is visible, it
@@ -45,24 +47,28 @@ function Form() {
 		// as nice as a fully native form, but close. sigh.
 		
 		function onBlur() {
-			var offset = that.el.style.top.replace('px', '');
-			if (offset) {
-				that.jumpTo(offset);	
-				that.el.style.top = '';			
-			}				
-			that.enable();					
-			setTimeout(function () {
-				that.finishScrolling();				
-			}, 0);
+			if (F5.platform() !== 'android') {
+				var offset = that.el.style.top.replace('px', '');
+				if (offset) {
+					that.jumpTo(offset);	
+					that.el.style.top = '';			
+				}				
+				that.enable();					
+				setTimeout(function () {
+					that.finishScrolling();				
+				}, 0);				
+			}
 		}
 		
 		function onFocus() {
-			var offset = that.el.style.top.replace('px', '');
-			if (!offset) {
-				that.el.style.top = that.staticOffset + 'px';
-			}				
-			that.jumpTo(0);					
-			that.disable();	
+			if (F5.platform() !== 'android') {
+				var offset = that.el.style.top.replace('px', '');
+				if (!offset) {
+					that.el.style.top = that.staticOffset + 'px';
+				}				
+				that.jumpTo(0);					
+				that.disable();					
+			}
 			
 			if (that.onFocus) {
 				that.onFocus();
@@ -87,14 +93,16 @@ function Form() {
 					if (blurTimeout) {
 						clearTimeout(blurTimeout);
 						blurTimeout = null;
-					}					
-					// disable scrolling
-					window.scrollTo(0, 0);
-					document.body.scrollTop = 0;	
-											
-					// do the scrolling ourselves		
-					that.el.style.top = (-el.offsetTop +
-							parseInt(window.getComputedStyle(that.el)['padding-top'].replace('px', ''), 10)) + 'px';							
+					}	
+					if (F5.platform() !== 'android') {
+						// disable scrolling
+						window.scrollTo(0, 0);
+						document.body.scrollTop = 0;	
+
+						// do the scrolling ourselves		
+						that.el.style.top = (-el.offsetTop +
+								parseInt(window.getComputedStyle(that.el)['padding-top'].replace('px', ''), 10)) + 'px';						
+					}				
 							
 					onFocus();
 				});
@@ -102,7 +110,9 @@ function Form() {
 	};
 	
 	this.widgetWillBecomeActive = function () {
-		this.refresh();						
+		if (F5.platform() !== 'android') {
+			this.refresh();			
+		}
 	};
 	
 	this.getFormData = function () {
@@ -142,7 +152,7 @@ function Form() {
 			var that = this;
 			document.onkeydown = function(evt) {
 			    evt = evt || window.event;
-			    if (evt.keyCode == 27) {
+			    if (evt.keyCode === 27) {
 					that.blur();
 			    }
 			};			
@@ -164,7 +174,9 @@ function Form() {
 		});
 	};		
 }
-Form.prototype = F5.Prototypes.Widgets.Scroller;
+if (F5.platform() !== 'android') {
+	Form.prototype = F5.Prototypes.Widgets.Scroller;	
+}
 
 
 F5.Prototypes.Widgets.Form = new Form();
