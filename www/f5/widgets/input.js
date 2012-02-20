@@ -118,12 +118,15 @@ function Input() {
 
 		// Can do a bit better on iOS if we take closer control over the events
 		if (F5.platform() !== 'android') {
-			this.input.style['pointer-events'] = 'none';
-			
+			this.input.style['pointer-events'] = 'none';							
 			if (navigator.userAgent.match(/OS 4/)) {
-				this.input.addEventListener('click', function (e) {
+				this.el.addEventListener('click', function (e) {
 					that.focus();	
-				});					
+					e.stopPropagation();
+				});			
+				F5.addTouchMoveListener(this.el, function (e) {
+					e.preventDefault();
+				});
 			} else {
 				F5.addTapListener(this.el, function (e) {
 					that.focus();
@@ -190,11 +193,20 @@ function Input() {
 	};
 	
 	this.setOnBlur = function (cb) {
-		this.input.onblur = cb;
+		var that = this;
+		this.onblur = function () {
+			cb();
+			that.input.onblur = null;
+		};
+//		this.input.onblur = cb;
 	};
 	
 	this.setOnFocus = function (cb) {
-		this.input.onfocus = cb;
+		var that = this;
+		this.input.onfocus = function () {
+			that.input.onblur = that.onblur;
+			cb();
+		};
 	};
 	
 	this.focus = function () {

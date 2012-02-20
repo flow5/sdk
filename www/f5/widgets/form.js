@@ -102,7 +102,7 @@ function Form() {
 
 		this.el.addEventListener('click', function () {
 			that.blur();
-		})		
+		});
 	};
 	
 	this.widgetWillBecomeActive = function () {
