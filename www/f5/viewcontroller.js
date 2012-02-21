@@ -122,9 +122,7 @@
 			
 			var animationFunction = F5.Animation[animation](containerElement, oldEl, newEl);
 			return function (cb) {
-				animationFunction(function () {
-					cb();
-				});
+				animationFunction(cb);
 			};
 		};	
 		
