@@ -29,9 +29,9 @@
 
 (function () {
 	
-	function doXHR(method, url, body, success, error, headers, user, password) {
+	function doXHR(method, url, body, success, error, headers, username, password) {
 		var xhr = new XMLHttpRequest();
-		xhr.open(method, url, true, user, password);
+		xhr.open(method, url, true, username, password);
 		if (method === 'POST' || method === 'PUT') {
 			xhr.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
 		}
@@ -91,18 +91,18 @@
 		}, 0);		
 	}
 	
-	F5.get = function(url, success, error, headers, user, password) {
-		doXHR('GET', url, null, success, error, headers, user, password);		
+	F5.get = function(url, success, error, headers, username, password) {
+		doXHR('GET', url, null, success, error, headers, username, password);		
 	};
 		
-	F5.upload = function(method, url, body, success, error, headers, user, password) {
-		doXHR(method, url, body, success, error, headers, user, password);
+	F5.upload = function(method, url, body, success, error, headers, username, password) {
+		doXHR(method, url, body, success, error, headers, username, password);
 	};
 	
 	F5.execService = function (name, parameters, cb) {
 
 		var service = F5.Services;
-		var protocol, baseUrl, method, user, password, urlParameterKeys;
+		var protocol, baseUrl, method, username, password, urlParameterKeys, extendedUrl;
 		F5.forEach(name.split('.'), function (component) {
 			if (service) {
 				service = service[component];				
@@ -110,11 +110,12 @@
 			
 			protocol = service.protocol || protocol;
 			baseUrl = service.baseUrl || baseUrl;
+			extendedUrl = service.extendedUrl || extendedUrl;
 			method = service.method || method;
 			// which parameters should go into the URL for POST/PUT
 			urlParameterKeys = service.urlParameterKeys || urlParameterKeys;
 			
-			user = service.user || user;
+			username = service.username || username;
 			password = service.password || password;
 			
 			if (service.parameters) {
@@ -127,6 +128,9 @@
 		// validate(parameters, service.parameterSchema);
 
 		var url = protocol + '://' + baseUrl;
+		if (extendedUrl) {
+			url += extendedUrl;
+		}
 		
 		function handleErrorResponse(response, status) {
 			console.log('Error from ' + url + ' : ' + response);
@@ -173,7 +177,7 @@
 					}
 				}, function error(response, status) {
 					handleErrorResponse(response, status);
-				}, null, user, password);
+				}, null, username, password);
 		} 
 		else if (method === 'POST' || method === 'PUT'){	
 			
@@ -202,7 +206,7 @@
 					}
 				}, function error(response, status) {
 					handleErrorResponse(response, status);
-				}, null, user, password);							
+				}, null, username, password);							
 		}		
 	};	
 	
