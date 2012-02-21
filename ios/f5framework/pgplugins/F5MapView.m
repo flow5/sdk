@@ -168,6 +168,7 @@ static char base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123
         mapView.userInteractionEnabled = YES;
         mapView.showsUserLocation = YES;
         mapView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+            mapView.hidden = YES; 
         
         AppDelegate *appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];                
         UIView *mainView = [appDelegate.viewController view];
@@ -182,6 +183,9 @@ static char base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123
                                       
         [self.mapView setFrame:mapBounds];        
     }
+    
+    PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];   
+    [self writeJavascript: [pluginResult toSuccessCallbackString:self.callbackID]];     
 }
 
 - (void)setMaskRegion:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)mask {

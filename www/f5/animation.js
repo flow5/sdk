@@ -113,6 +113,52 @@
 		};			
 	}
 	
+	function sheetHorizontal(container, el, distance) {
+		
+		if (distance < 0) {
+			el.style['-webkit-transform'] = 'translate3d(' + -distance + 'px, 0px, 0px)';			
+		} else {
+			el.style['-webkit-transform'] = 'translate3d(0px, 0px, 0px)';						
+		}
+		el.style.visibility = '';
+		el.style['z-index'] = 1;
+							
+		return function (cb) {
+			function complete() {
+
+				// Android pre-ICS: screen flashes if -webkit-transform is cleared while el is visible
+				if (F5.platform() !== 'android') {
+					el.style['-webkit-transform'] = '';					
+				}
+				el.style['-webkit-transition'] = '';
+				
+				if (distance < 0) {
+					el.style['z-index'] = '';					
+				}
+
+				F5.removeTransitionEndListener(el);			
+				
+				cb();
+			}			
+		
+			if (F5.platform() === 'android') {
+				// Android: transition stutters if the event listener is used
+				setTimeout(complete, 325);				
+			} else {
+				F5.addTransitionEndListener(el, complete);	
+			}
+			
+			var transition = '-webkit-transform ease-in .3s';
+			el.style['-webkit-transition'] = transition;
+			
+			if (distance < 0) {
+				el.style['-webkit-transform'] = 'translate3d(0px, 0px, 0px)';						
+			} else {
+				el.style['-webkit-transform'] = 'translate3d(' + distance + 'px, 0px, 0px)';			
+			}
+		};			
+	}	
+	
 	F5.Animation = {
 		
 		cut: function (container, oldEl, newEl) {
@@ -204,6 +250,14 @@
 		sheetUp: function (container, oldEl, newEl) {
 			return sheetVertical(container, oldEl, -container.offsetHeight);						
 		},
+
+		sheetLeft: function (container, oldEl, newEl) {
+			return sheetHorizontal(container, newEl, -container.offsetWidth);						
+		},
+
+		sheetRight: function (container, oldEl, newEl) {
+			return sheetHorizontal(container, oldEl, container.offsetWidth);						
+		},
 		
 		inverseAnimation: function(animation) {
 			var inverse;
@@ -228,6 +282,12 @@
 				break;
 			case 'sheetUp':
 				inverse = 'sheetDown';
+				break;
+			case 'sheetLeft':
+				inverse = 'sheetRight';
+				break;
+			case 'sheetRight':
+				inverse = 'sheetLeft';
 				break;
 			}
 

@@ -102,22 +102,41 @@
 		};						
 		
 		this.widgetWillBecomeActive = function () {
+			var that = this;
+			
+			var waitCb;
+			
+			function showMap() {
+				that.shown = true;	
+				F5.callBridgeSynchronous('com.flow5.mapview', 'showMap');				
+			}
+			
 			if (!this.created) {
 				var pos = F5.elementAbsolutePosition(this.el);
 				var bounds = {top: pos.y, left: pos.x, width: this.el.offsetWidth, height: this.el.offsetHeight};
 				
 				PhoneGap.exec(
 					function (result) { // success
-					console.log(result);
+						console.log(result);
+						that.created = true;						
+						showMap();
+						if (waitCb) {
+							waitCb();
+						}
 				}, function (result) { // failure
-					console.log(result);
+						console.log(result);
 				}, "com.flow5.mapview", "create", [bounds]);	
 				
-				this.created = true;						
-			}
-			
-			this.shown = true;	
-			F5.callBridgeSynchronous('com.flow5.mapview', 'showMap');		
+				F5.Global.flowController.addWaitTask(function (cb) {
+					if (!that.created) {
+						waitCb = cb;
+					} else {
+						cb();
+					}
+				});														
+			} else {
+				showMap();
+			}						
 		};
 		
 		this.widgetWillBecomeInactive = function () {
