@@ -132,10 +132,25 @@ function Input() {
 		} else {
 			// TODO: doesn't seem to be a way to prevent inputs from being selected on
 			// touch down						
-			if (navigator.userAgent.match(/OS 4/)) {
-				this.el.addEventListener('click', function (e) {
-					that.focus();	
+			if (true || navigator.userAgent.match(/OS 4/)) {
+				var mask = document.createElement('div');
+				mask.style.position = 'absolute';
+				mask.style.top = '0px';
+				mask.style.left = '0px';
+				mask.style.width = '100%';
+				mask.style.height = '100%';
+				this.el.appendChild(mask);
+				mask.addEventListener('click', function (e) {
+					if (that.form) {
+						// always focus the first element in the form. then use prev/next
+						if (!that.form.focused) {
+							that.form.el.querySelector('[f5widget=Input]').widget.focus();														
+						}
+					} else {
+						that.focus();							
+					}
 					e.stopPropagation();
+					e.preventDefault();
 				});			
 			} else {
 				F5.addTapListener(this.el, function (e) {
