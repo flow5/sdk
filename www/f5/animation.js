@@ -153,22 +153,20 @@
 				newEl.style['-webkit-transition'] = 'opacity .25s';	
 				oldEl.style['z-index'] = 0;
 				newEl.style['z-index'] = 1;	
-				setTimeout(function () {
-					newEl.style.opacity = 1;					
-				}, 0);						
+				newEl.style.opacity = 1;					
 			};		
 		},
 		
 		fadeOut: function (container, oldEl, newEl) {
 			
 			oldEl.style['z-index'] = 1;
-			newEl.style['z-index'] = 0;
+			newEl.style['z-index'] = '';
+			newEl.style.visibility = '';	
 																					
 			return function (cb) {
 				function completeFadeOut() {
 
 					oldEl.style['z-index'] = '';
-					newEl.style['z-index'] = '';
 					newEl.style['-webkit-transition'] = '';
 
 					// setting opacity causes flickering on Android (Gingerbread)
@@ -186,11 +184,8 @@
 				
 				F5.addTransitionEndListener(oldEl, completeFadeOut);				
 				oldEl.style['-webkit-transition'] = 'opacity .25s';	
-				newEl.style.visibility = '';	
 				newEl.style.opacity = 1;				
-				setTimeout(function () {
-					oldEl.style.opacity = 0;					
-				}, 0);
+				oldEl.style.opacity = 0;					
 			};		
 		},
 				

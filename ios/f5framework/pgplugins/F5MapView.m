@@ -204,9 +204,9 @@ static char base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123
 
 - (PluginResult*)showMap:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
     NSLog(@"showMap");
+    
     if (self.mapView) {
         self.mapView.hidden = NO;  
-        self.mapView.alpha = 1;
         return [PluginResult resultWithStatus:PGCommandStatus_OK]; 
     } else {
         NSLog(@"Trying to use showMap without calling create first");        
@@ -215,6 +215,7 @@ static char base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123
 }
 
 - (PluginResult*)hideMap:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
+    NSLog(@"hideMap");
     
     if (self.mapView) {
         self.mapView.hidden = YES;       
