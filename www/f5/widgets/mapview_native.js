@@ -60,9 +60,7 @@
 				}
 			};					
 			
-			F5.Global.flowController.addFlowObserver(this.flowObserver);
-						
-			this.shown = true;						
+			F5.Global.flowController.addFlowObserver(this.flowObserver);						
 		};
 		
 		this.setMaskRegion = function (region) {

@@ -236,8 +236,8 @@
 						node.selection.active = false;
 						node.selection = node.children[id];
 
-						nodeDidBecomeActive(node.selection, function () {
-							nodeDidBecomeInactive(oldSelection, function () {
+						nodeDidBecomeInactive(oldSelection, function () {
+							nodeDidBecomeActive(node.selection, function () {
 								lockout = false;	
 								cb();			
 							});					
@@ -252,8 +252,6 @@
 			var that = this;
 			
 			F5.assert(!lockout, 'Locked out');
-//			F5.assert(node.type === 'flow' || node.type === 'set', 
-//				'Can only doTransition on node of types flow or set');			
 			F5.assert(id === 'back' || node.transitions, 'No transitions defined for node: ' + node.path);
 			F5.assert(id === 'back' || node.transitions[id], 'No transition with id: ' + id);
 					
@@ -325,16 +323,14 @@
 					
 					// execute all of the transition competion functions
 					flushWaitTasks(function transitionComplete() {
-						var oldSelection = container.selection;
-						
-						if (id === 'back') {
-							container.selection = target;							
-						} else {
-							container.selection = node.transitions[id].to;							
-						}
-
-						nodeDidBecomeActive(container.selection, function () {
-							nodeDidBecomeInactive(oldSelection, function () {
+						var oldSelection = container.selection;						
+						nodeDidBecomeInactive(oldSelection, function () {
+							if (id === 'back') {
+								container.selection = target;							
+							} else {
+								container.selection = node.transitions[id].to;							
+							}							
+							nodeDidBecomeActive(container.selection, function () {
 								if (id === 'back') {
 									if (backNode) {
 										delete backNode.back;									
