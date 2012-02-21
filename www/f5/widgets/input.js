@@ -137,9 +137,6 @@ function Input() {
 					that.focus();	
 					e.stopPropagation();
 				});			
-				F5.addTouchMoveListener(this.el, function (e) {
-					e.preventDefault();
-				});
 			} else {
 				F5.addTapListener(this.el, function (e) {
 					that.focus();

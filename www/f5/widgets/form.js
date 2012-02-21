@@ -102,6 +102,23 @@ function Form() {
 			// let the input know about the form
 			el.widget.form = that;
 		});	
+		
+		// TODO: need to install handlers into the scroller to avoid double registration errors
+		
+		// WORKAROUND: for iOS 4.3 inability to disable inputs in reasonable ways
+		this.el.addEventListener('touchmove', function () {
+			F5.forEach(that.el.querySelectorAll('[f5widget=Input]'), function (el) {
+				el.widget.input.setAttribute('disabled', 'disabled');
+			});			
+		});
+
+		this.el.addEventListener('touchend', function () {
+			setTimeout(function () {
+				F5.forEach(that.el.querySelectorAll('[f5widget=Input]'), function (el) {
+					el.widget.input.removeAttribute('disabled');
+				});							
+			}, 100);
+		});
 
 		this.el.addEventListener('click', function () {
 			that.blur();

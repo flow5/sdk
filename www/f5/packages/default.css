@@ -27,6 +27,11 @@
 
 /* default.css contains styles that are used by f5 widgets but may be overridden by the application */
 
+/* override default tap highlighting on webview content */
+body {
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);	
+}
+
 /***************************************/
 /*                Nodes                */
 /***************************************/

@@ -223,7 +223,8 @@
 			return;
 		}
 		
-		e.stopPropagation();	
+		e.stopPropagation();
+		e.preventDefault();	
 			
 		// browser compatibility
 		if (!scroller.tracking) {

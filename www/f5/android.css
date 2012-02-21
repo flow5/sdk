@@ -27,11 +27,6 @@
 
 /* mainly workarounds for Android quirks. always included. for Android native styles use /packages/android.css */
 
-/* override default tap highlighting on webview content */
-body {
-	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);	
-}
-
 /* unclear on why this is required for Android */
 .f5mobile #f5screen {
 	position: static;
