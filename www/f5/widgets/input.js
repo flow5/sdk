@@ -132,7 +132,7 @@ function Input() {
 		} else {
 			// TODO: doesn't seem to be a way to prevent inputs from being selected on
 			// touch down						
-			if (true || navigator.userAgent.match(/OS 4/)) {
+			if (navigator.userAgent.match(/OS 4/)) {
 				var mask = document.createElement('div');
 				mask.style.position = 'absolute';
 				mask.style.top = '0px';
