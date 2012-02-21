@@ -71,6 +71,8 @@
 					F5.addClass(el, 'f5' + which + 'button');
 					el.style.opacity = 0;
 					
+					el.style['-webkit-transition'] = 'opacity .3s';
+					
 					el.widget.setAction(function () {
 						that.configuration[which].action();						
 					});
@@ -92,13 +94,13 @@
 				var titleEl = document.createElement('div');
 				F5.addClass(titleEl, 'f5title');
 				containers.title.appendChild(titleEl);
+				titleEl.style['-webkit-transition'] = 'opacity .3s';
 				return titleEl;
 			}
 			title.a = makeTitle();
 			title.b = makeTitle();
 			title.active = title.a;
-			
-						
+									
 			F5.Global.flowController.addFlowObserver(this);			
 		};
 		
@@ -136,7 +138,7 @@
 			var that = this;								
 		
 			buttons.left.inactive = chooseInactive(buttons.left);
-			buttons.right.inactive = chooseInactive(buttons.right);
+			buttons.right.inactive = chooseInactive(buttons.right);						
 			
 			function setupButton(which) {
 				var currentConfigData;
@@ -195,12 +197,10 @@
 				var button = buttons[which];
 				if (button.doAnimate) {
 					if (button.inactive) {
-						button.inactive.style['-webkit-transition'] = 'opacity .3s';
 						button.inactive.style.opacity = 1;					
 						button.inactive.style['pointer-events'] = '';						
 					}
 					if (button.active) {
-						button.active.style['-webkit-transition'] = 'opacity .3s';
 						button.active.style.opacity = 0;					
 						button.active.style['pointer-events'] = 'none';						
 					}
@@ -221,11 +221,9 @@
 			
 			if (title.doAnimate) {
 				if (title.inactive) {
-					title.inactive.style['-webkit-transition'] = 'opacity .3s';						
 					title.inactive.style.opacity = 1;
 				}
 				if (title.active) {
-					title.active.style['-webkit-transition'] = 'opacity .3s';						
 					title.active.style.opacity = 0;
 				}
 				swap(title);
