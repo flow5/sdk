@@ -70,13 +70,16 @@
 			}, 0);			
 		};
 		
-		this.dismiss = function () {
+		this.dismiss = function (cb) {
 			var that = this;
 			
 			function fadeComplete() {
 				F5.removeTouchEventListenersRecursive(that.el);
 				F5.removeTransitionEndListener(that.el);
 				that.el.parentElement.removeChild(that.el);
+				if (cb) {
+					cb();					
+				}
 			}
 
 			F5.addTransitionEndListener(this.el, fadeComplete);							
@@ -104,10 +107,11 @@
 			this.buttonsEl.appendChild(dismissEl);
 
 			dismissEl.widget.setAction(function () {
-				if (that.action) {
-					that.action();
-				}				
-				that.dismiss();
+				that.dismiss(function () {
+					if (that.action) {
+						that.action();
+					}									
+				});
 			});														
 		};		
 	}
@@ -126,10 +130,11 @@
 			this.buttonsEl.appendChild(cancelEl);
 
 			cancelEl.widget.setAction(function () {
-				if (that.action) {
-					that.action(false);
-				}
-				that.dismiss();
+				that.dismiss(function () {
+					if (that.action) {
+						that.action(false);
+					}					
+				});
 			});	
 			
 			var okEl = F5.createWidget('Button', {label: 'OK'}, 'label');
@@ -137,10 +142,11 @@
 			this.buttonsEl.appendChild(okEl);
 
 			okEl.widget.setAction(function () {
-				if (that.action) {
-					that.action(true);
-				}
-				that.dismiss();				
+				that.dismiss(function () {
+					if (that.action) {
+						that.action(true);
+					}					
+				});				
 			});														
 																
 		};			

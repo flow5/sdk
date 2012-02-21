@@ -104,10 +104,6 @@ function Form() {
 			// let the input know about the form
 			el.widget.form = that;
 		});					
-
-		this.el.addEventListener('click', function () {
-			that.blur();
-		});
 	};
 	
 	this.widgetWillBecomeActive = function () {

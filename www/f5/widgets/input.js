@@ -161,12 +161,7 @@ function Input() {
 				});	
 			}
 		}
-		
-		// Form listens for click to blur the fields. so catch it in the input
-		this.input.addEventListener('click', function (e) {
-			e.stopPropagation();
-		});
-				
+						
 		this.refresh(data);		
 	};
 	

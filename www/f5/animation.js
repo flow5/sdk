@@ -126,9 +126,6 @@
 		// oldElement sits on top, fades out to reveal newEl
 		fadeIn: function (container, oldEl, newEl) {
 			
-			oldEl.style['z-index'] = 0;
-
-			newEl.style['z-index'] = 1;
 			newEl.style.visibility = '';	
 			newEl.style.opacity = 0;
 																		
@@ -153,8 +150,12 @@
 				}
 				
 				F5.addTransitionEndListener(newEl, completeFadeIn);				
-				newEl.style['-webkit-transition'] = 'opacity .25s';				
-				newEl.style.opacity = 1;
+				newEl.style['-webkit-transition'] = 'opacity .25s';	
+				oldEl.style['z-index'] = 0;
+				newEl.style['z-index'] = 1;	
+				setTimeout(function () {
+					newEl.style.opacity = 1;					
+				}, 0);						
 			};		
 		},
 		

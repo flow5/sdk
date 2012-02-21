@@ -221,9 +221,8 @@
 			var oldSelection = node.selection;				
 			
 			cancelSubflowRecursive(node);
-			
+							
 			nodeWillBecomeInactive(oldSelection, function () {
-				
 				nodeWillBecomeActive(node.children[id], function () {
 					
 					var tasks = [];
@@ -237,8 +236,8 @@
 						node.selection.active = false;
 						node.selection = node.children[id];
 
-						nodeDidBecomeInactive(oldSelection, function () {
-							nodeDidBecomeActive(node.selection, function () {
+						nodeDidBecomeActive(node.selection, function () {
+							nodeDidBecomeInactive(oldSelection, function () {
 								lockout = false;	
 								cb();			
 							});					
@@ -313,8 +312,7 @@
 				}
 			}										
 															 
-			nodeWillBecomeInactive(node, function () {
-				
+			nodeWillBecomeInactive(node, function () {				
 				nodeWillBecomeActive(target, function () {		
 					
 					// queue up all of the transition completion functions from flow observers
@@ -328,27 +326,27 @@
 					// execute all of the transition competion functions
 					flushWaitTasks(function transitionComplete() {
 						var oldSelection = container.selection;
+						
+						if (id === 'back') {
+							container.selection = target;							
+						} else {
+							container.selection = node.transitions[id].to;							
+						}
 
-						nodeDidBecomeInactive(oldSelection, function () {
-							if (id === 'back') {
-								if (backNode) {
-									delete backNode.back;									
-								}
-
-								var oldNode = container.selection;
-								container.selection = target;
-								
-								that.release(oldNode);
-								flowObservers.forEach(function (observer) {
-									if (observer.release) {
-										observer.release(oldNode);
+						nodeDidBecomeActive(container.selection, function () {
+							nodeDidBecomeInactive(oldSelection, function () {
+								if (id === 'back') {
+									if (backNode) {
+										delete backNode.back;									
 									}
-								});
-							} else {
-								container.selection = node.transitions[id].to;
-							}		
 
-							nodeDidBecomeActive(container.selection, function () {
+									that.release(oldSelection);
+									flowObservers.forEach(function (observer) {
+										if (observer.release) {
+											observer.release(oldSelection);
+										}
+									});
+								}								
 								lockout = false;				
 								cb();
 							});		
