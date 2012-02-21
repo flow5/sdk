@@ -104,7 +104,10 @@
 								}, "com.phonegap.splashscreen", "hide", []);									
 							}							
 						}						
-					}, 0);																				
+					}, 1000); 
+					// NOTE: the delay shouldn't be necessary, but on older devices	
+					// sometimes the webview doesn't reflow completely before the
+					// splashscreen is hidden otherwise																		
 				});
 			} catch (exception) {
 				console.log(exception.message);
