@@ -162,11 +162,8 @@
 		fadeOut: function (container, oldEl, newEl) {
 			
 			oldEl.style['z-index'] = 1;
-
 			newEl.style['z-index'] = 0;
-			newEl.style.visibility = '';	
-			newEl.style.opacity = 1;
-																		
+																					
 			return function (cb) {
 				function completeFadeOut() {
 
@@ -188,8 +185,12 @@
 				}
 				
 				F5.addTransitionEndListener(oldEl, completeFadeOut);				
-				oldEl.style['-webkit-transition'] = 'opacity .25s';				
-				oldEl.style.opacity = 0;
+				oldEl.style['-webkit-transition'] = 'opacity .25s';	
+				newEl.style.visibility = '';	
+				newEl.style.opacity = 1;				
+				setTimeout(function () {
+					oldEl.style.opacity = 0;					
+				}, 0);
 			};		
 		},
 				
