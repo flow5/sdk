@@ -195,12 +195,12 @@
 				var button = buttons[which];
 				if (button.doAnimate) {
 					if (button.inactive) {
-						button.inactive.style['-webkit-transition'] = 'opacity .25s';
+						button.inactive.style['-webkit-transition'] = 'opacity .3s';
 						button.inactive.style.opacity = 1;					
 						button.inactive.style['pointer-events'] = '';						
 					}
 					if (button.active) {
-						button.active.style['-webkit-transition'] = 'opacity .25s';
+						button.active.style['-webkit-transition'] = 'opacity .3s';
 						button.active.style.opacity = 0;					
 						button.active.style['pointer-events'] = 'none';						
 					}
@@ -221,11 +221,11 @@
 			
 			if (title.doAnimate) {
 				if (title.inactive) {
-					title.inactive.style['-webkit-transition'] = 'opacity .25s';						
+					title.inactive.style['-webkit-transition'] = 'opacity .3s';						
 					title.inactive.style.opacity = 1;
 				}
 				if (title.active) {
-					title.active.style['-webkit-transition'] = 'opacity .25s';						
+					title.active.style['-webkit-transition'] = 'opacity .3s';						
 					title.active.style.opacity = 0;
 				}
 				swap(title);

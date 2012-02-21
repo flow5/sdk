@@ -172,7 +172,11 @@
 	};
 	
 	F5.addTransitionEndListener = function (el, cb) {
-		addEventListener(el, 'webkitTransitionEnd', cb);
+		addEventListener(el, 'webkitTransitionEnd', function (e) {
+			if (e.srcElement === el) {
+				cb();				
+			}
+		});
 	};
 	
 	F5.removeTransitionEndListener = function (el) {
