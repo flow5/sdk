@@ -78,7 +78,7 @@
 		}
 	}
 	
-	function login(cb) {		
+	function login(permissions, cb) {		
 		// TODO: make sure init is really complete
 		FB.login(function(response) {
 		   if (response.authResponse) {

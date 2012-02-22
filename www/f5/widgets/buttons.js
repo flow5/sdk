@@ -137,7 +137,10 @@
 			delete this.label;			
 		};
 					
-		this.construct = function (data) {									
+		this.construct = function (data) {	
+			this.labelText = this.el.innerText;
+			this.el.innerHTML = '';
+											
 			this.refresh(data);
 		};
 		
@@ -248,17 +251,13 @@
 				}				
 			}
 			
-			// construct can be called more than once
-			var label = this.el.innerText;
-			this.el.innerHTML = '';
-
 			this.data = data;
 			this.state = false;				
 			F5.addClass(that.el, 'f5button-up');									
 			F5.addClass(this.el, 'f5button');			
 
 			/* label can be defined by putting it in the HTML */
-			var mergedData = {label: label};
+			var mergedData = {label: this.labelText};
 						
 			// first apply styles from the Button class
 			var className = this.el.getAttribute('f5class');
@@ -279,7 +278,7 @@
 			}
 
 			applyResourceData(mergedData);			
-		}
+		};
 	}	
 		
 	F5.Prototypes.Widgets.Button = new Button();	

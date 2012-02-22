@@ -40,7 +40,7 @@
 			}, "com.flow5.facebookconnect", "initialize", [{appId: F5.facebook_appid}]);		
 	});
 	
-	function login(cb) {
+	function login(permissions, cb) {
 		PhoneGap.exec(
 			function (result) { // success
 				cb(result);
@@ -48,7 +48,7 @@
 			function (result) { // failure
 				console.log(result);
 				cb(null);
-			}, "com.flow5.facebookconnect", "login", []);
+			}, "com.flow5.facebookconnect", "login", [{permissions:permissions}]);
 	} 
 	
 	function logout(cb) {

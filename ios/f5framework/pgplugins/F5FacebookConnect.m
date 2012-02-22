@@ -58,16 +58,7 @@
 {    
     self.callbackID = [arguments pop];
     
-    NSArray *permissions = [NSArray arrayWithObjects:
-                                                     @"email", 
-                                                     @"user_location",
-                                                       @"publish_stream",
-                                                     @"offline_access",
-                                                     @"user_birthday",
-                                                     @"user_checkins",
-                                                     @"publish_checkins",
-                                                    nil];
-    permissions = nil;
+    NSArray *permissions = [options valueForKey:@"permissions"];    
     [self.facebook authorize:permissions];    
 }
 
