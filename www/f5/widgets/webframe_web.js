@@ -37,7 +37,7 @@
 			
 			this.frame = document.createElement('iframe');
 			this.frame.style.border = 'none';
-			this.frame.scrolling = 'no';
+//			this.frame.scrolling = 'no';
 						
 			this.el.appendChild(this.frame);
 			
