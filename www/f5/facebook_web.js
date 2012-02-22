@@ -80,6 +80,9 @@
 	
 	function login(permissions, cb) {		
 		// TODO: make sure init is really complete
+
+		var options = {scope: permissions.join(',')};
+		
 		FB.login(function(response) {
 		   if (response.authResponse) {
 				cb(response.authResponse.accessToken);
@@ -94,7 +97,7 @@
 		     console.log('User cancelled login or did not fully authorize.');
 			 cb(null);
 		   }
-		 }, {scope: 'email'});
+		 }, options);
 	}
 	
 	function logout(cb) {
