@@ -167,7 +167,7 @@ function Input() {
 	
 	// TODO: might want to be able to make menu options dynamic also
 	this.refresh = function (data) {
-		var valueText = F5.valueFromId(data.values, this.el.getAttribute('f5id'));				
+		var valueText = F5.valueFromId(data.values, this.el.getAttribute('f5id'));	
 		if (valueText) {
 			this.setValue(valueText);
 			this.label.style.display = 'none';

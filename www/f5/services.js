@@ -30,6 +30,14 @@
 (function () {	
 	
 	F5.Services = {
+		facebook: {
+			protocol: 'https',
+			method: 'GET',
+			baseUrl: 'graph.facebook.com/',
+			me: {
+				extendedUrl: 'me'
+			}
+		},
 		foursquare: {
 			protocol: 'https',
 			method: 'GET',
