@@ -99,8 +99,12 @@
 		doXHR(method, url, body, success, error, headers, username, password);
 	};
 	
-	F5.execService = function (name, parameters, cb) {
-
+	F5.execService = function (id, parameters, cb) {
+		
+		var components = id.split(':');
+		var name = components[0];
+		var qualifier = components[1];
+		
 		var service = F5.Services;
 		var protocol, baseUrl, method, username, password, urlParameterKeys, extendedUrl;
 		F5.forEach(name.split('.'), function (component) {
@@ -108,19 +112,32 @@
 				service = service[component];				
 			}
 			
-			protocol = service.protocol || protocol;
-			baseUrl = service.baseUrl || baseUrl;
-			extendedUrl = service.extendedUrl || extendedUrl;
-			method = service.method || method;
+			function get(which) {
+				if (service) {
+					var value;
+					if (qualifier) {
+						if (service[which] && typeof service[which] === 'object') {
+							value = service[which][qualifier];
+						}
+					}
+					if (!value) {
+						value = service[which];
+					}
+					return value;					
+				}
+			}			
+			
+			protocol = get('protocol') || protocol;
+			baseUrl = get('baseUrl') || baseUrl;
+			extendedUrl = get('extendedUrl') || extendedUrl;
+			method = get('method') || method;
 			// which parameters should go into the URL for POST/PUT
-			urlParameterKeys = service.urlParameterKeys || urlParameterKeys;
+			urlParameterKeys = get('urlParameterKeys') || urlParameterKeys;
 			
-			username = service.username || username;
-			password = service.password || password;
+			username = get('username') || username;
+			password = get('password') || password;
 			
-			if (service.parameters) {
-				F5.extend(parameters, service.parameters);
-			}
+			F5.extend(parameters, get('parameters'));
 		});
 		F5.assert(service, 'No service called: ' + name);		
 
@@ -354,24 +371,26 @@
 	};
 	
 	F5.forEach = function (obj, fn) {
-		/*global NodeList*/
-		if (typeof NodeList !== 'undefined' && obj.constructor === NodeList) {
-			var list = [];
-			var i;
-			for (i = 0; i < obj.length; i += 1) {
-				list.push(obj.item(i));
-			}
-			list.forEach(fn);
-
-		} else if (obj.constructor === Array) {
-			obj.forEach(fn);
-		} else {
-			var name;
-			for (name in obj) {
-				if (obj.hasOwnProperty(name)) {
-					fn(name, obj[name]);
+		if (obj) {
+			/*global NodeList*/
+			if (typeof NodeList !== 'undefined' && obj.constructor === NodeList) {
+				var list = [];
+				var i;
+				for (i = 0; i < obj.length; i += 1) {
+					list.push(obj.item(i));
 				}
-			}							
+				list.forEach(fn);
+
+			} else if (obj.constructor === Array) {
+				obj.forEach(fn);
+			} else {
+				var name;
+				for (name in obj) {
+					if (obj.hasOwnProperty(name)) {
+						fn(name, obj[name]);
+					}
+				}							
+			}			
 		}
 	};
 
