@@ -106,7 +106,7 @@
 		var qualifier = components[1];
 		
 		var service = F5.Services;
-		var protocol, baseUrl, method, username, password, urlParameterKeys, extendedUrl;
+		var protocol = 'http', method = 'GET', baseUrl, username, password, urlParameterKeys, extendedUrl;
 		F5.forEach(name.split('.'), function (component) {
 			if (service) {
 				service = service[component];				
