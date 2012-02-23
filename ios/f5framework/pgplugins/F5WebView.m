@@ -105,6 +105,7 @@
 
 - (void)close:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options 
 {
+    [self.overlayWebView stopLoading];    
     [UIView animateWithDuration:0.25 delay:0.0
                         options: UIViewAnimationOptionCurveEaseIn
                      animations:^{

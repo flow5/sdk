@@ -81,6 +81,7 @@
 		this.close = function () {	
 			if (!this.el.style.display) {
 				this.el.style.opacity = 0;
+				this.frame.onload = null;
 
 				var that = this;
 				function hide() {
