@@ -33,15 +33,24 @@
 	function Location() {
 		
 		var currentLocation;
+		var defaultLocation = {lat:37.774484, lng:-122.420091};
+		
+		if (localStorage.f5defaultLocation) {
+			defaultLocation = JSON.parse(localStorage.f5defaultLocation);
+		}
 		
 		this.getCurrentLocation = function () {
 			if (currentLocation) {
 				return currentLocation;
 			} else {
-				// TODO: allow client to specify default location
-				return {lat:37.774484, lng:-122.420091};
+				return defaultLocation;
 			}
-		};				
+		};	
+		
+		this.setDefaultLocation = function (location) {
+			defaultLocation = location;
+			localStorage.f5defaultLocation = JSON.stringify(location);
+		}			
 		
 		this.start = function (userOptions) {	
 			if (!navigator.geolocation) {
