@@ -40,6 +40,8 @@
 			var constrain = this.el.getAttribute('f5constrain');
 
 			function moveHandler(e) {
+				e.stopPropagation();
+				
 				var currentLocation = F5.eventLocation(e);
 				if (tracking) {
 					var delta = {
@@ -60,6 +62,8 @@
 			}
 
 			function stopHandler(e) {
+				e.stopPropagation();
+				
 				var currentLocation = F5.eventLocation(e);
 				var delta = {
 					x: constrain === 'vertical' ? 0 : currentLocation.x - startLocation.x,
@@ -81,6 +85,8 @@
 			}
 
 			F5.addTouchStartListener(this.el, function (e) {
+				e.stopPropagation();
+				
 				tracking = true;
 				startLocation = F5.eventLocation(e);
 				var transformMatrix = new WebKitCSSMatrix(that.el.style.webkitTransform);
