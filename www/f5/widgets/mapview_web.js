@@ -95,7 +95,7 @@
 					content.className = 'map-callout';
 
 					var name = document.createElement('div');
-					name.innerText = pin.name;
+					name.innerText = pin.title;
 					content.appendChild(name);
 
 					var streetView = document.createElement('div');

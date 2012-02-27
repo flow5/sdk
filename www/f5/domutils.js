@@ -174,7 +174,7 @@
 	F5.addTransitionEndListener = function (el, cb) {
 		addEventListener(el, 'webkitTransitionEnd', function (e) {
 			if (e.srcElement === el) {
-				cb();				
+				cb(e);				
 			}
 		});
 	};

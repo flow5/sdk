@@ -412,8 +412,8 @@ static char base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123
 
 		CLLocationCoordinate2D pinCoord = { [[pin objectForKey:@"lat"] floatValue] , [[pin objectForKey:@"lng"] floatValue] };
         annotation.coordinate = pinCoord;
-        annotation.title = [pin objectForKey:@"name"];        
-        annotation.subtitle = [pin objectForKey:@"reward"];
+        annotation.title = [pin objectForKey:@"title"];        
+        annotation.subtitle = [pin objectForKey:@"subtitle"];
         annotation.index = [pin objectForKey:@"index"];
         annotation.markerImage = [pin objectForKey:@"markerImage"];
                 
