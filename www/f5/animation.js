@@ -58,7 +58,7 @@
 				F5.addTransitionEndListener(oldEl, complete);	
 			}
 			
-			var transition = '-webkit-transform ease-in .3s';
+			var transition = '-webkit-transform ease-in .30s';
 			oldEl.style['-webkit-transition'] = transition;
 			newEl.style['-webkit-transition'] = transition;
 			
@@ -75,7 +75,6 @@
 			el.style['-webkit-transform'] = 'translate3d(0px, ' + -distance + 'px, 0px)';			
 		}
 		el.style.visibility = '';
-		el.style['z-index'] = 1;
 							
 		return function (cb) {
 			function complete() {
@@ -86,10 +85,6 @@
 				}
 				el.style['-webkit-transition'] = '';
 				
-				if (distance < 0) {
-					el.style['z-index'] = '';					
-				}
-
 				F5.removeTransitionEndListener(el);			
 				
 				cb();
@@ -102,7 +97,7 @@
 				F5.addTransitionEndListener(el, complete);	
 			}
 			
-			var transition = '-webkit-transform ease-in .3s';
+			var transition = '-webkit-transform ease-in .30s';
 			el.style['-webkit-transition'] = transition;
 			
 			if (distance < 0) {
@@ -121,7 +116,6 @@
 			el.style['-webkit-transform'] = 'translate3d(0px, 0px, 0px)';						
 		}
 		el.style.visibility = '';
-		el.style['z-index'] = 1;
 							
 		return function (cb) {
 			function complete() {
@@ -132,10 +126,6 @@
 				}
 				el.style['-webkit-transition'] = '';
 				
-				if (distance < 0) {
-					el.style['z-index'] = '';					
-				}
-
 				F5.removeTransitionEndListener(el);			
 				
 				cb();
@@ -148,7 +138,7 @@
 				F5.addTransitionEndListener(el, complete);	
 			}
 			
-			var transition = '-webkit-transform ease-in .3s';
+			var transition = '-webkit-transform ease-in .30s';
 			el.style['-webkit-transition'] = transition;
 			
 			if (distance < 0) {
@@ -174,12 +164,12 @@
 			
 			newEl.style.visibility = '';	
 			newEl.style.opacity = 0;
+			// move to end so this draws last
+			newEl.parentElement.appendChild(newEl);
 																		
 			return function (cb) {
 				function completeFadeIn() {
 
-					oldEl.style['z-index'] = '';
-					newEl.style['z-index'] = '';
 					newEl.style['-webkit-transition'] = '';
 
 					// setting opacity causes flickering on Android (Gingerbread)
@@ -196,23 +186,20 @@
 				}
 				
 				F5.addTransitionEndListener(newEl, completeFadeIn);				
-				newEl.style['-webkit-transition'] = 'opacity .25s';	
-				oldEl.style['z-index'] = 0;
-				newEl.style['z-index'] = 1;	
+				newEl.style['-webkit-transition'] = 'opacity .30s';	
 				newEl.style.opacity = 1;					
 			};		
 		},
 		
 		fadeOut: function (container, oldEl, newEl) {
 			
-			oldEl.style['z-index'] = 1;
-			newEl.style['z-index'] = '';
-			newEl.style.visibility = '';	
+			newEl.style.visibility = '';
+			newEl.style.opacity = 0;
+			newEl.parentElement.insertBefore(newEl, oldEl);	
 																					
 			return function (cb) {
 				function completeFadeOut() {
 
-					oldEl.style['z-index'] = '';
 					newEl.style['-webkit-transition'] = '';
 
 					// setting opacity causes flickering on Android (Gingerbread)
@@ -229,7 +216,7 @@
 				}
 				
 				F5.addTransitionEndListener(oldEl, completeFadeOut);				
-				oldEl.style['-webkit-transition'] = 'opacity .25s';	
+				oldEl.style['-webkit-transition'] = 'opacity .30s';	
 				newEl.style.opacity = 1;				
 				oldEl.style.opacity = 0;					
 			};		

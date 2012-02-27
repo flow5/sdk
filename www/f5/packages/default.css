@@ -296,7 +296,6 @@ body {
 
 .f5webframe {
 	position: relative;
-	z-index: 2;
 	border: none;
 	background-color: transparent;
 	-webkit-transition: opacity .5s;	
