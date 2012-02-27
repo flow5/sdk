@@ -28,8 +28,16 @@
 
 (function () {
 	
+	var callback;
+	window.addEventListener("message", function (e) {
+		console.log('origin: ' + e.origin);
+		if (callback) {
+			callback(e.data);
+		}
+	}, false);
+	
 	function WebFrame() {
-		
+				
 		this.construct = function (data) {
 			F5.addClass(this.el, 'f5webframe');
 			this.el.style.display = 'none';	
@@ -56,6 +64,7 @@
 		};
 		
 		this.open = function (url, referrer, options, cb) {
+			callback = cb;
 			this.el.style.display = '';
 			this.el.style.opacity = 0;			
 			var that = this;
