@@ -71,7 +71,7 @@
 					F5.addClass(el, 'f5' + which + 'button');
 					el.style.opacity = 0;
 					
-					el.style['-webkit-transition'] = 'opacity .30s';
+					el.style['-webkit-transition'] = 'opacity .30s ease-in-out';
 					
 					el.widget.setAction(function () {
 						that.configuration[which].action();						

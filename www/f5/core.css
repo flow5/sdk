@@ -91,6 +91,7 @@ body.f5mobile {
 .f5flow, .f5switcher, .f5set {
 	display: -webkit-box;
 	position: absolute;
+	z-index: 0;
 	top: 0px;
 	left: 0px;
 	width: 100%;
