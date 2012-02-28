@@ -474,7 +474,7 @@ static char base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123
             view.frame = CGRectMake(0, 0, 44, 33);
         } else {
             view = [[[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:identifier] autorelease];   
-            ((MKPinAnnotationView*)view).pinColor = MKPinAnnotationColorPurple;
+            ((MKPinAnnotationView*)view).pinColor = MKPinAnnotationColorGreen;
         }
     }
     
