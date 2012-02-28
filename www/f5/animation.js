@@ -67,25 +67,32 @@
 		};			
 	}
 	
-	function sheetVertical(container, el, distance) {
+	function sheetVertical(container, overEl, underEl, distance) {
 		
 		if (distance < 0) {
-			el.style['-webkit-transform'] = 'translate3d(0px, 0px, 0px)';						
+			overEl.style['-webkit-transform'] = 'translate3d(0px, 0px, 0px)';						
 		} else {
-			el.style['-webkit-transform'] = 'translate3d(0px, ' + -distance + 'px, 0px)';			
+			overEl.style['-webkit-transform'] = 'translate3d(0px, ' + -distance + 'px, 0px)';			
 		}
-		el.style.visibility = '';
+		overEl.style.visibility = '';
+
+		if (distance < 0) {
+			underEl.style.visibility = '';
+		}
 							
 		return function (cb) {
 			function complete() {
 
 				// Android pre-ICS: screen flashes if -webkit-transform is cleared while el is visible
 				if (F5.platform() !== 'android') {
-					el.style['-webkit-transform'] = '';					
+					overEl.style['-webkit-transform'] = '';					
 				}
-				el.style['-webkit-transition'] = '';
+				overEl.style['-webkit-transition'] = '';
+				if (distance >= 0) {
+					underEl.style.visibility = 'hidden';					
+				}
 				
-				F5.removeTransitionEndListener(el);			
+				F5.removeTransitionEndListener(overEl);			
 				
 				cb();
 			}			
@@ -94,16 +101,16 @@
 				// Android: transition stutters if the event listener is used
 				setTimeout(complete, 325);				
 			} else {
-				F5.addTransitionEndListener(el, complete);	
+				F5.addTransitionEndListener(overEl, complete);	
 			}
 			
 			var transition = '-webkit-transform ease-in .30s';
-			el.style['-webkit-transition'] = transition;
+			overEl.style['-webkit-transition'] = transition;
 			
 			if (distance < 0) {
-				el.style['-webkit-transform'] = 'translate3d(0px, ' + distance + 'px, 0px)';			
+				overEl.style['-webkit-transform'] = 'translate3d(0px, ' + distance + 'px, 0px)';			
 			} else {
-				el.style['-webkit-transform'] = 'translate3d(0px, 0px, 0px)';						
+				overEl.style['-webkit-transform'] = 'translate3d(0px, 0px, 0px)';						
 			}
 		};			
 	}
@@ -230,11 +237,11 @@
 		},
 
 		sheetDown: function (container, oldEl, newEl) {
-			return sheetVertical(container, newEl, container.offsetHeight);						
+			return sheetVertical(container, newEl, oldEl, container.offsetHeight);						
 		},
 
 		sheetUp: function (container, oldEl, newEl) {
-			return sheetVertical(container, oldEl, -container.offsetHeight);						
+			return sheetVertical(container, oldEl, newEl, -container.offsetHeight);						
 		},
 
 		sheetLeft: function (container, oldEl, newEl) {
