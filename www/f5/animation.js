@@ -194,7 +194,7 @@
 		fadeOut: function (container, oldEl, newEl) {
 			
 			newEl.style.visibility = '';
-			newEl.style.opacity = 0;
+			newEl.style.opacity = 1;
 			newEl.parentElement.insertBefore(newEl, oldEl);	
 																					
 			return function (cb) {
@@ -217,7 +217,6 @@
 				
 				F5.addTransitionEndListener(oldEl, completeFadeOut);				
 				oldEl.style['-webkit-transition'] = 'opacity .30s';	
-				newEl.style.opacity = 1;				
 				oldEl.style.opacity = 0;					
 			};		
 		},
