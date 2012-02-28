@@ -139,15 +139,38 @@
 			}						
 		};
 		
+		function setMaskRegion(region) {
+			PhoneGap.exec(
+				function (result) { // success
+			}, function (result) { // failure
+				console.log(result);
+			}, "com.flow5.mapview", "setMaskRegion", [region]);				
+		}
+		
+		function clearMaskRegion() {
+			PhoneGap.exec(
+				function (result) { // success
+			}, function (result) { // failure
+				console.log(result);
+			}, "com.flow5.mapview", "clearMaskRegion", []);						
+		}
+				
 		this.widgetWillBecomeInactive = function () {
 //			F5.callBridgeSynchronous('com.flow5.mapview', 'getSnapshot');		
-//			console.log('snapshot: ' + snapshot.substring(0, 255));			
+//			console.log('snapshot: ' + snapshot.substring(0, 255));	
+			clearMaskRegion();		
 		};
 
 		this.widgetDidBecomeInactive = function () {
 			this.shown = false;	
 			F5.callBridgeSynchronous('com.flow5.mapview', 'hideMap');		
 		};	
+		
+		this.widgetDidBecomeActive = function () {
+			if (this.maskRegion) {
+				setMaskRegion(this.maskRegion);
+			}
+		};
 				
 		this.getMapGeometry = function () {
 			return F5.callBridgeSynchronous('com.flow5.mapview', 'getMapGeometry');
@@ -180,21 +203,14 @@
 		};	
 		
 		this.setMaskRegion = function (region) {
-			PhoneGap.exec(
-				function (result) { // success
-			}, function (result) { // failure
-				console.log(result);
-			}, "com.flow5.mapview", "setMaskRegion", [region]);						
+			this.maskRegion = region;
+			setMaskRegion(region);
 		};
 		
 		this.clearMaskRegion = function () {
-			PhoneGap.exec(
-				function (result) { // success
-			}, function (result) { // failure
-				console.log(result);
-			}, "com.flow5.mapview", "clearMaskRegion", []);			
-		};
-			
+			delete this.maskRegion;
+			clearMaskRegion();
+		};			
 	}	
 	
 	F5.Prototypes.Widgets.MapView = new MapView();	

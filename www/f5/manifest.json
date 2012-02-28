@@ -103,7 +103,12 @@
                 "udp.js", 
                 "3p/phonegap-1.1.0.js",
                 "widgets/webframe_native.js"
-            ]
+            ],
+			"debug": {
+				"scripts": [
+/*					"debug/weinre.js" */
+				]
+			}
         }, 
         "browser": {
             "scripts": [
