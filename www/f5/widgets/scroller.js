@@ -399,6 +399,10 @@
 		// may not be derivable from offsetHeight
 		this.refresh = function () {
 			this.container = F5.elementOffsetGeometry(this.el.parentElement);
+			var absolutePosition = F5.elementAbsolutePosition(this.el.parentElement);
+			this.container.left = absolutePosition.x;
+			this.container.top = absolutePosition.y;
+			
 			var oldMinOffset = this.minOffset;
 			this.minOffset = Math.min(this.container.height - this.el.offsetHeight, 0);
 			if (oldMinOffset !== this.minOffset) {
