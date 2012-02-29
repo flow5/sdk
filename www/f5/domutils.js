@@ -366,8 +366,8 @@
 		   em = px * 100. default sizes are based on iOS screen densities */
 		// default is based on iPhone height
 		var metric = width/320;
-//		if (metric > 1.5) {
-//			metric = 1.5;
+//		if (metric > 1.0) {
+//			metric = 1.0;
 //		}
 		document.getElementById('f5appframe').style['font-size'] = metric*100 + 'px';		
 	};	
@@ -455,8 +455,8 @@
 		preloadImagesRecursive(F5.Resources);		
 	};
 	
+	var activityEl;
 	F5.startActivity = function (el) {
-		var activityEl = el.querySelector('[f5widget=Activity]');
 		if (!activityEl) {
 			activityEl = document.createElement('div');
 			F5.attachWidget(activityEl, 'Activity');			
@@ -467,8 +467,7 @@
 	};
 	
 	F5.stopActivity = function (el) {
-		var activityEl = el.querySelector('[f5widget=Activity]');
-		if (activityEl) {
+		if (activityEl && activityEl.parentElement) {
 			activityEl.parentElement.removeChild(activityEl);			
 		}
 	};
