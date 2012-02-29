@@ -49,7 +49,9 @@
 	
 	if (F5.isMobile()) {
 		window.onscroll = function () {
-			document.body.scrollTop = 0;
+			if (document.body.scrollTop) {
+				document.body.scrollTop = 0;				
+			}
 		};		
 	}
 

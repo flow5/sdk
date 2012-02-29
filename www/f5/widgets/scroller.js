@@ -322,6 +322,10 @@
 				that.refresh();
 			};
 			
+			this.scrollToTopFunction = function () {
+				that.scrollTo(0);
+			};			
+			
 			function moveHandlerWrapper(e) {
 				moveHandler(that, e);
 			}
@@ -349,16 +353,17 @@
 						
 			doTransform(this, this.staticOffset);
 		};
-		
+				
 		this.widgetWillBecomeActive = function () {
 			if (!this.initialized) {
 				this.refresh();
 				this.initialized = true;				
 			}			
-		};
+		};				
 				
 		this.widgetDidBecomeActive = function () {
 			window.addEventListener('orientationchange', this.refreshFunction);
+			document.addEventListener('statusBarTouched', this.scrollToTopFunction);
 			this.active = true;
 		};
 						
@@ -366,6 +371,7 @@
 			this.tracking = false;
 			finishScrolling(this);
 			window.removeEventListener('orientationchange', this.refreshFunction);			
+			document.removeEventListener('statusBarTouched', this.scrollToTopFunction);
 		};
 		
 		this.widgetDidBecomeInactive = function () {
@@ -385,6 +391,11 @@
 		this.enable = function () {
 			this.enabled = true;
 		};
+		
+		this.scrollTo = function (offset) {
+			this.staticOffset = offset;
+			doTransform(this, offset, 0.5, this.curves.softSnap);			
+		}
 		
 		this.jumpTo = function (offset) {
 			this.staticOffset = offset;					

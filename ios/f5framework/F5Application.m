@@ -23,29 +23,28 @@
  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR 
  OTHER DEALINGS IN THE SOFTWARE.
  
- ***********************************************************************************************************************/
+***********************************************************************************************************************/
 
-#import "F5MaskRegion.h"
+#import "F5Application.h"
 #import "AppDelegate.h"
 #import "PhoneGapViewController.h"
 
-@implementation F5MaskRegion
+@implementation F5Application
 
-- (PluginResult*)enable:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+- (void)sendEvent:(UIEvent *)anEvent
 {
-    AppDelegate *appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];                
-    appDelegate.viewController.enableMaskRegion = [NSNumber numberWithBool:YES];
-
-    return [PluginResult resultWithStatus:PGCommandStatus_OK]; 
+    NSEnumerator *enumerator = [[anEvent allTouches] objectEnumerator];
+    UITouch *touch;
+    while (touch = [enumerator nextObject]) {        
+        if ([NSStringFromClass([[touch window] class]) isEqualToString:@"UIStatusBarWindow"]) {
+            if (touch.phase == UITouchPhaseBegan) {
+                AppDelegate* delegate = (AppDelegate*)self.delegate;            
+                [((PhoneGapViewController*)delegate.viewController).webView stringByEvaluatingJavaScriptFromString:@"F5.fireStatusBarTouchedEvent();"];                
+            }
+        }
+    }
     
-}
-
-- (PluginResult*)disable:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
-{
-    AppDelegate *appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];                
-    appDelegate.viewController.enableMaskRegion = [NSNumber numberWithBool:NO];
-    
-    return [PluginResult resultWithStatus:PGCommandStatus_OK];     
+    [super sendEvent:anEvent];
 }
 
 @end

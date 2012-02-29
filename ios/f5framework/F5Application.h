@@ -23,29 +23,10 @@
  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR 
  OTHER DEALINGS IN THE SOFTWARE.
  
- ***********************************************************************************************************************/
+***********************************************************************************************************************/
 
-#import "F5MaskRegion.h"
-#import "AppDelegate.h"
-#import "PhoneGapViewController.h"
+#import <UIKit/UIKit.h>
 
-@implementation F5MaskRegion
-
-- (PluginResult*)enable:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
-{
-    AppDelegate *appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];                
-    appDelegate.viewController.enableMaskRegion = [NSNumber numberWithBool:YES];
-
-    return [PluginResult resultWithStatus:PGCommandStatus_OK]; 
-    
-}
-
-- (PluginResult*)disable:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
-{
-    AppDelegate *appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];                
-    appDelegate.viewController.enableMaskRegion = [NSNumber numberWithBool:NO];
-    
-    return [PluginResult resultWithStatus:PGCommandStatus_OK];     
-}
+@interface F5Application : UIApplication
 
 @end

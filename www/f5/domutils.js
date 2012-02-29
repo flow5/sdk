@@ -472,6 +472,12 @@
 			activityEl.parentElement.removeChild(activityEl);			
 		}
 	};
+	
+	F5.fireStatusBarTouchedEvent = function () {
+        var e = document.createEvent('Events'); 
+        e.initEvent('statusBarTouched');
+        document.dispatchEvent(e);						
+	};
 		
 }());
 
