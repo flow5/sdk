@@ -36,8 +36,8 @@
 			xhr.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
 		}
 		
-		console.log(url);
-		console.log(body);
+//		console.log(url);
+//		console.log(body);
 		
 //		xhr.setRequestHeader("Authorization", 'Basic c3ByaW50Omp1MWN5anUxYzM=');
 
