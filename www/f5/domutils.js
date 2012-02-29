@@ -366,6 +366,9 @@
 		   em = px * 100. default sizes are based on iOS screen densities */
 		// default is based on iPhone height
 		var metric = width/320;
+//		if (metric > 1.5) {
+//			metric = 1.5;
+//		}
 		document.getElementById('f5appframe').style['font-size'] = metric*100 + 'px';		
 	};	
 		

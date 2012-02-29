@@ -32,6 +32,14 @@
 		this.construct = function (data) {
 			var id = this.el.getAttribute('f5id');
 			var value = F5.valueFromId(data, id);
+			
+			if (!value) {
+				var className = this.el.getAttribute('f5class');
+				if (className) {
+					value = data['.' + className];
+				}								
+			}
+			
 			if (value) {
 				this.el.innerText = value;				
 			}
