@@ -47,7 +47,10 @@
             webView = view;
         }
     }
-    if (!hit && webView) {
+    
+    PhoneGapViewController *viewController = ((PhoneGapDelegate*)[[UIApplication sharedApplication] delegate]).viewController;                    
+    
+    if ((![viewController.enableMaskRegion boolValue] || !hit) && webView) {
         hit = [webView hitTest:[webView convertPoint:point fromView:self] withEvent:event];
     }
     
@@ -61,11 +64,12 @@
 
 @implementation PhoneGapViewController
 
-@synthesize supportedOrientations, webView;
+@synthesize supportedOrientations, webView, enableMaskRegion;
 
 - (id) init
 {
     if (self = [super init]) {
+        self.enableMaskRegion = [NSNumber numberWithBool:YES];
 		// do other init here
 	}
 	
@@ -160,6 +164,7 @@
 {
     self.supportedOrientations = nil;
     self.webView = nil;
+    self.enableMaskRegion = nil;
     
     [super dealloc];
 }

@@ -45,6 +45,8 @@
             "animation.js", 
             "services.js", 
             "location.js", 
+            "connection.js", 
+            "google.js", 
 			"phone.js",
 			"imagepreloader.js",
             "widgets/buttons.js", 

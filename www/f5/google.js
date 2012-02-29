@@ -1,6 +1,6 @@
 /***********************************************************************************************************************
 
-	Copyright (c) 2011 Paul Greyson
+	Copyright (c) 2012 Paul Greyson
 
 	Permission is hereby granted, free of charge, to any person 
 	obtaining a copy of this software and associated documentation 
@@ -24,37 +24,34 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global F5, google*/
+/*global F5*/
 
-(function () {
+(function () {		
+	// TODO: make the apis available configurable from client
 	
-	function StreetView() {
-		
-		this.construct = function (data) {
-			try {
-				this.streetView = new google.maps.StreetViewPanorama(this.el, {pano:data.pano});
-			} catch (e) {
-				console.log(e.message);
-			}
-			this.closeButton = F5.createWidget('Button', data, 'closeButton', 'closeButton');
-			F5.addClass(this.closeButton, 'f5closebutton');
-			this.el.appendChild(this.closeButton);																						
-		};	
-		
-		this.setCloseAction = function (action) {
-			this.closeButton.widget.setAction(function() {
-				action();
-			});						
-		};
-		
-		this.widgetWillBecomeActive = function () {
-			try {
-				google.maps.event.trigger(this.streetView, 'resize');				
-			} catch (e) {
-				console.log(e.message);
-			}
-		};
+	
+	function loadGoogleApi() {
+		var script = document.createElement("script");
+		script.type = "text/javascript";
+		script.src = 'http://maps.googleapis.com/maps/api/js?libraries=geometry,geocode&sensor=true&callback=F5.noop';
+		document.body.appendChild(script);
 	}
 	
-	F5.Prototypes.Widgets.StreetView = new StreetView();		
+	F5.Global.flowController.addWaitTask(function (cb) {
+		function onlineCb(online) {			
+			if (online) {
+				F5.connection.removeStatusChangeCallback(onlineCb);
+				loadGoogleApi();
+			}
+		}		
+		
+		// if network is connected, load maps. otherwise set a flag to load when network comes online
+		if (F5.connection.online()) {
+			loadGoogleApi();
+		} else {
+			F5.connection.addStatusChangeCallback(onlineCb);
+		}		
+		
+		cb();
+	});			
 }());

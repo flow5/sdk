@@ -24,7 +24,7 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global F5*/
+/*global F5, PhoneGap*/
 
 (function () {	
 	
@@ -63,6 +63,10 @@
 		};
 		
 		this.present = function (message) {
+			if (typeof PhoneGap !== 'undefined') {
+				F5.callBridgeSynchronous('com.flow5.maskregion', 'disable');
+			}
+			
 			var that = this;			
 			document.getElementById('f5screen').appendChild(that.el);			
 			setTimeout(function () {
@@ -71,6 +75,10 @@
 		};
 		
 		this.dismiss = function (cb) {
+			if (typeof PhoneGap !== 'undefined') {
+				F5.callBridgeSynchronous('com.flow5.maskregion', 'enable');
+			}
+			
 			var that = this;
 			
 			function fadeComplete() {
@@ -126,7 +134,7 @@
 			
 			var cancelEl = F5.createWidget('Button', {label: 'Cancel'}, 'label');
 			F5.addClass(cancelEl, 'f5alertbutton');
-			F5.addClass(cancelEl, 'f5not-default')
+			F5.addClass(cancelEl, 'f5not-default');
 			this.buttonsEl.appendChild(cancelEl);
 
 			cancelEl.widget.setAction(function () {

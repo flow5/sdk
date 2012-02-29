@@ -69,7 +69,7 @@
 		}
 		
 		this.distanceFromCurrentLocation = function () {
-			var currentLocation = F5.locationService.getCurrentLocation();
+			var currentLocation = F5.location.getCurrentLocation();
 			if (currentLocation) {
 				// from http://www.movable-type.co.uk/scripts/latlong.html
 				return distance(currentLocation, this.location);

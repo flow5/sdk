@@ -33,28 +33,6 @@
 		/*global google*/
 		
 		this.construct = function () {	
-			try {
-				var currentLocation = F5.locationService.getCurrentLocation();
-				var options = {
-					zoom: 13,
-					center: new google.maps.LatLng(currentLocation.lat, currentLocation.lng),
-					mapTypeId: google.maps.MapTypeId.ROADMAP,
-					streetViewControl: false,
-					mapTypeControl: false
-				};
-
-				this.map = new google.maps.Map(this.el, options);		
-				this.markers = [];		
-
-				var that = this;
-				google.maps.event.addListener(this.map, 'bounds_changed', function() {
-					if (that.boundsChangedAction) {
-						that.boundsChangedAction();
-					}
-				});				
-			} catch (e) {
-				console.log(e.message);
-			}	
 								
 		};	
 		
@@ -63,6 +41,33 @@
 				marker.setMap(null);
 			});			
 		};	
+		
+		this.widgetWillBecomeActive = function () {
+			if (!this.map) {
+				try {
+					var currentLocation = F5.location.getCurrentLocation();
+					var options = {
+						zoom: 13,
+						center: new google.maps.LatLng(currentLocation.lat, currentLocation.lng),
+						mapTypeId: google.maps.MapTypeId.ROADMAP,
+						streetViewControl: false,
+						mapTypeControl: false
+					};
+
+					this.map = new google.maps.Map(this.el, options);		
+					this.markers = [];		
+
+					var that = this;
+					google.maps.event.addListener(this.map, 'bounds_changed', function() {
+						if (that.boundsChangedAction) {
+							that.boundsChangedAction();
+						}
+					});				
+				} catch (e) {
+					console.log(e.message);
+				}							
+			}
+		}
 		
 		this.dropPins = function (pins) {
 			var that = this;

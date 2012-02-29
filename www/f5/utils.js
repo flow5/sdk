@@ -29,7 +29,7 @@
 
 (function () {
 	
-	function doXHR(method, url, body, success, error, headers, username, password) {
+	function doXHR(method, url, body, success, error, headers, username, password) {				
 		var xhr = new XMLHttpRequest();
 		xhr.open(method, url, true, username, password);
 		if (method === 'POST' || method === 'PUT') {
@@ -103,6 +103,14 @@
 	};
 	
 	F5.execService = function (id, parameters, cb) {
+				
+		if (!F5.connection.online()) {
+			// TODO: make this message configurable from client
+			F5.alert('Oops! No Network Connection', "Please enable your network connection and try again.", function () {
+				cb(null);				
+			});
+			return;
+		}				
 		
 		var components = id.split(':');
 		var name = components[0];

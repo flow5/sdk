@@ -14,6 +14,7 @@
 
 @property (nonatomic, retain) 	NSArray* supportedOrientations;
 @property (nonatomic, retain)	UIWebView* webView;
+@property (nonatomic, retain)   NSNumber* enableMaskRegion;
 
 
 @end

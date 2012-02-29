@@ -1,6 +1,6 @@
 /***********************************************************************************************************************
 
-	Copyright (c) 2011 Paul Greyson
+	Copyright (c) 2012 Paul Greyson
 
 	Permission is hereby granted, free of charge, to any person 
 	obtaining a copy of this software and associated documentation 
@@ -24,37 +24,44 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global F5, google*/
+/*global F5, PhoneGap*/
 
 (function () {
 	
-	function StreetView() {
+	function Connection() {
 		
-		this.construct = function (data) {
-			try {
-				this.streetView = new google.maps.StreetViewPanorama(this.el, {pano:data.pano});
-			} catch (e) {
-				console.log(e.message);
+		this.callbacks = [];
+		
+		this.online = function () {
+			if (typeof PhoneGap !== 'undefined') {
+				return navigator.network.connection.type !== 'unknown';
+			} else {
+				return navigator.onLine;
 			}
-			this.closeButton = F5.createWidget('Button', data, 'closeButton', 'closeButton');
-			F5.addClass(this.closeButton, 'f5closebutton');
-			this.el.appendChild(this.closeButton);																						
 		};	
 		
-		this.setCloseAction = function (action) {
-			this.closeButton.widget.setAction(function() {
-				action();
-			});						
+		this.addStatusChangeCallback = function (cb) {
+			this.callbacks.push(cb);
+		};				
+		
+		this.removeStatusChangeCallback = function (cb) {
+			this.callbacks.splice(this.callbacks.indexOf(cb), 1);
 		};
 		
-		this.widgetWillBecomeActive = function () {
-			try {
-				google.maps.event.trigger(this.streetView, 'resize');				
-			} catch (e) {
-				console.log(e.message);
-			}
-		};
+		var that = this;
+		
+		window.addEventListener("offline", function(e) {
+			that.callbacks.forEach(function (cb) {
+				cb(false);
+			});
+		}, false);
+
+		window.addEventListener("online", function(e) {
+			that.callbacks.forEach(function (cb) {
+				cb(true);
+			});
+		}, false);
 	}
-	
-	F5.Prototypes.Widgets.StreetView = new StreetView();		
+			
+	F5.connection = new Connection();
 }());

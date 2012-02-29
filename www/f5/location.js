@@ -93,6 +93,6 @@
 		};
 	}
 	
-	F5.locationService = new Location();
+	F5.location = new Location();
 	
 }());
