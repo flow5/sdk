@@ -80,8 +80,11 @@
 				var position = new google.maps.LatLng(pin.lat, pin.lng);
 				var markerImage; 
 				if (pin.markerImage) {
+					var image = new Image();
+					image.src = pin.markerImage;
+					
 					markerImage = new google.maps.MarkerImage(pin.markerImage, null, null, null, 
-													new google.maps.Size(24, 24));				
+						new google.maps.Size(pin.markerWidth, pin.markerHeight));			
 				}
 				var marker = new google.maps.Marker({
 								      position: position,
