@@ -29,6 +29,25 @@
 
 (function () {
 	
+	/*global PhoneGap*/
+	function networkActivityStarted() {
+		if (typeof PhoneGap !== 'undefined') {
+			PhoneGap.exec(
+				function (result) { // success
+			}, function (result) { // failure
+			}, "com.flow5.networkactivity", "activityStarted", []);													
+		}
+	}
+
+	function networkActivityCompleted() {
+		if (typeof PhoneGap !== 'undefined') {
+			PhoneGap.exec(
+				function (result) { // success
+			}, function (result) { // failure
+			}, "com.flow5.networkactivity", "activityCompleted", []);													
+		}
+	}		
+	
 	function doXHR(method, url, body, success, error, headers, username, password) {				
 		var xhr = new XMLHttpRequest();
 		xhr.open(method, url, true, username, password);
@@ -62,6 +81,7 @@
 //				console.log('XMLHttpRequest.LOADING');					
 				break;
 			case xhr.DONE:	
+				networkActivityCompleted();
 				if (xhr.status === 200) {
 					if (success) {
 						var responseHeaders = {};
@@ -90,6 +110,7 @@
 			/*global Iuppiter*/
 //			var compressed = Iuppiter.Base64.encode(Iuppiter.compress(body));
 //			xhr.send(compressed);
+			networkActivityStarted();
 			xhr.send(body);
 		}, 0);		
 	}
