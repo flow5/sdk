@@ -461,7 +461,7 @@
     UIImage *streetViewIcon = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"streetview" ofType:@"png"]];        
     UIButton *leftButton = [[[UIButton alloc] init] autorelease];       
     [leftButton setImage:streetViewIcon forState:UIControlStateNormal];
-    leftButton.frame = CGRectMake(0, 0, 31, 31);
+    leftButton.frame = CGRectMake(0, 0, streetViewIcon.size.width/2, streetViewIcon.size.height/2);
     view.leftCalloutAccessoryView = leftButton;
             
     view.canShowCallout = YES;
