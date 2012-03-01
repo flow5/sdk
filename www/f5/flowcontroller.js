@@ -74,6 +74,10 @@
 			}
 					
 			while (node) {
+				
+				if (event === 'WillBecomeInactive') {
+					that.cancelPending(node);
+				}
 						
 				// only recurse when an async operation requires it
 				if (node.subflows && node.subflows[event]) {
@@ -147,6 +151,15 @@
 					that.release(child);
 				});				
 			}
+		};
+		
+		this.cancelPending = function (node) {
+			if (node.pending) {
+				node.pending.forEach(function (pending) {
+					pending.abort();
+				});
+				node.pending = [];
+			}			
 		};
 			
 		this.start = function (cb) {	

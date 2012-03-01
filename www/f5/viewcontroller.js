@@ -61,6 +61,7 @@
 		};		
 		
 		this.nodeWillBecomeInactive = function (node) {
+			F5.stopActivity(node.view.el);
 			doLifecycleEvent(node, 'WillBecomeInactive');
 		};				
 

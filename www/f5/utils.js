@@ -112,18 +112,28 @@
 //			xhr.send(compressed);
 			networkActivityStarted();
 			xhr.send(body);
-		}, 0);		
+		}, 0);	
+		
+		return xhr;	
 	}
 	
 	F5.get = function(url, success, error, headers, username, password) {
-		doXHR('GET', url, null, success, error, headers, username, password);		
+		return doXHR('GET', url, null, success, error, headers, username, password);		
 	};
 		
 	F5.upload = function(method, url, body, success, error, headers, username, password) {
-		doXHR(method, url, body, success, error, headers, username, password);
+		return doXHR(method, url, body, success, error, headers, username, password);
 	};
-	
-	F5.execService = function (id, parameters, cb) {
+		
+	function pendingComplete(node, pending) {
+		node.pending.splice(node.pending.indexOf(pending), 1);
+	}
+		
+	F5.execService = function (node, id, parameters, cb) {
+		
+		if (!node.pending) {
+			node.pending = [];
+		}
 				
 		if (!F5.connection.online()) {
 			// TODO: make this message configurable from client
@@ -205,13 +215,19 @@
 			}			
 		}
 		
-		// TODO: this is a bit messy. need to make combinations of body + url params easier
+		var pending = {abort: function () {
+			console.log('aborting pending')
+			this.aborted = true;
+			this.xhr.abort();
+		}};
+		
 		if (method === 'GET') {			
 			url += formatUrlParameters(parameters);
 			
 //			console.log(url);	
-			F5.get(url, 
+			pending.xhr = F5.get(url, 
 				function success(response) {
+					pendingComplete(node, pending);
 					try {
 //						console.log(response);
 						var obj = JSON.parse(response);
@@ -221,11 +237,14 @@
 						cb(obj, 200);
 						// TODO: validateSchema(response, service.responseSchema);						
 					} catch (e) {
+						pendingComplete(node, pending);						
 						console.log(e.message);
 						cb(null, 200);
 					}
 				}, function error(response, status) {
-					handleErrorResponse(response, status);
+					if (!pending.aborted) {
+						handleErrorResponse(response, status);						
+					}			
 				}, null, username, password);
 		} 
 		else if (method === 'POST' || method === 'PUT'){	
@@ -239,8 +258,9 @@
 				}
 			});
 			
-			F5.upload(method, url, JSON.stringify(bodyParameters),
+			pending.xhr = F5.upload(method, url, JSON.stringify(bodyParameters),
 				function success(response) {
+					pendingComplete(node, pending);					
 					try {
 //						console.log(response);
 						var obj = JSON.parse(response);
@@ -254,9 +274,15 @@
 						cb(null, 200);
 					}
 				}, function error(response, status) {
-					handleErrorResponse(response, status);
+					pendingComplete(node, pending);		
+					if (!pending.aborted) {
+						handleErrorResponse(response, status);						
+					}			
 				}, null, username, password);							
-		}		
+		}	
+		
+		node.pending.push(pending);
+			
 	};	
 	
 	// TODO: need a unit test for this one

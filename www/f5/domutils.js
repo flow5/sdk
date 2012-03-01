@@ -467,7 +467,15 @@
 	};
 	
 	F5.stopActivity = function (el) {
-		if (activityEl && activityEl.parentElement) {
+		var search = activityEl;
+		while (search) {
+			if (search.parentElement === el) {
+				break;
+			}
+			search = search.parentElement;
+		}
+				
+		if (search) {
 			activityEl.parentElement.removeChild(activityEl);			
 		}
 	};

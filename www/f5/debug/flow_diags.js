@@ -96,7 +96,9 @@
 				var copy = {};
 				F5.forEach(obj, function (id, child) {
 					if (child && typeof child === 'object') {
-						if (child.constructor === Array) {
+						if (id === 'pending') {
+							copy[id] = '[' + child.length +']';
+						} else if (child.constructor === Array) {
 							copy[id] = [];
 							F5.forEach(child, function (item) {
 								copy[id].push(copyForPrettyPrintRecursive(item));
