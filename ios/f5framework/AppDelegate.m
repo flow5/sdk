@@ -98,7 +98,7 @@
 + (NSString*) startPage
 {
 #if TARGET_IPHONE_SIMULATOR
-    return [NSString stringWithFormat:@"http://%@:8008/generate?app=%@&native=true&inline=false&compress=false&mobile=true&platform=ios&debug=true", [AppDelegate devservhost], [AppDelegate appname]];
+    return [NSString stringWithFormat:@"http://%@:8008/generate?app=%@&native=true&inline=true&compress=false&mobile=true&platform=ios&debug=true", [AppDelegate devservhost], [AppDelegate appname]];
 #else
     return [super startPage];        
 #endif

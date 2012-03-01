@@ -31,44 +31,9 @@
 #import "SBJsonParser.h"
 #import "SBJSON.h"
 #import "F5CommandQueue.h"
+#import "QSStrings.h"
 #import <QuartzCore/QuartzCore.h>
 
-@implementation NSData (DataUtils)
-
-static char base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-
-- (NSString *)newStringInBase64FromData
-{
-    NSMutableString *dest = [[NSMutableString alloc] initWithString:@""];
-    unsigned char * working = (unsigned char *)[self bytes];
-    int srcLen = [self length];
-    
-    // tackle the source in 3's as conveniently 4 Base64 nibbles fit into 3 bytes
-    for (int i=0; i<srcLen; i += 3)
-    {
-        // for each output nibble
-        for (int nib=0; nib<4; nib++)
-        {
-            // nibble:nib from char:byt
-            int byt = (nib == 0)?0:nib-1;
-            int ix = (nib+1)*2;
-            
-            if (i+byt >= srcLen) break;
-            
-            // extract the top bits of the nibble, if valid
-            unsigned char curr = ((working[i+byt] << (8-ix)) & 0x3F);
-            
-            // extract the bottom bits of the nibble, if valid
-            if (i+nib < srcLen) curr |= ((working[i+nib] >> ix) & 0x3F);
-            
-            [dest appendFormat:@"%c", base64[curr]];
-        }
-    }
-    
-    return dest;
-}
-
-@end
 
 @interface F5Annotation : NSObject <MKAnnotation> {
 @private
@@ -76,12 +41,12 @@ static char base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123
     NSString *title;
 	NSString *subtitle;
     NSNumber *index;
-    NSString *markerImage;
+    UIImage *markerImage;
 }
 
 @property (nonatomic, copy) NSString *title;
 @property (nonatomic, copy) NSString *subtitle;
-@property (nonatomic, copy) NSString *markerImage;
+@property (nonatomic, copy) UIImage *markerImage;
 @property (nonatomic, copy) NSNumber *index;
 @property (nonatomic, assign) CLLocationCoordinate2D coordinate;
 
@@ -233,6 +198,8 @@ static char base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123
 
 - (PluginResult*)getSnapshot:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
     
+    return nil;
+    /*
     if (self.mapView) {
         CGSize size = [self.mapView bounds].size;
         UIGraphicsBeginImageContext(size);
@@ -247,6 +214,7 @@ static char base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123
         NSLog(@"Trying to use showMap without calling create first");        
         return [PluginResult resultWithStatus:PGCommandStatus_INVALID_ACTION];                
     }
+    */
 }
 
 - (void)animateToRegion:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)location {
@@ -416,7 +384,13 @@ static char base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123
         annotation.title = [pin objectForKey:@"title"];        
         annotation.subtitle = [pin objectForKey:@"subtitle"];
         annotation.index = [pin objectForKey:@"index"];
-        annotation.markerImage = [pin objectForKey:@"markerImage"];
+        
+        NSString *prefix = @"data:image/png;base64,";
+        NSString *markerImageB64 = [pin objectForKey:@"markerImage"];
+        if (markerImageB64 && [markerImageB64 hasPrefix:prefix]) {
+            NSData *data = [QSStrings decodeBase64WithString:[markerImageB64 substringFromIndex:[prefix length]]];
+            annotation.markerImage = [UIImage imageWithData:data];
+        }
                         
 		[self.mapView addAnnotation:annotation];
     }      
@@ -470,11 +444,10 @@ static char base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123
     if (!view) {
         if ([annotation isKindOfClass:[F5Annotation class]] && [(F5Annotation*)annotation markerImage]) {
             view = [[[MKAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:identifier] autorelease]; 
-            view.image = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"pin" ofType:@"png"]];
-            view.frame = CGRectMake(0, 0, 44, 33);
+            view.image = [(F5Annotation*)annotation markerImage];
+            view.frame = CGRectMake(0, 0, view.image.size.width/2, view.image.size.height/2);
         } else {
             view = [[[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:identifier] autorelease];   
-            ((MKPinAnnotationView*)view).pinColor = MKPinAnnotationColorGreen;
         }
     }
     
