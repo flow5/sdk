@@ -110,6 +110,10 @@ function Form() {
 		this.refresh();			
 	};
 	
+	this.widgetWillBecomeInactive = function () {
+		this.blur();
+	}
+	
 	this.getFormData = function () {
 		var data = {};
 		F5.forEach(this.el.querySelectorAll('[f5widget=Input]'), function (el) {
