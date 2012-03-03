@@ -40,9 +40,15 @@
 					value = data['.' + className];
 				}								
 			}
-
+			
 			if (value) {
-				var img = document.createElement('img');				
+				var img = document.createElement('img');
+
+				// TODO: maybe allow client to install hidden image handler
+				img.onerror = function () {
+					img.style.visibility = 'hidden';
+				}
+								
 				if (F5.ImagePreloader.isImagePreloader(value)) {
 					img.src = value.src();					
 				} else {
