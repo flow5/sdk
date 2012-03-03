@@ -80,6 +80,12 @@
 				}
 				
 				if (event === 'WillBecomeActive') {
+					// save away the original selection so it can be restored
+					// when the node is released
+					if (node.selection && !node.defaultSelection) {
+						node.defaultSelection = node.selection.id;
+					}
+					
 					if (!node.flowDelegate) {
 						var flowDelegatePrototype = F5.Prototypes.FlowDelegates[node.id];
 						if (flowDelegatePrototype) {
@@ -159,6 +165,13 @@
 		
 		this.release = function (node) {
 			delete node.flowDelegate;
+			if (node.defaultSelection) {
+				node.selection = node.children[node.defaultSelection];	
+				F5.forEach(node.children, function (id, child) {
+					child.active = child === node.selection;
+				});		
+			}
+			delete node.defaultSelection;
 			node.data = {};
 			var that = this;
 			if (node.children) {
