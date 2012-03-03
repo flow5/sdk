@@ -78,6 +78,20 @@
 				if (event === 'WillBecomeInactive') {
 					that.cancelPending(node);
 				}
+				
+				if (event === 'WillBecomeActive') {
+					if (!node.flowDelegate) {
+						var flowDelegatePrototype = F5.Prototypes.FlowDelegates[node.id];
+						if (flowDelegatePrototype) {
+							node.flowDelegate = F5.objectFromPrototype(flowDelegatePrototype);
+							node.flowDelegate.node = node;	
+
+							if (node.flowDelegate.initialize) {
+								node.flowDelegate.initialize();
+							}		
+						}													
+					}					
+				}
 						
 				// only recurse when an async operation requires it
 				if (node.subflows && node.subflows[event]) {
@@ -106,7 +120,7 @@
 			doLifecycleEventRecursive('DidBecomeInactive', node, cb);
 		}									
 
-		function nodeWillBecomeActive(node, cb) {											
+		function nodeWillBecomeActive(node, cb) {																	
 			doLifecycleEventRecursive('WillBecomeActive', node, cb);
 		}									
 
@@ -144,6 +158,7 @@
 		};
 		
 		this.release = function (node) {
+			delete node.flowDelegate;
 			node.data = {};
 			var that = this;
 			if (node.children) {

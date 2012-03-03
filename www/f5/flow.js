@@ -52,17 +52,6 @@
 							spec: nodeSpec, 
 							active: false};
 
-
-				var flowDelegatePrototype = F5.Prototypes.FlowDelegates[node.id];
-				if (flowDelegatePrototype) {
-					node.flowDelegate = F5.objectFromPrototype(flowDelegatePrototype);
-					node.flowDelegate.node = node;	
-					
-					if (node.flowDelegate.initialize) {
-						node.flowDelegate.initialize();
-					}		
-				}									
-
 				if (nodeSpec.children) {
 					node.children = {};
 					F5.assert(nodeSpec.selection, 'Parent node must declare child selection: ' + id);
