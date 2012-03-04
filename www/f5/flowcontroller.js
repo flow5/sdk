@@ -312,15 +312,15 @@
 			// TODO: this is asymmetrical with forward transitions where currently the transition
 			// has to be defined on the node itself. should forward transitions also be allowed to
 			// climb scope as well? Haven't found a case where it's needed yet. . .
-			var backNode;
 			if (node.transitions && node.transitions[id]) {
 				container = node.transitions[id].to.parent;					
-			} else {
-				backNode = node;		
-				while (!backNode.back) {
+			} else if (id === 'back') {
+				var backNode = node;		
+				while (!backNode.back && !(backNode.transitions && backNode.transitions['back'])) {
 					backNode = backNode.parent;
 				}		
 				container = backNode.parent;
+				node = backNode;
 			}
 						
 			F5.assert(container.type === 'flow' || container.type === 'set', 
@@ -337,10 +337,8 @@
 			
 			cancelSubflowRecursive(node);		
 			
-			// TODO: clean this up. the logic around backNode is confusing
 			// sets allow transition with 'back' semantics (cleanup views) where the
-			// state is set in lifecycle call so there's no backNode
-			var target = id === 'back' && backNode ? backNode.back : node.transitions[id].to;
+			var target = id === 'back' && node.back ? node.back : node.transitions[id].to;
 			var animation = node.transitions && node.transitions[id] ? node.transitions[id].animation : null;
 									
 			if (parameters) {
@@ -373,9 +371,7 @@
 							}							
 							nodeDidBecomeActive(container.selection, function () {
 								if (id === 'back') {
-									if (backNode) {
-										delete backNode.back;									
-									}
+									delete node.back;
 
 									that.release(oldSelection);
 									flowObservers.forEach(function (observer) {
