@@ -216,7 +216,7 @@
 		}
 		
 		var pending = {abort: function () {
-			console.log('aborting pending')
+//			console.log('aborting pending')
 			this.aborted = true;
 			this.xhr.abort();
 		}};
@@ -364,6 +364,10 @@
 		function Instance() {}
 		Instance.prototype = prototype;
 		return new Instance();
+	};
+	
+	F5.createCache = function () {
+		return F5.objectFromPrototype(F5.Prototypes.Utils.Cache);
 	};
 	
 	F5.callback = function (cb, arg) {

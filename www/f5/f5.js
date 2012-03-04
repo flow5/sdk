@@ -32,7 +32,8 @@
 
 	F5.Global = {};
 	F5.Prototypes = {};
-	F5.Prototypes.FlowDelegates = {};	
+	F5.Prototypes.FlowDelegates = {};
+	F5.Prototypes.Utils = {};	
 
 	if (typeof document !== 'undefined') {
 		F5.Prototypes.Widgets = {};

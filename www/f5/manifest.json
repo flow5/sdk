@@ -48,6 +48,7 @@
             "connection.js", 
             "google.js", 
 			"phone.js",
+			"cache.js",
 			"imagepreloader.js",
             "widgets/buttons.js", 
             "widgets/statictext.js", 
