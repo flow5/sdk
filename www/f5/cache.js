@@ -39,7 +39,7 @@
 			var that = this;
 			this.fields.forEach(function (field) {
 				if (field.persist) {
-					if (typeof field.value !== 'undefined') {
+					if (typeof field.value !== 'undefined' && !localStorage[field.name]) {
 						localStorage[field.name] = JSON.stringify(field.value);
 					}
 
