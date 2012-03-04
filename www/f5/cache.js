@@ -39,7 +39,7 @@
 			var that = this;
 			this.fields.forEach(function (field) {
 				if (field.persist) {
-					if (field.value) {
+					if (typeof field.value !== 'undefined') {
 						localStorage[field.name] = JSON.stringify(field.value);
 					}
 
@@ -47,7 +47,7 @@
 						if (localStorage[field.name]) {
 							return JSON.parse(localStorage[field.name]);							
 						} else {
-							return null;
+							return undefined;
 						}
 				    });
 
@@ -55,7 +55,7 @@
 						localStorage[field.name] = JSON.stringify(value);
 				    });					    
 				} else {
-					if (field.value) {
+					if (typeof field.value !== 'undefined') {
 						that.values[field.name] = field.value;					
 					}
 
@@ -70,13 +70,17 @@
 			});			
 		};
 				
-		this.clear = function () {
+		this.reset = function () {
 			var that = this;			
 			this.fields.forEach(function (field) {
-				if (field.persist) {
-					localStorage.removeItem(field.name);
+				if (typeof field.value !== 'undefined') {
+					that[field.name] = field.value;
 				} else {
-					delete that.values[field.name];
+					if (field.persist) {
+						localStorage.removeItem(field.name);
+					} else {
+						delete that.values[field.name];
+					}					
 				}
 			});
 		};
