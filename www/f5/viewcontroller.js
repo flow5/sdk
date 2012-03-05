@@ -151,15 +151,22 @@
 		};
 		
 		// called in a WillBecomeActive context to conditionally pick a starting view
+		// NOTE: the logic for sync'ing selection within a flow is a little wonky
+		// This is possible under limited circumstances, and useful at times.
 		this.syncSelection = function (node) {
 			F5.forEach(node.children, function (id, child) {
-				child.view.el.style.visibility = 'hidden';
+				if (child.view) {
+					child.view.el.style.visibility = 'hidden';					
+				}
 			});
-			node.selection.view.el.style.visibility = '';
-			// TODO: not 100% happy about this. See corresponding hackage in SwitcherView.doSelection
-			if (node.view.el.widget && node.view.el.widget.select) {
-				node.view.el.widget.select(node.selection.id);
-			}			
+			if (node.selection.view) {
+				node.selection.view.el.style.visibility = '';				
+
+				// TODO: not 100% happy about this. See corresponding hackage in SwitcherView.doSelection
+				if (node.view.el.widget && node.view.el.widget.select) {
+					node.view.el.widget.select(node.selection.id);
+				}			
+			}
 		};			
 		
 		this.startSubflow = function (subflow) {						

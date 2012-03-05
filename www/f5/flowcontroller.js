@@ -516,17 +516,7 @@
 					F5.assert(typeof nextAction === 'string', 'A subflow choice must be a node name or another subflow');
 					
 					if (nextAction) {
-						if (node.type === 'flow') {
-							// for a flow, the string indicates a node to transition to
-							completionCb();							
-							that.doTransition(node, nextAction);																			
-						} else if (node.type === 'switcher' && F5.lifecycleEvent !== 'WillBecomeActive') {
-							// for a switcher, the string indicates a node to select
-							completionCb();							
-							that.doSelection(node, nextAction);
-						} else if (node.type === 'set' || node.type === 'switcher') {
-							// for a set, the string indicates a node to sync to
-							// NOTE: this should only occur in a WillBecomeActive context
+						if (F5.lifecycleEvent === 'WillBecomeActive') {
 							if (node.selection.id !== nextAction) {
 								node.selection = node.children[nextAction];
 								F5.forEach(node.children, function (id, child) {
@@ -539,7 +529,20 @@
 									}
 								});
 							} 
-							completionCb();	
+							completionCb();							
+						} else {
+							// This is because there are not transition semantics defined for a set
+							// so the only reasonable time to set the node is before the view is visible
+							F5.assert(node.type !== 'set', 'The only subflow valid for a set is WillBecomeActive');
+							if (node.type === 'flow') {
+								// for a flow, the string indicates a node to transition to
+								completionCb();							
+								that.doTransition(node, nextAction);																			
+							} else if (node.type === 'switcher') {
+								// for a switcher, the string indicates a node to select
+								completionCb();							
+								that.doSelection(node, nextAction);
+							}							
 						}					
 					}					
 				}
