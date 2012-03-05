@@ -87,9 +87,31 @@
 			}
 			
 			if (offset !== this.staticOffset) {
-				return {offset: offset, bezier: this.curves.softSnap};				
+				return {offset: offset, duration: 0.25, bezier: this.curves.softSnap};				
 			}
 		};
+		
+		this.flickTo = function (velocity) {
+			var index;
+			// find the first detent that's been scrolled past
+			for (index = 0; index < this.detents.length; index += 1) {
+				if (this.staticOffset > this.detents[index]) {
+					break;
+				}
+			}
+
+			var offset;
+			if (Math.abs(velocity) > this.flickVelocityThreshold) {
+				if (velocity > 0 && index > 0) {
+					offset = this.detents[index - 1];
+				} else if (velocity < 0 && index < this.detents.length){
+					offset = this.detents[index];
+				}					
+			}
+			if (typeof offset !== 'undefined') {
+				return {offset: offset, duration: 0.25, bezier: this.curves.softSnap};
+			}					
+		};		
 	}
 	Carousel.prototype = F5.Prototypes.Widgets.Scroller;
 	

@@ -27,11 +27,7 @@
 /*global F5, WebKitCSSMatrix*/
 
 (function () {
-	
-	var standardBounceDistance = 40;		
-	var flickVelocityThreshold = 0.05;		
-	var bounceBackDuration = 500;
-	
+		
 	// see below
 	var useAndroidTransformWorkaround = false;			
 	function doTransform(scroller, offset, duration, bezierValues) {	
@@ -132,7 +128,7 @@
 		
 		var snapTo = scroller.snapTo();
 		if (snapTo) {
-			doTransform(scroller, snapTo.offset, 0.5, snapTo.bezier);
+			doTransform(scroller, snapTo.offset, snapTo.duration, snapTo.bezier);
 			scroller.currentOffset = scroller.staticOffset = snapTo.offset;			
 		}		
 	}
@@ -171,40 +167,22 @@
 		scroller.staticOffset = scroller.currentOffset;				
 		scroller.tracking = false;		
 		
-		function overDragged(velocity) {
-			return (F5.sign(velocity) === 1 && scroller.staticOffset > standardBounceDistance) || 
-				   (F5.sign(velocity) === -1 && scroller.staticOffset < scroller.minOffset - standardBounceDistance);
-		}
-
 		var velocity = updateVelocity(scroller, e);	
-		if (Math.abs(velocity) > flickVelocityThreshold && !overDragged(velocity)) {	
-			velocity = pinVelocity(velocity);
-
-			// based on http://code.google.com/mobile/articles/webapp_fixed_ui.html
-			var acceleration = velocity < 0 ? 0.0005 : -0.0005;
-			var momentumDistance = -(velocity * velocity) / (2 * acceleration);
-			var scrollDuration = -velocity / acceleration;
-			
-			var maxFlickDistance = standardBounceDistance;
-			var pinnedOffset = pinOffset(scroller, scroller.staticOffset + momentumDistance, maxFlickDistance);
-			var scrollDistance = pinnedOffset - scroller.staticOffset;
-
-			// Note quite right because of decelleration
-			scrollDuration *= Math.abs(scrollDistance/momentumDistance);
-
+		var flickTo = scroller.flickTo(velocity);
+		if (flickTo) {
 			F5.removeTransitionEndListener(scroller.el);				
 			F5.addTransitionEndListener(scroller.el, function (e) {
 				finishScrolling(scroller);
 			});						
 
-			doTransform(scroller, pinnedOffset, scrollDuration/1000, scroller.curves.flick);
+			doTransform(scroller, flickTo.offset, flickTo.duration, flickTo.bezier);
 
-			scroller.staticOffset = pinnedOffset;	
+			scroller.staticOffset = flickTo.offset;	
 			// also update the currentOffset since we're animating a move				
-			scroller.currentOffset = scroller.staticOffset;										
+			scroller.currentOffset = scroller.staticOffset;													
 		} else {
-			finishScrolling(scroller);
-		}				
+			finishScrolling(scroller);			
+		}			
 	}	
 
 	function moveHandler(scroller, e) {
@@ -289,6 +267,8 @@
 
 		this.maxVelocity = 5.0;
 		this.enabled = true;
+		this.bounceDistance = 40;	
+		this.flickVelocityThreshold = 0.05;							
 		
 		this.construct = function () {
 			var that = this;
@@ -353,16 +333,41 @@
 
 				// sharp snapback if stretched
 				var bezier;
-				if (Math.abs(this.currentOffset-offset) > standardBounceDistance) {
+				if (Math.abs(this.currentOffset-offset) > this.bounceDistance) {
 					bezier = this.curves.hardSnap;
 				} else {
 					bezier = this.curves.softSnap;
 				}
 				
-				snapTo = {offset: offset, bezier: bezier};
+				snapTo = {offset: offset, duration: 0.5, bezier: bezier};
 			}	
 			
 			return snapTo;			
+		};
+		
+		this.flickTo = function (velocity) {
+			function overDragged(velocity) {
+				return (F5.sign(velocity) === 1 && this.staticOffset > this.bounceDistance) || 
+					   (F5.sign(velocity) === -1 && this.staticOffset < this.minOffset - this.bounceDistance);
+			}
+			
+			if (Math.abs(velocity) > this.flickVelocityThreshold && !overDragged(velocity)) {	
+				velocity = pinVelocity(velocity);
+
+				// based on http://code.google.com/mobile/articles/webapp_fixed_ui.html
+				var acceleration = velocity < 0 ? 0.0005 : -0.0005;
+				var momentumDistance = -(velocity * velocity) / (2 * acceleration);
+				var scrollDuration = -velocity / acceleration;
+
+				var maxFlickDistance = this.bounceDistance;
+				var pinnedOffset = pinOffset(this, this.staticOffset + momentumDistance, maxFlickDistance);
+				var scrollDistance = pinnedOffset - this.staticOffset;
+
+				// Note quite right because of decelleration
+				scrollDuration *= Math.abs(scrollDistance/momentumDistance);
+
+				return {offset: pinnedOffset, duration: scrollDuration/1000, bezier: this.curves.flick};
+			}			
 		};
 				
 		this.widgetWillBecomeActive = function () {
