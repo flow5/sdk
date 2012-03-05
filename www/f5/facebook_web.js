@@ -30,24 +30,6 @@
 	
 	window.fbAsyncInit = function() {
 		console.log('hi there facebook');
-	    // Additional initialization code here	
-	  };
-
-	  // Load the SDK Asynchronously
-	var fbId = 'facebook-jssdk';
-	if (!document.getElementById(fbId)) {
-		var fb = document.createElement('div');
-		fb.id = 'fb-root';
-		document.body.appendChild(fb);
-						
-		var js = document.createElement('script'); 
-		js.id = fbId; 
-		js.async = true;
-		js.src = "//connect.facebook.net/en_US/all.js";
-		document.head.appendChild(js);		
-	}
-	
-	F5.Global.flowController.addWaitTask(function (cb) {
 		if (typeof FB !== 'undefined') {
 		    FB.init({
 		      appId      : F5.facebook_appid,
@@ -59,7 +41,24 @@
 
 			FB.Canvas.setSize();			
 		}
+	  };
+
 	
+	F5.Global.flowController.addWaitTask(function (cb) {
+		  // Load the SDK Asynchronously
+		var fbId = 'facebook-jssdk';
+		if (!document.getElementById(fbId)) {
+			var fb = document.createElement('div');
+			fb.id = 'fb-root';
+			document.body.appendChild(fb);
+
+			var js = document.createElement('script'); 
+			js.id = fbId; 
+			js.async = true;
+			js.src = "//connect.facebook.net/en_US/all.js";
+			document.head.appendChild(js);		
+		}
+			
 		cb();
 	});
 	
