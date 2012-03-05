@@ -397,6 +397,8 @@
 	};
 	
 	F5.attachWidget = function(el, f5widget, data) {
+		F5.assert(!el.widget, 'Widget already attached to element');
+		
 		// NOTE: this is just for readability in the DOM inspector
 		if (!el.getAttribute('f5widget')) {
 			el.setAttribute('f5widget', f5widget);

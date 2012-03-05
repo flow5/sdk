@@ -126,26 +126,15 @@
 		return newVelocity;
 	}
 	
-	function finishScrolling(scroller) {				
-
+	function finishScrolling(scroller) {	
+		
 		F5.removeTransitionEndListener(scroller.el);	
-
-		// bounce back						
-		if (Math.abs(scroller.staticOffset) > Math.abs(pinOffset(scroller, scroller.staticOffset, 0))) {
-
-			var offset = pinOffset(scroller, scroller.staticOffset, 0);	
-
-			// sharp snapback if stretched
-			var bezier;
-			if (Math.abs(scroller.currentOffset-offset) > standardBounceDistance) {
-				bezier = scroller.curves.hardSnap;
-			} else {
-				bezier = scroller.curves.softSnap;
-			}
-			doTransform(scroller, offset, 0.5, bezier);
-
-			scroller.currentOffset = scroller.staticOffset = offset;
-		}	
+		
+		var snapTo = scroller.snapTo();
+		if (snapTo) {
+			doTransform(scroller, snapTo.offset, 0.5, snapTo.bezier);
+			scroller.currentOffset = scroller.staticOffset = snapTo.offset;			
+		}		
 	}
 		
 	function startHandler(scroller, e) {
@@ -353,6 +342,28 @@
 						
 			doTransform(this, this.staticOffset);
 		};
+		
+		// standard snapTo logic: bound to beginning and end of scroller
+		this.snapTo = function () {
+			var snapTo;
+			// bounce back						
+			if (Math.abs(this.staticOffset) > Math.abs(pinOffset(this, this.staticOffset, 0))) {
+
+				var offset = pinOffset(this, this.staticOffset, 0);	
+
+				// sharp snapback if stretched
+				var bezier;
+				if (Math.abs(this.currentOffset-offset) > standardBounceDistance) {
+					bezier = this.curves.hardSnap;
+				} else {
+					bezier = this.curves.softSnap;
+				}
+				
+				snapTo = {offset: offset, bezier: bezier};
+			}	
+			
+			return snapTo;			
+		};
 				
 		this.widgetWillBecomeActive = function () {
 			if (!this.initialized) {
@@ -395,7 +406,7 @@
 		this.scrollTo = function (offset) {
 			this.staticOffset = offset;
 			doTransform(this, offset, 0.5, this.curves.softSnap);			
-		}
+		};
 		
 		this.jumpTo = function (offset) {
 			this.staticOffset = offset;					
@@ -415,7 +426,11 @@
 			this.container.top = absolutePosition.y;
 			
 			var oldMinOffset = this.minOffset;
-			this.minOffset = Math.min(this.container.height - this.el.offsetHeight, 0);
+			if (this.horizontal) {
+				this.minOffset = Math.min(this.container.width - this.el.offsetWidth, 0);				
+			} else {
+				this.minOffset = Math.min(this.container.height - this.el.offsetHeight, 0);
+			}
 			if (oldMinOffset !== this.minOffset) {
 				this.staticOffset = 0;
 				doTransform(this, 0);				
