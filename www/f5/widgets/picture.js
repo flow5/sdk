@@ -54,7 +54,14 @@
 				} else {
 					img.src = value;
 				}
-				this.el.appendChild(img);				
+				this.el.appendChild(img);	
+				
+				// prevent image dragging in browser
+				if (!F5.isMobile()) {
+					F5.addTouchStartListener(img, function (e) {
+						e.preventDefault();
+					});
+				}
 			}			
 		};
 	}
