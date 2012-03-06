@@ -171,6 +171,7 @@
 		var velocity = updateVelocity(scroller, e);	
 		var flickTo = scroller.flickTo(velocity);
 		if (flickTo) {
+			F5.removeTransitionEndListener(scroller.el);				
 			F5.addTransitionEndListener(scroller.el, function (e) {
 				finishScrolling(scroller);
 				F5.removeTransitionEndListener(scroller.el);				
@@ -273,7 +274,7 @@
 		
 		this.construct = function () {
 			var that = this;
-			
+						
 			F5.addClass(this.el, 'f5scroller');
 						
 			stopScrollingAt(this, 0);

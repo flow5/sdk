@@ -158,16 +158,19 @@
 			
 			if (this.delegate && this.delegate.initialize) {
 				this.delegate.initialize(this.el, this.node);					
-			} else {										
+			} else {				
+/*										
 				// default navigation controls
-				var div = document.createElement('div');
-				div.style.position = 'relative';
-				div.style['z-index'] = 1;
-				this.el.insertBefore(div, this.el.firstChild);
+				if (node.subflows || node.transitions) {
+					var div = document.createElement('div');
+					div.style.position = 'relative';
+					div.style['z-index'] = 1;
+					this.el.insertBefore(div, this.el.firstChild);
 				
-				var navControls = document.createElement('div');
-				F5.addClass(navControls, 'f5navcontrols');
-				div.appendChild(navControls);
+					var navControls = document.createElement('div');
+					F5.addClass(navControls, 'f5navcontrols');
+					div.appendChild(navControls);					
+				}
 				
 				if (node.subflows) {
 					var subflowsEl = document.createElement('div');
@@ -209,7 +212,8 @@
 						});
 					});				
 				}				
-			}						
+				*/							
+			}		
 		};
 	}
 	FlowView.prototype = ViewPrototype;

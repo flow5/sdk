@@ -92,8 +92,11 @@
 			var moveListener;
 			
 			function stopListener() {
-				release();			
-				that.setState(that.savedState);		
+				// give a bit of time for touch feedback
+				setTimeout(function () {
+					release();			
+					that.setState(that.savedState);							
+				}, 50);
 				
 				F5.removeTouchMoveListener(that.el, moveListener);
 				F5.removeTouchStopListener(that.el, stopListener);
@@ -123,8 +126,17 @@
 				F5.addTouchStopListener(document.body, stopListener);												
 			});
 			F5.addTapListener(this.el, function (e) {
+				e.preventDefault();
+				e.stopPropagation();
+				
 				stopListener();
-				cb(e);
+				
+				// TODO: not sure why this matters but without the 150ms delay there are sometimes
+				// glitches e.g. when dismissing alerts. need to dig deeper on this. very annoying
+				// probably related to the DOM modification in release() above (which is delayed by 50ms)
+				setTimeout(function () {
+					cb(e);										
+				}, 150);
 			});			
 		};		
 		
