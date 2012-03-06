@@ -210,6 +210,7 @@
 				
 				nodeWillBecomeActive(flow.root, function () {				
 					nodeDidBecomeActive(flow.root, function () {
+						that.refresh();
 						// flush any tasks that were queued up during lifecycle events
 						flushWaitTasks(cb);
 					});
