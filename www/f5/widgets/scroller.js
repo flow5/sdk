@@ -104,8 +104,8 @@
 		return {x:location.x-scroller.container.left,y:location.y-scroller.container.top};
 	}	
 			
-	// don't do instantaneous updating of velocity
 	function updateVelocity(scroller, e) {
+		// don't do instantaneous updating of velocity
 		var weighting = 0.5;
 
 		var newTouchLoc = eventPosition(scroller, e);
@@ -122,10 +122,7 @@
 		return newVelocity;
 	}
 	
-	function finishScrolling(scroller) {	
-		
-		F5.removeTransitionEndListener(scroller.el);	
-		
+	function finishScrolling(scroller) {			
 		var snapTo = scroller.snapTo();
 		if (snapTo) {
 			doTransform(scroller, snapTo.offset, snapTo.duration, snapTo.bezier);
@@ -137,6 +134,9 @@
 		if (!scroller.enabled) {
 			return;
 		}
+		
+		e.stopPropagation();
+		e.preventDefault();		
 		
 		scroller.tracking = true;					
 		scroller.touchLoc = eventPosition(scroller, e);
@@ -158,11 +158,12 @@
 			return;
 		}
 		
-		e.stopPropagation();
-
 		if (!scroller.tracking) {
 			return;
 		}		
+		
+		e.stopPropagation();
+		e.preventDefault();		
 		
 		scroller.staticOffset = scroller.currentOffset;				
 		scroller.tracking = false;		
@@ -170,9 +171,9 @@
 		var velocity = updateVelocity(scroller, e);	
 		var flickTo = scroller.flickTo(velocity);
 		if (flickTo) {
-			F5.removeTransitionEndListener(scroller.el);				
 			F5.addTransitionEndListener(scroller.el, function (e) {
 				finishScrolling(scroller);
+				F5.removeTransitionEndListener(scroller.el);				
 			});						
 
 			doTransform(scroller, flickTo.offset, flickTo.duration, flickTo.bezier);
@@ -272,6 +273,8 @@
 		
 		this.construct = function () {
 			var that = this;
+			
+			F5.addClass(this.el, 'f5scroller');
 						
 			stopScrollingAt(this, 0);
 			
@@ -339,13 +342,15 @@
 					bezier = this.curves.softSnap;
 				}
 				
-				snapTo = {offset: offset, duration: 0.5, bezier: bezier};
+				if (offset !== this.staticOffset) {
+					snapTo = {offset: offset, duration: 0.5, bezier: bezier};					
+				}
 			}	
 			
 			return snapTo;			
 		};
 		
-		this.flickTo = function (velocity) {
+		this.flickTo = function (velocity) {			
 			function overDragged(velocity) {
 				return (F5.sign(velocity) === 1 && this.staticOffset > this.bounceDistance) || 
 					   (F5.sign(velocity) === -1 && this.staticOffset < this.minOffset - this.bounceDistance);
@@ -363,10 +368,18 @@
 				var pinnedOffset = pinOffset(this, this.staticOffset + momentumDistance, maxFlickDistance);
 				var scrollDistance = pinnedOffset - this.staticOffset;
 
-				// Note quite right because of decelleration
-				scrollDuration *= Math.abs(scrollDistance/momentumDistance);
+				// Not quite right because of decelleration
+				var scaler = Math.abs(scrollDistance/momentumDistance);
+				
+				// TODO: need to take a closer look at this. this should never be > 1
+				if (scaler > 1) {
+					scaler = 1;
+				}
+				scrollDuration *= scaler;
 
-				return {offset: pinnedOffset, duration: scrollDuration/1000, bezier: this.curves.flick};
+				if (pinnedOffset !== this.staticOffset) {
+					return {offset: pinnedOffset, duration: scrollDuration/1000, bezier: this.curves.flick};					
+				}
 			}			
 		};
 				
@@ -425,6 +438,13 @@
 		// TODO: may run into the large div problem again in which case the content size
 		// may not be derivable from offsetHeight
 		this.refresh = function () {
+			
+// NOTE: it may be important to make the scroller a fixed size so that it doesn't grow to the size of the contained
+//		 divs. In the past I've seen glitches when a single div with -webkit-transform gets too big, probably
+//       due to paging of textures			
+//			this.el.style.width = '';
+//			this.el.style.height = '';			
+			
 			this.container = F5.elementOffsetGeometry(this.el.parentElement);
 			var absolutePosition = F5.elementAbsolutePosition(this.el.parentElement);
 			this.container.left = absolutePosition.x;
@@ -440,7 +460,14 @@
 				this.staticOffset = 0;
 				doTransform(this, 0);				
 			}
+			
 			this.initialized = false;				
+			
+//			if (this.horizontal) {
+//				this.el.style.width = '0px';				
+//			} else {
+//				this.el.style.height = '0px';				
+//			}			
 		};
 	}
 
