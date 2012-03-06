@@ -81,7 +81,7 @@
 				F5.parallelizeTasks(tasks, cb);	
 				// force reflow before returning control to native side
 				// this allows synchronization of webkit and native animations
-				var reflow = document.body.offsetTop;
+				F5.reflow();
 			},
 			function (result) { // failure
 				console.log(result);

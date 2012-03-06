@@ -487,6 +487,10 @@
         e.initEvent('statusBarTouched');
         document.dispatchEvent(e);						
 	};
+	
+	F5.reflow = function () {
+		var reflow = document.body.offsetTop;		
+	};
 		
 }());
 
