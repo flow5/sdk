@@ -92,11 +92,8 @@
 			var moveListener;
 			
 			function stopListener() {
-				// give a bit of time for touch feedback
-				setTimeout(function () {
-					release();			
-					that.setState(that.savedState);							
-				}, 50);
+				release();			
+				that.setState(that.savedState);							
 				
 				F5.removeTouchMoveListener(that.el, moveListener);
 				F5.removeTouchStopListener(that.el, stopListener);
@@ -131,12 +128,7 @@
 				
 				stopListener();
 				
-				// TODO: not sure why this matters but without the 150ms delay there are sometimes
-				// glitches e.g. when dismissing alerts. need to dig deeper on this. very annoying
-				// probably related to the DOM modification in release() above (which is delayed by 50ms)
-				setTimeout(function () {
-					cb(e);										
-				}, 150);
+				cb(e);										
 			});			
 		};		
 		
