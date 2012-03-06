@@ -29,7 +29,7 @@
 (function () {	
 	function Loader() {		
 		this.construct = function (data) {			
-			var template = F5.loadTemplate(this.el.getAttribute('f5template'));
+			var template = F5.loadTemplate(this.el.getAttribute('f5template'), data);
 			this.el.appendChild(template);
 		};
 	}
