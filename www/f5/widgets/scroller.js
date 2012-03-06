@@ -134,10 +134,7 @@
 		if (!scroller.enabled) {
 			return;
 		}
-		
-		e.stopPropagation();
-		e.preventDefault();		
-		
+				
 		scroller.tracking = true;					
 		scroller.touchLoc = eventPosition(scroller, e);
 		scroller.startLoc = scroller.touchLoc;
@@ -161,10 +158,7 @@
 		if (!scroller.tracking) {
 			return;
 		}		
-		
-		e.stopPropagation();
-		e.preventDefault();		
-		
+				
 		scroller.staticOffset = scroller.currentOffset;				
 		scroller.tracking = false;		
 		
@@ -191,10 +185,7 @@
 		if (!scroller.enabled) {
 			return;
 		}
-		
-		e.stopPropagation();
-		e.preventDefault();	
-			
+					
 		// browser compatibility
 		if (!scroller.tracking) {
 			return;
