@@ -239,7 +239,7 @@
 					} catch (e) {
 						pendingComplete(node, pending);						
 						console.log(e.message);
-						cb(null, 200);
+						cb(null, null);
 					}
 				}, function error(response, status) {
 					if (!pending.aborted) {
