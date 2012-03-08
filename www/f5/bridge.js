@@ -63,16 +63,17 @@
 		doSync('gapready');
 	};
 	
-	F5.callBridgeSynchronous = function (className, methodName, parameters) {	
-		var query = '';
-		if (parameters) {
-			F5.forEach(parameters, function (key, value) {
-				query += "&" + key + '="' + value + '"';
-			});			
-		}
-			
-		var url = 'gap' + '?className=' + className + '&methodName=' + methodName + query;			
-		return doSync(url);
+	F5.callBridgeSynchronous = function (className, methodName, arguments, options) {	
+		var command = {
+			className: className,
+			methodName: methodName,
+			arguments: arguments,
+			options: options
+		};
+							
+		var url = 'gap?command=' +  encodeURIComponent(JSON.stringify(command));
+				
+		return doSync(url);		
 	};
 	
 	F5.flushTasks = function (tasks, cb) {

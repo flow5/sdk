@@ -1,6 +1,6 @@
 /***********************************************************************************************************************
 
-	Copyright (c) 2011 Paul Greyson
+	Copyright (c) 2012 Paul Greyson
 
 	Permission is hereby granted, free of charge, to any person 
 	obtaining a copy of this software and associated documentation 
@@ -24,45 +24,57 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global F5*/
+/*global F5, PhoneGap*/
 
-(function () {
+(function () {	
 	
-	function StaticText() {
-		this.construct = function (data) {
-			this.refresh(data);
+	function Dialog() {
+		this.constructDialog = function (data) {	
+			
+			var that = this;
+			
+			this.data = data;
 		};
 		
-		this.refresh = function (data) {
-			var id = this.el.getAttribute('f5id');
-			var value = F5.valueFromId(data, id);
-			
-			if (!value) {
-				var className = this.el.getAttribute('f5class');
-				if (className) {
-					value = data['.' + className];
-				}								
-			}
-			
-			if (value) {
-				this.el.innerText = value;				
-			}			
+		this.setAction = function (cb) {
+			this.action = cb;
 		};
-	}
-	
-	F5.Prototypes.Widgets.StaticText = new StaticText();	
-	
-	
-	function Telephone() {
-		this.construct = function (data) {
-			var id = this.el.getAttribute('f5id');
-			var value = F5.valueFromId(data, id);
-			if (value) {
-				this.el.innerText = value;
-			}
-		};
-	}
-	
-	F5.Prototypes.Widgets.Telephone = new Telephone();		
 		
+		this.present = function (message) {
+			var that = this;
+			PhoneGap.exec(
+				function (result) { // messages from frame
+					if (that.action) {
+						that.action(result);
+					}
+				}, 
+				function (result) { // failure
+					console.log(result);
+				}, 
+				'com.flow5.alert', // the plugin name
+				this.method, // the method
+				[this.data]
+			);			
+		};		
+	}	
+	
+	function Alert() {
+		this.construct = function (data) {				
+			this.constructDialog(data);		
+			this.method = 'alert';	
+		};		
+	}
+	Alert.prototype = new Dialog();
+	
+	function Confirm() {
+		this.construct = function (data) {				
+			this.constructDialog(data);
+			this.method = 'confirm';
+		};			
+	}
+	Confirm.prototype = new Dialog();	
+		
+	F5.Prototypes.Widgets.Alert = new Alert();
+	F5.Prototypes.Widgets.Confirm = new Confirm();
+	
 }());

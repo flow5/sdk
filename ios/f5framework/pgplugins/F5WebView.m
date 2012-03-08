@@ -42,7 +42,6 @@
 
 @synthesize overlayWebView;
 @synthesize callbackID;
-@synthesize zoom;
 
 - (id)initWithWebView:(UIWebView*)webview {
     self = [super initWithWebView:webview];
@@ -51,8 +50,7 @@
         self.overlayWebView = [[ [ F5OverlayWebview alloc ] initWithFrame:webViewBounds] autorelease]; 
         self.overlayWebView.hidden = YES;
         self.overlayWebView.delegate = self;
-        
-        
+                
         AppDelegate *appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];                
         UIView *mainView = [appDelegate.viewController view];
         
@@ -78,19 +76,21 @@
     
     [self.overlayWebView setFrame:viewBounds];     
     
-    NSNumber *radius = [options objectForKey:@"radius"];
-    if (radius) {
-        [self.overlayWebView.layer setCornerRadius:[radius floatValue]];
-        [self.overlayWebView.layer setMasksToBounds:YES];        
-    }
-    
     // TODO: configurable
-    [self.overlayWebView.layer setBorderColor: [[UIColor blackColor] CGColor]];
-    [self.overlayWebView.layer setBorderWidth: 2.0];
+//    NSNumber *radius = [options objectForKey:@"radius"];
+//    if (radius) {
+//        [self.overlayWebView.layer setCornerRadius:[radius floatValue]];
+//        [self.overlayWebView.layer setMasksToBounds:YES];        
+//    }    
+//    [self.overlayWebView.layer setBorderColor: [[UIColor blackColor] CGColor]];
+//    [self.overlayWebView.layer setBorderWidth: 2.0];    
     
-    self.zoom = [options objectForKey:@"zoom"];
-    
-    
+    self.overlayWebView.opaque = NO;
+    self.overlayWebView.backgroundColor = UIColor.clearColor;
+    for (UIView* view in self.overlayWebView.subviews) {
+        view.backgroundColor = UIColor.clearColor;
+    }
+            
     NSString *url = [options objectForKey:@"url"];
     
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url] cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.0];
@@ -118,36 +118,68 @@
             
 }
 
+- (PluginResult*)show:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+    self.overlayWebView.hidden = NO;
+    return [PluginResult resultWithStatus:PGCommandStatus_OK];    
+}
+
+- (PluginResult*)hide:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+    self.overlayWebView.hidden = YES;
+    return [PluginResult resultWithStatus:PGCommandStatus_OK];
+}
+
 - (void)webViewDidStartLoad:(UIWebView *)webView {      
-    [UIView animateWithDuration:.15 delay:0.0
-                        options: UIViewAnimationOptionCurveEaseIn
-                     animations:^{
-                         self.overlayWebView.alpha = 0;
-                     }
-                     completion:nil];            
+//    [UIView animateWithDuration:.15 delay:0.0
+//                        options: UIViewAnimationOptionCurveEaseIn
+//                     animations:^{
+//                         self.overlayWebView.alpha = 0;
+//                     }
+//                     completion:nil];            
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView
 {        
 
-    if (self.zoom) {
-        NSString *zoomString = [NSString stringWithFormat:@"document.body.style.zoom = %@;", self.zoom];    
-        [self.overlayWebView stringByEvaluatingJavaScriptFromString:zoomString];              
-    }
-    NSString *html = [self.overlayWebView stringByEvaluatingJavaScriptFromString:@"document.body.innerHTML"];
-        
-    PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsString:html];  
-    [pluginResult setKeepCallbackAsBool:YES];    
-    [self writeJavascript: [pluginResult toSuccessCallbackString:self.callbackID]];
-    
+//    NSString *html = [self.overlayWebView stringByEvaluatingJavaScriptFromString:@"document.body.innerHTML"];
+            
     self.overlayWebView.hidden = NO;        
     [UIView animateWithDuration:.25 delay:0.0
                         options: UIViewAnimationOptionCurveEaseIn
                      animations:^{
                          self.overlayWebView.alpha = 1;
                      }
-                     completion:nil];        
+                     completion:nil]; 
+    
+    NSDictionary *message = [NSDictionary dictionaryWithObject:@"onload" forKey:@"type"];    
+    PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsDictionary:message];  
+    [pluginResult setKeepCallbackAsBool:YES];    
+    [self writeJavascript:[pluginResult toSuccessCallbackString:self.callbackID]];    
 }
+
+- (PluginResult*)receiveMessageFromWebView:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+    // since this is called synchronously, defer the callback to the user of the webview (which is the main webview!)
+    
+    
+    NSDictionary *message = [NSDictionary dictionaryWithObject:options forKey:@"message"];
+    
+    PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsDictionary:message];  
+    [pluginResult setKeepCallbackAsBool:YES];    
+    [self performSelectorOnMainThread:@selector(writeJavascript:) withObject:[pluginResult toSuccessCallbackString:self.callbackID] waitUntilDone:NO]; 
+        
+    return [PluginResult resultWithStatus:PGCommandStatus_OK];  
+}
+
+- (void)writeJavascript:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+    [arguments pop];
+
+    [self.overlayWebView stringByEvaluatingJavaScriptFromString:[arguments pop]];
+}
+
+
 
 
 @end

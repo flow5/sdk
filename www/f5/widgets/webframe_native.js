@@ -34,12 +34,28 @@
 			this.el.style.position = 'relative';	
 			this.el.style.display = 'none';						
 		};
+		
+		this.setOnLoadAction = function (cb) {
+			this.onLoadAction = cb;
+		};		
 
 		this.setCloseAction = function (cb) {
 			this.closeAction = cb;
 		};
 		
-		this.open = function (url, referrer, options, cb) {
+		this.setMessageAction = function (cb) {
+			this.messageAction = cb;
+		};
+		
+		this.show = function () {
+			F5.callBridgeSynchronous('com.flow5.webview', 'show');
+		};
+		
+		this.hide = function () {
+			F5.callBridgeSynchronous('com.flow5.webview', 'hide');			
+		}
+		
+		this.open = function (url, referrer) {
 			
 			this.el.style.display = '';
 			
@@ -53,21 +69,20 @@
 				bounds: bounds,
 				url: url
 			};
+			
 			if (referrer) {
 				parameters.referrer = referrer;
-			}
-			
-			var radius = window.getComputedStyle(this.el)['border-top-left-radius'];
-			if (radius) {
-				parameters.radius = radius.replace('px', '');
-			}
-			
-			F5.extend(parameters, options);
+			}						
 						
+			var that = this;
 			PhoneGap.exec(
-				function (result) { // success
-					if (cb) {
-						cb(result);						
+				function (message) { // messages from frame
+					if (message.type === 'onload') {
+						if (that.onLoadAction) {
+							that.onLoadAction();
+						}
+					} else	if (that.messageAction) {
+						that.messageAction(message.message);
 					}
 				}, 
 				function (result) { // failure
@@ -95,6 +110,22 @@
 			if (this.closeAction) {
 				this.closeAction();
 			}										
+			
+		};
+		
+		this.postMessage = function (data) {
+			var javascript = 'window.postMessage(' + JSON.stringify(data) + ', "*")';
+			PhoneGap.exec(
+				function (result) { // success
+					console.log(result);
+				}, 
+				function (result) { // failure
+					console.log(result);
+				}, 
+				'com.flow5.webview', // the plugin name
+				'writeJavascript', // the method
+				[javascript]
+			);	
 			
 		};
 	}

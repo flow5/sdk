@@ -22,13 +22,15 @@
 		"browser": {
 			"scripts": [
 				"facebook_web.js",
-                "widgets/webframe_web.js"			
+                "widgets/webframe_web.js",
+	            "widgets/dialogs.js"		
 			]
 		},
 		"app": {
 			"scripts": [
 				"facebook_native.js",
-				"analytics_native.js"
+				"analytics_native.js",
+	            "widgets/dialogs_native.js"						
 			]
 		},	
         "elements": [
@@ -66,7 +68,6 @@
             "widgets/input.js", 
             "widgets/form.js", 
             "widgets/activity.js", 
-            "widgets/dialogs.js", 
             "3p/bezier.js",
 			"3p/b64.js"
         ]

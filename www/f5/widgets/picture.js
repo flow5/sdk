@@ -29,7 +29,11 @@
 (function () {
 	
 	function Picture() {
-		this.construct = function (data) {			
+		this.construct = function (data) {	
+			this.refresh(data);				
+		};
+		
+		this.refresh = function (data) {
 			var id = this.el.getAttribute('f5id');
 			// NOTE: valueFromId handles period delimited ids. probably going to get rid of this in favor of scoping
 			var value = F5.valueFromId(data, id);
@@ -42,25 +46,29 @@
 			}
 			
 			if (value) {
-				var img = document.createElement('img');
-
-				// TODO: maybe allow client to install hidden image handler
-				img.onerror = function () {
-					img.style.visibility = 'hidden';
+				if (!this.img) {
+					this.img = document.createElement('img');	
+					this.el.appendChild(this.img);	
+					
+					// TODO: maybe allow client to install hidden image handler
+					var that = this;
+					this.img.onerror = function () {
+						that.img.style.visibility = 'hidden';
+					};
+					
+					// prevent image dragging in browser
+					if (!F5.isMobile()) {
+						F5.addTouchStartListener(this.img, function (e) {
+							e.preventDefault();
+						});
+					}														
 				}
-								
-				if (F5.ImagePreloader.isImagePreloader(value)) {
-					img.src = value.src();					
-				} else {
-					img.src = value;
-				}
-				this.el.appendChild(img);	
 				
-				// prevent image dragging in browser
-				if (!F5.isMobile()) {
-					F5.addTouchStartListener(img, function (e) {
-						e.preventDefault();
-					});
+				this.img.style.visibility = '';					
+				if (F5.ImagePreloader.isImagePreloader(value)) {
+					this.img.src = value.src();					
+				} else {
+					this.img.src = value;
 				}
 			}			
 		};

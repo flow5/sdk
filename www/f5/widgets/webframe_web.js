@@ -27,15 +27,7 @@
 /*global F5, PhoneGap*/
 
 (function () {
-	
-	var callback;
-	window.addEventListener("message", function (e) {
-		console.log('origin: ' + e.origin);
-		if (callback) {
-			callback(e.data);
-		}
-	}, false);
-	
+		
 	function WebFrame() {
 				
 		this.construct = function (data) {
@@ -45,66 +37,82 @@
 			
 			this.frame = document.createElement('iframe');
 			this.frame.style.border = 'none';
-//			this.frame.scrolling = 'no';
+			this.frame.style.width = '100%';
+			this.frame.style.height = '100%';
+			this.frame.scrolling = 'no';
 						
-			this.el.appendChild(this.frame);
-			
-			var closeButton = F5.createWidget('Button', data, 'closeButton', 'closeButton');
-			F5.addClass(closeButton, 'f5closebutton');
-			this.el.appendChild(closeButton);																																					
-			
-			var that = this;
-			closeButton.widget.setAction(function () {
-				that.close();
-			});
+			this.el.appendChild(this.frame);			
+		};
+		
+		this.setOnLoadAction = function (cb) {
+			this.onLoadAction = cb;
 		};
 		
 		this.setCloseAction = function (cb) {
 			this.closeAction = cb;
 		};
 		
-		this.open = function (url, referrer, options, cb) {
-			callback = cb;
+		this.setMessageAction = function (cb) {
+			this.messageAction = cb;
+		};		
+		
+		this.handleEvent = function (e) {
+			if (e.type === 'message' && this.messageAction) {
+				this.messageAction(e.data);
+			}
+		};
+		
+		this.show = function () {
+//			F5.callBridgeSynchronous('com.flow5.webview', 'show');
+		};
+		
+		this.hide = function () {
+//			F5.callBridgeSynchronous('com.flow5.webview', 'hide');			
+		}		
+				
+		this.open = function (url, referrer) {
 			this.el.style.display = '';
 			this.el.style.opacity = 0;			
 			var that = this;
-		
-			var radius = window.getComputedStyle(this.el)['border-top-left-radius'];
-			if (radius) {
-				this.frame.style['border-radius'] = radius;
-			}
-			if (options.zoom) {
-//				this.frame.style.zoom = options.zoom;
-				this.frame.style['-webkit-transform'] = 'scale(' + options.zoom + ')';
-				this.frame.style['-webkit-transform-origin'] = '0% 0%';
-				this.frame.width = 100/options.zoom + '%';
-				this.frame.height = 100/options.zoom + '%';				
-			}
-						
+								
 			this.frame.onload = function () {
 				that.el.style.opacity = 1;												
-			}
+				if (that.onLoadAction) {
+					that.onLoadAction();
+				}
+			};
+			
 			this.frame.src = url;
+			
+			window.addEventListener("message", this, false);	
 		};
 		
 		this.close = function () {	
+			var that = this;
+			
+			function hide() {
+				that.frame.src = null;						
+				that.el.style.display = 'none';
+				F5.removeTransitionEndListener(that.el, hide);				
+			}
+
 			if (!this.el.style.display) {
 				this.el.style.opacity = 0;
 				this.frame.onload = null;
-
-				var that = this;
-				function hide() {
-					that.frame.src = null;						
-					that.el.style.display = 'none';
-					F5.removeTransitionEndListener(that.el, hide);				
-				}
 
 				F5.addTransitionEndListener(this.el, hide);
 				if (this.closeAction) {
 					this.closeAction();
 				}				
 			}
+			
+			window.removeEventListener("message", this);				
 		};
+		
+		this.postMessage = function (data) {
+			this.frame.contentWindow.postMessage(data, '*');
+		};
+		
 	}
 	
 	F5.Prototypes.Widgets.WebFrame = new WebFrame();	

@@ -58,16 +58,24 @@
     NSURL *url = [request URL];
 //    NSLog(@"%@", request);
     if ([[url lastPathComponent] isEqualToString:@"gap"]) {
+        
+        PG_SBJSON *parser = [[[PG_SBJSON alloc] init] autorelease];
 
         NSArray *components = [[url query] componentsSeparatedByString:@"&"];
-        NSMutableDictionary *parameters = [[[NSMutableDictionary alloc] init] autorelease];
-        for (NSString *component in components) {
-            [parameters setObject:[[component componentsSeparatedByString:@"="] objectAtIndex:1] forKey:[[component componentsSeparatedByString:@"="] objectAtIndex:0]];
+        NSMutableDictionary *parameters;
+        for (NSString *component in components) {            
+            NSArray *parts = [component componentsSeparatedByString:@"="];
+            NSString *decoded = [[parts objectAtIndex:1] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+            parameters = [parser objectWithString:decoded];
         }        
-                
-        NSString *jsonResult = [[appDelegate executeSynchronous: [InvokedUrlCommand commandFromObject:parameters]] toJSONString];
-        
-        return [self makeResponse:jsonResult forRequest:request];      
+
+        if (parameters) {
+            NSString *jsonResult = [[appDelegate executeSynchronous: [InvokedUrlCommand commandFromObject:parameters]] toJSONString];            
+            return [self makeResponse:jsonResult forRequest:request];            
+        } else {
+            NSLog(@"No parameters found in gap request");
+            return [super cachedResponseForRequest:request]; 
+        }
     } else if ([[url lastPathComponent] isEqualToString:@"gapready"]) {        
         [appDelegate performSelectorOnMainThread:@selector(flushCommandQueue) withObject:nil waitUntilDone:NO]; 
         return [self makeResponse:[[PluginResult resultWithStatus:PGCommandStatus_OK] toJSONString] forRequest:request];        
