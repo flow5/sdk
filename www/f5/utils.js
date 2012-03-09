@@ -82,7 +82,7 @@
 				break;
 			case xhr.DONE:	
 				networkActivityCompleted();
-				if (xhr.status === 200) {
+				if (xhr.status !== 0) {
 					if (success) {
 						var responseHeaders = {};
 						if (headers) {
@@ -91,7 +91,7 @@
 							});													
 						}
 
-						success(xhr.responseText, responseHeaders);
+						success(xhr.responseText, xhr.status, responseHeaders);
 					}
 				} else {
 					if (error) {
@@ -131,7 +131,13 @@
 		
 	function pendingComplete(node, pending) {
 		node.pending.splice(node.pending.indexOf(pending), 1);
+		clearTimeout(pending.timeout);
+		pending.timeout = null;
 	}
+	
+	F5.networkErrorHandler = function (cb) {
+		F5.alert('Network Error', "", cb);
+	};
 		
 	F5.execService = function (node, id, parameters, cb) {
 		
@@ -198,17 +204,7 @@
 		if (resourceName) {
 			url += '/' + resourceName;
 		}
-		
-		function handleErrorResponse(response, status) {
-			console.log('Error from ' + url + ' : ' + response);
-			try {
-				var json = JSON.parse(response);
-				cb(json, status);
-			} catch (e) {
-				cb(null, status);
-			}
-		}
-		
+				
 		function formatUrlParameters(parameters, keys) {
 			var urlParameters = [];
 			F5.forEach(parameters, function (id, value) {
@@ -223,11 +219,28 @@
 			}			
 		}
 		
+		
 		var pending = {abort: function () {
 //			console.log('aborting pending')
 			this.aborted = true;
 			this.xhr.abort();
 		}};
+		
+		var timeoutMS = 500;
+		function timeout() {
+			F5.confirm("A network operation is taking a long time.", 
+						"Press OK to keep waiting or Cancel to cancel the operation.", function (result) {
+							if (result) {
+								if (pending.timeout) {
+									pending.timeout = setTimeout(timeout, timeoutMS);									
+								}
+							} else {
+								pending.abort();
+							}
+						});
+		}		
+		
+		pending.timeout = setTimeout(timeout, timeoutMS);
 		
 		if (method === 'GET' || method === 'DELETE') {			
 			url += formatUrlParameters(parameters);
@@ -235,7 +248,7 @@
 						
 //			console.log(url);	
 			pending.xhr = F5[method.toLowerCase()](url, 
-				function success(response) {
+				function success(response, status) {
 					pendingComplete(node, pending);
 					try {
 //						console.log(response);
@@ -243,16 +256,18 @@
 						if (service.postprocess) {
 							obj = service.postprocess(obj);
 						}
-						cb(obj, 200);
+						cb(obj, status);
 						// TODO: validateSchema(response, service.responseSchema);						
 					} catch (e) {
-						pendingComplete(node, pending);						
 						console.log(e.message);
-						cb(null, null);
+						F5.networkErrorHandler(cb);						
 					}
 				}, function error(response, status) {
-					if (!pending.aborted) {
-						handleErrorResponse(response, status);						
+					pendingComplete(node, pending);						
+					if (pending.aborted) {
+						cb(); 
+					} else {
+						F5.networkErrorHandler(cb);
 					}			
 				}, null, username, password);
 		} else if (method === 'POST' || method === 'PUT'){	
@@ -267,7 +282,7 @@
 			});
 			
 			pending.xhr = F5.upload(method, url, JSON.stringify(bodyParameters),
-				function success(response) {
+				function success(response, status) {
 					pendingComplete(node, pending);					
 					try {
 //						console.log(response);
@@ -275,16 +290,18 @@
 						if (service.postprocess) {
 							obj = service.postprocess(obj);
 						}
-						cb(obj, 200);
+						cb(obj, status);
 						// TODO: validateSchema(response, service.responseSchema);						
 					} catch (e) {
 						console.log(e.message);
-						cb(null, 200);
+						F5.networkErrorHandler(cb);						
 					}
 				}, function error(response, status) {
-					pendingComplete(node, pending);		
-					if (!pending.aborted) {
-						handleErrorResponse(response, status);						
+					pendingComplete(node, pending);	
+					if (pending.aborted) {
+						cb();
+					} else {
+						F5.networkErrorHandler(cb);						
 					}			
 				}, null, username, password);							
 		}	
