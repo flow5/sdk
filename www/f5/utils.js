@@ -133,6 +133,9 @@
 		node.pending.splice(node.pending.indexOf(pending), 1);
 		clearTimeout(pending.timeout);
 		pending.timeout = null;
+		if (pending.confirmWidget) {
+			pending.confirmWidget.dismiss();
+		}		
 	}
 	
 	F5.networkErrorHandler = function (cb) {
@@ -226,9 +229,10 @@
 			this.xhr.abort();
 		}};
 		
+		// TODO: should move this up to the DOM aware layer
 		var timeoutMS = 500;
 		function timeout() {
-			F5.confirm("A network operation is taking a long time.", 
+			pending.confirmWidget = F5.confirm("A network operation is taking a long time.", 
 						"Press OK to keep waiting or Cancel to cancel the operation.", function (result) {
 							if (result) {
 								if (pending.timeout) {
@@ -237,6 +241,7 @@
 							} else {
 								pending.abort();
 							}
+							delete pending.confirmWidget;
 						});
 		}		
 		

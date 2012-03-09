@@ -187,12 +187,14 @@
 		var alert = F5.createWidget('Alert', {title: title, message: message});
 		alert.widget.setAction(action);
 		alert.widget.present();
+		return alert.widget;
 	};
 
 	F5.confirm = function (title, message, action) {
 		var confirm = F5.createWidget('Confirm', {title: title, message: message});
 		confirm.widget.setAction(action);
 		confirm.widget.present();
+		return confirm.widget;
 	};
 	
 	F5.eventLocation = function(event) {
