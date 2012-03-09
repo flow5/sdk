@@ -120,6 +120,10 @@
 	F5.get = function(url, success, error, headers, username, password) {
 		return doXHR('GET', url, null, success, error, headers, username, password);		
 	};
+
+	F5.delete = function(url, success, error, headers, username, password) {
+		return doXHR('DELETE', url, null, success, error, headers, username, password);		
+	};
 		
 	F5.upload = function(method, url, body, success, error, headers, username, password) {
 		return doXHR(method, url, body, success, error, headers, username, password);
@@ -148,7 +152,7 @@
 		var qualifier = components[1];
 		
 		var service = F5.Services;
-		var protocol = 'http', method = 'GET', baseUrl, username, password, urlParameterKeys, extendedUrl;
+		var protocol = 'http', method = 'GET', baseUrl, username, password, urlParameterKeys, extendedUrl, resourceName;
 		F5.forEach(name.split('.'), function (component) {
 			if (service) {
 				service = service[component];				
@@ -172,6 +176,7 @@
 			protocol = get('protocol') || protocol;
 			baseUrl = get('baseUrl') || baseUrl;
 			extendedUrl = get('extendedUrl') || extendedUrl;
+			resourceName = get('resourceName') || resourceName;
 			method = get('method') || method;
 			// which parameters should go into the URL for POST/PUT
 			urlParameterKeys = get('urlParameterKeys') || urlParameterKeys;
@@ -189,6 +194,9 @@
 		var url = protocol + '://' + baseUrl;
 		if (extendedUrl) {
 			url += extendedUrl;
+		}
+		if (resourceName) {
+			url += '/' + resourceName;
 		}
 		
 		function handleErrorResponse(response, status) {
@@ -221,11 +229,12 @@
 			this.xhr.abort();
 		}};
 		
-		if (method === 'GET') {			
+		if (method === 'GET' || method === 'DELETE') {			
 			url += formatUrlParameters(parameters);
 			
+						
 //			console.log(url);	
-			pending.xhr = F5.get(url, 
+			pending.xhr = F5[method.toLowerCase()](url, 
 				function success(response) {
 					pendingComplete(node, pending);
 					try {
@@ -246,8 +255,7 @@
 						handleErrorResponse(response, status);						
 					}			
 				}, null, username, password);
-		} 
-		else if (method === 'POST' || method === 'PUT'){	
+		} else if (method === 'POST' || method === 'PUT'){	
 			
 			url += formatUrlParameters(parameters, urlParameterKeys);
 			
