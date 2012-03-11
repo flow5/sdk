@@ -31,10 +31,14 @@
 
 @synthesize callbackID;
 @synthesize successIndex;
+@synthesize alertView;
 
 - (void)alertView:(UIAlertView*)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-    PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsInt:buttonIndex == [self.successIndex integerValue]];  
-    [self writeJavascript:[pluginResult toSuccessCallbackString:self.callbackID]];        
+    if (self.alertView) {
+        PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsInt:buttonIndex == [self.successIndex integerValue]];  
+        [self writeJavascript:[pluginResult toSuccessCallbackString:self.callbackID]];                
+    }
+    self.alertView = nil;
 }
 
 - (void)alert:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
@@ -45,9 +49,9 @@
     NSString *title = [options objectForKey:@"title"];
     NSString *message = [options objectForKey:@"message"];
     NSString *cancelText = @"OK";
-    UIAlertView *alertView = [[[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:cancelText otherButtonTitles:nil] autorelease];
-    alertView.delegate = self;
-    [alertView show];
+    self.alertView = [[[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:cancelText otherButtonTitles:nil] autorelease];
+    self.alertView.delegate = self;
+    [self.alertView show];
 }
 
 - (void)confirm:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
@@ -59,9 +63,17 @@
     NSString *message = [options objectForKey:@"message"];
     NSString *cancelText = @"Cancel";
     NSString *okText = @"OK";
-    UIAlertView *alertView = [[[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:cancelText otherButtonTitles:okText, nil] autorelease];
-    alertView.delegate = self;
-    [alertView show];
+    self.alertView = [[[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:cancelText otherButtonTitles:okText, nil] autorelease];
+    self.alertView.delegate = self;
+    [self.alertView show];
 }
+
+- (void)dismiss:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+    UIAlertView *theAlertView = [[self.alertView retain] autorelease];
+    self.alertView = nil;
+    [theAlertView dismissWithClickedButtonIndex:0 animated:YES];
+}
+
 
 @end

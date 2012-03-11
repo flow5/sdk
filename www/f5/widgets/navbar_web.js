@@ -71,7 +71,7 @@
 					F5.addClass(el, 'f5' + which + 'button');
 					el.style.opacity = 0;
 					
-					el.style['-webkit-transition'] = 'opacity .30s ease-in-out';
+					el.style['-webkit-transition'] = 'opacity .25s ease-in-out';
 					
 					el.widget.setAction(function () {
 						that.configuration[which].action();						
@@ -94,7 +94,7 @@
 				var titleEl = document.createElement('div');
 				F5.addClass(titleEl, 'f5title');
 				containers.title.appendChild(titleEl);
-				titleEl.style['-webkit-transition'] = 'opacity .30s';
+				titleEl.style['-webkit-transition'] = 'opacity .25s ease-in-out';
 				return titleEl;
 			}
 			title.a = makeTitle();

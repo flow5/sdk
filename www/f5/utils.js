@@ -116,15 +116,8 @@
 		
 		return xhr;	
 	}
-	
-	F5.get = function(url, success, error, headers, username, password) {
-		return doXHR('GET', url, null, success, error, headers, username, password);		
-	};
-
-	F5.delete = function(url, success, error, headers, username, password) {
-		return doXHR('DELETE', url, null, success, error, headers, username, password);		
-	};
-		
+			
+	// TODO: get rid of this
 	F5.upload = function(method, url, body, success, error, headers, username, password) {
 		return doXHR(method, url, body, success, error, headers, username, password);
 	};
@@ -139,7 +132,9 @@
 	}
 	
 	F5.networkErrorHandler = function (cb) {
-		F5.alert('Network Error', "", cb);
+		F5.alert('Network Error', "", function () {
+			cb();
+		});
 	};
 		
 	F5.execService = function (node, id, parameters, cb) {
@@ -230,7 +225,7 @@
 		}};
 		
 		// TODO: should move this up to the DOM aware layer
-		var timeoutMS = 500;
+		var timeoutMS = 10000;
 		function timeout() {
 			pending.confirmWidget = F5.confirm("A network operation is taking a long time.", 
 						"Press OK to keep waiting or Cancel to cancel the operation.", function (result) {
@@ -252,7 +247,8 @@
 			
 						
 //			console.log(url);	
-			pending.xhr = F5[method.toLowerCase()](url, 
+			
+			pending.xhr = doXHR(method, url, null,
 				function success(response, status) {
 					pendingComplete(node, pending);
 					try {
@@ -261,7 +257,11 @@
 						if (service.postprocess) {
 							obj = service.postprocess(obj);
 						}
-						cb(obj, status);
+						try {
+							cb(obj, status);							
+						} catch (e) {
+							console.log(e.message);
+						}
 						// TODO: validateSchema(response, service.responseSchema);						
 					} catch (e) {
 						console.log(e.message);
@@ -286,7 +286,7 @@
 				}
 			});
 			
-			pending.xhr = F5.upload(method, url, JSON.stringify(bodyParameters),
+			pending.xhr = doXHR(method, url, JSON.stringify(bodyParameters),
 				function success(response, status) {
 					pendingComplete(node, pending);					
 					try {
@@ -295,7 +295,11 @@
 						if (service.postprocess) {
 							obj = service.postprocess(obj);
 						}
-						cb(obj, status);
+						try {
+							cb(obj, status);							
+						} catch (e) {
+							console.log(e.message);
+						}
 						// TODO: validateSchema(response, service.responseSchema);						
 					} catch (e) {
 						console.log(e.message);

@@ -282,8 +282,8 @@
     animateWithDuration:delay:options:animations:completion:
     
     [[F5CommandQueue instance] queueCommand:^{                
-        [UIView animateWithDuration:0.3 delay:0.0
-                            options: UIViewAnimationOptionCurveEaseIn
+        [UIView animateWithDuration:0.25 delay:0.0
+                            options: UIViewAnimationOptionCurveEaseOut
                          animations:^{
                              CGPoint center = self.mapView.center;
                              center.x += [appDelegate.viewController view].bounds.size.width;
@@ -299,8 +299,8 @@
     AppDelegate *appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];                    
     
     [[F5CommandQueue instance] queueCommand:^{                    
-        [UIView animateWithDuration:0.3 delay:0.0
-                            options: UIViewAnimationOptionCurveEaseIn
+        [UIView animateWithDuration:0.25 delay:0.0
+                            options: UIViewAnimationOptionCurveEaseOut
                          animations:^{
                              CGPoint center = self.mapView.center;
                              center.x -= [appDelegate.viewController view].bounds.size.width;

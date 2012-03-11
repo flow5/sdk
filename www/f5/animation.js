@@ -58,7 +58,7 @@
 				F5.addTransitionEndListener(oldEl, complete);	
 			}
 			
-			var transition = '-webkit-transform ease-in .30s';
+			var transition = '-webkit-transform .25s ease-out';
 			oldEl.style['-webkit-transition'] = transition;
 			newEl.style['-webkit-transition'] = transition;
 			
@@ -104,7 +104,7 @@
 				F5.addTransitionEndListener(overEl, complete);	
 			}
 			
-			var transition = '-webkit-transform ease-in .30s';
+			var transition = '-webkit-transform .25s ease-in ';
 			overEl.style['-webkit-transition'] = transition;
 			
 			if (distance < 0) {
@@ -145,7 +145,7 @@
 				F5.addTransitionEndListener(el, complete);	
 			}
 			
-			var transition = '-webkit-transform ease-in .30s';
+			var transition = '-webkit-transform .25s ease-in';
 			el.style['-webkit-transition'] = transition;
 			
 			if (distance < 0) {
@@ -193,7 +193,7 @@
 				}
 				
 				F5.addTransitionEndListener(newEl, completeFadeIn);				
-				newEl.style['-webkit-transition'] = 'opacity .30s';	
+				newEl.style['-webkit-transition'] = 'opacity .25s';	
 				newEl.style.opacity = 1;					
 			};		
 		},
@@ -223,7 +223,7 @@
 				}
 				
 				F5.addTransitionEndListener(oldEl, completeFadeOut);				
-				oldEl.style['-webkit-transition'] = 'opacity .30s';	
+				oldEl.style['-webkit-transition'] = 'opacity .25s';	
 				oldEl.style.opacity = 0;					
 			};		
 		},

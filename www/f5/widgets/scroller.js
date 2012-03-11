@@ -106,20 +106,23 @@
 			
 	function updateVelocity(scroller, e) {
 		// don't do instantaneous updating of velocity
-		var weighting = 0.5;
+		var weighting = 0.25;
 
 		var newTouchLoc = eventPosition(scroller, e);
 		var delta = scroller.horizontal ? newTouchLoc.x - scroller.touchLoc.x : newTouchLoc.y - scroller.touchLoc.y;			
 		scroller.touchLoc = newTouchLoc;
 
 		var deltaT = e.timeStamp - scroller.touchTime;
-		scroller.touchTime = e.timeStamp;
+				
+		if (deltaT) {
+			scroller.touchTime = e.timeStamp;
 
-		var newVelocity = pinVelocity((1.0 - weighting) * scroller.lastVelocity + weighting * (delta / deltaT));
+			var newVelocity = pinVelocity((1.0 - weighting) * scroller.lastVelocity + weighting * (delta / deltaT));
 
-		scroller.lastVelocity = newVelocity;	
-
-		return newVelocity;
+			scroller.lastVelocity = newVelocity;				
+		}
+		
+		return scroller.lastVelocity;
 	}
 	
 	function finishScrolling(scroller) {			
@@ -165,16 +168,56 @@
 		var velocity = updateVelocity(scroller, e);	
 		var flickTo = scroller.flickTo(velocity);
 		if (flickTo) {
-			F5.removeTransitionEndListener(scroller.el);				
-			F5.addTransitionEndListener(scroller.el, function (e) {
-				finishScrolling(scroller);
+			var flickDistance = Math.abs(scroller.staticOffset - flickTo.offset);
+			
+			F5.removeTransitionEndListener(scroller.el);			
+			// if we use the transition end event, there's a tiny hickup in the transition from the
+			// flick to the flickPast animation. so instead	use a setTimeout so that
+			// the flickPast animation gets set while the flick animation is still running
+//			F5.addTransitionEndListener(scroller.el, function (e) {
+			setTimeout(function () {
 				F5.removeTransitionEndListener(scroller.el);				
-			});						
+				
+				// handle a flick past the scroller end
+				var now = Date.now();
+				if (flickTo.bezier === scroller.curves.flickPast) {
+					var bounceOffset;
+					if (F5.sign(velocity) === 1) {
+						bounceOffset = scroller.bounceDistance;
+					} else {
+						bounceOffset = scroller.minOffset - scroller.bounceDistance;
+					}
+
+					scroller.staticOffset = bounceOffset;
+					scroller.currentOffset = bounceOffset;
+					
+					// match the starting velocity of the bounce to the ending velocity of the flick
+					var t1, t2;		
+								
+					t1 = F5.cubicBezierAtTime.apply(F5, [0.99].concat(flickTo.bezier).concat(1));
+					t2 = F5.cubicBezierAtTime.apply(F5, [1.00].concat(flickTo.bezier).concat(1));					
+					var endVelocity = (t2 - t1)*flickDistance/(0.01*flickTo.duration);
+					
+					t1 = F5.cubicBezierAtTime.apply(F5, [0.00].concat(scroller.curves.easeOut).concat(1));
+					t2 = F5.cubicBezierAtTime.apply(F5, [0.01].concat(scroller.curves.easeOut).concat(1));						
+					var duration = 100 * ((t2 - t1) * scroller.bounceDistance) / endVelocity;
+															
+					F5.addTransitionEndListener(scroller.el, function () {
+						F5.removeTransitionEndListener(scroller.el);									
+						finishScrolling(scroller);					
+					});										
+					
+					doTransform(scroller, bounceOffset, duration, scroller.curves.bounce);	
+					console.log(Date.now() - now);												
+				} else {
+					// TODO: not necessary?
+					finishScrolling(scroller);										
+				}				
+			}, flickTo.duration * 1000 - 10);						
 
 			doTransform(scroller, flickTo.offset, flickTo.duration, flickTo.bezier);
 
 			scroller.staticOffset = flickTo.offset;	
-			// also update the currentOffset since we're animating a move				
 			scroller.currentOffset = scroller.staticOffset;													
 		} else {
 			finishScrolling(scroller);			
@@ -252,8 +295,11 @@
 
 		// prototype functions
 		this.curves = {
-			easeOut: [0, 0, 0.58, 1.0],
-			flick: [0.33, 0.66, 0.76, 1],
+			bounce: [0.0, 0.0, 0.58, 1.0],
+			easeOut: [0.0, 0.0, 0.58, 1.0],
+			easeIn: [0.42, 0.0, 1.0, 1.0],
+			flickTo: [0.33, 0.66, 0.76, 1],
+			flickPast: [0.33, 0.55, .55, .75],
 			hardSnap: [0, 0.75, 0.55, 1.0],
 			softSnap: [0.25, 0.25, 0.55, 1.0]
 		};
@@ -331,7 +377,7 @@
 				if (Math.abs(this.currentOffset-offset) > this.bounceDistance) {
 					bezier = this.curves.hardSnap;
 				} else {
-					bezier = this.curves.softSnap;
+					bezier = this.curves.easeOut;
 				}
 				
 				if (offset !== this.staticOffset) {
@@ -342,10 +388,11 @@
 			return snapTo;			
 		};
 		
-		this.flickTo = function (velocity) {			
+		this.flickTo = function (velocity) {
+			var that = this;			
 			function overDragged(velocity) {
-				return (F5.sign(velocity) === 1 && this.staticOffset > this.bounceDistance) || 
-					   (F5.sign(velocity) === -1 && this.staticOffset < this.minOffset - this.bounceDistance);
+				return (F5.sign(velocity) === 1 && that.staticOffset > 0) || 
+					   (F5.sign(velocity) === -1 && that.staticOffset < that.minOffset);
 			}
 			
 			if (Math.abs(velocity) > this.flickVelocityThreshold && !overDragged(velocity)) {	
@@ -356,8 +403,10 @@
 				var momentumDistance = -(velocity * velocity) / (2 * acceleration);
 				var scrollDuration = -velocity / acceleration;
 
-				var maxFlickDistance = this.bounceDistance;
-				var pinnedOffset = pinOffset(this, this.staticOffset + momentumDistance, maxFlickDistance);
+				// flick to the bounce boundary. then the handler will create a second bezier
+				// to decelerate to the end of the bounce
+				var pinnedOffset = pinOffset(this, this.staticOffset + momentumDistance, 0);
+				var flickPast = pinnedOffset !== this.staticOffset + momentumDistance;
 				var scrollDistance = pinnedOffset - this.staticOffset;
 
 				// Not quite right because of decelleration
@@ -368,9 +417,16 @@
 					scaler = 1;
 				}
 				scrollDuration *= scaler;
+				
+				var bezier;
+				if (flickPast) {
+					bezier = this.curves.flickPast;
+				} else {
+					bezier = this.curves.flickTo;
+				}
 
 				if (pinnedOffset !== this.staticOffset) {
-					return {offset: pinnedOffset, duration: scrollDuration/1000, bezier: this.curves.flick};					
+					return {offset: pinnedOffset, duration: scrollDuration/1000, bezier: bezier};					
 				}
 			}			
 		};

@@ -150,19 +150,24 @@
 
 		F5.Global.flowController.addFlowObserver({
 			start: function () {
-				update();
+				setTimeout(update,0);
+//				update();
 			},
 			startSubflow: function () {
-				update();
+				setTimeout(update,0);
+				//				update();
 			},
 			syncSelection: function (node) {
-				update();
+				setTimeout(update,0);
+				//				update();
 			},
 			completeSubflow: function () {
-				update();
+				setTimeout(update,0);
+				//				update();
 			},
 			asyncOperationComplete: function () {
-				update();
+				setTimeout(update,0);
+				//				update();
 			}
 		});
 		update();

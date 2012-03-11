@@ -55,7 +55,19 @@
 				this.method, // the method
 				[this.data]
 			);			
-		};		
+		};	
+		
+		this.dismiss = function () {
+			PhoneGap.exec(
+				function (result) { // messages from frame
+				}, 
+				function (result) { // failure
+				}, 
+				'com.flow5.alert', // the plugin name
+				'dismiss',
+				[]
+			);			
+		};
 	}	
 	
 	function Alert() {

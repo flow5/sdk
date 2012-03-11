@@ -30,7 +30,9 @@
 @interface F5Alert : PGPlugin
 
 - (void)alert:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void)dismiss:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
 @property (nonatomic, copy) NSString* callbackID;
 @property (nonatomic, copy) NSNumber* successIndex;
+@property (nonatomic, retain) UIAlertView* alertView;
 @end
