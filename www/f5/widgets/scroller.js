@@ -143,6 +143,10 @@
 		scroller.startLoc = scroller.touchLoc;
 		scroller.touchTime = e.timeStamp;
 		scroller.lastVelocity = 0;
+		if (scroller.bounceTimeout) {
+			clearTimeout(scroller.bounceTimeout);
+			scroller.bounceTimeout = null;		
+		}
 
 		var transformMatrix = new WebKitCSSMatrix(window.getComputedStyle(scroller.el)['-webkitTransform']);
 		stopScrollingAt(scroller, scroller.horizontal ? transformMatrix.m41 : transformMatrix.m42);					
@@ -175,7 +179,9 @@
 			// flick to the flickPast animation. so instead	use a setTimeout so that
 			// the flickPast animation gets set while the flick animation is still running
 //			F5.addTransitionEndListener(scroller.el, function (e) {
-			setTimeout(function () {
+			scroller.bounceTimeout = setTimeout(function () {
+				scroller.bounceTimeout = null;
+				
 				F5.removeTransitionEndListener(scroller.el);				
 				
 				// handle a flick past the scroller end

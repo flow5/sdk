@@ -91,6 +91,7 @@ function Input() {
 			this.input.setAttribute('maxlength', this.el.getAttribute('maxlength'));			
 
 			this.input.setAttribute('autocorrect', this.el.getAttribute('autocorrect'));			
+			this.input.setAttribute('autocapitalize', this.el.getAttribute('autocapitalize'));			
 
 			this.input.onkeypress = function (e) {
 				clearErrorAndLabel();
@@ -130,8 +131,7 @@ function Input() {
 				e.preventDefault();
 			});									
 		} else {
-			// TODO: doesn't seem to be a way to prevent inputs from being selected on
-			// touch down						
+			// NOTE: mask the element to prevent wonky scrolling behaviors
 			if (navigator.userAgent.match(/OS 4/)) {
 				var mask = document.createElement('div');
 				mask.style.position = 'absolute';
