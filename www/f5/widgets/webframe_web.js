@@ -48,6 +48,10 @@
 			this.onLoadAction = cb;
 		};
 		
+		this.setOnErrorAction = function (cb) {
+			this.onErrorAction = cb;
+		};				
+		
 		this.setCloseAction = function (cb) {
 			this.closeAction = cb;
 		};
@@ -81,6 +85,14 @@
 					that.onLoadAction();
 				}
 			};
+			
+			// TODO: this doesn't work!
+			// NOT sure it's possible to detect an iframe load error
+			this.frame.onerror = function () {
+
+			}
+			
+			// TODO: on error action
 			
 			this.frame.src = url;
 			

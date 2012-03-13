@@ -120,7 +120,8 @@
             "scripts": [
                 "nobridge.js", 
                 "widgets/navbar_web.js", 
-                "widgets/mapview_web.js"
+                "widgets/mapview_web.js",
+	            "widgets/activity.js"
             ]
         }, 
         "elements": [

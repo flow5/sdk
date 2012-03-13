@@ -143,6 +143,12 @@
 //                     completion:nil];            
 }
 
+- (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error
+{
+    PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_ERROR];  
+    [self writeJavascript:[pluginResult toErrorCallbackString:self.callbackID]];             
+}
+
 - (void)webViewDidFinishLoad:(UIWebView *)webView
 {        
     if (!self.overlayWebView.hidden) {

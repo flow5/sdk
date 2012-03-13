@@ -39,6 +39,10 @@
 			this.onLoadAction = cb;
 		};		
 
+		this.setOnErrorAction = function (cb) {
+			this.onErrorAction = cb;
+		};		
+
 		this.setCloseAction = function (cb) {
 			this.closeAction = cb;
 		};
@@ -86,6 +90,9 @@
 					}
 				}, 
 				function (result) { // failure
+					if (that.onErrorAction) {
+						that.onErrorAction();
+					}					
 					console.log(result);
 				}, 
 				'com.flow5.webview', // the plugin name
