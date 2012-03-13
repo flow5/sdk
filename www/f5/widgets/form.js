@@ -74,7 +74,7 @@ function Form() {
 		F5.addClass(this.el, 'f5form');
 								
 		var blurTimeout;
-		F5.forEach(this.el.querySelectorAll('[f5widget=Input]'), function (el) {				
+		F5.forEach(this.el.querySelectorAll('[f5widget=Input]'), function (el) {	
 			// NOTE: on iOS 4.3 and Android, executing the blur logic when switching fields
 			// causes problems. so delay so that a subsequent focus call can abort
 			el.widget.setOnBlur(function () {
@@ -90,13 +90,17 @@ function Form() {
 						clearTimeout(blurTimeout);
 						blurTimeout = null;
 					}	
-					// disable scrolling
-					window.scrollTo(0, 0);
-					document.body.scrollTop = 0;	
+					if (navigator.userAgent.match(/OS 4/)) {
+						// not possible to cleanly disable scrolling on iOS4
+					} else {
+						// disable scrolling
+						window.scrollTo(0, 0);
+						document.body.scrollTop = 0;	
 
-					// do the scrolling ourselves		
-					that.el.style.top = (-el.offsetTop +
-							parseInt(window.getComputedStyle(that.el)['padding-top'].replace('px', ''), 10)) + 'px';						
+						// do the scrolling ourselves		
+						that.el.style.top = (-el.offsetTop +
+								parseInt(window.getComputedStyle(that.el)['padding-top'].replace('px', ''), 10)) + 'px';
+					}
 							
 					onFocus();
 				});
@@ -112,7 +116,7 @@ function Form() {
 	
 	this.widgetWillBecomeInactive = function () {
 		this.blur();
-	}
+	};
 	
 	this.getFormData = function () {
 		var data = {};

@@ -210,12 +210,12 @@
 					newEl.style['-webkit-transition'] = '';
 
 					// setting opacity causes flickering on Android (Gingerbread)
-					if (F5.platform() !== 'android') {
+//					if (F5.platform() !== 'android') {
 						oldEl.style.visibility = 'hidden';
 						setTimeout(function () {
 							oldEl.style.opacity = '';													
 						});
-					}
+//					}
 
 					F5.removeTransitionEndListener(oldEl);
 

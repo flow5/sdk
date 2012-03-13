@@ -30,7 +30,10 @@
 (function () {
 	
 	/*global PhoneGap*/
+//	var networkActivityCount = 0;
 	function networkActivityStarted() {
+//		networkActivityCount += 1;
+//		console.log('networkActivityCount: ' + networkActivityCount);
 		if (typeof PhoneGap !== 'undefined') {
 			PhoneGap.exec(
 				function (result) { // success
@@ -40,6 +43,8 @@
 	}
 
 	function networkActivityCompleted() {
+//		networkActivityCount -= 1;
+//		console.log('networkActivityCount: ' + networkActivityCount);
 		if (typeof PhoneGap !== 'undefined') {
 			PhoneGap.exec(
 				function (result) { // success
@@ -220,8 +225,10 @@
 		
 		var pending = {abort: function () {
 //			console.log('aborting pending')
-			this.aborted = true;
-			this.xhr.abort();
+			if (this.xhr.readyState !== this.xhr.DONE) {
+				this.aborted = true;
+				this.xhr.abort();				
+			}
 		}};
 		
 		// TODO: should move this up to the DOM aware layer
@@ -259,12 +266,12 @@
 						}
 						try {
 							cb(obj, status);							
-						} catch (e) {
-							console.log(e.message);
+						} catch (e1) {
+							console.log(e1.message);
 						}
 						// TODO: validateSchema(response, service.responseSchema);						
-					} catch (e) {
-						console.log(e.message);
+					} catch (e2) {
+						console.log(e2.message);
 						F5.networkErrorHandler(cb);						
 					}
 				}, function error(response, status) {
@@ -297,12 +304,12 @@
 						}
 						try {
 							cb(obj, status);							
-						} catch (e) {
-							console.log(e.message);
+						} catch (e1) {
+							console.log(e1.message);
 						}
 						// TODO: validateSchema(response, service.responseSchema);						
-					} catch (e) {
-						console.log(e.message);
+					} catch (e2) {
+						console.log(e2.message);
 						F5.networkErrorHandler(cb);						
 					}
 				}, function error(response, status) {

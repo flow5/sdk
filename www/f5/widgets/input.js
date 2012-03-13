@@ -118,8 +118,8 @@ function Input() {
 		}			
 
 		// take control of the touch events
-		this.input.style['pointer-events'] = 'none';
 		if (F5.platform() === 'android') {
+/*			this.input.style['pointer-events'] = 'none';
 			this.el.addEventListener('click', function (e) {
 				// if the form is scrolling when the click comes in
 				// the input will end up in the wrong place
@@ -129,10 +129,13 @@ function Input() {
 				}
 				e.stopPropagation();
 				e.preventDefault();
+
 			});									
+*/
 		} else {
-			// NOTE: mask the element to prevent wonky scrolling behaviors
 			if (navigator.userAgent.match(/OS 4/)) {
+				// failed attempt to prevent scrolling on iOS 4
+/*				
 				var mask = document.createElement('div');
 				mask.style.position = 'absolute';
 				mask.style.top = '0px';
@@ -151,8 +154,11 @@ function Input() {
 					}
 					e.stopPropagation();
 					e.preventDefault();
-				});			
+				});	
+*/						
 			} else {
+				// in iOS5 it is possible to properly prevent scrolling in forms
+				this.input.style['pointer-events'] = 'none';				
 				F5.addTapListener(this.el, function (e) {
 					that.focus();
 				});				
