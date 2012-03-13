@@ -1,6 +1,6 @@
 /***********************************************************************************************************************
 
-	Copyright (c) 2011 Paul Greyson
+	Copyright (c) 2012 Paul Greyson
 
 	Permission is hereby granted, free of charge, to any person 
 	obtaining a copy of this software and associated documentation 
@@ -32,34 +32,28 @@
 	function Activity() {
 		
 		this.construct = function () {			
-			F5.addClass(this.el, 'f5activityspritecontainer');
 
-			var mask = document.createElement('div');
-			F5.addClass(mask, 'f5activityspritemask');
-			this.el.appendChild(mask);
-
-			var sprite = document.createElement('div');
-			F5.addClass(sprite, 'f5activitysprite');
-			mask.appendChild(sprite);							
 		};
 		
 		this.start = function (el) {		
-			el.appendChild(this.el);			
+			var pos = F5.elementAbsolutePosition(el);
+			var bounds = {top: pos.y, left: pos.x, width: el.offsetWidth, height: el.offsetHeight};
+			
+			PhoneGap.exec(
+				function (result) { // success
+					console.log(result);
+			}, function (result) { // failure
+					console.log(result);
+			}, "com.flow5.activity", "start", [bounds]);	
 		};
 		
 		this.stop = function (el) {
-			// make sure that the activity is actually contained by this element
-			var search = this.el;
-			while (search) {
-				if (search.parentElement === el) {
-					break;
-				}
-				search = search.parentElement;
-			}
-
-			if (search) {
-				this.el.parentElement.removeChild(this.el);			
-			}			
+			PhoneGap.exec(
+				function (result) { // success
+					console.log(result);
+			}, function (result) { // failure
+					console.log(result);
+			}, "com.flow5.activity", "stop", []);	
 		};
 	}
 	

@@ -67,7 +67,6 @@
             "widgets/carousel.js", 
             "widgets/input.js", 
             "widgets/form.js", 
-            "widgets/activity.js", 
             "3p/bezier.js",
 			"3p/b64.js"
         ]
@@ -96,7 +95,8 @@
             "android.js", 
             "widgets/navbar_web.js", 
             "widgets/mapview_web.js",
-            "widgets/webframe_web.js"
+            "widgets/webframe_web.js",
+            "widgets/activity.js"
         ]
     }, 
     "ios": {
@@ -105,6 +105,7 @@
                 "bridge.js", 
                 "widgets/navbar_web.js", 
                 "widgets/mapview_native.js", 
+	            "widgets/activity_native.js",
                 "udp.js", 
                 "3p/phonegap-1.1.0.js",
                 "widgets/webframe_native.js"
