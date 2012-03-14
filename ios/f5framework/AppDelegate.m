@@ -36,11 +36,10 @@
 
 #import "Debug.h"
 
-@interface MyURLCache : NSURLCache
+@interface F5URLCache : NSURLCache
 @end
 
-// TODO: switch to URLencoded JSON
-@implementation MyURLCache
+@implementation F5URLCache
 
 - (NSCachedURLResponse*)makeResponse:(NSString*)responseText forRequest:(NSURLRequest*)request {
     NSData *data = [responseText dataUsingEncoding:NSUTF8StringEncoding];
@@ -155,8 +154,8 @@
         view.backgroundColor = UIColor.clearColor;
     }
             
-    [NSURLCache setSharedURLCache:[[[MyURLCache alloc] initWithMemoryCapacity:1024 * 1024 diskCapacity:1024 * 1024 * 10 diskPath:@"Cache"] autorelease]];
-                
+    [NSURLCache setSharedURLCache:[[[F5URLCache alloc] initWithMemoryCapacity:1024 * 1024 diskCapacity:1024 * 1024 * 10 diskPath:@"Cache"] autorelease]];
+                    
     return result;
 }
 

@@ -74,7 +74,7 @@
 //			F5.callBridgeSynchronous('com.flow5.webview', 'hide');			
 		}		
 				
-		this.open = function (url, referrer) {
+		this.open = function (url) {
 			this.el.style.display = '';
 			this.el.style.opacity = 0;			
 			var that = this;

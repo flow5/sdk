@@ -59,7 +59,7 @@
 			F5.callBridgeSynchronous('com.flow5.webview', 'hide');			
 		}
 		
-		this.open = function (url, referrer) {
+		this.open = function (url) {
 			
 			this.el.style.display = '';
 			
@@ -73,11 +73,7 @@
 				bounds: bounds,
 				url: url
 			};
-			
-			if (referrer) {
-				parameters.referrer = referrer;
-			}						
-						
+									
 			var that = this;
 			PhoneGap.exec(
 				function (message) { // messages from frame

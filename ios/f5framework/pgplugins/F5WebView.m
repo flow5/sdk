@@ -72,7 +72,6 @@
     return self;
 }
 
-
 - (void)open:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options 
 {
     self.callbackID = [arguments pop];
@@ -91,11 +90,6 @@
     NSString *url = [options objectForKey:@"url"];
     
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url] cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.0];
-    
-    NSString *referrer = [options objectForKey:@"referrer"];
-    if (referrer) {
-        [request setValue:referrer forHTTPHeaderField: @"Referer"];        
-    }
     
     [self.overlayWebView loadRequest:request];        
 }
