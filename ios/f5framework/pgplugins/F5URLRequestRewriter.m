@@ -62,8 +62,7 @@ static id<F5URLRequestRewriterProtocolDelegate> sProtocolDelegate = nil;
 {
     NSMutableURLRequest *request = [[[self request] mutableCopy] autorelease];        
     NSURL *url = [request URL];
-    
-    
+        
     NSDictionary *rule = [sProtocolDelegate rewriteUrl:url];
     
     NSString *content = [rule valueForKey:@"content"];

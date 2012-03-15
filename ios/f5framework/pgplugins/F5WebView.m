@@ -123,6 +123,23 @@
         return;
     }
     
+    [self hide];                    
+}
+
+- (PluginResult*)show:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+    self.overlayWebView.hidden = NO;
+    [UIView animateWithDuration:.25 delay:0.0
+                        options: UIViewAnimationOptionCurveEaseIn
+                     animations:^{
+                         self.overlayWebView.alpha = 1;
+                     }
+                     completion:nil];     
+    return [PluginResult resultWithStatus:PGCommandStatus_OK];    
+}
+
+- (void)hide
+{
     [UIView animateWithDuration:0.25 delay:0.0
                         options: UIViewAnimationOptionCurveEaseIn
                      animations:^{
@@ -132,21 +149,13 @@
                          NSString *path = [[NSBundle mainBundle] bundlePath];
                          NSURL *baseURL = [NSURL fileURLWithPath:path];
                          self.overlayWebView.hidden = YES;
-                        [self.overlayWebView loadHTMLString:@"<html></html>" baseURL:baseURL];
-                     }];
-    
-            
-}
-
-- (PluginResult*)show:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
-{
-    self.overlayWebView.hidden = NO;
-    return [PluginResult resultWithStatus:PGCommandStatus_OK];    
+                         [self.overlayWebView loadHTMLString:@"<html></html>" baseURL:baseURL];
+                     }];    
 }
 
 - (PluginResult*)hide:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-    self.overlayWebView.hidden = YES;
+    [self hide];
     return [PluginResult resultWithStatus:PGCommandStatus_OK];
 }
 
@@ -167,14 +176,7 @@
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView
 {        
-    if (!self.overlayWebView.hidden) {
-        [UIView animateWithDuration:.25 delay:0.0
-                            options: UIViewAnimationOptionCurveEaseIn
-                         animations:^{
-                             self.overlayWebView.alpha = 1;
-                         }
-                         completion:nil]; 
-        
+    if (!self.overlayWebView.hidden) {        
         NSDictionary *message = [NSDictionary dictionaryWithObject:@"onload" forKey:@"type"];    
         PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsDictionary:message];  
         [pluginResult setKeepCallbackAsBool:YES];    
