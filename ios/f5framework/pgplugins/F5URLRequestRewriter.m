@@ -48,14 +48,30 @@ static id<F5URLRequestRewriterProtocolDelegate> sProtocolDelegate = nil;
     return request;
 }
 
+- (id)choose:(id)a :(id)b
+{
+    if (a) {
+        return a;
+    } else {
+        return b;
+    }
+}
+
 - (void)startLoading
 {
     NSMutableURLRequest *request = [[[self request] mutableCopy] autorelease];        
+    NSURL *url = [request URL];
     
-    NSDictionary *rule = [sProtocolDelegate rewriteUrl:[request URL]];
     
-    NSString *url = [NSString stringWithFormat:@"%@:%@", [rule valueForKey:@"scheme"], [[request URL] resourceSpecifier]];    
-    [request setURL:[NSURL URLWithString:url]];      
+    NSDictionary *rule = [sProtocolDelegate rewriteUrl:url];
+    
+    NSString *scheme = [self choose:[rule valueForKey:@"scheme"] :[url scheme]];
+    NSString *host = [self choose:[rule valueForKey:@"host"] :[url host]];
+    NSString *path = [self choose:[rule valueForKey:@"path"] :[url path]];
+    NSString *query = [self choose:[url query] :@""];
+            
+    NSString *rewrittenUrl = [NSString stringWithFormat:@"%@://%@%@?%@", scheme, host, path, query];    
+    [request setURL:[NSURL URLWithString:rewrittenUrl]];      
     
     NSDictionary *headers = [rule valueForKey:@"headers"];
     
@@ -138,6 +154,8 @@ static id<F5URLRequestRewriterProtocolDelegate> sProtocolDelegate = nil;
     [rule setValue:regex forKey:@"regex"];
     [rule setValue:[options valueForKey:@"scheme"] forKey:@"scheme"];
     [rule setValue:[options valueForKey:@"headers"] forKey:@"headers"];
+    [rule setValue:[options valueForKey:@"host"] forKey:@"host"];
+    [rule setValue:[options valueForKey:@"path"] forKey:@"path"];
         
     [rules addObject:rule];
 }
