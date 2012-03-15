@@ -26,6 +26,7 @@
  ***********************************************************************************************************************/
 
 #import "F5URLRequestRewriter.h"
+#import "QSStrings.h"
 
 // TODO: provide a more general regex-based rewrite rule mechanism. below solves the immediate problem
 
@@ -65,30 +66,39 @@ static id<F5URLRequestRewriterProtocolDelegate> sProtocolDelegate = nil;
     
     NSDictionary *rule = [sProtocolDelegate rewriteUrl:url];
     
-    NSString *scheme = [self choose:[rule valueForKey:@"scheme"] :[url scheme]];
-    NSString *host = [self choose:[rule valueForKey:@"host"] :[url host]];
-    NSString *path = [self choose:[rule valueForKey:@"path"] :[url path]];
-    NSString *query = [self choose:[url query] :@""];
-            
-    NSString *rewrittenUrl = [NSString stringWithFormat:@"%@://%@%@?%@", scheme, host, path, query];    
-    [request setURL:[NSURL URLWithString:rewrittenUrl]];      
-    
-    NSDictionary *headers = [rule valueForKey:@"headers"];
-    
-    if (headers) {
-        [headers enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop){
-            [request setValue:obj forHTTPHeaderField:key];
-        }];         
-    }    
+    NSString *content = [rule valueForKey:@"content"];
+    if (content) {
+        NSRange prefixRange = [content rangeOfString:@"base64,"];
+        NSUInteger contentStart = prefixRange.location + prefixRange.length;
+        NSData *data = [QSStrings decodeBase64WithString:[content substringFromIndex:contentStart]];        
+        [[self client] URLProtocol:self didLoadData:data];
+        [[self client] URLProtocolDidFinishLoading:self];        
+    } else {
+        NSString *scheme = [self choose:[rule valueForKey:@"scheme"] :[url scheme]];
+        NSString *host = [self choose:[rule valueForKey:@"host"] :[url host]];
+        NSString *path = [self choose:[rule valueForKey:@"path"] :[url path]];
+        NSString *query = [self choose:[url query] :@""];
         
-    NSURLConnection *connection = [[[NSURLConnection alloc]
-                                    initWithRequest:request
-                                    delegate:self
-                                    startImmediately:YES] autorelease];    
-    if(!connection) {
-        NSError *error = [NSError errorWithDomain:@"" code:0 userInfo:nil];        
-        [[self client] URLProtocol:(NSURLProtocol *)self didFailWithError:error];    
-    }                
+        NSString *rewrittenUrl = [NSString stringWithFormat:@"%@://%@%@?%@", scheme, host, path, query];    
+        [request setURL:[NSURL URLWithString:rewrittenUrl]];      
+        
+        NSDictionary *headers = [rule valueForKey:@"headers"];
+        
+        if (headers) {
+            [headers enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop){
+                [request setValue:obj forHTTPHeaderField:key];
+            }];         
+        }    
+        
+        NSURLConnection *connection = [[[NSURLConnection alloc]
+                                        initWithRequest:request
+                                        delegate:self
+                                        startImmediately:YES] autorelease];    
+        if(!connection) {
+            NSError *error = [NSError errorWithDomain:@"" code:0 userInfo:nil];        
+            [[self client] URLProtocol:(NSURLProtocol *)self didFailWithError:error];    
+        }               
+    }             
 }
 
 - (void)stopLoading
@@ -156,6 +166,7 @@ static id<F5URLRequestRewriterProtocolDelegate> sProtocolDelegate = nil;
     [rule setValue:[options valueForKey:@"headers"] forKey:@"headers"];
     [rule setValue:[options valueForKey:@"host"] forKey:@"host"];
     [rule setValue:[options valueForKey:@"path"] forKey:@"path"];
+    [rule setValue:[options valueForKey:@"content"] forKey:@"content"];
         
     [rules addObject:rule];
 }

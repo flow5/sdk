@@ -59,7 +59,7 @@ function handleDataResourcesRecursive(obj, handler) {
 			if (value.constructor !== Array) {
 				handleDataResourcesRecursive(value, handler);				
 			}
-		} else if (value.match(/(\.png)|(\.jpg)|(\.ttf)|(\.svg)|(\.html)/)) {
+		} else if (value.match(/(\.png)|(\.jpg)|(\.ttf)|(\.svg)|(\.html)|(\.css)/)) {
 			handler(obj, id, value);
 		}
 	});
@@ -289,7 +289,7 @@ exports.generateHtml = function(parsed) {
 					// jsdom doesn't like the non-b64 encoded svg :(
 //					data = 'data:image/svg+xml;utf8,' + fs.readFileSync(path).toString().replace(/(\r\n|\n|\r)/gm, '');	
 					data = 'data:image/svg+xml;base64,' + fs.readFileSync('www/' + path, 'base64');
-				} else if (ext === 'html') {
+				} else if (ext === 'html' || ext === 'css') {
 					data = 'base64,' + fs.readFileSync('www/' + path, 'base64');
 				} else {
 					if (boolValue(query.crush)) {
