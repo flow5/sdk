@@ -66,10 +66,15 @@ static id<F5URLRequestRewriterProtocolDelegate> sProtocolDelegate = nil;
     NSDictionary *rule = [sProtocolDelegate rewriteUrl:url];
     
     NSString *content = [rule valueForKey:@"content"];
+    NSString *mimeType = [self choose:[rule valueForKey:@"mimeType"] :@"application/octet-stream"];
     if (content) {
         NSRange prefixRange = [content rangeOfString:@"base64,"];
         NSUInteger contentStart = prefixRange.location + prefixRange.length;
-        NSData *data = [QSStrings decodeBase64WithString:[content substringFromIndex:contentStart]];        
+        NSData *data = [QSStrings decodeBase64WithString:[content substringFromIndex:contentStart]];   
+        
+        NSURLResponse *response = [[NSURLResponse alloc] initWithURL:url MIMEType:mimeType expectedContentLength:[data length] textEncodingName:nil];        
+        [[self client] URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageAllowed];
+        
         [[self client] URLProtocol:self didLoadData:data];
         [[self client] URLProtocolDidFinishLoading:self];        
     } else {
@@ -159,15 +164,8 @@ static id<F5URLRequestRewriterProtocolDelegate> sProtocolDelegate = nil;
         // TODO: callback to js
     }
     
-    NSMutableDictionary *rule = [[[NSMutableDictionary alloc] init] autorelease];
-    [rule setValue:regex forKey:@"regex"];
-    [rule setValue:[options valueForKey:@"scheme"] forKey:@"scheme"];
-    [rule setValue:[options valueForKey:@"headers"] forKey:@"headers"];
-    [rule setValue:[options valueForKey:@"host"] forKey:@"host"];
-    [rule setValue:[options valueForKey:@"path"] forKey:@"path"];
-    [rule setValue:[options valueForKey:@"content"] forKey:@"content"];
-        
-    [rules addObject:rule];
+    [options setValue:regex forKey:@"regex"];        
+    [rules addObject:options];
 }
 
 - (BOOL)canInitWithRequest:(NSURLRequest *)request
