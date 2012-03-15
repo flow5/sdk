@@ -35,6 +35,7 @@
 @property (nonatomic, readwrite, retain) UIWebView *overlayWebView;
 
 - (void)open:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void)openHTML:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void)close:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
 - (PluginResult*)show:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;

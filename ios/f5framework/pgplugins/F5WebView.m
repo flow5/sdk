@@ -94,6 +94,28 @@
     [self.overlayWebView loadRequest:request];        
 }
 
+- (void)openHTML:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options 
+{
+    self.callbackID = [arguments pop];
+    
+    self.overlayWebView.alpha = 0;
+    self.overlayWebView.hidden = NO;            
+    
+    NSDictionary *bounds = [options objectForKey:@"bounds"];
+    
+    CGRect viewBounds = CGRectMake([[bounds objectForKey:@"left"] floatValue],
+                                   [[bounds objectForKey:@"top"] floatValue],
+                                   [[bounds objectForKey:@"width"] floatValue],
+                                   [[bounds objectForKey:@"height"] floatValue]);            
+    [self.overlayWebView setFrame:viewBounds];     
+    
+    NSString *html = [options objectForKey:@"html"];
+    
+    NSString *path = [[NSBundle mainBundle] bundlePath];
+    NSURL *baseURL = [NSURL fileURLWithPath:path];    
+    [self.overlayWebView loadHTMLString:html baseURL:baseURL];       
+}
+
 - (void)close:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options 
 {
     // already closed

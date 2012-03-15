@@ -72,7 +72,16 @@
 		
 		this.hide = function () {
 //			F5.callBridgeSynchronous('com.flow5.webview', 'hide');			
-		}		
+		};	
+		
+		this.openHTML = function (html) {
+			this.frame.contentDocument.querySelector('html').innerHTML = html;
+			this.el.style.display = '';
+			this.el.style.opacity = 1;			
+			if (this.onLoadAction) {
+				this.onLoadAction();
+			}
+		};
 				
 		this.open = function (url) {
 			this.el.style.display = '';
@@ -90,7 +99,7 @@
 			// NOT sure it's possible to detect an iframe load error
 			this.frame.onerror = function () {
 
-			}
+			};
 			
 			// TODO: on error action
 			

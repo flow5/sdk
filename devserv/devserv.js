@@ -195,7 +195,7 @@ cli.main(function (args, options) {
 		}
 			
 		
-		showRequest(req, true);
+//		showRequest(req, true);
 		
 		// prevent directory climbing through passed parameters
 		var parsed = url.parse(req.url.replace('..', ''), true);

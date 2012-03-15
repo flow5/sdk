@@ -59,6 +59,44 @@
 			F5.callBridgeSynchronous('com.flow5.webview', 'hide');			
 		}
 		
+		this.openHTML = function (html) {
+			this.el.style.display = '';
+			
+			var bounds = F5.elementOffsetGeometry(this.el);			
+			var position = F5.elementAbsolutePosition(this.el);
+			
+			bounds.left = position.x;
+			bounds.top = position.y;
+						
+			var parameters = {
+				bounds: bounds,
+				html: html
+			};
+									
+			var that = this;
+			PhoneGap.exec(
+				function (message) { // messages from frame
+					if (message.type === 'onload') {
+						if (that.onLoadAction) {
+							that.onLoadAction();
+						}
+					} else	if (that.messageAction) {
+						that.messageAction(message.message);
+					}
+				}, 
+				function (result) { // failure
+					if (that.onErrorAction) {
+						that.onErrorAction();
+					}					
+					console.log(result);
+				}, 
+				'com.flow5.webview', // the plugin name
+				'openHTML', // the method
+				[parameters]
+			);											
+			
+		};
+		
 		this.open = function (url) {
 			
 			this.el.style.display = '';

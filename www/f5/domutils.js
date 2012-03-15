@@ -446,6 +446,10 @@
 					resource.indexOf('data:image') !== -1;
 		}
 		
+		function isHTMLResource(resource) {
+			return resource.indexOf('.html') !== -1
+		}
+		
 		function preloadImagesRecursive(resources) {
 			F5.forEach(resources, function (id, resource) {
 				if (typeof resource === 'object' && resource.constructor !== Array) {
@@ -453,6 +457,8 @@
 				} else if (isImageResource(resource)){
 					resources[id] = F5.objectFromPrototype(F5.ImagePreloader);
 					resources[id].load(resource);
+				} else if (isHTMLResource(resource)) {
+					resources[id] = 'apps/' + F5.query.app + '/' + resource;
 				}
 			});			
 		}
