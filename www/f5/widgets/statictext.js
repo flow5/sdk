@@ -45,6 +45,11 @@
 			}
 			
 			if (value) {
+				
+				if (this.formatValue) {
+					value = this.formatValue(value);
+				}
+				
 				this.el.innerText = value;				
 			}			
 		};
@@ -54,14 +59,21 @@
 	
 	
 	function Telephone() {
-		this.construct = function (data) {
-			var id = this.el.getAttribute('f5id');
-			var value = F5.valueFromId(data, id);
-			if (value) {
-				this.el.innerText = value;
+		this.formatValue = function (value) {
+			var tmp = value.replace(/[^0-9]/g, '');
+			
+			if (tmp.length === 7) {
+				tmp = tmp.substring(0,3) + '-' + tmp.substring(3, 7);
+			} else if (tmp.length === 10) {
+				tmp = tmp.substring(0,3) + '-' + tmp.substring(3, 6) + '-' + tmp.substring(6, 10);				
+			} else if (tmp.length === 11) {
+				tmp = tmp.substring(1,4) + '-' + tmp.substring(4, 7) + '-' + tmp.substring(7, 11);								
 			}
+			
+			return tmp;
 		};
 	}
+	Telephone.prototype = new StaticText();
 	
 	F5.Prototypes.Widgets.Telephone = new Telephone();		
 		
