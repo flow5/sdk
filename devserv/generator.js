@@ -86,32 +86,32 @@ function processManifest(manifest, query, type, process) {
 	
 	function processIfExists(list) {
 		if (list) {
-			process(list);
+			process(list, type);
 		}
 	}
 	
 	function processSection(section) {
-		processIfExists(manifestEntry(manifest, section + '.' + type), type);
+		processIfExists(manifestEntry(manifest, section + '.' + type));
 		
 		if (!boolValue(query.mobile)) {
-			processIfExists(manifestEntry(manifest, section + '.desktop.' + type), type);
+			processIfExists(manifestEntry(manifest, section + '.desktop.' + type));
 		}						
 		
 		if (boolValue(query.native)) {
-			processIfExists(manifestEntry(manifest, section + '.app.' + type), type);
+			processIfExists(manifestEntry(manifest, section + '.app.' + type));
 		} else {
-			processIfExists(manifestEntry(manifest, section + '.browser.' + type), type);
+			processIfExists(manifestEntry(manifest, section + '.browser.' + type));
 		}	
 		
 		if (boolValue(query.debug)) {
-			processIfExists(manifestEntry(manifest, section + '.debug.' + type), type);
+			processIfExists(manifestEntry(manifest, section + '.debug.' + type));
 			if (!boolValue(query.mobile)) {
-				processIfExists(manifestEntry(manifest, section + '.desktop.debug.' + type), type);
+				processIfExists(manifestEntry(manifest, section + '.desktop.debug.' + type));
 			}
 			if (boolValue(query.native)) {
-				processIfExists(manifestEntry(manifest, section + '.app.debug.' + type), type);				
+				processIfExists(manifestEntry(manifest, section + '.app.debug.' + type));				
 			} else {
-				processIfExists(manifestEntry(manifest, section + '.browser.debug.' + type), type);				
+				processIfExists(manifestEntry(manifest, section + '.browser.debug.' + type));				
 			}
 		}				
 	}
@@ -155,7 +155,7 @@ exports.generateCacheManifest = function(query) {
 						try {
 							var resources = parseJSON(resolvedPath);
 							handleDataResourcesRecursive(resources, function (obj, id, src) {
-								checkDate('www/' + src);
+								checkDate('www/' + path + src);
 							});			
 						} catch (e) {
 							console.log('error:' + e.stack);
