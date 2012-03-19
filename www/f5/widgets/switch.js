@@ -112,7 +112,26 @@
 				} else {
 					delta.x = this.maxThrow;
 				}				
-			}					
+			}	
+			
+			if (this.action) {
+				var that = this;
+				setTimeout(function () {
+					that.action(delta.x !== 0);					
+				}, 0);
+			}				
+		};
+		
+		this.setState = function (value) {
+			if (value) {
+				this.slider.widget.animateTo({x: this.maxThrow, y: 0});
+			} else {
+				this.slider.widget.animateTo({x: 0, y: 0});
+			}
+		};
+		
+		this.setAction = function (cb) {
+			this.action = cb;
 		};
 	}
 

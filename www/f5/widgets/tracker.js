@@ -98,7 +98,7 @@
 			});									
 		};
 		
-		this.animateTo = function (delta, time) {
+		this.animateTo = function (delta) {
 			this.el.style['-webkit-transition'] = '-webkit-transform .25s';
 			this.el.style['-webkit-transform'] = 'translate3d(' + delta.x + 'px,' + delta.y + 'px, 0px)';			
 		};
