@@ -502,6 +502,11 @@
 			obj1[id] = value;
 		});
 	};	
+	
+	F5.clone = function (obj) {
+		return JSON.parse(JSON.stringify(obj));
+	};
+	
 }());
 
 

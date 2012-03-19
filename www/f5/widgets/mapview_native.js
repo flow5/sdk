@@ -125,7 +125,17 @@
 						}
 				}, function (result) { // failure
 						console.log(result);
-				}, "com.flow5.mapview", "create", [bounds]);	
+				}, "com.flow5.mapview", "create", [bounds]);
+				
+				PhoneGap.exec(
+					function (result) { // success
+	//					console.log('regionChanged');
+						if (that.boundsChangeAction) {
+							that.boundsChangeAction();						
+						}
+				}, function (result) { // failure
+					console.log(result);
+				}, "com.flow5.mapview", "setRegionChangedCallback", []);					
 				
 				F5.Global.flowController.addWaitTask(function (cb) {
 					if (!that.created) {
@@ -193,13 +203,7 @@
 		};
 		
 		this.setBoundsChangedAction = function (cb) {
-			PhoneGap.exec(
-				function (result) { // success
-//					console.log('regionChanged');
-					cb();
-			}, function (result) { // failure
-				console.log(result);
-			}, "com.flow5.mapview", "setRegionChangedCallback", []);										
+			this.boundsChangeAction = cb;										
 		};	
 		
 		this.setMaskRegion = function (region) {
