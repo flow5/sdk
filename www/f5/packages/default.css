@@ -294,6 +294,7 @@ body {
 	color: red;
 	position: absolute;
 	top: -.25em;
+	left: .25em;
 	font-size: .7em;
 	font-style: italic;
 }
