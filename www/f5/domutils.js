@@ -447,7 +447,7 @@
 		}
 		
 		function isHTMLResource(resource) {
-			return resource.indexOf('.html') !== -1
+			return resource.indexOf('.html') !== -1;
 		}
 		
 		function preloadImagesRecursive(resources) {
@@ -475,8 +475,10 @@
 		activityEl.widget.start(el);
 	};
 	
-	F5.stopActivity = function (el) {		
-		activityEl.widget.stop(el);		
+	F5.stopActivity = function (el) {	
+		if (activityEl) {
+			activityEl.widget.stop(el);					
+		}	
 	};
 	
 	F5.fireStatusBarTouchedEvent = function () {
