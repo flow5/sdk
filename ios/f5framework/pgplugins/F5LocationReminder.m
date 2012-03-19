@@ -70,7 +70,7 @@
 
     // Do not create regions if support is unavailable or disabled.
     if (![CLLocationManager regionMonitoringAvailable] || ![CLLocationManager regionMonitoringEnabled]) {
-        NSLog(@"no can do");
+        DLog(@"no can do");
     } else {
         CLLocationCoordinate2D coord;        
         coord.latitude = [[location objectForKey:@"lat"] doubleValue];

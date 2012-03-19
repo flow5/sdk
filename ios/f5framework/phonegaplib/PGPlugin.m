@@ -53,7 +53,7 @@
 /* 
 	The arguments passed in should not included the callbackId. 
 	If argument count is not as expected, it will call the error callback using PluginResult (if callbackId is available),
-	or it will write to stderr using NSLog.
+	or it will write to stderr using DLog.
  
 	Usage is through the VERIFY_ARGUMENTS macro.
  */

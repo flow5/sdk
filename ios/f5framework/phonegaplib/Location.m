@@ -154,7 +154,7 @@
 		{
             NSError* error = [NSError errorWithDomain:kPGLocationErrorDomain code:1 userInfo:
                               [NSDictionary dictionaryWithObject:@"Location services is not enabled" forKey:NSLocalizedDescriptionKey]];
-            NSLog(@"%@", [error JSONRepresentation]);
+            DLog(@"%@", [error JSONRepresentation]);
             
 			NSString* jsCallback = [NSString stringWithFormat:@"navigator.geolocation.setError(%@);", [error JSONRepresentation]]; 
 			[super writeJavascript:jsCallback];
@@ -172,7 +172,7 @@
         
         NSError* error = [NSError errorWithDomain:NSCocoaErrorDomain code:code userInfo:
                           [NSDictionary dictionaryWithObject:@"App is not authorized for Location Services" forKey:NSLocalizedDescriptionKey]];
-        NSLog(@"%@", [error JSONRepresentation]);
+        DLog(@"%@", [error JSONRepresentation]);
 
         NSString* jsCallback = [NSString stringWithFormat:@"navigator.geolocation.setError(%@);", [error JSONRepresentation]];
         [super writeJavascript:jsCallback];
@@ -420,7 +420,7 @@
 }
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
 {
-    NSLog(@"locationManager::didFailWithError %@", [error localizedFailureReason]);
+    DLog(@"locationManager::didFailWithError %@", [error localizedFailureReason]);
 	NSString* jsCallback = @"";
 	
     // Compass Error

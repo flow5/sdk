@@ -121,7 +121,7 @@
     self.callbackID = [arguments pop];
     
     if (self.mapView) {
-        NSLog(@"mapView already created. Was location.reload() called?");
+        DLog(@"mapView already created. Was location.reload() called?");
     } else {                    
         self.mapView = [[[F5MKMapView alloc] init] autorelease];
         
@@ -173,25 +173,25 @@
 }
 
 - (PluginResult*)showMap:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
-    NSLog(@"showMap");
+    DLog(@"showMap");
     
     if (self.mapView) {
         self.mapView.hidden = NO;  
         return [PluginResult resultWithStatus:PGCommandStatus_OK]; 
     } else {
-        NSLog(@"Trying to use showMap without calling create first");        
+        DLog(@"Trying to use showMap without calling create first");        
         return [PluginResult resultWithStatus:PGCommandStatus_INVALID_ACTION];   
     }
 }
 
 - (PluginResult*)hideMap:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
-    NSLog(@"hideMap");
+    DLog(@"hideMap");
     
     if (self.mapView) {
         self.mapView.hidden = YES;       
         return [PluginResult resultWithStatus:PGCommandStatus_OK];                
     } else {
-        NSLog(@"Trying to use showMap without calling create first");        
+        DLog(@"Trying to use showMap without calling create first");        
         return [PluginResult resultWithStatus:PGCommandStatus_INVALID_ACTION];                
     }
 }
@@ -211,7 +211,7 @@
         NSString *jpegData = [[data newStringInBase64FromData] autorelease];
         return [PluginResult resultWithStatus:PGCommandStatus_OK messageAsString:jpegData];                
     } else {
-        NSLog(@"Trying to use showMap without calling create first");        
+        DLog(@"Trying to use showMap without calling create first");        
         return [PluginResult resultWithStatus:PGCommandStatus_INVALID_ACTION];                
     }
     */
@@ -269,13 +269,13 @@
         
         return [PluginResult resultWithStatus:PGCommandStatus_OK messageAsDictionary:geometry];                
     } else {
-        NSLog(@"Trying to use showMap without calling create first");        
+        DLog(@"Trying to use showMap without calling create first");        
         return [PluginResult resultWithStatus:PGCommandStatus_INVALID_ACTION];                
     }    
 }
 
 - (void)queue_pushRight:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
-    NSLog(@"F5MapView.pushRight");
+    DLog(@"F5MapView.pushRight");
     
     AppDelegate *appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];                
     
@@ -294,7 +294,7 @@
 }
 
 - (void)queue_pushLeft:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
-    NSLog(@"F5MapView.pushLeft");
+    DLog(@"F5MapView.pushLeft");
     
     AppDelegate *appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];                    
     
@@ -311,7 +311,7 @@
 }
 
 - (void)queue_fadeIn:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
-    NSLog(@"F5MapView.fadeIn");
+    DLog(@"F5MapView.fadeIn");
     
     self.mapView.alpha = 0;
     
@@ -326,7 +326,7 @@
 }
 
 - (void)queue_fadeOut:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
-    NSLog(@"F5MapView.fadeOut");
+    DLog(@"F5MapView.fadeOut");
     
     self.mapView.alpha = 1;
     
@@ -416,7 +416,7 @@
         [pluginResult setKeepCallbackAsBool:YES];
         [self writeJavascript: [pluginResult toSuccessCallbackString:self.regionChangeCallbackID]];        
     }
-//    NSLog(@"region changed");
+//    DLog(@"region changed");
 }
 
 - (void)mapView:(MKMapView *)mapView annotationView:(MKAnnotationView *)view calloutAccessoryControlTapped:(UIControl *)control {
@@ -432,7 +432,7 @@
         [pluginResult setKeepCallbackAsBool:YES];
         [self writeJavascript: [pluginResult toSuccessCallbackString:self.callbackID]];
     } else {
-        NSLog(@"wtf?");
+        DLog(@"wtf?");
     }
 }
 

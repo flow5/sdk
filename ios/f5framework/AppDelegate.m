@@ -55,7 +55,7 @@
     AppDelegate *appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];  
 
     NSURL *url = [request URL];
-//    NSLog(@"%@", request);
+//    DLog(@"%@", request);
     if ([[url lastPathComponent] isEqualToString:@"gap"]) {
         
         PG_SBJSON *parser = [[[PG_SBJSON alloc] init] autorelease];
@@ -72,7 +72,7 @@
             NSString *jsonResult = [[appDelegate executeSynchronous: [InvokedUrlCommand commandFromObject:parameters]] toJSONString];            
             return [self makeResponse:jsonResult forRequest:request];            
         } else {
-            NSLog(@"No parameters found in gap request");
+            DLog(@"No parameters found in gap request");
             return [super cachedResponseForRequest:request]; 
         }
     } else if ([[url lastPathComponent] isEqualToString:@"gapready"]) {        
@@ -126,7 +126,7 @@
 	{
 		NSURL *url = [launchOptions objectForKey:[keyArray objectAtIndex:0]];
 		self.invokeString = [url absoluteString];
-		NSLog(@"ios launchOptions = %@",url);
+		DLog(@"ios launchOptions = %@",url);
 	}
 	
 	BOOL result = [super application:application didFinishLaunchingWithOptions:launchOptions];
@@ -141,7 +141,7 @@
 	}    
         
 #if DEBUG
-    NSLog(@"instrumenting webview");
+    DLog(@"instrumenting webview");
     [Debug instrumentWebView:self.viewController.webView];
 #endif
     
@@ -243,7 +243,7 @@
     PGPlugin* obj = [self getCommandInstance:command.className];
     
     if (!([obj isKindOfClass:[PGPlugin class]])) { // still allow deprecated class, until 1.0 release
-        NSLog(@"ERROR: Plugin '%@' not found, or is not a PGPlugin. Check your plugin mapping in PhoneGap.plist.", command.className);
+        DLog(@"ERROR: Plugin '%@' not found, or is not a PGPlugin. Check your plugin mapping in PhoneGap.plist.", command.className);
         return [PluginResult resultWithStatus:PGCommandStatus_CLASS_NOT_FOUND_EXCEPTION];
     } else {
         // construct the fill method name to ammend the second argument.
@@ -252,7 +252,7 @@
             return [obj performSelector:NSSelectorFromString(fullMethodName) withObject:command.arguments withObject:command.options];
         } else {
             // There's no method to call, so throw an error.
-            NSLog(@"ERROR: Method '%@' not defined in Plugin '%@'", fullMethodName, command.className);
+            DLog(@"ERROR: Method '%@' not defined in Plugin '%@'", fullMethodName, command.className);
             return [PluginResult resultWithStatus:PGCommandStatus_INVALID_ACTION];
         }
     }        

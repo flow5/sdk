@@ -84,7 +84,7 @@ static const NSTimeInterval kTimeoutInterval = 180.0;
     if (([[params valueForKey:key] isKindOfClass:[UIImage class]])
         ||([[params valueForKey:key] isKindOfClass:[NSData class]])) {
       if ([httpMethod isEqualToString:@"GET"]) {
-        NSLog(@"can not use GET to upload a file");
+        DLog(@"can not use GET to upload a file");
       }
       continue;
     }

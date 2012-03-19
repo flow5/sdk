@@ -36,7 +36,7 @@
 - (void) processWhitelist
 {
     if (self.whitelist == nil) {
-        NSLog(@"ERROR: PGWhitelist was not initialized properly, all urls will be disallowed.");
+        DLog(@"ERROR: PGWhitelist was not initialized properly, all urls will be disallowed.");
         return;
     }
     
@@ -88,7 +88,7 @@
 - (BOOL) URLIsAllowed:(NSURL*)url
 {
     if (self.expandedWhitelist == nil) {
-        NSLog(@"ERROR: PGWhitelist was not initialized properly, all urls will be disallowed.");
+        DLog(@"ERROR: PGWhitelist was not initialized properly, all urls will be disallowed.");
         return NO;
     }
 
@@ -110,7 +110,7 @@
         }
     }
     
-    NSLog([self errorStringForURL:url], @"");
+    DLog([self errorStringForURL:url], @"");
     // if we got here, the url host is not in the white-list, do nothing
     return NO;
 }

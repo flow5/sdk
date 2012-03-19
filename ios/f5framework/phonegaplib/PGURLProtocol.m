@@ -45,13 +45,13 @@ static PGWhitelist* gWhitelist = nil;
 
 + (NSURLRequest*) canonicalRequestForRequest:(NSURLRequest*) request 
 {
-    //NSLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
+    //DLog(@"%@ received %@", self, NSStringFromSelector(_cmd));
     return request;
 }
 
 - (void) startLoading
 {    
-    //NSLog(@"%@ received %@ - start", self, NSStringFromSelector(_cmd));
+    //DLog(@"%@ received %@ - start", self, NSStringFromSelector(_cmd));
     NSURL* url = [[self request] URL];
     NSString* body = [gWhitelist errorStringForURL:url];
 

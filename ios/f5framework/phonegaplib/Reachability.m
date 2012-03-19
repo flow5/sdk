@@ -62,7 +62,7 @@ static void PrintReachabilityFlags(SCNetworkReachabilityFlags    flags, const ch
 {
 #if kShouldPrintReachabilityFlags
 	
-    NSLog(@"Reachability Flag Status: %c%c %c%c%c%c%c%c%c %s\n",
+    DLog(@"Reachability Flag Status: %c%c %c%c%c%c%c%c%c %s\n",
 			(flags & kSCNetworkReachabilityFlagsIsWWAN)				  ? 'W' : '-',
 			(flags & kSCNetworkReachabilityFlagsReachable)            ? 'R' : '-',
 			
@@ -89,12 +89,12 @@ static void ReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReach
     
     // Converted the asserts above to conditionals, with safe return from the function
     if (info == NULL) {
-        NSLog(@"info was NULL in ReachabilityCallback");
+        DLog(@"info was NULL in ReachabilityCallback");
         return;
     }
     
     if (![(NSObject*) info isKindOfClass: [Reachability class]]) {
-        NSLog(@"info was wrong class in ReachabilityCallback");
+        DLog(@"info was wrong class in ReachabilityCallback");
         return;
     }
 

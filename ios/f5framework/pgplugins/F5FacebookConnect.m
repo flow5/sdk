@@ -78,7 +78,7 @@
         [self writeJavascript: [pluginResult toSuccessCallbackString:self.callbackID]];   
         self.callbackID = nil;        
     } else {
-        NSLog(@"fbDidLogin called back but no callbackID to communicate to JS layer");
+        DLog(@"fbDidLogin called back but no callbackID to communicate to JS layer");
     }
 }
 
@@ -114,7 +114,7 @@
         [self writeJavascript: [pluginResult toSuccessCallbackString:self.callbackID]];   
         self.callbackID = nil;        
     } else {
-        NSLog(@"fbDidLogout called back but no callbackID to communicate to JS layer");
+        DLog(@"fbDidLogout called back but no callbackID to communicate to JS layer");
     }    
 }
 

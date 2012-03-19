@@ -61,7 +61,7 @@
     [self.socket connectToHost:[options valueForKey:@"host"] onPort:[[options valueForKey:@"port"] integerValue] error:&error];
     [self.socket receiveWithTimeout:-1 tag:0];    
     
-    NSLog(@"%@", error);
+    DLog(@"%@", error);
 }
 
 - (void)onUdpSocket:(AsyncUdpSocket *)sock didSendDataWithTag:(long)tag {
@@ -75,12 +75,11 @@
 - (BOOL)onUdpSocket:(AsyncUdpSocket *)sock didReceiveData:(NSData *)data withTag:(long)tag fromHost:(NSString *)host port:(UInt16)port {
     
     NSString* message = [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];    
-    NSLog(@"%@", message);
+    DLog(@"%@", message);
     
     PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsString:message];  
     [pluginResult setKeepCallbackAsBool:YES];
-    NSString* result = [self writeJavascript: [pluginResult toSuccessCallbackString:self.callbackID]];   
-    NSLog(@"%@", result);
+    [self writeJavascript: [pluginResult toSuccessCallbackString:self.callbackID]];   
     
     // wait again
     [self.socket receiveWithTimeout:-1 tag:0];     

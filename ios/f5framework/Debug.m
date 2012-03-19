@@ -25,6 +25,7 @@
  
 ***********************************************************************************************************************/
 
+#if DEBUG
 #import "Debug.h"
 
 @interface Shim : NSObject {
@@ -94,7 +95,7 @@
 
 @implementation WebViewShim
 - (void)webView:(WebView *)webView addMessageToConsole:(NSDictionary *)dictionary {    
-    NSLog(@"%@", [dictionary description]);
+    DLog(@"%@", [dictionary description]);
 }
 @end
 
@@ -113,3 +114,4 @@
 }
 
 @end
+#endif

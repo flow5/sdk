@@ -12,6 +12,7 @@
 
 - (void)log:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
+#if DEBUG
 	NSString* callbackId = [arguments objectAtIndex:0];
 #pragma unused(callbackId)
     NSString* message = [arguments objectAtIndex:1];
@@ -20,6 +21,7 @@
         log_level = [options objectForKey:@"logLevel"];
 
     NSLog(@"[%@] %@", log_level, message);
+#endif
 }
 
 @end

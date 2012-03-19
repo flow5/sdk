@@ -19,6 +19,7 @@
 #import "PhoneGapDelegate.h"
 #import "PhoneGapViewController.h"
 #import "PGPlugin.h"
+#import "PGDebug.h"
 
 #define SYMBOL_TO_NSSTRING_HELPER(x) @#x
 #define SYMBOL_TO_NSSTRING(x) SYMBOL_TO_NSSTRING_HELPER(x)
@@ -200,7 +201,7 @@ static NSString *gapVersion;
             [self.pluginObjects setObject:obj forKey:className];
             [obj release];
         } else {
-            NSLog(@"PGPlugin class %@ (pluginName: %@) does not exist.", className, pluginName);
+            DLog(@"PGPlugin class %@ (pluginName: %@) does not exist.", className, pluginName);
         }
     }
     return obj;
@@ -298,7 +299,7 @@ static NSString *gapVersion;
     }
     
     if (launchImage == nil) {
-        NSLog(@"WARNING: Splash-screen image '%@' was not found. Orientation: %d, iPad: %d", orientedLaunchImageFile, deviceOrientation, isIPad);
+        DLog(@"WARNING: Splash-screen image '%@' was not found. Orientation: %d, iPad: %d", orientedLaunchImageFile, deviceOrientation, isIPad);
     }
     
     self.imageView = [[[UIImageView alloc] initWithImage:launchImage] autorelease];    
@@ -369,16 +370,16 @@ BOOL gSplashScreenShown = NO;
     NSString* appPlistName = @"PhoneGap";
     NSDictionary* phonegapPlist = [[self class] getBundlePlist:appPlistName];
     if (phonegapPlist == nil) {
-        NSLog(@"WARNING: %@.plist is missing.", appPlistName);
+        DLog(@"WARNING: %@.plist is missing.", appPlistName);
         return NO;
     }
     self.settings = [[[NSDictionary alloc] initWithDictionary:phonegapPlist] autorelease];
 
     // read from Plugins dict in PhoneGap.plist in the app bundle
     NSString* pluginsKey = @"Plugins";
-    NSDictionary* pluginsDict = [self.settings objectForKey:@"Plugins"];
+    NSDictionary* pluginsDict = [self.settings objectForKey:pluginsKey];
     if (pluginsDict == nil) {
-        NSLog(@"WARNING: %@ key in %@.plist is missing! PhoneGap will not work, you need to have this key.", pluginsKey, appPlistName);
+        DLog(@"WARNING: %@ key in %@.plist is missing! PhoneGap will not work, you need to have this key.", pluginsKey, appPlistName);
         return NO;
     }
     
@@ -457,7 +458,7 @@ BOOL gSplashScreenShown = NO;
         if (startFilePath == nil)
         {
             loadErr = [NSString stringWithFormat:@"ERROR: Start Page at '%@/%@' was not found.", [[self class] wwwFolderName], startPage];
-            NSLog(@"%@", loadErr);
+            DLog(@"%@", loadErr);
             appURL = nil;
         }
         else {
@@ -581,7 +582,7 @@ BOOL gSplashScreenShown = NO;
         [result appendFormat:@"\nwindow.Settings = %@;", [temp JSONFragment]];
     }
     
-    NSLog(@"Device initialization: %@", result);
+    DLog(@"Device initialization: %@", result);
     [theWebView stringByEvaluatingJavaScriptFromString:result];
     [result release];
     
@@ -611,7 +612,7 @@ BOOL gSplashScreenShown = NO;
  *
  */
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
-    NSLog(@"Failed to load webpage with error: %@", [error localizedDescription]);
+    DLog(@"Failed to load webpage with error: %@", [error localizedDescription]);
     /*
     if ([error code] != NSURLErrorCancelled)
         alert([error localizedDescription]);
@@ -736,7 +737,7 @@ BOOL gSplashScreenShown = NO;
      */
     else
     {
-        NSLog(@"PhoneGapDelegate::shouldStartLoadWithRequest: Received Unhandled URL %@", url);
+        DLog(@"PhoneGapDelegate::shouldStartLoadWithRequest: Received Unhandled URL %@", url);
 
         if ([[UIApplication sharedApplication] canOpenURL:url]) {
             [[UIApplication sharedApplication] openURL:url];
@@ -760,7 +761,7 @@ BOOL gSplashScreenShown = NO;
     PGPlugin* obj = [self getCommandInstance:command.className];
     
     if (!([obj isKindOfClass:[PGPlugin class]])) { // still allow deprecated class, until 1.0 release
-        NSLog(@"ERROR: Plugin '%@' not found, or is not a PGPlugin. Check your plugin mapping in PhoneGap.plist.", command.className);
+        DLog(@"ERROR: Plugin '%@' not found, or is not a PGPlugin. Check your plugin mapping in PhoneGap.plist.", command.className);
         return NO;
     }
     BOOL retVal = YES;
@@ -771,7 +772,7 @@ BOOL gSplashScreenShown = NO;
         [obj performSelector:NSSelectorFromString(fullMethodName) withObject:command.arguments withObject:command.options];
     } else {
         // There's no method to call, so throw an error.
-        NSLog(@"ERROR: Method '%@' not defined in Plugin '%@'", fullMethodName, command.className);
+        DLog(@"ERROR: Method '%@' not defined in Plugin '%@'", fullMethodName, command.className);
         retVal = NO;
     }
     [fullMethodName release];
@@ -785,7 +786,7 @@ BOOL gSplashScreenShown = NO;
 - (void)applicationWillTerminate:(UIApplication *)application
 {
 
-    NSLog(@"applicationWillTerminate");
+    DLog(@"applicationWillTerminate");
     
     // empty the tmp directory
     NSFileManager* fileMgr = [[NSFileManager alloc] init];
@@ -801,7 +802,7 @@ BOOL gSplashScreenShown = NO;
         NSString* filePath = [tempDirectoryPath stringByAppendingPathComponent:fileName];
         result = [fileMgr removeItemAtPath:filePath error:&err];
         if (!result && err) {
-            NSLog(@"Failed to delete: %@ (error: %@)", filePath, err);
+            DLog(@"Failed to delete: %@ (error: %@)", filePath, err);
         }
     }    
     [fileMgr release];
@@ -813,7 +814,7 @@ BOOL gSplashScreenShown = NO;
 */
 - (void)applicationWillResignActive:(UIApplication *)application
 {
-    //NSLog(@"%@",@"applicationWillResignActive");
+    //DLog(@"%@",@"applicationWillResignActive");
 }
 
 /*
@@ -823,14 +824,14 @@ BOOL gSplashScreenShown = NO;
 */
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
-    //NSLog(@"%@",@"applicationWillEnterForeground");
+    //DLog(@"%@",@"applicationWillEnterForeground");
     [self.webView stringByEvaluatingJavaScriptFromString:@"PhoneGap.fireDocumentEvent('resume');"];
 }
 
 // This method is called to let your application know that it moved from the inactive to active state. 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
-    //NSLog(@"%@",@"applicationDidBecomeActive");
+    //DLog(@"%@",@"applicationDidBecomeActive");
 }
 
 /*
@@ -839,7 +840,7 @@ BOOL gSplashScreenShown = NO;
  */
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
-    //NSLog(@"%@",@"applicationDidEnterBackground");
+    //DLog(@"%@",@"applicationDidEnterBackground");
     [self.webView stringByEvaluatingJavaScriptFromString:@"PhoneGap.fireDocumentEvent('pause');"];
 }
 

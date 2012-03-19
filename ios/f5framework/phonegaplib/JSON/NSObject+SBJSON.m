@@ -36,7 +36,7 @@
     PG_SBJsonWriter *jsonWriter = [PG_SBJsonWriter new];
     NSString *json = [jsonWriter stringWithFragment:self];    
     if (json == nil)
-        NSLog(@"-JSONFragment failed. Error trace is: %@", [jsonWriter errorTrace]);
+        DLog(@"-JSONFragment failed. Error trace is: %@", [jsonWriter errorTrace]);
     [jsonWriter release];
     return json;
 }
@@ -45,7 +45,7 @@
     PG_SBJsonWriter *jsonWriter = [PG_SBJsonWriter new];    
     NSString *json = [jsonWriter stringWithObject:self];
     if (json == nil)
-        NSLog(@"-JSONRepresentation failed. Error trace is: %@", [jsonWriter errorTrace]);
+        DLog(@"-JSONRepresentation failed. Error trace is: %@", [jsonWriter errorTrace]);
     [jsonWriter release];
     return json;
 }

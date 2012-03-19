@@ -25,9 +25,10 @@
  
 ***********************************************************************************************************************/
 
-
+#if DEBUG
 @interface Debug : NSObject
 
 + (void)instrumentWebView:(UIWebView*)webview;
 
 @end
+#endif

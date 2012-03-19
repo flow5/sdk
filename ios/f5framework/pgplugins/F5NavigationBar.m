@@ -57,7 +57,7 @@
     self.callbackID = [arguments pop];
     
     if (self.navigationBar) {
-        NSLog(@"NavigationBar already created. Was location.reload() called?");
+        DLog(@"NavigationBar already created. Was location.reload() called?");
     } else {
         AppDelegate *appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];   
         
@@ -79,7 +79,7 @@
 }
 
 -(void)queue_configure:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)configuration {
-    NSLog(@"F5NavigationBar.configure");
+    DLog(@"F5NavigationBar.configure");
     
     NSString *callbackId = [arguments pop];
     BOOL animated = [[arguments pop] boolValue];
@@ -138,7 +138,7 @@
         PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];        
         [self writeJavascript: [pluginResult toSuccessCallbackString:callbackId]];        
     } else {
-        NSLog(@"Trying to use configure NavigationBar without calling create first");
+        DLog(@"Trying to use configure NavigationBar without calling create first");
         
         PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_INVALID_ACTION];        
         [self writeJavascript: [pluginResult toSuccessCallbackString:callbackId]];        

@@ -160,7 +160,7 @@ static id<F5URLRequestRewriterProtocolDelegate> sProtocolDelegate = nil;
                                                                            options:NSRegularExpressionCaseInsensitive
                                                                              error:&error];    
     if (error) {
-        NSLog(@"bad regex");
+        DLog(@"bad regex");
         // TODO: callback to js
     }
     
