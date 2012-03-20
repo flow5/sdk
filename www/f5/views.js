@@ -159,7 +159,7 @@
 			if (this.delegate && this.delegate.initialize) {
 				this.delegate.initialize(this.el, this.node);					
 			} else {				
-/*										
+										
 				// default navigation controls
 				if (node.subflows || node.transitions) {
 					var div = document.createElement('div');
@@ -212,7 +212,7 @@
 						});
 					});				
 				}				
-				*/							
+											
 			}		
 		};
 	}
