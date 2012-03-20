@@ -38,12 +38,12 @@
 }
 
 .f5tabset .f5button.f5button-down {
-	padding-top: .10em;
+	padding-top: .08em;
 	border-bottom: .04em solid #33b5e5;	
 }
 
 .f5tabset .f5button  {
-	padding-top: .08em;
+	padding-top: .06em;
 	border-bottom: .02em solid #33b5e5;		
 	border-right: 1px solid #2e3031;
 }
