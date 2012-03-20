@@ -70,6 +70,7 @@
 		   
 			this.watchId = navigator.geolocation.watchPosition(
 				function (position) {
+					that.enabled = true;
 //					console.log(position.coords);
 					var newLocation = {lat: position.coords.latitude, lng: position.coords.longitude};
 					if (newLocation !== currentLocation) {
@@ -81,6 +82,7 @@
 					}
 				},
 				function (error) {
+					that.enabled = false;
 					console.log(error);
 				},
 				options);

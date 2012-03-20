@@ -44,14 +44,13 @@
 				}								
 			}
 			
-			if (value) {
-				
+			if (value) {				
 				if (this.formatValue) {
 					value = this.formatValue(value);
 				}
 				
 				this.el.innerText = value;				
-			}			
+			}
 		};
 	}
 	
