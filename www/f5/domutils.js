@@ -140,7 +140,7 @@
 	F5.maxClickDistance = 30;
 	F5.maxClickTime = 1000;
 	
-	F5.addTapListener = function (el, cb) {
+	F5.addTapListener = function (el, cb, pressTime) {
 		addEventListener(el, startEventName(), function (startEvent) {						
 			startEvent.preventDefault();
 			
@@ -155,11 +155,17 @@
 				var clickTime = stopEvent.timeStamp - startEvent.timeStamp;
 				var clickMove = F5.eventDistance(startLoc, stopLoc);
 				
-				if (clickTime <= F5.maxClickTime  && clickMove <= F5.maxClickDistance) {
-					F5.callback(cb, stopEvent);
-				}
+				if (pressTime) {
+					if (clickTime >= pressTime && clickMove <= F5.maxClickDistance) {
+						F5.callback(cb, stopEvent);
+					}										
+				} else {
+					if (clickTime <= F5.maxClickTime && clickMove <= F5.maxClickDistance) {
+						F5.callback(cb, stopEvent);
+					}					
+				}				
 				
-				F5.addTapListener(el, cb);
+				F5.addTapListener(el, cb, pressTime);
 				
 			}, 'tap');
 		}, 'tap');
