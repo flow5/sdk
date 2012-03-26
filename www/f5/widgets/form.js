@@ -72,7 +72,25 @@ function Form() {
 		}
 					
 		F5.addClass(this.el, 'f5form');
-								
+		
+		// create a hidden submit button so we can hook the keyboard "Go" button
+		var submit = document.createElement('input');
+		submit.type = 'submit';
+		submit.style.height = '0px';
+		submit.style.width = '0px';
+		submit.style.visibility = 'hidden';
+		submit.addEventListener('click', function (e) {
+			e.stopPropagation();
+		})
+		this.el.appendChild(submit);
+		
+		this.el.onsubmit = function () {
+			if (that.onSubmit) {
+				that.onSubmit();
+			}
+			return false;
+		}
+												
 		var blurTimeout;
 		F5.forEach(this.el.querySelectorAll('[f5widget=Input]'), function (el) {	
 			// NOTE: on iOS 4.3 and Android, executing the blur logic when switching fields
@@ -143,6 +161,10 @@ function Form() {
 	this.setOnFocus = function (cb) {
 		this.onFocus = cb;
 	};
+	
+	this.setOnSubmit = function (cb) {
+		this.onSubmit = cb;
+	}
 	
 	this.reset = function () {
 		F5.forEach(this.el.querySelectorAll('[f5widget=Input]'), function (el) {
