@@ -96,7 +96,7 @@ body {
 }
 
 .f5navbar .f5button-label {
-	font-size: .16em;
+	font-size: .15em;
 }
 
 .f5navbar .f5leftbutton {
@@ -637,7 +637,7 @@ body {
 
 .f5slider .left, .f5slider .right {
 	position: absolute;
-	top: 0px;
+	top: .01em;
 	height: 100%;
 	width: 50%;
 	display: -webkit-box;
