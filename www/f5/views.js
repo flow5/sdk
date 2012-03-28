@@ -121,7 +121,7 @@
 			if (this.delegate && this.delegate.getNavConfig) {
 				return this.delegate.getNavConfig();
 			} else {
-				if (this.node.back) {
+				if (this.node.back && this.node.parent.type === 'flow') {
 					var leaf = this.node.back;
 					while (leaf.selection) {
 						leaf = leaf.selection;
