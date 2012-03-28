@@ -45,6 +45,7 @@ cli.setUsage("node devserv.js [OPTIONS]");
 
 cli.parse({
 	port: ['p', 'port', 'number'],
+	verbose: ['v', 'verbose logging'],
 });
 
 function compress(html, res) {
@@ -194,8 +195,9 @@ cli.main(function (args, options) {
 			}		
 		}
 			
-		
-//		showRequest(req, true);
+		if (options.verbose) {
+			showRequest(req, true);			
+		}
 		
 		// prevent directory climbing through passed parameters
 		var parsed = url.parse(req.url.replace('..', ''), true);
