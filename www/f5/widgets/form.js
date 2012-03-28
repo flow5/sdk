@@ -78,6 +78,9 @@ function Form() {
 		submit.type = 'submit';
 		submit.style.height = '0px';
 		submit.style.width = '0px';
+		submit.style.position = 'absolute';
+		submit.style.top = '0px';
+		submit.style.left = '-100px'
 		submit.style.visibility = 'hidden';
 		submit.addEventListener('click', function (e) {
 			e.stopPropagation();

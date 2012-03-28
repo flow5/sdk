@@ -104,6 +104,8 @@
 // f5
 + (NSString*) startPage
 {
+// this makes debugging using http://localhost:9999 a bit nicer because the code is still readable
+// using inline=false is even a bit easier. just like in desktop browser
 #if TARGET_IPHONE_SIMULATOR
     return [NSString stringWithFormat:@"http://%@:8008/generate?app=%@&native=true&inline=true&compress=false&mobile=true&platform=ios&debug=true", [AppDelegate devservhost], [AppDelegate appname]];
 #else

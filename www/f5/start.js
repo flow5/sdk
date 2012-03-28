@@ -28,6 +28,11 @@
 /*global F5*/
 
 (function () {	
+	
+	if (F5.isDebug()) {
+		console.log(JSON.stringify(localStorage));
+	}
+	
 		
 	// TODO: specify a mock image server location
 	if (F5.isMobile()) {
