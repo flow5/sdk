@@ -24,7 +24,7 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global F5*/
+/*global F5, PhoneGap*/
 
 
 (function () {
@@ -32,10 +32,13 @@
 	function Activity() {
 		
 		this.construct = function () {			
-
+			F5.addClass(this.el, 'f5activityspritecontainer');
 		};
 		
-		this.start = function (el) {		
+				
+		this.start = function (el) {
+			el.appendChild(this.el);			
+					
 			var pos = F5.elementAbsolutePosition(el);
 			var bounds = {top: pos.y, left: pos.x, width: el.offsetWidth, height: el.offsetHeight};
 			
@@ -48,6 +51,19 @@
 		};
 		
 		this.stop = function (el) {
+			// make sure that the activity is actually contained by this element
+			var search = this.el;
+			while (search) {
+				if (search.parentElement === el) {
+					break;
+				}
+				search = search.parentElement;
+			}
+
+			if (search) {
+				this.el.parentElement.removeChild(this.el);			
+			}
+						
 			PhoneGap.exec(
 				function (result) { // success
 					console.log(result);
