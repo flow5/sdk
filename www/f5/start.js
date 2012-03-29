@@ -30,7 +30,9 @@
 (function () {	
 	
 	if (F5.isDebug()) {
-		console.log(JSON.stringify(localStorage));
+		F5.forEach(localStorage, function (id, value) {
+//			console.log(id + ': ' + value);			
+		});
 	}
 	
 		

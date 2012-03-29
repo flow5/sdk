@@ -39,20 +39,25 @@
 			var that = this;
 			this.fields.forEach(function (field) {
 				if (field.persist) {
-					if (typeof field.value !== 'undefined' && !localStorage[field.name]) {
-						localStorage[field.name] = JSON.stringify(field.value);
+					
+					if (typeof field.value !== 'undefined' && !localStorage.getItem(field.name)) {
+						if (typeof field.value === 'object') {
+							localStorage.setItem(field.name, JSON.stringify(field.value));
+						} else {
+							localStorage.setItem(field.name, field.value);	
+						}
 					}
 
 					that.__defineGetter__(field.name, function(){
-						if (localStorage[field.name]) {
-							return JSON.parse(localStorage[field.name]);							
+						if (localStorage.getItem(field.name)) {
+							return JSON.parse(localStorage.getItem(field.name));							
 						} else {
 							return undefined;
 						}
 				    });
 
 				    that.__defineSetter__(field.name, function(value){
-						localStorage[field.name] = JSON.stringify(value);
+						localStorage.setItem(field.name, JSON.stringify(value));
 				    });					    
 				} else {
 					if (typeof field.value !== 'undefined') {
