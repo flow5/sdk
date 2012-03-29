@@ -56,7 +56,7 @@
 				    });					    
 				} else {
 					if (typeof field.value !== 'undefined') {
-						that.values[field.name] = field.value;					
+						that.values[field.name] = F5.clone(field.value);					
 					}
 
 					that.__defineGetter__(field.name, function(){
@@ -74,7 +74,7 @@
 			var that = this;			
 			this.fields.forEach(function (field) {
 				if (typeof field.value !== 'undefined') {
-					that[field.name] = field.value;
+					that[field.name] = F5.clone(field.value);
 				} else {
 					if (field.persist) {
 						localStorage.removeItem(field.name);

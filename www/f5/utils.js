@@ -55,7 +55,8 @@
 	
 	function doXHR(method, url, body, success, error, headers, username, password) {				
 		var xhr = new XMLHttpRequest();
-		xhr.open(method, url, true, username, password);
+		xhr.open(method, url, true);
+//		xhr.open(method, url, true, username, password);
 		if (method === 'POST' || method === 'PUT') {
 			xhr.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
 		}
@@ -136,10 +137,13 @@
 		}		
 	}
 	
-	F5.networkErrorHandler = function (cb) {
-		F5.alert('Network Error', "", function () {
+	F5.networkErrorHandler = function (cb, url, message) {
+		F5.alert('Network Error', '', function () {
 			cb();
 		});
+		// message might be a number
+		message += '';
+		F5.Analytics.logEvent('NetworkError', {url: url, message: message});
 	};
 		
 	F5.execService = function (node, id, parameters, cb) {
@@ -231,9 +235,9 @@
 			}
 		}};
 		
-		// TODO: should move this up to the DOM aware layer
 		var timeoutMS = 10000;
 		function timeout() {
+			// TODO: should move this up to the DOM aware layer
 			pending.confirmWidget = F5.confirm("A network operation is taking a long time.", 
 						"Press OK to keep waiting or Cancel to cancel the operation.", function (result) {
 							if (result) {
@@ -272,14 +276,14 @@
 						// TODO: validateSchema(response, service.responseSchema);						
 					} catch (e2) {
 						console.log(e2.message);
-						F5.networkErrorHandler(cb);						
+						F5.networkErrorHandler(cb, url, e2.message);						
 					}
 				}, function error(response, status) {
 					pendingComplete(node, pending);						
 					if (pending.aborted) {
 						cb(); 
 					} else {
-						F5.networkErrorHandler(cb);
+						F5.networkErrorHandler(cb, url, status);
 					}			
 				}, null, username, password);
 		} else if (method === 'POST' || method === 'PUT'){	
@@ -310,14 +314,14 @@
 						// TODO: validateSchema(response, service.responseSchema);						
 					} catch (e2) {
 						console.log(e2.message);
-						F5.networkErrorHandler(cb);						
+						F5.networkErrorHandler(cb, url, e2.message);						
 					}
 				}, function error(response, status) {
 					pendingComplete(node, pending);	
 					if (pending.aborted) {
 						cb();
 					} else {
-						F5.networkErrorHandler(cb);						
+						F5.networkErrorHandler(cb, url, status);						
 					}			
 				}, null, username, password);							
 		}	
