@@ -140,17 +140,29 @@
 	F5.maxClickDistance = 30;
 	F5.maxClickTime = 1000;
 	
-	F5.addTapListener = function (el, cb, pressTime) {
-		addEventListener(el, startEventName(), function (startEvent) {						
+	F5.addTapListener = function (el, cb, pressTime) {		
+		addEventListener(el, startEventName(), function (startEvent) {	
+			var cancel = false;
+								
 			startEvent.preventDefault();
 			
 			var startLoc = F5.eventLocation(startEvent);
 			removeEventListener(el, startEventName(), 'tap');
+			
+			addEventListener(el, moveEventName(), function (moveEvent) {
+				var moveLoc = F5.eventLocation(moveEvent);				
+				var moveDistance = F5.eventDistance(startLoc, moveLoc);
+				if (moveDistance > F5.maxClickDistance) {
+					cancel = true;
+				}
+			}, 'tapMove');
+			
 			addEventListener(el, stopEventName(), function (stopEvent) {
 				stopEvent.preventDefault();
 				
 				var stopLoc = F5.eventLocation(stopEvent);
 				removeEventListener(el, stopEventName(), 'tap');
+				removeEventListener(el, moveEventName(), 'tapMove');
 				
 				var clickTime = stopEvent.timeStamp - startEvent.timeStamp;
 				var clickMove = F5.eventDistance(startLoc, stopLoc);
@@ -160,7 +172,7 @@
 						F5.callback(cb, stopEvent);
 					}										
 				} else {
-					if (clickTime <= F5.maxClickTime && clickMove <= F5.maxClickDistance) {
+					if (clickTime <= F5.maxClickTime && clickMove <= F5.maxClickDistance && !cancel) {
 						F5.callback(cb, stopEvent);
 					}					
 				}				
@@ -175,6 +187,7 @@
 		// TODO: maybe include the event name with the el.F5 object so this is guaranteed
 		// to work even if called before the stop event fires
 		removeEventListener(el, startEventName(), 'tap');
+		removeEventListener(el, startEventName(), 'tapMove');
 	};
 	
 	F5.addTransitionEndListener = function (el, cb) {
