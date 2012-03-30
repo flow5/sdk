@@ -72,7 +72,7 @@ static id<F5URLRequestRewriterProtocolDelegate> sProtocolDelegate = nil;
         NSUInteger contentStart = prefixRange.location + prefixRange.length;
         NSData *data = [QSStrings decodeBase64WithString:[content substringFromIndex:contentStart]];   
         
-        NSURLResponse *response = [[NSURLResponse alloc] initWithURL:url MIMEType:mimeType expectedContentLength:[data length] textEncodingName:nil];        
+        NSURLResponse *response = [[[NSURLResponse alloc] initWithURL:url MIMEType:mimeType expectedContentLength:[data length] textEncodingName:nil] autorelease];      
         [[self client] URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageAllowed];
         
         [[self client] URLProtocol:self didLoadData:data];

@@ -72,7 +72,7 @@
 					this.screenFrame.appendChild(node.view.el);
 				} else {
 					// TODO: this is slightly ugly
-					node.parent.view.el.getElementsByClassName('f5container')[0].appendChild(node.view.el);												
+					node.parent.view.el.getElementsByClassName('f5container')[0].appendChild(node.view.el);
 				}
 			}
 			

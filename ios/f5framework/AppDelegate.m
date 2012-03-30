@@ -61,7 +61,7 @@
         PG_SBJSON *parser = [[[PG_SBJSON alloc] init] autorelease];
 
         NSArray *components = [[url query] componentsSeparatedByString:@"&"];
-        NSMutableDictionary *parameters;
+        NSMutableDictionary *parameters = nil;
         for (NSString *component in components) {            
             NSArray *parts = [component componentsSeparatedByString:@"="];
             NSString *decoded = [[parts objectAtIndex:1] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];

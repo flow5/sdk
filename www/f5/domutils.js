@@ -184,10 +184,9 @@
 	};
 	
 	F5.removeTapListener = function (el) {
-		// TODO: maybe include the event name with the el.F5 object so this is guaranteed
-		// to work even if called before the stop event fires
 		removeEventListener(el, startEventName(), 'tap');
-		removeEventListener(el, startEventName(), 'tapMove');
+		removeEventListener(el, moveEventName(), 'tapMove');
+		removeEventListener(el, stopEventName(), 'tap');
 	};
 	
 	F5.addTransitionEndListener = function (el, cb) {
