@@ -58,6 +58,17 @@
 @synthesize subtitle;
 @synthesize index;
 @synthesize	coordinate;
+
+- (void)dealloc
+{
+    self.title = nil;
+    self.markerImage = nil;
+    self.subtitle = nil;
+    self.index = nil;
+    
+    [super dealloc];
+}
+
 @end
 
 @interface F5AnnotationView : MKAnnotationView
