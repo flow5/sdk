@@ -40,6 +40,7 @@
 			}, "com.flow5.udp", "sendDatagram", [data]);	
 		};	
 		
+		// TODO: need a disconnect call to avoid leaving the PG callback registered
 		this.connectToHost = function (host, port, receive, error) {
 			PhoneGap.exec(
 				function (result) { // success

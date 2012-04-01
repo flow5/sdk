@@ -32,6 +32,9 @@
 - (void)call:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
     NSString *phoneNumber = [@"tel://" stringByAppendingString:[options valueForKey:@"number"]];
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:phoneNumber]];    
+    
+    PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];  
+    [self writeJavascript: [pluginResult toSuccessCallbackString:[arguments pop]]];    
 }
 
 - (PluginResult*)canMakeCall:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {

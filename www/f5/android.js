@@ -42,7 +42,7 @@ F5.Global.flowController.addWaitTask(function (cb) {
 		if (F5.Global.flowController.hasBack()) {
 			F5.Global.flowController.doBack();
 		} else {
-			PhoneGap.exec(null, null, "App", "exitApp", [false]);		
+			PhoneGap.exec(F5.noop, F5.noop, "App", "exitApp", [false]);		
 		}
 	});
 	

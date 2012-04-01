@@ -89,8 +89,6 @@
 			
 			PhoneGap.exec(
 				function (result) { // success
-					console.log('dropPins');					
-					that.calloutActions[result.button](result.index);
 				console.log(result);
 			}, function (result) { // failure
 				console.log(result);
@@ -136,6 +134,15 @@
 				}, function (result) { // failure
 					console.log(result);
 				}, "com.flow5.mapview", "setRegionChangedCallback", []);					
+				
+				PhoneGap.exec(
+					function (result) { // success
+						if (that.calloutActions) {
+							that.calloutActions[result.button](result.index);						
+						}					
+				}, function (result) { // failure
+					console.log(result);
+				}, "com.flow5.mapview", "setCalloutCallback", []);					
 				
 				F5.Global.flowController.addWaitTask(function (cb) {
 					if (!that.created) {
@@ -187,6 +194,14 @@
 		};
 		
 		this.release = function () {
+			delete this.calloutActions;
+			delete this.boundsChangeAction;						
+			PhoneGap.exec(
+				function (result) { // success
+			}, function (result) { // failure
+				console.log(result);
+			}, "com.flow5.mapview", "releaseCallbacks", []);			
+			
 			F5.Global.flowController.removeFlowObserver(this);							
 		};
 		

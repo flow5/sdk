@@ -102,7 +102,7 @@
 							console.log('hiding splash: ' + F5.platform());
 							if (F5.platform() === 'android') {
 								setTimeout(function () {
-								    PhoneGap.exec(null, null, "App", "hideSplashScreen", [false]);																		
+								    PhoneGap.exec(F5.noop, F5.noop, "App", "hideSplashScreen", [false]);																		
 								}, 500);
 							} else {
 								PhoneGap.exec(

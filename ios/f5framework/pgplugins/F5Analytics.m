@@ -59,12 +59,10 @@ void uncaughtExceptionHandler(NSException *exception)
 
 - (void)logEvent:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-    NSString *callbackId = [arguments pop];
-    
-    [FlurryAnalytics logEvent:[arguments pop] withParameters:options];   
-    
     PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];  
-    [self writeJavascript: [pluginResult toSuccessCallbackString:callbackId]];
+    [self writeJavascript: [pluginResult toSuccessCallbackString:[arguments pop]]];
+
+    [FlurryAnalytics logEvent:[arguments pop] withParameters:options];       
 }
 
 @end

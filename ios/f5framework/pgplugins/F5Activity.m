@@ -61,12 +61,18 @@
     
     self.activityView.hidden = NO;
     
+    PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];  
+    [self writeJavascript: [pluginResult toSuccessCallbackString:[arguments pop]]];    
+    
 }
 
 - (void)stop:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
     [self.activityView stopAnimating];    
-    self.activityView.hidden = YES;        
+    self.activityView.hidden = YES;     
+    
+    PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];  
+    [self writeJavascript: [pluginResult toSuccessCallbackString:[arguments pop]]];    
 }
 
 @end

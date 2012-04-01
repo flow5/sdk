@@ -46,7 +46,7 @@
 
 @property (nonatomic, copy) NSString *title;
 @property (nonatomic, copy) NSString *subtitle;
-@property (nonatomic, copy) UIImage *markerImage;
+@property (nonatomic, retain) UIImage *markerImage;
 @property (nonatomic, copy) NSNumber *index;
 @property (nonatomic, assign) CLLocationCoordinate2D coordinate;
 
@@ -112,13 +112,16 @@
 @implementation F5MapView
 
 @synthesize mapView;
-@synthesize callbackID;
+
+// these get used multiple times
+@synthesize pinCallbackID;
 @synthesize regionChangeCallbackID;
+
 @synthesize animateToRegionCallbackID;
 
 - (void)create:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)bounds {
     
-    self.callbackID = [arguments pop];
+    id callbackID = [arguments pop];
     
     if (self.mapView) {
         DLog(@"mapView already created. Was location.reload() called?");
@@ -151,12 +154,24 @@
     }
     
     PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];   
-    [self writeJavascript: [pluginResult toSuccessCallbackString:self.callbackID]];     
+    [self writeJavascript: [pluginResult toSuccessCallbackString:callbackID]];     
+}
+
+- (void)releaseCallbacks:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
+    if (self.regionChangeCallbackID) {
+        PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];   
+        [self writeJavascript: [pluginResult toSuccessCallbackString:self.regionChangeCallbackID]];        
+    }
+    if (self.pinCallbackID) {
+        PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];   
+        [self writeJavascript: [pluginResult toSuccessCallbackString:self.pinCallbackID]];        
+    }    
+    
+    PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];   
+    [self writeJavascript: [pluginResult toSuccessCallbackString:[arguments pop]]];        
 }
 
 - (void)setMaskRegion:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)mask {
-    
-    NSString *callbackID __attribute__((unused)) = [arguments pop];
     
     int top = [[mask valueForKey:@"top"] intValue];
     int left = [[mask valueForKey:@"left"] intValue];
@@ -165,11 +180,17 @@
     
     // TODO: get mask regions from js layer
     [self.mapView.maskRegions removeAllObjects];
-    [self.mapView.maskRegions addObject:[NSValue valueWithCGRect:CGRectMake(left, top, width, height)]];        
+    [self.mapView.maskRegions addObject:[NSValue valueWithCGRect:CGRectMake(left, top, width, height)]]; 
+    
+    PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];   
+    [self writeJavascript: [pluginResult toSuccessCallbackString:[arguments pop]]];            
 }
 
 - (void)clearMaskRegion:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)mask {    
     [self.mapView.maskRegions removeAllObjects];
+
+    PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];   
+    [self writeJavascript: [pluginResult toSuccessCallbackString:[arguments pop]]];            
 }
 
 - (PluginResult*)showMap:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
@@ -290,7 +311,10 @@
                              self.mapView.center = center;
                          }
                          completion:nil];                                       
-    }];                
+    }];    
+    
+    PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];   
+    [self writeJavascript: [pluginResult toSuccessCallbackString:[arguments pop]]];                
 }
 
 - (void)queue_pushLeft:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
@@ -308,6 +332,9 @@
                          }
                          completion:nil];
     }];
+    
+    PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];   
+    [self writeJavascript: [pluginResult toSuccessCallbackString:[arguments pop]]];                
 }
 
 - (void)queue_fadeIn:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
@@ -323,6 +350,9 @@
                          }
                          completion:nil];
     }];
+    
+    PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];   
+    [self writeJavascript: [pluginResult toSuccessCallbackString:[arguments pop]]];                
 }
 
 - (void)queue_fadeOut:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
@@ -338,11 +368,17 @@
                          }
                          completion:nil];
     }];
+    
+    PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];   
+    [self writeJavascript: [pluginResult toSuccessCallbackString:[arguments pop]]];                
 }
 
 - (void)removePins:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
     
     [self.mapView removeAnnotations:self.mapView.annotations];
+    
+    PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];   
+    [self writeJavascript: [pluginResult toSuccessCallbackString:[arguments pop]]];                
 }
 
 
@@ -365,10 +401,15 @@
     }
 }
 
+- (void)setCalloutCallback:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+    self.pinCallbackID = [arguments pop];    
+}
+
 - (void)dropPins:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
     
-    self.callbackID = [arguments pop];
-
+    id callbackID = [arguments pop];
+    
     [self.mapView removeAnnotations:self.mapView.annotations];
         
     PG_SBJSON *parser = [[[PG_SBJSON alloc] init] autorelease];
@@ -394,7 +435,10 @@
                         
 		[self.mapView addAnnotation:annotation];
     }      
-  
+    
+    PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];   
+    [self writeJavascript: [pluginResult toSuccessCallbackString:callbackID]];        
+      
     // not required if map bounds are used to do search
 //    [self.mapView zoomToFitMapAnnotations];
 }
@@ -425,12 +469,12 @@
         NSDictionary *message = [NSDictionary dictionaryWithObjectsAndKeys:@"streetView", @"button", annotation.index, @"index", nil];                
         PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsDictionary:message];   
         [pluginResult setKeepCallbackAsBool:YES];
-        [self writeJavascript: [pluginResult toSuccessCallbackString:self.callbackID]];
+        [self writeJavascript: [pluginResult toSuccessCallbackString:self.pinCallbackID]];
     } else if (control == [view rightCalloutAccessoryView]) {
         NSDictionary *message = [NSDictionary dictionaryWithObjectsAndKeys:@"detailView", @"button", annotation.index, @"index", nil];                        
         PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsDictionary:message];   
         [pluginResult setKeepCallbackAsBool:YES];
-        [self writeJavascript: [pluginResult toSuccessCallbackString:self.callbackID]];
+        [self writeJavascript: [pluginResult toSuccessCallbackString:self.pinCallbackID]];
     } else {
         DLog(@"wtf?");
     }

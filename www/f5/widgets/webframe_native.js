@@ -97,6 +97,8 @@
 			
 		};
 		
+		// TODO: releaseCallback
+		
 		this.open = function (url) {
 			
 			this.el.style.display = '';

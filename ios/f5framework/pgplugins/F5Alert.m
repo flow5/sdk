@@ -73,6 +73,9 @@
     UIAlertView *theAlertView = [[self.alertView retain] autorelease];
     self.alertView = nil;
     [theAlertView dismissWithClickedButtonIndex:0 animated:YES];
+    
+    PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];  
+    [self writeJavascript: [pluginResult toSuccessCallbackString:[arguments pop]]];    
 }
 
 

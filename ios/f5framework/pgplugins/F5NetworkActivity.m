@@ -25,6 +25,9 @@
 {
     self.activityCount = [NSNumber numberWithInt:[self.activityCount integerValue] + 1];
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    
+    PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];  
+    [self writeJavascript: [pluginResult toSuccessCallbackString:[arguments pop]]];    
 }
 
 - (void)activityCompleted:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
@@ -33,6 +36,9 @@
     if (![self.activityCount integerValue]) {
         [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
     }
+    
+    PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];  
+    [self writeJavascript: [pluginResult toSuccessCallbackString:[arguments pop]]];    
 }
 
 @end

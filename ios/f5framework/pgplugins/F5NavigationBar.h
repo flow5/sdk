@@ -27,6 +27,8 @@
 
 #import "PGPlugin.h"
 
+// TODO: OBSOLETE? OR CREATE RELEASE CALLBACK METHOD
+
 @interface F5NavigationBar : PGPlugin {
 
     NSString* callbackID; 

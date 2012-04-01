@@ -166,6 +166,9 @@ static id<F5URLRequestRewriterProtocolDelegate> sProtocolDelegate = nil;
     
     [options setValue:regex forKey:@"regex"];        
     [rules addObject:options];
+    
+    PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];  
+    [self writeJavascript: [pluginResult toSuccessCallbackString:[arguments pop]]];    
 }
 
 - (BOOL)canInitWithRequest:(NSURLRequest *)request

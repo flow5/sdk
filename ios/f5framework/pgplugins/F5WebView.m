@@ -123,7 +123,10 @@
         return;
     }
     
-    [self hide];                    
+    [self hide];  
+    
+    PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];  
+    [self writeJavascript: [pluginResult toSuccessCallbackString:[arguments pop]]];    
 }
 
 - (PluginResult*)show:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
@@ -150,7 +153,8 @@
                          NSURL *baseURL = [NSURL fileURLWithPath:path];
                          self.overlayWebView.hidden = YES;
                          [self.overlayWebView loadHTMLString:@"<html></html>" baseURL:baseURL];
-                     }];    
+                     }];   
+    
 }
 
 - (PluginResult*)hide:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options

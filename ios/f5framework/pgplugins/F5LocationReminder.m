@@ -63,7 +63,7 @@
 
 - (void)setReminder:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
     
-    NSString *callbackID __attribute__((unused)) = [arguments pop];
+    id callbackID = [arguments pop];
     
     PG_SBJSON *parser = [[[PG_SBJSON alloc] init] autorelease];    
     NSDictionary *location = [parser objectWithString:[arguments pop]];
@@ -81,7 +81,10 @@
         [self.locationManager startMonitoringForRegion:region desiredAccuracy:kCLLocationAccuracyHundredMeters];
         
         [region release];        
-    }    
+    } 
+    
+    PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];   
+    [self writeJavascript: [pluginResult toSuccessCallbackString:callbackID]];            
 }
 
 @end

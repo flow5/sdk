@@ -75,7 +75,7 @@ typedef void (^CommandBlock)();
         command.block();
         Block_release(command.block);
     }  
-    [self.queue removeAllObjects];   
+    [self.queue removeAllObjects];       
 }
 
 @end

@@ -33,13 +33,13 @@
 @class F5MKMapView;
 
 @interface F5MapView : PGPlugin <MKMapViewDelegate> {
-    NSString* callbackID;   
+    NSString *pinCallbackID;   
     NSString *regionChangeCallbackID;
     NSString *animateToRegionCallbackID;
     F5MKMapView* mapView;    
 }
 
-@property (nonatomic, copy) NSString* callbackID;
+@property (nonatomic, copy) NSString* pinCallbackID;
 @property (nonatomic, copy) NSString* regionChangeCallbackID;
 @property (nonatomic, copy) NSString* animateToRegionCallbackID;
 @property (nonatomic, retain) F5MKMapView* mapView;
@@ -51,6 +51,7 @@
 - (PluginResult*)getSnapshot:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
 - (void)create:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void)releaseCallbacks:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
 - (void)animateToRegion:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
@@ -58,6 +59,7 @@
 - (void)clearMaskRegion:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
 - (void)setRegionChangedCallback:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void)setCalloutCallback:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
 - (void)queue_pushLeft:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void)queue_pushRight:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
