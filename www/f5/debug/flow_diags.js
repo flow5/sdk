@@ -46,15 +46,6 @@
 			return getChildRecursive(flow.root, path.split('-').slice(1));
 		};	
 
-		flow.diags.isNodePathActive = function (node) {
-			var active = node.active;
-			while (active && node.parent) {
-				node = node.parent;
-				active = node.active;
-			}
-			return active;
-		};	
-
 		flow.diags.isSubflowActive = function (node) {
 			while (!node.activeSubflow && node.parent) {
 				node = node.parent;
@@ -204,7 +195,7 @@
 
 			function getActiveNodeStyle(node) {
 				var nodeActive = node.active;
-				var pathActive = flow.diags.isNodePathActive(node);
+				var pathActive = flow.isNodePathActive(node);
 
 				if (flow.diags.isSubflowActive(node)) {
 					pathActive = false;
@@ -235,7 +226,7 @@
 
 			function addSelectionButton(node, parent, id) {
 				var fillColor, color;
-				if (flow.diags.isNodePathActive(parent) && !flow.diags.isSubflowActive(parent) && !node.active) {
+				if (flow.isNodePathActive(parent) && !flow.diags.isSubflowActive(parent) && !node.active) {
 					fillColor = activeColorAttribute('fillcolor');
 					color = activeColorAttribute('color');					
 				} else {
@@ -261,7 +252,7 @@
 
 			function addTransitionSource(node, id) {
 				var fillColor, color;
-				if (flow.diags.isNodePathActive(node) && !flow.diags.isSubflowActive(node)) {
+				if (flow.isNodePathActive(node) && !flow.diags.isSubflowActive(node)) {
 					fillColor = activeColorAttribute('fillcolor');
 					color = activeColorAttribute('color');
 				} else {
@@ -289,7 +280,7 @@
 
 			function addSubflowSource(node, id) {
 				var fillColor, color;
-				if (flow.diags.isNodePathActive(node) && !flow.diags.isSubflowActive(node)) {
+				if (flow.isNodePathActive(node) && !flow.diags.isSubflowActive(node)) {
 					fillColor = activeColorAttribute('fillcolor');
 					color = activeColorAttribute('color');
 				} else {

@@ -73,7 +73,11 @@
 		
 		el.F5.listeners[eventName] = function f5eventListenerWrapper(e) {
 			// TODO: check for transitioning for all event callbacks?
-			F5.callback(cb, e);
+			if (!F5.synchronousXHRReentryWorkaround) {
+				F5.callback(cb, e);				
+			} else {
+				console.log('Ignoring event dispatched during synchronous xhr.send: ' + eventName);
+			}			
 		};
 		el.addEventListener(eventType, el.F5.listeners[eventName], false);	
 		eventListenerCount += 1;
@@ -202,14 +206,22 @@
 	};
 	
 	F5.alert = function (title, message, action) {
-		var alert = F5.createWidget('Alert', {title: title, message: message+''});
+		if (message) {
+			message += '';
+		}		
+		
+		var alert = F5.createWidget('Alert', {title: title, message: message});
 		alert.widget.setAction(action);
 		alert.widget.present();
 		return alert.widget;
 	};
 
 	F5.confirm = function (title, message, action) {
-		var confirm = F5.createWidget('Confirm', {title: title, message: message+''});
+		if (message) {
+			message += '';
+		}		
+		
+		var confirm = F5.createWidget('Confirm', {title: title, message: message});
 		confirm.widget.setAction(action);
 		confirm.widget.present();
 		return confirm.widget;

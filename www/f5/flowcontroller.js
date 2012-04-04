@@ -134,7 +134,8 @@
 			doLifecycleEventRecursive('WillBecomeInactive', node, cb);
 		}									
 						
-		function flushWaitTasks(cb) {			
+		function flushWaitTasks(cb) {	
+			
 			function complete() {	
 				cb();
 				
@@ -243,10 +244,18 @@
 		
 		// select the child of node with the given id
 		this.doSelection = function (node, id, cb) {	
-			F5.assert(!lockout, 'Locked out');				
 			F5.assert(node.type === 'switcher' || node.type === 'set', 
 				'Can only doSelection on node of types switcher or set');
 			F5.assert(node.children[id], 'No child with id: ' + id);
+
+			if (lockout) {
+				console.log('Cannot doSelection. Locked out.');
+				return;
+			}
+			if (!flow.isNodePathActive(node)) {
+				console.log('Cannot doSelection. Node is not active.');
+				return;
+			}					
 			
 			cb = cb || function () {
 //				console.log('selection complete');
@@ -273,7 +282,6 @@
 							that.addWaitTask(observer.doSelection(node, id));
 						}
 					});		
-					
 					flushWaitTasks(function selectionComplete() {
 						node.selection.active = false;
 						node.selection = node.children[id];
@@ -291,12 +299,20 @@
 				
 		// use the transition on the node with the given id 
 		this.doTransition = function (node, id, parameters, cb) {
-			var that = this;
-			
-			F5.assert(!lockout, 'Locked out');
 			F5.assert(id === 'back' || node.transitions, 'No transitions defined for node: ' + node.path);
 			F5.assert(id === 'back' || node.transitions[id], 'No transition with id: ' + id);
-					
+
+			if (lockout) {
+				console.log('Cannot doSelection. Locked out.');
+				return;
+			}
+			if (!flow.isNodePathActive(node)) {
+				console.log('Cannot doTransition. Node is not active.');
+				return;
+			}
+
+			var that = this;
+								
 			parameters = parameters || {};
 			cb = cb || function () {
 				//					console.log('transition complete');				
@@ -351,7 +367,7 @@
 			}										
 															 
 			nodeWillBecomeInactive(node, function () {				
-				nodeWillBecomeActive(target, function () {		
+				nodeWillBecomeActive(target, function () {	
 					
 					// queue up all of the transition completion functions from flow observers
 					var tasks = [];

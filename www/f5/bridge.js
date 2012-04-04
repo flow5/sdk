@@ -47,7 +47,10 @@
 		url = origin + '/' +  generateToken() + '/' + url;
 		var xhr = new XMLHttpRequest();
 		xhr.open('GET', url, false);
+		
+	F5.synchronousXHRReentryWorkaround = true;
 		xhr.send(null);	
+	F5.synchronousXHRReentryWorkaround = false;
 		
 		var result;
 		try {

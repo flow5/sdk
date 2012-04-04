@@ -30,6 +30,15 @@
 	
 	function Flow(flowspec) {
 		
+		this.isNodePathActive = function (node) {
+			var active = node.active;
+			while (active && node.parent) {
+				node = node.parent;
+				active = node.active;
+			}
+			return active;
+		};			
+		
 		this.parse = function () {
 			var that = this;
 

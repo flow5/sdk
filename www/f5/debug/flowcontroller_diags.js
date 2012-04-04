@@ -39,7 +39,6 @@
 		
 		var doSelection = F5.Global.flowController.doSelection;
 		F5.Global.flowController.doSelection = function (node, id, cb) {	
-			F5.assert(flow.diags.isNodePathActive(node), 'Attempt to select on an inactive node');	
 			F5.assert(!flow.diags.isSubflowActive(node), 'Cannot select with a subflow active');				
 							
 			doSelection.call(F5.Global.flowController, node, id, cb);
@@ -47,7 +46,6 @@
 		
 		var doTransition = F5.Global.flowController.doTransition;
 		F5.Global.flowController.doTransition = function (node, id, parameters, cb) {
-			F5.assert(flow.diags.isNodePathActive(node), 'Attempt to transition from an inactive node');
 			F5.assert(!flow.diags.isSubflowActive(node), 'Cannot transition with a subflow active');	
 		
 			doTransition.call(F5.Global.flowController, node, id, parameters, cb);
@@ -55,7 +53,7 @@
 		
 		var doSubflow = F5.Global.flowController.doSubflow;
 		F5.Global.flowController.doSubflow = function (node, id, cb) {
-			F5.assert(id === 'WillBecomeActive' || id === 'DidBecomeInactive' || flow.diags.isNodePathActive(node), 
+			F5.assert(id === 'WillBecomeActive' || id === 'DidBecomeInactive' || flow.isNodePathActive(node), 
 				'Attempt to execute subflow from an inactive node');	
 			F5.assert(!flow.diags.isSubflowActive(node), 'Subflow already in progress');	
 			
