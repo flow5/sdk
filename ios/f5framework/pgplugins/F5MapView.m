@@ -61,10 +61,10 @@
 
 - (void)dealloc
 {
-    self.title = nil;
-    self.markerImage = nil;
-    self.subtitle = nil;
-    self.index = nil;
+    [self.title release];
+    [self.markerImage release];
+    [self.subtitle release];
+    [self.index release];
     
     [super dealloc];
 }
@@ -421,6 +421,8 @@
     
     id callbackID = [arguments pop];
     
+    
+    
     [self.mapView removeAnnotations:self.mapView.annotations];
         
     PG_SBJSON *parser = [[[PG_SBJSON alloc] init] autorelease];
@@ -491,35 +493,45 @@
     }
 }
 
-- (MKAnnotationView *) mapView:(MKMapView *)mapView viewForAnnotation:(id <MKAnnotation>) annotation{
-    
-    NSString *identifier = [NSString stringWithFormat:@"%f%f", annotation.coordinate.latitude, annotation.coordinate.longitude];
-    
-    MKAnnotationView *view = (MKAnnotationView *)[self.mapView dequeueReusableAnnotationViewWithIdentifier:identifier];    
-    if (!view) {
-        if ([annotation isKindOfClass:[F5Annotation class]] && [(F5Annotation*)annotation markerImage]) {
-            view = [[[MKAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:identifier] autorelease]; 
-            view.image = [(F5Annotation*)annotation markerImage];
-            view.frame = CGRectMake(0, 0, view.image.size.width/2, view.image.size.height/2);
-        } else {
-            view = [[[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:identifier] autorelease];   
-        }
-    }
+- (MKAnnotationView *) mapView:(MKMapView *)mapView viewForAnnotation:(id <MKAnnotation>) annotation {
     
     if (![annotation isKindOfClass:[F5Annotation class]]) {
         return nil;
     }
     
-    UIButton* rightButton = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
-    view.rightCalloutAccessoryView = rightButton;
+    BOOL customPin = [annotation isKindOfClass:[F5Annotation class]] && [(F5Annotation*)annotation markerImage];
+    
+    NSString *identifier = nil;
+    if (customPin) {
+        identifier = @"customPin";
+    } else {
+        identifier = @"defaultPin";        
+    }   
+    
+    MKAnnotationView *view = (MKAnnotationView *)[self.mapView dequeueReusableAnnotationViewWithIdentifier:identifier];    
+    if (!view) {
+        if (customPin) {
+            view = [[[MKAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:identifier] autorelease];             
+        } else {
+            view = [[[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:identifier] autorelease];               
+        }
         
-    UIImage *streetViewIcon = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"streetview" ofType:@"png"]];        
-    UIButton *leftButton = [[[UIButton alloc] init] autorelease];       
-    [leftButton setImage:streetViewIcon forState:UIControlStateNormal];
-    leftButton.frame = CGRectMake(0, 0, streetViewIcon.size.width/2, streetViewIcon.size.height/2);
-    view.leftCalloutAccessoryView = leftButton;
-            
-    view.canShowCallout = YES;
+        UIButton* rightButton = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
+        view.rightCalloutAccessoryView = rightButton;
+        
+        UIImage *streetViewIcon = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"streetview" ofType:@"png"]];        
+        UIButton *leftButton = [[[UIButton alloc] init] autorelease];       
+        [leftButton setImage:streetViewIcon forState:UIControlStateNormal];
+        leftButton.frame = CGRectMake(0, 0, streetViewIcon.size.width/2, streetViewIcon.size.height/2);
+        view.leftCalloutAccessoryView = leftButton;
+        
+        view.canShowCallout = YES;        
+    }
+    
+    if (customPin) {
+        view.image = [(F5Annotation*)annotation markerImage];
+        view.frame = CGRectMake(0, 0, view.image.size.width/2, view.image.size.height/2);
+    }        
         
     return view;
 }
