@@ -33,7 +33,7 @@
 		this.construct = function () {		
 			Carousel.prototype.construct.call(this);														
 			F5.addClass(this.el, 'f5carousel');				
-			this.horizontal = true;
+			this.horizontal = true;			
 		};
 		
 		this.refresh = function () {			
@@ -60,15 +60,26 @@
 			}
 		};
 		
-		// snap to nearest detent
-		this.snapTo = function () {
-			var index;
+		this.getDetent = function () {
 			// find the first detent that's been scrolled past
+			var index;
 			for (index = 0; index < this.detents.length; index += 1) {
-				if (this.staticOffset > this.detents[index]) {
+				if (this.staticOffset >= this.detents[index]) {
 					break;
 				}
 			}
+			return index;									
+		};
+		
+		this.scrollToDetent = function (i) {
+			if (i >= 0 && i < this.detents.length) {
+				this.scrollTo(this.detents[i]);				
+			}
+		};
+
+		// snap to nearest detent
+		this.snapTo = function () {
+			var index = this.getDetent();
 			
 			var offset;
 			// if scrolled all the way to the end, snap to the last div
@@ -92,13 +103,7 @@
 		};
 		
 		this.flickTo = function (velocity) {
-			var index;
-			// find the first detent that's been scrolled past
-			for (index = 0; index < this.detents.length; index += 1) {
-				if (this.staticOffset > this.detents[index]) {
-					break;
-				}
-			}
+			var index = this.getDetent();
 
 			var offset;
 			if (Math.abs(velocity) > this.flickVelocityThreshold) {
