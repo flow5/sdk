@@ -118,15 +118,19 @@
 
 - (void)close:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options 
 {
-    // already closed
-    if (self.overlayWebView.hidden) {
-        return;
+    if (self.callbackID) {
+        PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];   
+        [self writeJavascript: [pluginResult toSuccessCallbackString:self.callbackID]];  
+        
+        self.callbackID = nil;
     }
-    
-    [self hide];  
-    
+
     PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];  
     [self writeJavascript: [pluginResult toSuccessCallbackString:[arguments pop]]];    
+
+    if (!self.overlayWebView.hidden) {
+        [self hide];    
+    }    
 }
 
 - (PluginResult*)show:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options

@@ -57,7 +57,7 @@
 		
 		this.hide = function () {
 			F5.callBridgeSynchronous('com.flow5.webview', 'hide');			
-		}
+		};
 		
 		this.openHTML = function (html) {
 			this.el.style.display = '';
@@ -121,7 +121,7 @@
 						if (that.onLoadAction) {
 							that.onLoadAction();
 						}
-					} else	if (that.messageAction) {
+					} else if (message.message && that.messageAction) {
 						that.messageAction(message.message);
 					}
 				}, 
@@ -155,7 +155,7 @@
 			}										
 			
 		};
-		
+				
 		this.postMessage = function (data) {
 			var javascript = 'window.postMessage(' + JSON.stringify(data) + ', "*")';
 			PhoneGap.exec(
