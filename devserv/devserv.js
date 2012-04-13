@@ -25,6 +25,12 @@
 
 ***********************************************************************************************************************/
 
+if (process.env.npm_package_config_root) {
+	console.log(process.cwd())
+	process.chdir(process.env.npm_package_config_root);
+	console.log(process.cwd())
+}
+
 var WEBROOT = process.cwd() + '/www';
 
 // nodelibs
@@ -52,8 +58,8 @@ function compress(html, res) {
 		
 	// CSS compression is done in generate() pre-image inlining. this is both for efficiency and
 	// because the inline images break the yuicompressor
-	var options = ['-jar', process.cwd() + '/devserv/htmlcompressor-1.5.2.jar', '--compress-js'];
-//	var options = ['-jar', process.cwd() + '/devserv/htmlcompressor-1.5.2.jar', '--compress-css', '--compress-js'];
+	var options = ['-jar', __dirname + '/htmlcompressor-1.5.2.jar', '--compress-js'];
+//	var options = ['-jar', __dirname + '/htmlcompressor-1.5.2.jar', '--compress-css', '--compress-js'];
 	var child = spawn('java', options);
 	
 	child.stdout.on('data', function (data) {
@@ -132,7 +138,7 @@ function showRequest(req, printHeaders) {
 // http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
 cli.main(function (args, options) {
 	
-	options.port = options.port || 8008;
+	options.port = process.env.npm_package_config_port || options.port || 8008;
 
 	http.createServer(function (req, res) {
 		
@@ -307,4 +313,5 @@ cli.main(function (args, options) {
 	}).listen(options.port);
 	
 	console.log('HTTP server listening on port ' + options.port);
+	console.log('WEBROOT:' + WEBROOT);
 });

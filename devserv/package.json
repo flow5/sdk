@@ -1,6 +1,15 @@
 {
     "name": "devserv",
-    "version": "1.0.0",
+    "version": "1.0.1",
+	"config": {
+		"port": 8008,
+		"root": "../../flow5"
+	},	
+	"scripts": {
+		"start": "node devserv.js",
+		"install": "node install.js"
+	},
+	
     "dependencies": {
 		"cli": "0.4.0",
 		"css-compressor": "1.0.0",
