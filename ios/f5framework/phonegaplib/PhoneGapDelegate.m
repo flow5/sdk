@@ -9,6 +9,8 @@
 #import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>
 
+#import "UIDevice+IdentifierAddition.h"
+
 #import "Location.h"
 #import "DebugConsole.h"
 #import "Connection.h"
@@ -399,8 +401,8 @@ BOOL gSplashScreenShown = NO;
     [[UIApplication sharedApplication] setStatusBarOrientation:[[supportedOrientations objectAtIndex:0] intValue]];
     
     // Set the supported orientations for rotation. If number of items in the array is > 1, autorotate is supported
-    // F5: don't do this until the webview has loaded
-//    viewController.supportedOrientations = supportedOrientations;
+    // F5: HAD COMMENTED THIS OUT. BUT IT PREVENTS LAUNCH IN LANDSCAPE FROM WORKING CORRECTLY. . .
+    viewController.supportedOrientations = supportedOrientations;
     
     
     CGRect screenBounds = [ [ UIScreen mainScreen ] bounds ];
@@ -499,7 +501,7 @@ BOOL gSplashScreenShown = NO;
     NSMutableDictionary *devProps = [NSMutableDictionary dictionaryWithCapacity:4];
     [devProps setObject:[device model] forKey:@"platform"];
     [devProps setObject:[device systemVersion] forKey:@"version"];
-    [devProps setObject:[device uniqueIdentifier] forKey:@"uuid"];
+    [devProps setObject:[device uniqueDeviceIdentifier] forKey:@"uuid"];
     [devProps setObject:[device name] forKey:@"name"];
 //    [devProps setObject:[[self class] phoneGapVersion ] forKey:@"gap"];
     
