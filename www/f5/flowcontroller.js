@@ -149,8 +149,9 @@
 			// yield back to the event loop to allow any necessary reflow
 			// then flush the remaining tasks (usually animations or queued native commands)
 			setTimeout(function flushWaitTasksCb() {
-				F5.flushTasks(waitTasks, function () {
-					waitTasks = [];
+				var tmp = waitTasks;
+				waitTasks = [];
+				F5.flushTasks(tmp, function () {
 					complete();
 				});
 			}, 0);

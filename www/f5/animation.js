@@ -166,6 +166,37 @@
 			};
 		},
 		
+		overlayFadeIn: function (container, oldEl, newEl) {
+			newEl.style.visibility = '';				
+			newEl.style.opacity = 0;
+			
+			return function (cb) {
+				function completeFadeIn() {
+					newEl.style['-webkit-transition'] = '';
+					F5.removeTransitionEndListener(newEl);
+					cb();
+				}
+
+				F5.addTransitionEndListener(newEl, completeFadeIn);				
+				newEl.style['-webkit-transition'] = 'opacity .25s';	
+				newEl.style.opacity = 1;					
+			};						
+		},
+		
+		overlayFadeOut: function (container, oldEl, newEl) {
+			return function (cb) {
+				function completeFadeOut() {
+					oldEl.style['-webkit-transition'] = '';
+					F5.removeTransitionEndListener(newEl);
+					cb();
+				}
+
+				F5.addTransitionEndListener(oldEl, completeFadeOut);				
+				oldEl.style['-webkit-transition'] = 'opacity .25s';	
+				oldEl.style.opacity = 0;					
+			};			
+		},
+		
 		// oldElement sits on top, fades out to reveal newEl
 		fadeIn: function (container, oldEl, newEl) {
 			
@@ -281,6 +312,9 @@
 				break;
 			case 'sheetRight':
 				inverse = 'sheetLeft';
+				break;
+			case 'overlayFadeIn':
+				inverse = 'overlayFadeOut';
 				break;
 			}
 
