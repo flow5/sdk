@@ -430,10 +430,10 @@
 			return that.getBackNode() !== null;
 		};
 		
-		this.doBack = function () {			
+		this.doBack = function (cb) {			
 			var backNode = that.getBackNode();
 			F5.assert(backNode, 'Cannot go back');
-			that.doTransition(backNode, 'back');
+			that.doTransition(backNode, 'back', {}, cb);
 		};
 											
 		this.doSubflow = function (node, id, cb) {

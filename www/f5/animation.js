@@ -115,6 +115,38 @@
 		};			
 	}
 	
+	function drawerVertical(container, overEl, underEl, distance) {
+		
+		if (distance < 0) {
+			overEl.style['-webkit-transform'] = 'translate3d(0px, 0px, 0px)';						
+		} else {
+			overEl.style['-webkit-transform'] = 'translate3d(0px, ' + -distance + 'px, 0px)';			
+		}
+		overEl.style.visibility = '';
+
+		if (distance < 0) {
+			underEl.style.visibility = '';
+		}
+							
+		return function (cb) {
+			function complete() {				
+				F5.removeTransitionEndListener(overEl);							
+				cb();
+			}			
+		
+			F5.addTransitionEndListener(overEl, complete);	
+			
+			var transition = '-webkit-transform .25s ease-in ';
+			overEl.style['-webkit-transition'] = transition;
+			
+			if (distance < 0) {
+				overEl.style['-webkit-transform'] = 'translate3d(0px, ' + distance + 'px, 0px)';			
+			} else {
+				overEl.style['-webkit-transform'] = 'translate3d(0px, 0px, 0px)';						
+			}
+		};			
+	}	
+	
 	function sheetHorizontal(container, el, distance) {
 		
 		if (distance < 0) {
@@ -275,6 +307,14 @@
 			return sheetVertical(container, oldEl, newEl, -container.offsetHeight);						
 		},
 
+		drawerDown: function (container, oldEl, newEl) {
+			return drawerVertical(container, newEl, oldEl, container.offsetHeight);						
+		},
+
+		drawerUp: function (container, oldEl, newEl) {
+			return drawerVertical(container, oldEl, newEl, -container.offsetHeight);						
+		},
+
 		sheetLeft: function (container, oldEl, newEl) {
 			return sheetHorizontal(container, newEl, -container.offsetWidth);						
 		},
@@ -306,6 +346,12 @@
 				break;
 			case 'sheetUp':
 				inverse = 'sheetDown';
+				break;
+			case 'drawerDown':
+				inverse = 'drawerUp';
+				break;
+			case 'drawerUp':
+				inverse = 'drawerDown';
 				break;
 			case 'sheetLeft':
 				inverse = 'sheetRight';

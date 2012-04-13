@@ -227,6 +227,10 @@
 		return confirm.widget;
 	};
 	
+	F5.screen = function () {
+		return document.getElementById('f5screen');
+	}
+	
 	F5.eventLocation = function(event) {
 		var x, y;
 		if (F5.isMobile()) {

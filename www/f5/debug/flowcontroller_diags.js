@@ -61,12 +61,12 @@
 		};
 		
 		var doBack = F5.Global.flowController.doBack;
-		F5.Global.flowController.doBack = function () {			
+		F5.Global.flowController.doBack = function (cb) {			
 			var backNode = F5.Global.flowController.getBackNode();
 			F5.assert(backNode, 'Cannot go back');			
 			F5.assert(!flow.diags.isSubflowActive(backNode), 'Cannot go back with a subflow active');
 			
-			doBack.call(F5.Global.flowController);
+			doBack.call(F5.Global.flowController, cb);
 		};	
 		
 		cb();							
