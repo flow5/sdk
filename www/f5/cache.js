@@ -43,6 +43,8 @@
 					if (typeof field.value !== 'undefined' && !localStorage.getItem(field.name)) {
 						if (typeof field.value === 'object') {
 							localStorage.setItem(field.name, JSON.stringify(field.value));
+						} else if (typeof field.value === 'string') {
+							localStorage.setItem(field.name, '"' + field.value + '"');	
 						} else {
 							localStorage.setItem(field.name, field.value);	
 						}
@@ -72,7 +74,9 @@
 				        that.values[field.name] = value;
 					});			
 				}
-			});			
+			});	
+			
+			return this;		
 		};
 				
 		this.reset = function () {

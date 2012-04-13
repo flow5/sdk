@@ -94,7 +94,10 @@ function Input() {
 			this.input.setAttribute('autocapitalize', this.el.getAttribute('autocapitalize'));			
 
 			this.input.onkeypress = function (e) {
-				clearErrorAndLabel();
+				// enter key
+				if (e.keyCode !== 13) {
+					clearErrorAndLabel();					
+				}
 			};
 
 			if (this.input.type === 'date') {

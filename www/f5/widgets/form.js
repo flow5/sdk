@@ -82,12 +82,15 @@ function Form() {
 		submit.style.top = '0px';
 		submit.style.left = '-100px'
 		submit.style.visibility = 'hidden';
+		submit.style['font-size'] = '0em';
+		submit.setAttribute('tabindex', -1);
 		submit.addEventListener('click', function (e) {
 			e.stopPropagation();
 		})
 		this.el.appendChild(submit);
 		
 		this.el.onsubmit = function () {
+			that.blur();
 			if (that.onSubmit) {
 				that.onSubmit();
 			}
