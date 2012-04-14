@@ -154,18 +154,15 @@
 		// NOTE: the logic for sync'ing selection within a flow is a little wonky
 		// This is possible under limited circumstances, and useful at times.
 		this.syncSelection = function (node) {
+			node.view.syncSelection(node);
+			
 			F5.forEach(node.children, function (id, child) {
 				if (child.view) {
 					child.view.el.style.visibility = 'hidden';					
 				}
 			});
 			if (node.selection.view) {
-				node.selection.view.el.style.visibility = '';				
-
-				// TODO: not 100% happy about this
-				if (node.view.el.widget && node.view.el.widget.select) {
-					node.view.el.widget.select(node.selection.id);
-				}			
+				node.selection.view.el.style.visibility = '';
 			}
 		};			
 		

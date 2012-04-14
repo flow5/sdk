@@ -120,6 +120,12 @@
 				this.tabset.widget.select(id);								
 			}
 		};
+
+		this.syncSelection = function (node) {
+			if (this.tabset) {
+				this.tabset.widget.select(node.selection.id);								
+			}
+		};		
 						
 		this.viewWillBecomeActive = function () {
 			if (this.delegate && this.delegate.viewWillBecomeActive) {
