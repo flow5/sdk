@@ -58,71 +58,36 @@
 	// TODO: customize with images or alternate text
 	// TODO: can't really go querySelectorAll since there might be nested tab sets
 	function Tabset() {
-		
-		// NOTE: all tabs have to be at the same level of hierarchy
-		function findTabs(el) {
-			var tabs = [];
-			F5.forEach(el.childNodes, function (child) {
-				if (child.getAttribute && child.getAttribute('f5tab')) {
-					tabs.push(child);
-				}
-			});
-			if (tabs.length) {
-				return tabs;
-			} else {
-				var i;
-				for (i = 0; i < el.childNodes.length; i += 1) {
-					tabs = findTabs(el.childNodes[i]);
-					if (tabs.length) {
-						return tabs;
-					}
-				}
-			}
-			return tabs;
-		}
-		
-	
+					
 		this.construct = function (data) {
-			var that = this;
+			this.data = data;		
+			F5.addClass(this.el, 'f5tabset');
+		};
 		
-			this.tabset = document.createElement('div');
-			F5.addClass(this.tabset, 'f5tabset');
+		this.attachToNode = function (node) {
+			this.el.innerHTML = '';
 			
-			var className = data['f5tabsetclass'];
-			if (className) {
-				F5.addClass(this.tabset, className);
-			}
-								
-			that.tabs = {};
-		
-			F5.forEach(findTabs(this.el), function (el) {
-				var id = el.getAttribute('f5tab');
-				
-				
-				if (!data[id]) {
-					data[id] = id;
+			this.tabs = {};
+			
+			var that = this;
+			F5.forEach(node.children, function (id, node) {
+				if (!that.data[id]) {
+					that.data[id] = id;
 				}				
-				var tab = F5.createWidget('_TabButton', data, id);
-												
+				var tab = F5.createWidget('_TabButton', that.data, id);
+
 				F5.addClass(tab, 'f5tab');
-				that.tabset.appendChild(tab);								
+				that.el.appendChild(tab);								
 				that.tabs[id] = tab;
 
 				tab.widget.setAction(function (e) {
 					if (that.action) {
 						that.action(id);
 					}
-				});				
-			});	
-			
-			var position = data['f5tabsetposition'];
-			if (position && position === 'top') {
-				that.el.insertBefore(this.tabset, that.el.childNodes[0]);
-			} else {
-				that.el.appendChild(this.tabset);				
-			}					
+				});							
+			});
 		};
-	
+		
 		this.setAction = function (cb) {
 			this.action = cb;
 		};
@@ -135,9 +100,9 @@
 				F5.forEach(that.tabs, function (id, tab) {
 					tab.widget.setState(selection === id);
 					if (selection === id) {
-						F5.addClass(that.tabset, id + '-selected');
+						F5.addClass(that.el, id + '-selected');
 					} else {
-						F5.removeClass(that.tabset, id + '-selected');
+						F5.removeClass(that.el, id + '-selected');
 					}
 				});	
 				cb();			

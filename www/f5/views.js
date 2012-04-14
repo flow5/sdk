@@ -47,9 +47,27 @@
 			this.el = el;			
 			this.node = node;
 
-			node.view = this;												
+			node.view = this;	
+			
+			var that = this;
+			function attachTabset(el) {
+				if (el.getAttribute('f5widget') === 'Tabset') {
+					that.tabset = el;
+					that.tabset.widget.attachToNode(node);
+					that.tabset.widget.setAction(function selectionChangeCb(id) {
+						F5.Global.flowController.doSelection(node, id);					
+					});
+					that.tabset.widget.select(node.selection.id);											
+				}				
+			}											
 																		
 			if (node.children) {
+				var header = F5.loadTemplate(node.id + '-header', F5.getNodeData(node));
+				if (header) {
+					attachTabset(header);
+					this.el.appendChild(header);
+				}
+				
 				var container = document.createElement('div');
 				F5.addClass(container, 'f5container');
 				this.el.appendChild(container);	
@@ -58,11 +76,23 @@
 					F5.forEach(node.children, function (id, child) {
 						F5.objectFromPrototype(F5.Views[child.type]).initialize(child);
 						container.appendChild(child.view.el);
-					});					
+					});				
 				} else {
+					
 					F5.objectFromPrototype(F5.Views[node.selection.type]).initialize(node.selection);					
 					container.appendChild(node.selection.view.el);
 				}
+				
+				var footer = F5.loadTemplate(node.id + '-footer', F5.getNodeData(node));
+				if (footer) {
+					attachTabset(footer);
+					this.el.appendChild(footer, container);
+				}										
+			} else {
+				var template = F5.loadTemplate(node.id, F5.getNodeData(node));
+				if (template) {
+					this.el.appendChild(template);
+				}								
 			}
 			
 			if (F5.Prototypes.ViewDelegates[node.id]) {
@@ -70,17 +100,7 @@
 				this.delegate.node = node;
 				this.delegate.el = el;
 			}
-			
-			// if there's no view delegate, look for an html template
-			// and load it into the view. this allows quick building of wireframes
-			// navigation elements will be overlayed
-			if (!this.delegate || !this.delegate.initialize) {
-				var template = F5.loadTemplate(node);
-				if (template) {
-					el.appendChild(template);
-				}				
-			}
-			
+									
 			if (!node.active) {
 				el.style.visibility = 'hidden';
 			}		
@@ -92,7 +112,13 @@
 				this.el.insertBefore(label, this.el.firstChild);								
 			}
 		};
-				
+		
+		this.doSelection = function (node, id) {
+			if (this.tabset) {
+				this.tabset.widget.select(id);								
+			}
+		};
+						
 		this.viewWillBecomeActive = function () {
 			if (this.delegate && this.delegate.viewWillBecomeActive) {
 				this.delegate.viewWillBecomeActive();
@@ -161,13 +187,15 @@
 			} else {				
 										
 				// default navigation controls
+				var navControls;
+				
 				if (node.subflows || node.transitions) {
 					var div = document.createElement('div');
 					div.style.position = 'relative';
 					div.style['z-index'] = 1;
 					this.el.insertBefore(div, this.el.firstChild);
 				
-					var navControls = document.createElement('div');
+					navControls = document.createElement('div');
 					F5.addClass(navControls, 'f5navcontrols');
 					div.appendChild(navControls);					
 				}
@@ -191,7 +219,7 @@
 						}
 					});	
 
-					if (showSubflows) {
+					if (navControls && showSubflows) {
 						navControls.appendChild(subflowsEl);
 					}
 				}
@@ -216,45 +244,13 @@
 			}		
 		};
 	}
-	FlowView.prototype = ViewPrototype;
-		
-	function SwitcherView() {
-		this.initialize = function (node) {
-			this.initializeView(node);
-
-			F5.forEach(node.children, function (id, child) {
-				child.view.el.setAttribute('f5tab', id);
-			});						
-
-			if (this.delegate && this.delegate.initialize) {
-				this.delegate.initialize();					
-			} 
-
-			// attach the tabset. styling is defined by resources
-			if (Object.keys(node.children).length > 1) {
-				F5.attachWidget(this.el, 'Tabset', F5.getNodeData(node));
-				F5.addClass(this.el.widget.tabset, node.id + '-tabset');
-				this.el.widget.setAction(function selectionChangeCb(id) {
-					F5.Global.flowController.doSelection(node, id);					
-				});
-				this.el.widget.select(node.selection.id);						
-			}
-		};
-		
-		this.doSelection = function (node, id) {
-			if (this.delegate && this.delegate.doSelection) {
-				this.delegate.doSelection(id);
-			} else {
-				node.view.el.widget.select(id);				
-			}
-		};
-	}
-	SwitcherView.prototype = ViewPrototype;
+	FlowView.prototype = ViewPrototype;		
 	
 		
 	function SetView() {
 		this.initialize = function (node) {
 			this.initializeView(node);	
+			
 			if (this.delegate && this.delegate.initialize) {
 				this.delegate.initialize();					
 			}
@@ -265,7 +261,7 @@
 	
 	F5.Views = {
 		flow: new FlowView(),
-		switcher: new SwitcherView(),
+		switcher: new SetView(),
 		set: new SetView()
 	};
 
