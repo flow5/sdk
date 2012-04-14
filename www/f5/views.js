@@ -40,6 +40,7 @@
 
 			var el = document.createElement('div');
 			F5.addClass(el, 'f5' + node.type);
+			F5.addClass(el, node.id + '-node');
 			
 			el.id = node.path;
 			el.view = this;
@@ -70,6 +71,7 @@
 				
 				var container = document.createElement('div');
 				F5.addClass(container, 'f5container');
+				F5.addClass(container, node.id + '-container');
 				this.el.appendChild(container);	
 
 				if (node.type === 'switcher' || node.type === 'set') {

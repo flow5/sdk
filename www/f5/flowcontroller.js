@@ -479,7 +479,7 @@
 				
 		this.doSubflowChoice = function (node, id) {	
 			F5.assert(node.activeSubflow, 'No active subflow');
-			F5.assert(node.activeSubflow.choices.hasOwnProperty(id), 'No such choice');	
+			F5.assert(node.activeSubflow.choices.hasOwnProperty(id), 'No such choice: ' + id);	
 						
 			// if the user made the choice, pass the result to a flowDelegate if a handler exists			
 			if (node.activeSubflow.userInput) {
