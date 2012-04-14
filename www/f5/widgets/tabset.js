@@ -56,7 +56,6 @@
 	
 	// Tabset works by looking for elements with f5tab attribute set
 	// TODO: customize with images or alternate text
-	// TODO: can't really go querySelectorAll since there might be nested tab sets
 	function Tabset() {
 					
 		this.construct = function (data) {

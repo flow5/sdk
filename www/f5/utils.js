@@ -110,7 +110,7 @@
 		};
 
 		// WORKAROUND: it seems that xhr.send can cause pending events to fire with reentrancy
-		// TODO: build test case. need something that takes a long time right after send, and then
+		// TODO: reference RADAR bug report
 		// some queued events
 		setTimeout(function () {
 			/*global Iuppiter*/

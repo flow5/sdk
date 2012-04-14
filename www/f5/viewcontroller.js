@@ -67,7 +67,7 @@
 
 		this.nodeWillBecomeActive = function (node) {
 			if (!node.view) {
-				F5.objectFromPrototype(F5.Views[node.type]).initialize(node);
+				F5.objectFromPrototype(F5.Prototypes.View).initialize(node);
 				if (node === F5.Global.flow.root) {
 					this.screenFrame.appendChild(node.view.el);
 				} else {
