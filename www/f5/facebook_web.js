@@ -28,8 +28,13 @@
 
 (function () {
 	
+	if (!F5.facebook_appid) {
+		return;
+	}
+	
 	window.fbAsyncInit = function() {
-		console.log('hi there facebook');
+		console.log('Facebook initialized');
+		
 		if (typeof FB !== 'undefined') {
 		    FB.init({
 		      appId      : F5.facebook_appid,
@@ -43,7 +48,7 @@
 		}
 	  };
 
-	
+
 	F5.Global.flowController.addWaitTask(function (cb) {
 		  // Load the SDK Asynchronously
 		var fbId = 'facebook-jssdk';
@@ -58,10 +63,10 @@
 			js.src = "//connect.facebook.net/en_US/all.js";
 			document.head.appendChild(js);		
 		}
-			
+
 		cb();
 	});
-	
+
 	if (F5.query.body) {
 		// TODO: should also verify the SHA signature
 		// http://developers.facebook.com/docs/authentication/signed_request/
@@ -76,12 +81,12 @@
 			console.log('unexpected body');
 		}
 	}
-	
+
 	function login(permissions, cb) {		
 		// TODO: make sure init is really complete
 
 		var options = {scope: permissions.join(',')};
-		
+
 		FB.login(function(response) {
 		   if (response.authResponse) {
 				cb(response.authResponse.accessToken);
@@ -98,17 +103,16 @@
 		   }
 		 }, options);
 	}
-	
+
 	function logout(cb) {
 		if (typeof FB !== 'undefined') {
 			FB.logout();			
 		}
 		cb();
 	}
-	
+
 	F5.facebook = {
 		login: login,
 		logout: logout
-	};
-	
+	};		
 }());

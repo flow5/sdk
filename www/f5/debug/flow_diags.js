@@ -547,7 +547,7 @@
 							if (toNode.transitions) {
 								toPath = toNode.path + '_' + getAnId(toNode.transitions);
 							} 
-							// if the toNode is the child of a switcher then it's a cluster
+							// if the toNode is the child of a set then it's a cluster
 							// because of the selection button. so grab the button
 							else if (toNode.parent.type === 'set') {
 								toPath = toNode.parent.path + '_' + toNode.id;

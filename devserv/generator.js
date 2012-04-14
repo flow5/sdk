@@ -263,7 +263,7 @@ exports.generateHtml = function(parsed) {
 			var path = 'www/apps/' + query.app + '/facebook_appid.txt';
 			facebookId = fs.readFileSync(path).toString();
 		} catch (e) {
-			console.log('Could not find facebook_appid.txt');
+//			console.log('Could not find facebook_appid.txt');
 		}		
 	}	
 	

@@ -74,7 +74,7 @@
 				F5.addClass(container, node.id + '-container');
 				this.el.appendChild(container);	
 
-				// in switchers and sets all of the children are initialized
+				// in sets all of the children are initialized
 				// in flows only the first child is initialied
 				// TODO: might change this behavior. it is a performance choice
 				if (node.type === 'set') {

@@ -91,7 +91,7 @@ body.f5mobile {
 	-webkit-transform: translate3d(0, 0, 0);
 }
 
-.f5flow, .f5switcher, .f5set {
+.f5flow, .f5node, .f5set {
 	display: -webkit-box;
 	position: absolute;
 	z-index: 0;

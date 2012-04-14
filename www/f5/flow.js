@@ -52,10 +52,10 @@
 				}
 			}
 
-			function injectNodeRecursive(id, nodeSpec, parent) {										
+			function injectNodeRecursive(id, nodeSpec, parent) {
 				var node = {id: id, 
 							data: {},
-							type: nodeSpec.type || 'flow', 
+							type: nodeSpec.type || 'node', 
 							parent: parent,
 							viewDelegate: nodeSpec.viewDelegate,
 							spec: nodeSpec, 
@@ -104,8 +104,6 @@
 			function resolveTransitionsRecursive(node) {								
 
 				if (node.spec.transitions) {
-	//				F5.assert(node.type === 'flow' || node.type === 'set', 
-	//							'A node with transitions must be of type flow or set');
 					node.transitions = {};
 					F5.forEach(node.spec.transitions, function (transition) {
 						var id;

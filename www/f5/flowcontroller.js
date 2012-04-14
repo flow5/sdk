@@ -548,15 +548,12 @@
 							} 
 							completionCb();							
 						} else {
-							// This is because there are not transition semantics defined for a set
-							// so the only reasonable time to set the node is before the view is visible
-							F5.assert(node.type !== 'set', 'The only subflow valid for a set is WillBecomeActive');
 							if (node.type === 'flow') {
 								// for a flow, the string indicates a node to transition to
 								completionCb();							
 								that.doTransition(node, nextAction);																			
 							} else if (node.type === 'set') {
-								// for a switcher, the string indicates a node to select
+								// for a set, the string indicates a node to select
 								completionCb();							
 								that.doSelection(node, nextAction);
 							}							
