@@ -245,8 +245,7 @@
 		
 		// select the child of node with the given id
 		this.doSelection = function (node, id, cb) {	
-			F5.assert(node.type === 'switcher' || node.type === 'set', 
-				'Can only doSelection on node of types switcher or set');
+			F5.assert(node.type === 'set', 'Can only doSelection on node of type set');
 			F5.assert(node.children[id], 'No child with id: ' + id);
 
 			if (lockout) {
@@ -556,7 +555,7 @@
 								// for a flow, the string indicates a node to transition to
 								completionCb();							
 								that.doTransition(node, nextAction);																			
-							} else if (node.type === 'switcher') {
+							} else if (node.type === 'set') {
 								// for a switcher, the string indicates a node to select
 								completionCb();							
 								that.doSelection(node, nextAction);

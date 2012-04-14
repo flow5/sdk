@@ -74,13 +74,15 @@
 				F5.addClass(container, node.id + '-container');
 				this.el.appendChild(container);	
 
-				if (node.type === 'switcher' || node.type === 'set') {
+				// in switchers and sets all of the children are initialized
+				// in flows only the first child is initialied
+				// TODO: might change this behavior. it is a performance choice
+				if (node.type === 'set') {
 					F5.forEach(node.children, function (id, child) {
 						F5.objectFromPrototype(F5.Prototypes.View).initialize(child);
 						container.appendChild(child.view.el);
 					});				
-				} else {
-					
+				} else {					
 					F5.objectFromPrototype(F5.Prototypes.View).initialize(node.selection);					
 					container.appendChild(node.selection.view.el);
 				}
