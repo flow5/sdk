@@ -149,7 +149,7 @@
 	margin-top:-.20em;
 }
 
-.f5frames .f5flow, .f5frames .f5node, .f5frames .f5set {
+.f5frames .f5flow, .f5frames .f5node, .f5frames .f5set, .f5frames .f5group {
 	padding: .04em;
 	border: 1px solid grey;
 }

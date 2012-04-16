@@ -91,7 +91,7 @@ body.f5mobile {
 	-webkit-transform: translate3d(0, 0, 0);
 }
 
-.f5flow, .f5node, .f5set {
+.f5flow, .f5node, .f5set, .f5group {
 	display: -webkit-box;
 	position: absolute;
 	z-index: 0;
@@ -102,4 +102,9 @@ body.f5mobile {
 	overflow: hidden;
 	-webkit-box-sizing: border-box;	
 	-webkit-box-orient: vertical;
+}
+
+/* can't assume anything about children of groups */
+.f5group > .f5container > .f5node {
+	position: relative;	
 }

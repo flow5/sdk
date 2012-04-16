@@ -63,10 +63,13 @@
 
 				if (nodeSpec.children) {
 					node.children = {};
-					F5.assert(nodeSpec.selection, 'Parent node must declare child selection: ' + id);
+					F5.assert(nodeSpec.type === 'group' || nodeSpec.selection, 
+								'Parent node must declare child selection: ' + id);
 					F5.forEach(nodeSpec.children, function (id, childSpec) {
 						var child = injectNodeRecursive(id, childSpec, node);
-						if (id === nodeSpec.selection) {
+						if (nodeSpec.type === 'group') {
+							child.active = true;							
+						} else if (id === nodeSpec.selection) {
 							node.selection = child;
 							child.active = true;
 						}

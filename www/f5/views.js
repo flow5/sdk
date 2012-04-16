@@ -68,8 +68,11 @@
 					attachTabset(header);
 					this.el.appendChild(header);
 				}
-				
-				var container = document.createElement('div');
+								
+				var container = F5.loadTemplate(node.id + '-container', F5.getNodeData(node));
+				if (!container) {
+					container = document.createElement('div');					
+				}
 				F5.addClass(container, 'f5container');
 				F5.addClass(container, node.id + '-container');
 				this.el.appendChild(container);	
@@ -77,7 +80,7 @@
 				// in sets all of the children are initialized
 				// in flows only the first child is initialied
 				// TODO: might change this behavior. it is a performance choice
-				if (node.type === 'set') {
+				if (node.type === 'set' || node.type === 'group') {
 					F5.forEach(node.children, function (id, child) {
 						F5.objectFromPrototype(F5.Prototypes.View).initialize(child);
 						container.appendChild(child.view.el);
