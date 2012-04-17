@@ -245,7 +245,7 @@
 		else {
 			// in browser, there may be a zoom on the screen element
 			// TODO: cache this value
-			var zoom = window.getComputedStyle(document.getElementById('f5screen')).zoom;
+			var zoom = window.getComputedStyle(document.getElementById('f5screen')).zoom || 1;
 			x = event.clientX / zoom;
 			y = event.clientY / zoom; 
 		}	

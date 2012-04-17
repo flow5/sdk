@@ -343,7 +343,7 @@ exports.generateHtml = function(parsed) {
 								var imageData = inlineData(cssBase + '/' + url);
 								statements[i] = statements[i].replace(url, imageData);
 							}
-						}														
+						}								
 						styleBlock += statements.join('');							
 					} else {
 						injectLink('stylesheet', resolvePath(file, base), 'text/css');
@@ -468,6 +468,7 @@ exports.generateHtml = function(parsed) {
 	scriptsEl.appendChild(makeScript('f5/start.js'));				
 				
 	var html = document.outerHTML.replace('<head>', '<head><style>' + styleBlock + '</style>');		
+//	return html.replace(/-webkit/g, '-ms').replace(/webkitTransition/g, 'MSTransition');
 	return html;
 };
 
