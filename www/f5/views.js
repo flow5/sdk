@@ -69,31 +69,18 @@
 					this.el.appendChild(header);
 				}
 								
-				var container = F5.loadTemplate(node.id + '-container', F5.getNodeData(node));
-				if (!container) {
-					container = document.createElement('div');					
+				this.container = F5.loadTemplate(node.id + '-container', F5.getNodeData(node));
+				if (!this.container) {
+					this.container = document.createElement('div');					
 				}
-				F5.addClass(container, 'f5container');
-				F5.addClass(container, node.id + '-container');
-				this.el.appendChild(container);	
-
-				// in sets all of the children are initialized
-				// in flows only the first child is initialied
-				// TODO: might change this behavior. it is a performance choice
-				if (node.type === 'set' || node.type === 'group') {
-					F5.forEach(node.children, function (id, child) {
-						F5.objectFromPrototype(F5.Prototypes.View).initialize(child);
-						container.appendChild(child.view.el);
-					});				
-				} else {					
-					F5.objectFromPrototype(F5.Prototypes.View).initialize(node.selection);					
-					container.appendChild(node.selection.view.el);
-				}
+				F5.addClass(this.container, 'f5container');
+				F5.addClass(this.container, node.id + '-container');
+				this.el.appendChild(this.container);	
 				
 				var footer = F5.loadTemplate(node.id + '-footer', F5.getNodeData(node));
 				if (footer) {
 					attachTabset(footer);
-					this.el.appendChild(footer, container);
+					this.el.appendChild(footer, this.container);
 				}										
 			} else {
 				var template = F5.loadTemplate(node.id, F5.getNodeData(node));
@@ -101,6 +88,12 @@
 					this.el.appendChild(template);
 				}								
 			}
+			
+			if (node.parent) {
+				node.parent.view.container.appendChild(this.el);
+			} else {
+				document.getElementById('f5screen').appendChild(node.view.el);
+			}			
 			
 			if (F5.Prototypes.ViewDelegates[node.id]) {
 				this.delegate = F5.objectFromPrototype(F5.Prototypes.ViewDelegates[node.id]);

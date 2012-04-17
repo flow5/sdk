@@ -46,14 +46,18 @@
 		};		
 		this.removeFlowObserver = function (observer) {
 			flowObservers.splice(flowObservers.indexOf(observer), 1);
-		};		
-		
+		};				
 						
 		// TODO: fix the case where the recursive flow terminates in a selection or transition
 		// before a leaf node is reached. current impl the recursion may continue along the old branch
 		// More concerning is that elements that have received "willBecomeActive" events will never
 		// actually be activated (or inactivated) because of a transition or selection away
+		
 		function doLifecycleEventRecursive(event, node, cb) {	
+			if (!node) {
+				cb();
+				return;
+			}
 			
 			F5.lifecycleEvent = event;
 			function callback() {
@@ -67,54 +71,60 @@
 				}
 			}
 			
-			function subflowCallback(node) {
-				return function () {					
-					doLifecycleEventRecursive(event, node.selection, cb);
-				};
-			}
-					
-			while (node) {
-				
-				if (event === 'WillBecomeInactive') {
-					that.cancelPending(node);
-				}
-				
-				if (event === 'WillBecomeActive') {
-					// save away the original selection so it can be restored
-					// when the node is released
-					if (node.selection && !node.defaultSelection) {
-						node.defaultSelection = node.selection.id;
-					}
-					
-					if (!node.flowDelegate) {
-						var flowDelegatePrototype = F5.Prototypes.FlowDelegates[node.id];
-						if (flowDelegatePrototype) {
-							node.flowDelegate = F5.objectFromPrototype(flowDelegatePrototype);
-							node.flowDelegate.node = node;	
+			if (event === 'Initialize') {
+				if (!node.flowDelegate) {
+					var flowDelegatePrototype = F5.Prototypes.FlowDelegates[node.id];
+					if (flowDelegatePrototype) {
+						node.flowDelegate = F5.objectFromPrototype(flowDelegatePrototype);
+						node.flowDelegate.node = node;	
 
-							if (node.flowDelegate.initialize) {
-								node.flowDelegate.initialize();
-							}		
-						}													
-					}					
-				}
-						
-				// only recurse when an async operation requires it
-				if (node.subflows && node.subflows[event]) {
-					flowObservers.forEach(doLifecycleEvent);
-					that.doSubflow(node, event, subflowCallback(node));		
-					break;					
+						if (node.flowDelegate.initialize) {
+							node.flowDelegate.initialize();
+						}		
+					}													
+				}					
+			}
+								
+			if (event === 'WillBecomeInactive') {
+				that.cancelPending(node);
+			}
+			
+			if (event === 'WillBecomeActive') {
+				// save away the original selection so it can be restored
+				// when the node is released
+				if (node.selection && !node.defaultSelection) {
+					node.defaultSelection = node.selection.id;
+				}				
+			}
+					
+			flowObservers.forEach(doLifecycleEvent);
+			
+			function recurse(node) {
+				if (node.type === 'group') {
+					var tasks = [];
+					F5.forEach(node.children, function (id, child) {
+						tasks.push(function (cb) {
+							doLifecycleEventRecursive(event, child, cb);																
+						});
+					});
+					F5.parallelizeTasks(tasks, cb);
 				} else {
-				// otherwise just iterate to keep the stack minimal
-					flowObservers.forEach(doLifecycleEvent);	
-					node = node.selection;
-				}	
-				
-			}
-			if (!node) {
-				cb();
-			}
-		}						
+					doLifecycleEventRecursive(event, node.selection, cb);									
+				}
+			}	
+
+			if (node.subflows && node.subflows[event]) {
+				that.doSubflow(node, event, function () {
+					recurse(node);
+				});		
+			} else {
+				recurse(node);
+			}					
+		}	
+		
+		function nodeInitialize(node, cb) {			
+			doLifecycleEventRecursive('Initialize', node, cb);										
+		}					
 		
 		function nodeDidBecomeActive(node, cb) {								
 			node.active = true;			
@@ -198,7 +208,7 @@
 			};
 						
 			F5.parseResources();
-			F5.Global.flow.parse();
+			F5.Global.flow.initialize();
 			F5.Global.viewController.initialize();
 			
 			// flush any tasks that were waiting on init
@@ -208,15 +218,17 @@
 					if (observer.start) {
 						observer.start();
 					}
-				});					
+				});	
 				
-				nodeWillBecomeActive(flow.root, function () {				
-					nodeDidBecomeActive(flow.root, function () {
-						that.refresh();
-						// flush any tasks that were queued up during lifecycle events
-						flushWaitTasks(cb);
-					});
-				});													
+				nodeInitialize(flow.root, function () {
+					nodeWillBecomeActive(flow.root, function () {				
+						nodeDidBecomeActive(flow.root, function () {
+							that.refresh();
+							// flush any tasks that were queued up during lifecycle events
+							flushWaitTasks(cb);
+						});
+					});																		
+				});								
 			});		
 		};
 		
@@ -273,27 +285,29 @@
 			
 			cancelSubflowRecursive(node);
 							
-			nodeWillBecomeInactive(oldSelection, function () {
-				nodeWillBecomeActive(node.children[id], function () {
-					
-					var tasks = [];
-					flowObservers.forEach(function (observer) {
-						if (observer.doSelection) {
-							that.addWaitTask(observer.doSelection(node, id));
-						}
-					});		
-					flushWaitTasks(function selectionComplete() {
-						node.selection.active = false;
-						node.selection = node.children[id];
+			nodeWillBecomeInactive(oldSelection, function () {				
+				nodeInitialize(node.children[id], function () {
+					nodeWillBecomeActive(node.children[id], function () {
 
-						nodeDidBecomeInactive(oldSelection, function () {
-							nodeDidBecomeActive(node.selection, function () {
-								lockout = false;	
-								cb();			
-							});					
-						});							
-					});
-				});									
+						var tasks = [];
+						flowObservers.forEach(function (observer) {
+							if (observer.doSelection) {
+								that.addWaitTask(observer.doSelection(node, id));
+							}
+						});		
+						flushWaitTasks(function selectionComplete() {
+							node.selection.active = false;
+							node.selection = node.children[id];
+
+							nodeDidBecomeInactive(oldSelection, function () {
+								nodeDidBecomeActive(node.selection, function () {
+									lockout = false;	
+									cb();			
+								});					
+							});							
+						});
+					});														
+				});				
 			});
 		};
 				
@@ -366,43 +380,45 @@
 				}
 			}										
 															 
-			nodeWillBecomeInactive(node, function () {				
-				nodeWillBecomeActive(target, function () {	
-					
-					// queue up all of the transition completion functions from flow observers
-					var tasks = [];
-					flowObservers.forEach(function (observer) {
-						if (observer.doTransition) {
-							that.addWaitTask(observer.doTransition(container, node, id, target, animation));
-						}
-					});		
-					
-					// execute all of the transition competion functions
-					flushWaitTasks(function transitionComplete() {
-						var oldSelection = container.selection;						
-						nodeDidBecomeInactive(oldSelection, function () {
-							if (id === 'back') {
-								container.selection = target;							
-							} else {
-								container.selection = node.transitions[id].to;							
-							}							
-							nodeDidBecomeActive(container.selection, function () {
-								if (id === 'back') {
-									delete node.back;
+			nodeWillBecomeInactive(node, function () {						
+				nodeInitialize(target, function () {
+						nodeWillBecomeActive(target, function () {	
 
-									that.release(oldSelection);
-									flowObservers.forEach(function (observer) {
-										if (observer.release) {
-											observer.release(oldSelection);
-										}
-									});
-								}								
-								lockout = false;				
-								cb();
-							});		
-						});						
-					});
-				});				
+						// queue up all of the transition completion functions from flow observers
+						var tasks = [];
+						flowObservers.forEach(function (observer) {
+							if (observer.doTransition) {
+								that.addWaitTask(observer.doTransition(container, node, id, target, animation));
+							}
+						});		
+
+						// execute all of the transition competion functions
+						flushWaitTasks(function transitionComplete() {
+							var oldSelection = container.selection;						
+							nodeDidBecomeInactive(oldSelection, function () {
+								if (id === 'back') {
+									container.selection = target;							
+								} else {
+									container.selection = node.transitions[id].to;							
+								}							
+								nodeDidBecomeActive(container.selection, function () {
+									if (id === 'back') {
+										delete node.back;
+
+										that.release(oldSelection);
+										flowObservers.forEach(function (observer) {
+											if (observer.release) {
+												observer.release(oldSelection);
+											}
+										});
+									}								
+									lockout = false;				
+									cb();
+								});		
+							});						
+						});
+					});					
+				});										
 			});
 		};	
 		
@@ -535,15 +551,25 @@
 					if (nextAction) {
 						if (F5.lifecycleEvent === 'WillBecomeActive') {
 							if (node.selection.id !== nextAction) {
-								node.selection = node.children[nextAction];
-								F5.forEach(node.children, function (id, child) {
-									child.active = false;
-								});
-								node.selection.active = true;
-								flowObservers.forEach(function (observer) {
-									if (observer.syncSelection) {
-										observer.syncSelection(node);
-									}
+								
+								// TODO: might want to call willBecomeInactive on the previous active node. . .
+								
+								if (node.parent && node.parent.type !== 'group') {
+									node.selection = node.children[nextAction];
+									F5.forEach(node.children, function (id, child) {
+										child.active = false;
+									});
+									node.selection.active = true;									
+								}
+								
+								doLifecycleEventRecursive('Initialize', node.selection, function () {
+									doLifecycleEventRecursive('WillBecomeActive', node.selection, function () {
+										flowObservers.forEach(function (observer) {
+											if (observer.syncSelection) {
+												observer.syncSelection(node);
+											}
+										});									
+									});																	
 								});
 							} 
 							completionCb();							

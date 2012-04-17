@@ -68,7 +68,10 @@
 		}
 		var instance = template.cloneNode(true);
 		instance.removeAttribute('id');
-		
+		if (!instance.hasAttribute('f5id')) {
+			instance.setAttribute('f5id', id);			
+		}
+				
 		var widgetEls = [];
 		
 		if (instance.hasAttribute('f5widget')) {

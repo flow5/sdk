@@ -65,22 +65,18 @@
 			doLifecycleEvent(node, 'WillBecomeInactive');
 		};				
 
-		this.nodeWillBecomeActive = function (node) {
+		this.nodeWillBecomeActive = function (node) {			
+			doLifecycleEvent(node, 'WillBecomeActive');		
+		};	
+		
+		this.nodeInitialize = function (node) {
 			if (!node.view) {
 				F5.objectFromPrototype(F5.Prototypes.View).initialize(node);
-				if (node === F5.Global.flow.root) {
-					this.screenFrame.appendChild(node.view.el);
-				} else {
-					// TODO: this is slightly ugly
-					node.parent.view.el.getElementsByClassName('f5container')[0].appendChild(node.view.el);
-				}
-			}
-			
-			doLifecycleEvent(node, 'WillBecomeActive');		
-		};				
+			}			
+		};		
 		
 		this.initialize = function () {
-			this.screenFrame = document.getElementById('f5screen');				
+							
 		};
 		
 		this.start = function () {

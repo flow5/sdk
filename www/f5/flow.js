@@ -28,18 +28,9 @@
 
 (function () {
 	
-	function Flow(flowspec) {
+	function Flow(rootSpec) {
 		
-		this.isNodePathActive = function (node) {
-			var active = node.active;
-			while (active && node.parent) {
-				node = node.parent;
-				active = node.active;
-			}
-			return active;
-		};			
-		
-		this.parse = function () {
+		this.importNode = function (id, flowspec, parent) {
 			var that = this;
 
 			function findNodeUp(node, name) {
@@ -59,7 +50,7 @@
 							parent: parent,
 							viewDelegate: nodeSpec.viewDelegate,
 							spec: nodeSpec, 
-							active: false};
+							active: parent && parent.type === 'group'};
 
 				if (nodeSpec.children) {
 					node.children = {};
@@ -97,7 +88,7 @@
 					});					
 				}
 
-				if (node.parent) {
+				if (parent) {
 					parent.children[id] = node;
 				}
 
@@ -136,15 +127,11 @@
 					});
 				}				
 			}
-
-			// inject nodes
-			that.root = injectNodeRecursive('root', flowspec);
-
-			// resolve transitions
-			resolveTransitionsRecursive(that.root);								
-
-			// remove the cached specs
+			
 			function removeSpecsRecursive(obj) {
+				if (obj.parent) {
+					obj.parent._mark = true;
+				}
 				delete obj.spec;
 				// break cycles
 				obj._mark = true;
@@ -154,9 +141,11 @@
 					}
 				});
 				delete obj._mark;
+				if (obj.parent) {
+					delete obj.parent._mark;
+				}				
 			}
-			removeSpecsRecursive(that.root);
-
+			
 			function addPathsRecursive(node) {
 				function getPath(node) {
 					var path = [];
@@ -188,10 +177,34 @@
 						addSubflowPathsRecursive(subflow, node.path);
 					});
 				}			
-			}			
-			addPathsRecursive(this.root);			
+			}	
+			
+			// inject nodes
+			var node = injectNodeRecursive(id, flowspec, parent);
 
-			that.root.active = true;						
+			// resolve transitions
+			resolveTransitionsRecursive(node);								
+		
+			// remove the cached specs
+			removeSpecsRecursive(node);
+			
+			addPathsRecursive(node);			
+
+			return node;
+		};
+		
+		this.isNodePathActive = function (node) {
+			var active = node.active;
+			while (active && node.parent) {
+				node = node.parent;
+				active = node.active;
+			}
+			return active;
+		};			
+		
+		this.initialize = function () {
+			this.root = this.importNode('root', rootSpec);
+			this.root.active = true;			
 		};
 	}
 	
