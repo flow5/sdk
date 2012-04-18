@@ -39,9 +39,9 @@
 		this.initialize = function (node) {	
 
 			var el = document.createElement('div');
-			F5.addClass(el, 'f5' + node.type);
+			F5.addClass(el, 'f5node');
 			F5.addClass(el, node.id + '-node');
-			
+						
 			el.id = node.path;
 			el.view = this;
 						
@@ -69,13 +69,16 @@
 					this.el.appendChild(header);
 				}
 								
+				var container = document.createElement('div');
 				this.container = F5.loadTemplate(node.id + '-container', F5.getNodeData(node));
-				if (!this.container) {
-					this.container = document.createElement('div');					
+				if (this.container) {
+					container.appendChild(this.container);
+					F5.addClass(this.container, node.id + '-container');					
+				} else {
+					this.container = container;
 				}
-				F5.addClass(this.container, 'f5container');
-				F5.addClass(this.container, node.id + '-container');
-				this.el.appendChild(this.container);	
+				F5.addClass(container, 'f5container');
+				this.el.appendChild(container);	
 				
 				var footer = F5.loadTemplate(node.id + '-footer', F5.getNodeData(node));
 				if (footer) {

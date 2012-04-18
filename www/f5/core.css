@@ -88,10 +88,11 @@ body.f5mobile {
 	overflow: hidden;
 	
 	/* need to keep containers in the hw accelerated space to facilitate hw accelerated transitions within */
+	/* TODO: really? */
 	-webkit-transform: translate3d(0, 0, 0);
 }
 
-.f5flow, .f5node, .f5set, .f5group {
+.f5node {
 	display: -webkit-box;
 	position: absolute;
 	z-index: 0;

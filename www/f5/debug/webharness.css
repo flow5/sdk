@@ -149,7 +149,7 @@
 	margin-top:-.20em;
 }
 
-.f5frames .f5flow, .f5frames .f5node, .f5frames .f5set, .f5frames .f5group {
+.f5frames .f5node {
 	padding: .04em;
 	border: 1px solid grey;
 }
@@ -162,8 +162,4 @@
 	font-size:.08em;
 	opacity: .5;
 	display: block;
-}
-
-.f5frames .f5flow {
-	padding: .04em;
 }
