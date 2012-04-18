@@ -103,8 +103,3 @@ body.f5mobile {
 	-webkit-box-sizing: border-box;	
 	-webkit-box-orient: vertical;
 }
-
-/* can't assume anything about children of groups */
-.f5group > .f5container > .f5node {
-	position: relative;	
-}

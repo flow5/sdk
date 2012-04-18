@@ -47,6 +47,8 @@
 					that.detents.push(-width);
 					width += el.offsetWidth;
 					el.style.width = el.offsetWidth + 'px';
+					
+					F5.addClass(el, 'f5carousel-item');
 				}
 			});
 			this.el.style.width = width + 'px';	
