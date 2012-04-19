@@ -82,11 +82,15 @@
 				var container = document.createElement('div');
 				var containerTemplate = F5.loadTemplate(node.id + '-container', F5.getNodeData(node));
 				if (containerTemplate) {
-					var userContainer = document.createElement('div');
-					F5.addClass(userContainer, 'f5usercontainer');
-					container.appendChild(userContainer);		
-					userContainer.appendChild(containerTemplate);		
-					this.container = containerTemplate;
+					F5.addClass(containerTemplate, 'f5containertemplate');
+					container.appendChild(containerTemplate);					
+					var userContainer = containerTemplate.querySelector('[f5id=f5usercontainer]');
+					if (userContainer) {
+						F5.addClass(userContainer, 'f5usercontainer');
+						this.container = userContainer;
+					} else {
+						this.container = containerTemplate;
+					}				
 				} else {
 					this.container = container;
 				}

@@ -33,7 +33,7 @@
 		this.construct = function () {		
 			Carousel.prototype.construct.call(this);														
 			F5.addClass(this.el, 'f5carousel');				
-			this.horizontal = true;		
+			this.horizontal = true;			
 		};				
 		
 		this.refresh = function () {			
@@ -42,14 +42,16 @@
 			var width = 0;
 			var that = this;
 						
+			// TODO: to make the carousel work with fluid layout, 
+			// can't explicitly set widths
+			// this very nearly works without except that the Scroller (prototype)
+			// doesn't quite handle the propagated move events properly (probably because
+			// the offsets are relative to the wrong div)
 			F5.forEach(this.el.childNodes, function (el) {
 				if (el.constructor === HTMLDivElement) {
 					that.detents.push(-width);										
-
-					width += el.offsetWidth;
-					
-					console.log(el.offsetWidth)
-					
+					width += el.offsetWidth;	
+					F5.addClass(el, 'f5carouselitem');				
 					el.style.width = el.offsetWidth + 'px';					
 				}
 			});

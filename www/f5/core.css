@@ -114,7 +114,7 @@ body.f5mobile {
 	-webkit-transform: translate3d(0, 0, 0);
 }
 
-.f5usercontainer {
+.f5containertemplate {
 	height: 100%;
 	width: 100%;
 	position: absolute;
