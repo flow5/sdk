@@ -62,9 +62,9 @@
 		function updateLocation(that, location) {
 			var distance = that.distanceFromCurrentLocation();
 			if (distance) {
-				that.el.innerText = distance + ' m';								
+				that.el.textContent = distance + ' m';								
 			} else {
-				that.el.innerText = '';
+				that.el.textContent = '';
 			}
 		}
 		

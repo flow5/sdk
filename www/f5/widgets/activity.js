@@ -32,11 +32,15 @@
 	function Activity() {
 		
 		this.construct = function () {			
-			F5.addClass(this.el, 'f5activityspritecontainer');
+			F5.addClass(this.el, 'f5activityspriteroot');
+			
+			var container = document.createElement('div');
+			F5.addClass(container, 'f5activityspritecontainer');
+			this.el.appendChild(container);
 
 			var mask = document.createElement('div');
 			F5.addClass(mask, 'f5activityspritemask');
-			this.el.appendChild(mask);
+			container.appendChild(mask);
 
 			var sprite = document.createElement('div');
 			F5.addClass(sprite, 'f5activitysprite');
@@ -48,6 +52,8 @@
 		};
 		
 		this.stop = function (el) {
+//			return
+			
 			// make sure that the activity is actually contained by this element
 			var search = this.el;
 			while (search) {

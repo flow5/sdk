@@ -26,6 +26,8 @@
 ***********************************************************************************************************************/
 /*global F5*/
 
+
+// NOTE: global nav controller doesn't work within groups
 F5.Prototypes.Widgets.NavController = {
 	updateConfiguration: function (node) {		
 		// find the leaf node

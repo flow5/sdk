@@ -38,14 +38,24 @@
 	function View() {
 		this.initialize = function (node) {	
 
-			var el = document.createElement('div');
-			F5.addClass(el, 'f5node');
-			F5.addClass(el, node.id + '-node');
+			var nodeEl = document.createElement('div');
+			F5.addClass(nodeEl, 'f5node');
+			F5.addClass(nodeEl, node.id + '-node');			
+
+			var frameEl;
+			if (node.parent && node.parent.type === 'group') {
+				frameEl = nodeEl;
+			} else  {
+				frameEl = document.createElement('div');
+				F5.addClass(frameEl, 'f5frame');				
+				frameEl.appendChild(nodeEl);
+			}
 						
-			el.id = node.path;
-			el.view = this;
+			frameEl.id = node.path;
 						
-			this.el = el;			
+			this.el = frameEl;
+			frameEl.view = this;
+
 			this.node = node;
 
 			node.view = this;	
@@ -66,42 +76,45 @@
 				var header = F5.loadTemplate(node.id + '-header', F5.getNodeData(node));
 				if (header) {
 					attachTabset(header);
-					this.el.appendChild(header);
+					nodeEl.appendChild(header);
 				}
 								
 				var container = document.createElement('div');
-				this.container = F5.loadTemplate(node.id + '-container', F5.getNodeData(node));
-				if (this.container) {
-					container.appendChild(this.container);
-					F5.addClass(this.container, node.id + '-container');					
+				var containerTemplate = F5.loadTemplate(node.id + '-container', F5.getNodeData(node));
+				if (containerTemplate) {
+					var userContainer = document.createElement('div');
+					F5.addClass(userContainer, 'f5usercontainer');
+					container.appendChild(userContainer);		
+					userContainer.appendChild(containerTemplate);		
+					this.container = containerTemplate;
 				} else {
 					this.container = container;
 				}
 				F5.addClass(container, 'f5container');
-				this.el.appendChild(container);	
+				nodeEl.appendChild(container);	
 				
 				var footer = F5.loadTemplate(node.id + '-footer', F5.getNodeData(node));
 				if (footer) {
 					attachTabset(footer);
-					this.el.appendChild(footer, this.container);
+					nodeEl.appendChild(footer, this.container);
 				}										
 			} else {
 				var template = F5.loadTemplate(node.id, F5.getNodeData(node));
 				if (template) {
-					this.el.appendChild(template);
+					nodeEl.appendChild(template);
 				}								
 			}
 			
 			if (node.parent) {
-				node.parent.view.container.appendChild(this.el);
+				node.parent.view.container.appendChild(frameEl);
 			} else {
-				document.getElementById('f5screen').appendChild(node.view.el);
+				document.getElementById('f5screen').appendChild(frameEl);
 			}			
 			
 			if (F5.Prototypes.ViewDelegates[node.id]) {
 				this.delegate = F5.objectFromPrototype(F5.Prototypes.ViewDelegates[node.id]);
 				this.delegate.node = node;
-				this.delegate.el = el;
+				this.delegate.el = nodeEl;
 
 				if (this.delegate.initialize) {
 					this.delegate.initialize();					
@@ -116,14 +129,14 @@
 			}			
 												
 			if (!node.active) {
-				el.style.visibility = 'hidden';
+				frameEl.style.visibility = 'hidden';
 			}		
 			
 			if (F5.isDebug() && !F5.isMobile()) {
 				var label = document.createElement('div');
 				label.innerHTML = this.node.id;
 				F5.addClass(label, 'f5nodelabel');
-				this.el.insertBefore(label, this.el.firstChild);								
+				nodeEl.insertBefore(label, nodeEl.firstChild);								
 			}
 		};
 				

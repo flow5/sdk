@@ -33,11 +33,15 @@
 			
 			var that = this;
 			
-			F5.addClass(this.el, 'f5alert');
+			F5.addClass(this.el, 'f5alertroot');
+			
+			var alertEl = document.createElement('div');			
+			F5.addClass(alertEl, 'f5alert');
+			
 			
 			var containerEl = document.createElement('div');
 			F5.addClass(containerEl, 'f5alertcontainer');
-			that.el.appendChild(containerEl);
+			alertEl.appendChild(containerEl);
 			
 			var highlightEl = document.createElement('div');
 			F5.addClass(highlightEl, 'f5alerthighlight');
@@ -55,7 +59,9 @@
 
 			this.buttonsEl = document.createElement('div');
 			F5.addClass(this.buttonsEl, 'f5alertbuttoncontainer');
-			containerEl.appendChild(this.buttonsEl);			
+			containerEl.appendChild(this.buttonsEl);
+			
+			this.el.appendChild(alertEl);			
 		};
 		
 		this.setAction = function (cb) {

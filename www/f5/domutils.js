@@ -194,15 +194,16 @@
 	};
 	
 	F5.addTransitionEndListener = function (el, cb) {
-		addEventListener(el, 'webkitTransitionEnd', function (e) {
-			if (e.srcElement === el) {
+		addEventListener(el, F5.eventName('transitionEnd'), function (e) {
+			// TODO: originalTarget is for Firefox. srcElement is for webkit and IE. break these out?
+			if (e.originalTarget === el || e.srcElement === el) {
 				cb(e);				
 			}
 		});
 	};
 	
 	F5.removeTransitionEndListener = function (el) {
-		removeEventListener(el, 'webkitTransitionEnd');		
+		removeEventListener(el, F5.eventName('transitionEnd'));		
 	};
 	
 	F5.alert = function (title, message, action) {
@@ -229,7 +230,7 @@
 	
 	F5.screen = function () {
 		return document.getElementById('f5screen');
-	}
+	};
 	
 	F5.eventLocation = function(event) {
 		var x, y;
@@ -405,7 +406,8 @@
 		if (metric > 1.5) {
 			metric = 1.5;
 		}
-		document.getElementById('f5appframe').style['font-size'] = metric*100 + 'px';		
+		
+		document.getElementById('f5appframe').style.fontSize = metric*100 + 'px';		
 	};	
 		
 	F5.elementOffsetGeometry = function (el) {
@@ -524,7 +526,51 @@
 	F5.reflow = function () {
 		var reflow = document.body.offsetTop;		
 	};
+	
+	F5.eventName = function (canonicalName) {
+		// TODO; move mapping to manifest user agent targets
+		var mapping;
+		if (navigator.userAgent.match('Firefox')) {
+			mapping = {
+				transitionEnd: 'transitionend'
+			};			
+		} else if (navigator.userAgent.match('MSIE')){
+			mapping = {
+				transitionEnd: 'MSTransitionEnd'
+			};						
+		} else {
+			mapping = {
+				transitionEnd: 'webkitTransitionEnd'
+			};						
+		}
 		
+		return mapping[canonicalName];
+	};	
+
+	F5.styleName = function (canonicalName) {
+		// TODO; move mapping to manifest user agent targets
+		var mapping;
+		if (navigator.userAgent.match('Firefox')) {
+			mapping = {
+				transform: 'MozTransform',
+				transition: 'MozTransition'
+			};			
+		} else if (navigator.userAgent.match('MSIE')){
+			mapping = {
+				transform: '-ms-transform',
+				transition: '-ms-transition'
+			};						
+		} else {
+			mapping = {
+				transform: '-webkit-transform',
+				transition: '-webkit-transition'
+			};						
+			
+		}
+		
+		return mapping[canonicalName];
+	};
+			
 }());
 
 

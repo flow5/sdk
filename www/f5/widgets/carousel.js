@@ -33,22 +33,24 @@
 		this.construct = function () {		
 			Carousel.prototype.construct.call(this);														
 			F5.addClass(this.el, 'f5carousel');				
-			this.horizontal = true;			
-		};
+			this.horizontal = true;		
+		};				
 		
 		this.refresh = function () {			
 			// calculate the widths of the child divs to set detents
 			this.detents = [];
 			var width = 0;
 			var that = this;
-			F5.forEach(this.el.childNodes, function (obj) {
-				if (obj.constructor === HTMLDivElement) {
-					var el = obj;
-					that.detents.push(-width);
+						
+			F5.forEach(this.el.childNodes, function (el) {
+				if (el.constructor === HTMLDivElement) {
+					that.detents.push(-width);										
+
 					width += el.offsetWidth;
-					el.style.width = el.offsetWidth + 'px';
 					
-					F5.addClass(el, 'f5carousel-item');
+					console.log(el.offsetWidth)
+					
+					el.style.width = el.offsetWidth + 'px';					
 				}
 			});
 			this.el.style.width = width + 'px';	

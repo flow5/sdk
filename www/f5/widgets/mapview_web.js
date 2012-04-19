@@ -103,11 +103,11 @@
 					content.className = 'map-callout';
 
 					var name = document.createElement('div');
-					name.innerText = pin.title;
+					name.textContent = pin.title;
 					content.appendChild(name);
 
 					var streetView = document.createElement('div');
-					streetView.innerText = 'Street View';
+					streetView.textContent = 'Street View';
 					content.appendChild(streetView);
 
 					F5.addTapListener(name, function () {

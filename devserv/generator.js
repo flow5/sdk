@@ -467,8 +467,18 @@ exports.generateHtml = function(parsed) {
 				
 	scriptsEl.appendChild(makeScript('f5/start.js'));				
 				
-	var html = document.outerHTML.replace('<head>', '<head><style>' + styleBlock + '</style>');		
-//	return html.replace(/-webkit/g, '-ms').replace(/webkitTransition/g, 'MSTransition');
+	var html = document.outerHTML.replace('<head>', '<head><style>' + styleBlock + '</style>');	
+	
+	// TODO: this is quite inefficient since it's happening after image inlining
+	// should do this transform when loading elements and scripts
+	// Need a better general transformation approach. Or I start typing a lot of extra CSS
+	// the mapping would allow the server to blow up if a non-compatible property is used
+	if (query.agent === 'MSIE') {
+		html = html.replace(/-webkit/g, '-ms').replace(/-ms-box-sizing/g, 'box-sizing');		
+	} else if (query.agent === 'FF') {
+		html = html.replace(/-webkit/g, '-moz');		
+	}
+	
 	return html;
 };
 

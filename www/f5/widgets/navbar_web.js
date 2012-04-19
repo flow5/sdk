@@ -34,11 +34,6 @@
 		var title = {};
 		var buttons = {};
 		var containers = {};
-
-		// make space for the navbar
-		this.widgetWillBecomeActive = function () {
-			this.el.parentElement.style['padding-top'] = this.el.offsetHeight + 'px';
-		};
 			
 		this.construct = function (data) {
 			
@@ -172,12 +167,12 @@
 			} else {
 				var currentTitle;
 				if (title.active) {
-					currentTitle = title.active.innerText;
+					currentTitle = title.active.textContent;
 				}
 				if (currentTitle !== this.configuration.title) {
 					title.doAnimate = true;
 					title.inactive = chooseInactive(title);
-					title.inactive.innerText = this.configuration.title;						
+					title.inactive.textContent = this.configuration.title;						
 				}
 				setupButton('left');
 				setupButton('right');														

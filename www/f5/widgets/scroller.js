@@ -42,22 +42,22 @@
 		// the transform is set
 		if (F5.platform() === 'android' && duration) {
 			setTimeout(function () {
-				scroller.el.style['-webkit-transform'] = transform;									
+				scroller.el.style[F5.styleName('transform')] = transform;									
 			}, 10);
 		} else {
 			// Android misbehaves if -webkit-transform is left on elements when not required
 			// at application layer this means using a combination of animation and 
 			// positioning to manage element location
 			if (F5.platform() === 'android' && offset === 0) {
-				scroller.el.style['-webkit-transform'] = '';
+				scroller.el.style[F5.styleName('transform')] = '';
 			} else {
-				scroller.el.style['-webkit-transform'] = transform;									
+				scroller.el.style[F5.styleName('transform')] = transform;									
 			}
 		}
 
 		if (duration) {
 			var bezier = 'cubic-bezier(' + bezierValues.join(',') + ')';
-			scroller.el.style['-webkit-transition'] = '-webkit-transform ' + duration + 's ' + bezier;	
+			scroller.el.style[F5.styleName('transition')] = '-webkit-transform ' + duration + 's ' + bezier;	
 			
 			if (F5.platform() === 'android') {
 				useAndroidTransformWorkaround = true;
@@ -68,10 +68,10 @@
 			// in this case, the change to -webkit-transform is ignored (sometimes) unless there
 			// is still a transition in place
 			if (useAndroidTransformWorkaround) {
-				scroller.el.style['-webkit-transition'] = '-webkit-transform .0001s linear';				
+				scroller.el.style[F5.styleName('transition')] = '-webkit-transform .0001s linear';				
 				useAndroidTransformWorkaround = false;
 			} else {
-				scroller.el.style['-webkit-transition'] = '';				
+				scroller.el.style[F5.styleName('transition')] = '';				
 			}
 		}
 	}

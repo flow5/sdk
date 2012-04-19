@@ -42,7 +42,7 @@
 			this.slider.appendChild(this.left);
 
 			var on = document.createElement('div');
-			on.innerText = 'ON';
+			on.textContent = 'ON';
 			F5.addClass(on, 'f5label');
 			this.left.appendChild(on);
 
@@ -51,7 +51,7 @@
 			this.slider.appendChild(this.right);
 			
 			var off = document.createElement('div');
-			off.innerText = 'OFF';
+			off.textContent = 'OFF';
 			F5.addClass(off, 'f5label');
 			this.right.appendChild(off);
 			

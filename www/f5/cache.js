@@ -28,6 +28,27 @@
 
 (function () {
 	
+	// http://blogs.msdn.com/b/ie/archive/2010/09/07/transitioning-existing-code-to-the-es5-getter-setter-apis.aspx	
+	try {
+	   if (!Object.prototype.__defineGetter__ &&
+	        Object.defineProperty({},"x",{get: function(){return true}}).x) {
+	      Object.defineProperty(Object.prototype, "__defineGetter__",
+	         {enumerable: false, configurable: true,
+	          value: function(name,func)
+	             {Object.defineProperty(this,name,
+	                 {get:func,enumerable: true,configurable: true});
+	      }});
+	      Object.defineProperty(Object.prototype, "__defineSetter__",
+	         {enumerable: false, configurable: true,
+	          value: function(name,func)
+	             {Object.defineProperty(this,name,
+	                 {set:func,enumerable: true,configurable: true});
+	      }});
+	   }
+	} catch(defPropException) {/*Do nothing if an exception occurs*/};
+	
+		
+	
 	/* fields is array of {name, persist:true/false(default), value:value/null(default)} */
 	function Cache() {
 		

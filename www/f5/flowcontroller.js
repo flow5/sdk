@@ -423,7 +423,9 @@
 		};	
 		
 		// find an active leaf node
-		// then climb up the stack for the first node with 'back'		
+		// then climb up the stack for the first node with 'back'
+		
+		// NOTE: global navigation does not work within 'group' nodes because group doesn't have selection		
 		this.getBackNode = function (leaf) {
 			leaf = leaf || flow.root;
 			while (leaf.selection) {

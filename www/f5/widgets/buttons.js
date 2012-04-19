@@ -57,7 +57,7 @@
 				this.el.appendChild(this.label);							
 			}
 
-			this.label.innerText = label;					
+			this.label.textContent = label;					
 		};
 		
 		this.getData = function () {
@@ -142,7 +142,7 @@
 		};
 					
 		this.construct = function (data) {	
-			this.labelText = this.el.innerText;
+			this.labelText = this.el.textContent;
 			this.el.innerHTML = '';
 											
 			this.refresh(data);

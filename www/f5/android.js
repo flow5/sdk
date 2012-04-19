@@ -146,7 +146,7 @@ F5.Global.flowController.addWaitTask(function (cb) {
 			F5.forEach(data.choices, function (choice) {
 				var choiceEl = document.createElement('div');
 				F5.addClass(choiceEl, 'f5androidsetting');
-				choiceEl.innerText = choice;
+				choiceEl.textContent = choice;
 				that.container.appendChild(choiceEl);
 				F5.addTouchStartListener(choiceEl, function () {
 					if (that.action) {

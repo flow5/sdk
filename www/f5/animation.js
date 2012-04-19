@@ -30,21 +30,21 @@
 		
 	function pushHorizontal(container, oldEl, newEl, distance) {
 		
-		oldEl.style['-webkit-transform'] = 'translate3d(0px, 0px, 0px)';			
-		newEl.style['-webkit-transform'] = 'translate3d(' + distance + 'px, 0px, 0px)';
+		oldEl.style[F5.styleName('transform')] = 'translate3d(0px, 0px, 0px)';			
+		newEl.style[F5.styleName('transform')] = 'translate3d(' + distance + 'px, 0px, 0px)';
 		newEl.style.visibility = '';
 							
 		return function (cb) {
 			function complete() {
 				oldEl.style.visibility = 'hidden';
-				oldEl.style['-webkit-transform'] = '';
-				oldEl.style['-webkit-transition'] = '';
+				oldEl.style[F5.styleName('transform')] = '';
+				oldEl.style[F5.styleName('transition')] = '';
 
 				// Android pre-ICS: screen flashes if -webkit-transform is cleared while el is visible
 				if (F5.platform() !== 'android') {
-					newEl.style['-webkit-transform'] = '';					
+					newEl.style[F5.styleName('transform')] = '';					
 				}
-				newEl.style['-webkit-transition'] = '';
+				newEl.style[F5.styleName('transition')] = '';
 
 				F5.removeTransitionEndListener(oldEl);			
 				
@@ -59,20 +59,20 @@
 			}
 			
 			var transition = '-webkit-transform .25s ease-out';
-			oldEl.style['-webkit-transition'] = transition;
-			newEl.style['-webkit-transition'] = transition;
+			oldEl.style[F5.styleName('transition')] = transition;
+			newEl.style[F5.styleName('transition')] = transition;
 			
-			oldEl.style['-webkit-transform'] = 'translate3d(' + -distance + 'px, 0px, 0px)';
-			newEl.style['-webkit-transform'] = 'translate3d(0px, 0px, 0px)';							
+			oldEl.style[F5.styleName('transform')] = 'translate3d(' + -distance + 'px, 0px, 0px)';
+			newEl.style[F5.styleName('transform')] = 'translate3d(0px, 0px, 0px)';							
 		};			
 	}
 	
 	function sheetVertical(container, overEl, underEl, distance) {
 		
 		if (distance < 0) {
-			overEl.style['-webkit-transform'] = 'translate3d(0px, 0px, 0px)';						
+			overEl.style[F5.styleName('transform')] = 'translate3d(0px, 0px, 0px)';						
 		} else {
-			overEl.style['-webkit-transform'] = 'translate3d(0px, ' + -distance + 'px, 0px)';			
+			overEl.style[F5.styleName('transform')] = 'translate3d(0px, ' + -distance + 'px, 0px)';			
 		}
 		overEl.style.visibility = '';
 
@@ -85,9 +85,9 @@
 
 				// Android pre-ICS: screen flashes if -webkit-transform is cleared while el is visible
 				if (F5.platform() !== 'android') {
-					overEl.style['-webkit-transform'] = '';					
+					overEl.style[F5.styleName('transform')] = '';					
 				}
-				overEl.style['-webkit-transition'] = '';
+				overEl.style[F5.styleName('transition')] = '';
 				if (distance >= 0) {
 					underEl.style.visibility = 'hidden';					
 				}
@@ -105,12 +105,12 @@
 			}
 			
 			var transition = '-webkit-transform .25s ease-in ';
-			overEl.style['-webkit-transition'] = transition;
+			overEl.style[F5.styleName('transition')] = transition;
 			
 			if (distance < 0) {
-				overEl.style['-webkit-transform'] = 'translate3d(0px, ' + distance + 'px, 0px)';			
+				overEl.style[F5.styleName('transform')] = 'translate3d(0px, ' + distance + 'px, 0px)';			
 			} else {
-				overEl.style['-webkit-transform'] = 'translate3d(0px, 0px, 0px)';						
+				overEl.style[F5.styleName('transform')] = 'translate3d(0px, 0px, 0px)';						
 			}
 		};			
 	}
@@ -118,9 +118,9 @@
 	function drawerVertical(container, overEl, underEl, distance) {
 		
 		if (distance < 0) {
-			overEl.style['-webkit-transform'] = 'translate3d(0px, 0px, 0px)';						
+			overEl.style[F5.styleName('transform')] = 'translate3d(0px, 0px, 0px)';						
 		} else {
-			overEl.style['-webkit-transform'] = 'translate3d(0px, ' + -distance + 'px, 0px)';			
+			overEl.style[F5.styleName('transform')] = 'translate3d(0px, ' + -distance + 'px, 0px)';			
 		}
 		overEl.style.visibility = '';
 
@@ -137,12 +137,12 @@
 			F5.addTransitionEndListener(overEl, complete);	
 			
 			var transition = '-webkit-transform .25s ease-in ';
-			overEl.style['-webkit-transition'] = transition;
+			overEl.style[F5.styleName('transition')] = transition;
 			
 			if (distance < 0) {
-				overEl.style['-webkit-transform'] = 'translate3d(0px, ' + distance + 'px, 0px)';			
+				overEl.style[F5.styleName('transform')] = 'translate3d(0px, ' + distance + 'px, 0px)';			
 			} else {
-				overEl.style['-webkit-transform'] = 'translate3d(0px, 0px, 0px)';						
+				overEl.style[F5.styleName('transform')] = 'translate3d(0px, 0px, 0px)';						
 			}
 		};			
 	}	
@@ -150,9 +150,9 @@
 	function sheetHorizontal(container, el, distance) {
 		
 		if (distance < 0) {
-			el.style['-webkit-transform'] = 'translate3d(' + -distance + 'px, 0px, 0px)';			
+			el.style[F5.styleName('transform')] = 'translate3d(' + -distance + 'px, 0px, 0px)';			
 		} else {
-			el.style['-webkit-transform'] = 'translate3d(0px, 0px, 0px)';						
+			el.style[F5.styleName('transform')] = 'translate3d(0px, 0px, 0px)';						
 		}
 		el.style.visibility = '';
 							
@@ -161,9 +161,9 @@
 
 				// Android pre-ICS: screen flashes if -webkit-transform is cleared while el is visible
 				if (F5.platform() !== 'android') {
-					el.style['-webkit-transform'] = '';					
+					el.style[F5.styleName('transform')] = '';					
 				}
-				el.style['-webkit-transition'] = '';
+				el.style[F5.styleName('transition')] = '';
 				
 				F5.removeTransitionEndListener(el);			
 				
@@ -178,12 +178,12 @@
 			}
 			
 			var transition = '-webkit-transform .25s ease-in';
-			el.style['-webkit-transition'] = transition;
+			el.style[F5.styleName('transition')] = transition;
 			
 			if (distance < 0) {
-				el.style['-webkit-transform'] = 'translate3d(0px, 0px, 0px)';						
+				el.style[F5.styleName('transform')] = 'translate3d(0px, 0px, 0px)';						
 			} else {
-				el.style['-webkit-transform'] = 'translate3d(' + distance + 'px, 0px, 0px)';			
+				el.style[F5.styleName('transform')] = 'translate3d(' + distance + 'px, 0px, 0px)';			
 			}
 		};			
 	}	
@@ -204,13 +204,13 @@
 			
 			return function (cb) {
 				function completeFadeIn() {
-					newEl.style['-webkit-transition'] = '';
+					newEl.style[F5.styleName('transition')] = '';
 					F5.removeTransitionEndListener(newEl);
 					cb();
 				}
 
 				F5.addTransitionEndListener(newEl, completeFadeIn);				
-				newEl.style['-webkit-transition'] = 'opacity .25s';	
+				newEl.style[F5.styleName('transition')] = 'opacity .25s';	
 				newEl.style.opacity = 1;					
 			};						
 		},
@@ -218,13 +218,13 @@
 		overlayFadeOut: function (container, oldEl, newEl) {
 			return function (cb) {
 				function completeFadeOut() {
-					oldEl.style['-webkit-transition'] = '';
+					oldEl.style[F5.styleName('transition')] = '';
 					F5.removeTransitionEndListener(newEl);
 					cb();
 				}
 
 				F5.addTransitionEndListener(oldEl, completeFadeOut);				
-				oldEl.style['-webkit-transition'] = 'opacity .25s';	
+				oldEl.style[F5.styleName('transition')] = 'opacity .25s';	
 				oldEl.style.opacity = 0;					
 			};			
 		},
@@ -240,7 +240,7 @@
 			return function (cb) {
 				function completeFadeIn() {
 
-					newEl.style['-webkit-transition'] = '';
+					newEl.style[F5.styleName('transition')] = '';
 
 					// setting opacity causes flickering on Android (Gingerbread)
 //					if (F5.platform() !== 'android') {
@@ -256,7 +256,7 @@
 				}
 				
 				F5.addTransitionEndListener(newEl, completeFadeIn);				
-				newEl.style['-webkit-transition'] = 'opacity .25s';	
+				newEl.style[F5.styleName('transition')] = 'opacity .25s';	
 				newEl.style.opacity = 1;					
 			};		
 		},
@@ -270,7 +270,7 @@
 			return function (cb) {
 				function completeFadeOut() {
 
-					newEl.style['-webkit-transition'] = '';
+					newEl.style[F5.styleName('transition')] = '';
 
 					// setting opacity causes flickering on Android (Gingerbread)
 //					if (F5.platform() !== 'android') {
@@ -286,7 +286,7 @@
 				}
 				
 				F5.addTransitionEndListener(oldEl, completeFadeOut);				
-				oldEl.style['-webkit-transition'] = 'opacity .25s';	
+				oldEl.style[F5.styleName('transition')] = 'opacity .25s';	
 				oldEl.style.opacity = 0;					
 			};		
 		},

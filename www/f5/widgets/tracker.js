@@ -57,7 +57,7 @@
 						that.delegate.moveHandler(delta, startTransform);
 					}
 					
-					that.el.style['-webkit-transform'] = 'translate3d(' + delta.x + 'px,' + delta.y + 'px, 0px)';	
+					that.el.style[F5.styleName('transform')] = 'translate3d(' + delta.x + 'px,' + delta.y + 'px, 0px)';	
 				}
 			}
 
@@ -91,7 +91,7 @@
 				startLocation = F5.eventLocation(e);
 				var transformMatrix = new WebKitCSSMatrix(that.el.style.webkitTransform);
 				startTransform = {x: transformMatrix.m41, y: transformMatrix.m42};
-				that.el.style['-webkit-transition'] = '';
+				that.el.style[F5.styleName('transition')] = '';
 
 				F5.addTouchMoveListener(document.body, moveHandler);	
 				F5.addTouchStopListener(document.body, stopHandler);										
@@ -99,8 +99,8 @@
 		};
 		
 		this.animateTo = function (delta) {
-			this.el.style['-webkit-transition'] = '-webkit-transform .25s';
-			this.el.style['-webkit-transform'] = 'translate3d(' + delta.x + 'px,' + delta.y + 'px, 0px)';			
+			this.el.style[F5.styleName('transition')] = '-webkit-transform .25s';
+			this.el.style[F5.styleName('transform')] = 'translate3d(' + delta.x + 'px,' + delta.y + 'px, 0px)';			
 		};
 	}
 	

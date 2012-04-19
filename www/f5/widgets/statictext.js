@@ -49,7 +49,7 @@
 					value = this.formatValue(value);
 				}
 				
-				this.el.innerText = value;				
+				this.el.textContent = value;				
 			}
 		};
 	}

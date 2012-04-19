@@ -45,7 +45,7 @@ function Input() {
 
 		var labelText = F5.valueFromId(data.labels, id);
 		if (labelText) {
-			this.label.innerText = labelText;			
+			this.label.textContent = labelText;			
 		}
 		
 		if (!this.error) {
@@ -56,7 +56,7 @@ function Input() {
 		
 		function clearErrorAndLabel() {
 			that.label.style.display = 'none';
-			that.error.innerText = '';									
+			that.error.textContent = '';									
 		}			
 					
 		this.type = this.el.getAttribute('type');
@@ -66,7 +66,7 @@ function Input() {
 			if (options) {
 				options.forEach(function (option) {
 					var optionEl = document.createElement('option');
-					optionEl.innerText = option;
+					optionEl.textContent = option;
 					that.input.appendChild(optionEl);						
 				});
 			}
@@ -87,7 +87,8 @@ function Input() {
 			this.input.setAttribute('tabindex', -1);
 
 			this.input.pattern = this.el.getAttribute('pattern');
-			this.input.type = this.el.getAttribute('type');
+			
+			this.input.setAttribute('type', this.el.getAttribute('type'));
 			this.input.setAttribute('maxlength', this.el.getAttribute('maxlength'));			
 
 			this.input.setAttribute('autocorrect', this.el.getAttribute('autocorrect'));			
@@ -207,7 +208,7 @@ function Input() {
 	this.setValue = function (value) {
 		if (this.type === 'menu') {
 			F5.forEach(this.input.querySelectorAll('option'), function (option) {
-				if (option.innerText === value) {
+				if (option.textContent === value) {
 					option.selected = true;
 				}
 			});
@@ -243,17 +244,17 @@ function Input() {
 	};
 		
 	this.reset = function () {
-		this.error.innerText = '';
+		this.error.textContent = '';
 		this.label.style.display = '';
 		this.input.value = '';
 	};
 		
 	this.showError = function (message) {
-		this.error.innerText = message;
+		this.error.textContent = message;
 	};
 	
 	this.clearError = function () {
-		this.error.innerText = '';
+		this.error.textContent = '';
 	};
 }
 
