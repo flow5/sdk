@@ -87,7 +87,6 @@ body.f5mobile {
 
 /* f5node is nested in f5frame
    NOTE: this is a workaround for the fact that Firefox converts divs with position: absolute to display: block */
-/* can be used to style children of a container generically */
 .f5node {
 	width: 100%;
 	height: 100%;	

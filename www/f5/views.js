@@ -66,7 +66,6 @@
 				}
 								
 				var container = document.createElement('div');
-
 				var containerTemplate = F5.loadTemplate(node.id + '-container', F5.getNodeData(node));
 				if (containerTemplate) {
 					var frame = document.createElement('div');
@@ -75,6 +74,7 @@
 					frame.appendChild(containerTemplate);										
 					container.appendChild(frame);					
 				} else {
+					F5.addClass(container, node.id + '-container');
 					this.container = container;
 				}
 
