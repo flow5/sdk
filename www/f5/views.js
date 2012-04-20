@@ -37,30 +37,7 @@
 	
 	function View() {
 		this.initialize = function (node) {	
-
-			var nodeEl = document.createElement('div');
-			F5.addClass(nodeEl, 'f5node');
-			F5.addClass(nodeEl, node.id + '-node');			
-
-			var frameEl;
-			if (node.parent && node.parent.type === 'group') {
-				frameEl = nodeEl;
-			} else  {
-				frameEl = document.createElement('div');
-				F5.addClass(frameEl, 'f5frame');				
-				frameEl.appendChild(nodeEl);
-			}
-						
-			frameEl.id = node.path;
-						
-			this.el = frameEl;
-			frameEl.view = this;
-
-			this.node = node;
-
-			node.view = this;	
 			
-			var that = this;
 			function attachTabset(el) {
 				if (el.getAttribute('f5widget') === 'Tabset') {
 					that.tabset = el;
@@ -70,20 +47,22 @@
 					});
 					that.tabset.widget.select(node.selection.id);											
 				}				
-			}											
+			}		
+			
+			var that = this;																						
 																		
-			if (node.children) {
-				var nodeTemplate = F5.loadTemplate(node.id, F5.getNodeData(node));
-				if (nodeTemplate) {
-					nodeEl.appendChild(nodeTemplate);
-				} else {
-					nodeTemplate = nodeEl;
-				}
-								
+			var nodeEl = F5.loadTemplate(node.id, F5.getNodeData(node));
+			if (!nodeEl) {
+				nodeEl = document.createElement('div');
+				F5.addClass(nodeEl, node.id);					
+			}
+			F5.addClass(nodeEl, 'f5node');	
+																		
+			if (node.children) {								
 				var headerTemplate = F5.loadTemplate(node.id + '-header', F5.getNodeData(node));
 				if (headerTemplate) {
 					attachTabset(headerTemplate);
-					nodeTemplate.appendChild(headerTemplate);
+					nodeEl.appendChild(headerTemplate);
 				}
 								
 				var container = document.createElement('div');
@@ -102,25 +81,40 @@
 					this.container = container;
 				}
 				F5.addClass(container, 'f5container');
-				nodeTemplate.appendChild(container);	
+				nodeEl.appendChild(container);	
 				
 				var footerTemplate = F5.loadTemplate(node.id + '-footer', F5.getNodeData(node));
 				if (footerTemplate) {
 					attachTabset(footerTemplate);
-					nodeTemplate.appendChild(footerTemplate, this.container);
+					nodeEl.appendChild(footerTemplate, this.container);
 				}										
-			} else {
-				var template = F5.loadTemplate(node.id, F5.getNodeData(node));
-				if (template) {
-					nodeEl.appendChild(template);
-				}								
+			}																				
+			
+			if (F5.isDebug() && !F5.isMobile()) {
+				var label = document.createElement('div');
+				label.innerHTML = node.id;
+				F5.addClass(label, 'f5nodelabel');
+				nodeEl.insertBefore(label, nodeEl.firstChild);								
 			}
 			
-			if (node.parent) {
-				node.parent.view.container.appendChild(frameEl);
-			} else {
-				document.getElementById('f5screen').appendChild(frameEl);
-			}			
+			var frameEl;
+			if (node.parent && node.parent.type === 'group') {
+				frameEl = nodeEl;
+			} else  {
+				frameEl = document.createElement('div');
+				F5.addClass(frameEl, 'f5frame');				
+				frameEl.appendChild(nodeEl);
+			}
+			
+			if (!node.active) {
+				frameEl.style.visibility = 'hidden';
+			}		
+											
+			frameEl.id = node.path;						
+			this.el = frameEl;
+			frameEl.view = this;
+			this.node = node;
+			node.view = this;
 			
 			if (F5.Prototypes.ViewDelegates[node.id]) {
 				this.delegate = F5.objectFromPrototype(F5.Prototypes.ViewDelegates[node.id]);
@@ -130,25 +124,20 @@
 				if (this.delegate.initialize) {
 					this.delegate.initialize();					
 				}								
-			}
-
+			}			
+			
 			// TODO: enable this with an additional URL parameter?
 			// Would require an additional build target for device
 			// TODO: Don't like to have to create a stub initialize method to make these go away
 			if (!this.delegate || !this.delegate.initialize) {				
 				this.addDevOverlay(node);
 			}			
-												
-			if (!node.active) {
-				frameEl.style.visibility = 'hidden';
-			}		
 			
-			if (F5.isDebug() && !F5.isMobile()) {
-				var label = document.createElement('div');
-				label.innerHTML = this.node.id;
-				F5.addClass(label, 'f5nodelabel');
-				nodeEl.insertBefore(label, nodeEl.firstChild);								
-			}
+			if (node.parent) {
+				node.parent.view.container.appendChild(frameEl);
+			} else {
+				document.getElementById('f5screen').appendChild(frameEl);
+			}						
 		};
 				
 		this.doSelection = function (node, id) {

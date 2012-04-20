@@ -420,7 +420,7 @@
 		} else {
 			// TODO: move to Firefox specific block
 			// FIREFOX is not happy with f5screen 100/100
-			if (true && navigator.userAgent.match('Firefox')) {
+			if (false && navigator.userAgent.match('Firefox')) {
 				style = document.createElement('style');
 				style.innerHTML = '#f5screen {width:' + window.innerWidth + 'px; height:' + window.innerHeight + 'px;}';
 				document.head.appendChild(style);	

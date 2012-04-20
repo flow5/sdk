@@ -220,19 +220,17 @@
 		
 		viewerbuttonEl.widget.setState(localStorage.showViewer === 'true');
 		viewerbuttonEl.widget.setAction(function () {
-			if (viewerframeEl.style.display === 'none') {
-				viewerframeEl.style.display = '';
-				localStorage.showViewer = true;
-			} else {
+			if (F5.hasClass(document.body, 'f5viewer')) {
 				localStorage.showViewer = false;
-				viewerframeEl.style.display = 'none';				
+				F5.removeClass(document.body, 'f5viewer');
+			} else {
+				F5.addClass(document.body, 'f5viewer');
+				localStorage.showViewer = true;				
 			}
 		});	
 
 		if (localStorage.showViewer && JSON.parse(localStorage.showViewer)) {
-			viewerframeEl.style.display = '';
-		} else {
-			viewerframeEl.style.display = 'none';
+			F5.addClass(document.body, 'f5viewer');
 		}	
 		
 		cb();	
