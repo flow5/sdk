@@ -30,32 +30,66 @@
 	
 	function Carousel() {
 		
-		this.construct = function () {		
+		this.construct = function (data) {		
 			Carousel.prototype.construct.call(this);														
 			F5.addClass(this.el, 'f5carousel');				
-			this.horizontal = true;			
-		};				
+			this.horizontal = true;	
+			
+			var screen = document.getElementById('f5screen');
+			var height = screen.offsetHeight;
+			var width = screen.offsetWidth;
+			var that = this;
+			
+			this.data = data;						
+		};	
 		
-		this.refresh = function () {			
+		function getChildren(carousel) {
+			var children = [];
+			F5.forEach(carousel.el.childNodes, function (el) {
+				if (el.constructor === HTMLDivElement) {
+					children.push(el);
+				}
+			});
+			return children;
+		}		
+				
+		this.refresh = function () {
+			var that = this;
+							
+			// TODO: move to a FF-specific package
+			// workaround for FF box behavior
+			if (navigator.userAgent.match('Firefox')) {
+				var data = this.data[this.el.getAttribute('f5id')];				
+				if (data && data.width) {
+					if (data.width.match('px')) {
+						F5.forEach(getChildren(this), function (child) {
+							child.style.width = data.width;
+						});				
+					} else if (data.width.match('%')) {
+						var node = document.getElementById(data.node);
+						F5.forEach(getChildren(this), function (child) {
+							var widthValue = node.offsetWidth * data.width.replace('%', '')/100 + 'px';
+							child.style.width = widthValue;
+						});					
+					}							
+				}
+				
+				if (!this.detents) {
+					window.addEventListener('resize', function () {
+						that.refresh();
+					});									
+				}			
+			}
+						
 			// calculate the widths of the child divs to set detents
 			this.detents = [];
 			var width = 0;
-			var that = this;
 						
-			// TODO: to make the carousel work with fluid layout, 
-			// can't explicitly set widths
-			// this very nearly works without except that the Scroller (prototype)
-			// doesn't quite handle the propagated move events properly (probably because
-			// the offsets are relative to the wrong div)
-			F5.forEach(this.el.childNodes, function (el) {
-				if (el.constructor === HTMLDivElement) {
-					that.detents.push(-width);										
-					width += el.offsetWidth;	
-					F5.addClass(el, 'f5carouselitem');				
-					el.style.width = el.offsetWidth + 'px';					
-				}
+			F5.forEach(getChildren(this), function (child) {
+				that.detents.push(-width);										
+				width += child.offsetWidth;	
+				F5.addClass(child, 'f5carouselitem');	
 			});
-			this.el.style.width = width + 'px';	
 			
 			Carousel.prototype.refresh.call(this);																			
 		};
@@ -63,6 +97,7 @@
 		this.widgetWillBecomeActive = function () {
 			if (!this.detents) {
 				this.refresh();
+				var that = this;
 			}
 		};
 		
@@ -81,6 +116,10 @@
 			if (i >= 0 && i < this.detents.length) {
 				this.scrollTo(this.detents[i]);				
 			}
+		};
+		
+		this.constrainDrag = function(offset, delta) {				
+			return offset + delta;	
 		};
 
 		// snap to nearest detent

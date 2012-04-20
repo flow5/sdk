@@ -336,11 +336,36 @@
 	F5.setupScreenGeometry = function (isMobile, isNative) {
 		var geometry = F5.query.geometry;
 		
+		if (F5.isDebug()) {
+			F5.addClass(document.body, 'f5debug');
+		}
+		
 		var style, width, height;
 		if (geometry) {
-			var size = geometry.split('x');
-			width = size[0];
-			height = size[1];
+			var size;
+			switch (geometry) {
+			case 'iphone-portrait':
+				width = 320;
+				height = 460;
+				break;
+			case 'iphone-landscape':
+				width = 480;
+				height = 300;
+				break;
+			case 'ipad-portrait':
+				height = 1004;
+				width = 768;
+				break;
+			case 'ipad-landscape':
+				height = 748;
+				width = 1024;
+				break;
+			default:			
+				size = geometry.split('x');
+				width = size[0];
+				height = size[1];
+				break;
+			}
 			style = document.createElement('style');
 			style.innerHTML = '#f5screen {width:' + width + 'px; height:' + height + 'px;}';
 			document.head.appendChild(style);
@@ -393,9 +418,20 @@
 				}, 0);			
 			});		
 		} else {
+			// TODO: move to Firefox specific block
+			// FIREFOX is not happy with f5screen 100/100
+			if (true && navigator.userAgent.match('Firefox')) {
+				style = document.createElement('style');
+				style.innerHTML = '#f5screen {width:' + window.innerWidth + 'px; height:' + window.innerHeight + 'px;}';
+				document.head.appendChild(style);	
+				window.addEventListener('resize', function () {
+					style.innerHTML = '#f5screen {width:' + window.innerWidth + 'px; height:' + window.innerHeight + 'px;}';					
+				});			
+			}			
+			
 			var screenEl = document.getElementById('f5screen');
 			height = screenEl.offsetHeight;
-			width = screenEl.offsetWidth;
+			width = screenEl.offsetWidth;			
 		}
 		
 		/* for resolution independence, sizes should be expressed in em */

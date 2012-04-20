@@ -30,7 +30,6 @@
 	width: 100%;
 	height: 46px;
 	border-bottom: 1px solid black;
-	background-color: darkslategray;
 	display: -webkit-box;
 	-webkit-box-sizing: border-box;
 }
@@ -71,6 +70,7 @@
 .viewerbutton.f5button {
 	position: absolute;
 	left: 0px;
+	top: 0px;
 	margin: 11px;
 	height: 24px;
 	width: 24px;

@@ -30,7 +30,7 @@
 		
 	// see below
 	var useAndroidTransformWorkaround = false;			
-	function doTransform(scroller, offset, duration, bezierValues) {	
+	function doTransform(scroller, offset, duration, bezierValues) {					
 		var transform;
 		if (scroller.horizontal) {
 			transform = 'translate3d(' + offset + 'px, 0px, 0px)';				
@@ -148,8 +148,10 @@
 			scroller.bounceTimeout = null;		
 		}
 
-		var transformMatrix = new WebKitCSSMatrix(window.getComputedStyle(scroller.el)['-webkitTransform']);
-		stopScrollingAt(scroller, scroller.horizontal ? transformMatrix.m41 : transformMatrix.m42);					
+		if (typeof WebKitCSSMatrix !== 'undefined') {
+			var transformMatrix = new WebKitCSSMatrix(window.getComputedStyle(scroller.el)['-webkitTransform']);
+			stopScrollingAt(scroller, scroller.horizontal ? transformMatrix.m41 : transformMatrix.m42);								
+		}
 	}	
 	
 	
@@ -238,61 +240,14 @@
 		// browser compatibility
 		if (!scroller.tracking) {
 			return;
-		}	
-
-		function constrainDrag(offset, delta) {		
-
-			// limit is the furthest it's possible to drag without leaving the container
-			var limit = scroller.horizontal ? scroller.container.width : scroller.container.height;		
-							
-			// maxDrag is the furthest it's possible to drag without leaving the container
-			// given the initial touch position
-			var maxDrag = scroller.horizontal ? limit - scroller.startLoc.x : limit - scroller.startLoc.y;				
-			if (F5.sign(delta) < 0 ) {
-				maxDrag = scroller.horizontal ? -scroller.startLoc.x : -scroller.startLoc.y;
-			}
-
-			// constrain the drag based on the container
-			if (Math.abs(delta) > Math.abs(maxDrag)) {
-				delta = maxDrag;
-			}
-
-			// now see how far it's possible to overdrag based on initial scroller position
-			var maxOverdrag = maxDrag;
-			// logic is dependent on direction of drag
-			if (F5.sign(delta) > 0 && offset + maxDrag > 0) {
-				maxOverdrag = offset + maxDrag;
-			} else if (F5.sign(delta) < 0 && offset+maxDrag < scroller.minOffset) {
-				maxOverdrag = offset+maxDrag-scroller.minOffset;
-			}
-
-			// see if the drag is past the maximum drag position
-			var overDrag = 0;
-			// logic is dependent on direction of drag
-			if (F5.sign(delta) > 0 && offset+delta > 0) {
-				overDrag = offset+delta;
-			} else if (F5.sign(delta) < 0 && offset+delta < scroller.minOffset) {
-				overDrag = offset+delta-scroller.minOffset;
-			}
-
-			// if overdragged, constrain and apply a rubbery effect using bezier
-			if (overDrag) {								
-				// limit the overdrag to half the 
-				var overDragLimit = 0.5 * F5.sign(delta) * Math.min(Math.abs(maxOverdrag), limit);
-				// make it stretchy
-				var constrainedOverdrag = overDragLimit * F5.cubicBezierAtTime(overDrag/maxOverdrag, 0, 0, 0.5 ,1, 2.0);
-				delta = delta - overDrag + constrainedOverdrag;
-			}
-
-			return offset + delta;
-		}
+		}			
 
 		updateVelocity(scroller, e);	
 
 		var delta = scroller.horizontal ? eventPosition(scroller, e).x - scroller.startLoc.x : 
 											eventPosition(scroller, e).y - scroller.startLoc.y;
 
-		scroller.currentOffset = constrainDrag(scroller.staticOffset, delta);
+		scroller.currentOffset = scroller.constrainDrag(scroller.staticOffset, delta);
 
 		doTransform(scroller, scroller.currentOffset);
 	}	
@@ -393,6 +348,53 @@
 			
 			return snapTo;			
 		};
+		
+		this.constrainDrag = function(offset, delta) {	
+			
+			// limit is the furthest it's possible to drag without leaving the container
+			var limit = this.horizontal ? this.container.width : this.container.height;		
+							
+			// maxDrag is the furthest it's possible to drag without leaving the container
+			// given the initial touch position
+			var maxDrag = this.horizontal ? limit - this.startLoc.x : limit - this.startLoc.y;				
+			if (F5.sign(delta) < 0 ) {
+				maxDrag = this.horizontal ? -this.startLoc.x : -this.startLoc.y;
+			}
+
+			// constrain the drag based on the container
+			if (Math.abs(delta) > Math.abs(maxDrag)) {
+				delta = maxDrag;
+			}
+
+			// now see how far it's possible to overdrag based on initial scroller position
+			var maxOverdrag = maxDrag;
+			// logic is dependent on direction of drag
+			if (F5.sign(delta) > 0 && offset + maxDrag > 0) {
+				maxOverdrag = offset + maxDrag;
+			} else if (F5.sign(delta) < 0 && offset+maxDrag < this.minOffset) {
+				maxOverdrag = offset+maxDrag-this.minOffset;
+			}
+
+			// see if the drag is past the maximum drag position
+			var overDrag = 0;
+			// logic is dependent on direction of drag
+			if (F5.sign(delta) > 0 && offset+delta > 0) {
+				overDrag = offset+delta;
+			} else if (F5.sign(delta) < 0 && offset+delta < this.minOffset) {
+				overDrag = offset+delta-this.minOffset;
+			}
+
+			// if overdragged, constrain and apply a rubbery effect using bezier
+			if (overDrag) {								
+				// limit the overdrag to half the 
+				var overDragLimit = 0.5 * F5.sign(delta) * Math.min(Math.abs(maxOverdrag), limit);
+				// make it stretchy
+				var constrainedOverdrag = overDragLimit * F5.cubicBezierAtTime(overDrag/maxOverdrag, 0, 0, 0.5 ,1, 2.0);
+				delta = delta - overDrag + constrainedOverdrag;
+			}
+
+			return offset + delta;
+		}
 		
 		this.flickTo = function (velocity) {
 			var that = this;			
