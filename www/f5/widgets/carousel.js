@@ -40,7 +40,11 @@
 			var width = screen.offsetWidth;
 			var that = this;
 			
-			this.data = data;						
+			this.data = data;	
+			
+			window.addEventListener('resize', function () {
+				that.refresh();
+			});									
 		};	
 		
 		function getChildren(carousel) {
@@ -56,30 +60,26 @@
 		this.refresh = function () {
 			var that = this;
 							
-			// TODO: move to a FF-specific package
-			// workaround for FF box behavior
-			if (navigator.userAgent.match('Firefox')) {
-				var data = this.data[this.el.getAttribute('f5id')];				
-				if (data && data.width) {
-					if (data.width.match('px')) {
-						F5.forEach(getChildren(this), function (child) {
-							child.style.width = data.width;
-						});				
-					} else if (data.width.match('%')) {
-						var node = document.getElementById(data.node);
-						F5.forEach(getChildren(this), function (child) {
-							var widthValue = node.offsetWidth * data.width.replace('%', '')/100 + 'px';
-							child.style.width = widthValue;
-						});					
-					}							
-				}
-				
-				if (!this.detents) {
-					window.addEventListener('resize', function () {
-						that.refresh();
-					});									
-				}			
-			}
+			// resize carousel items relative to a specified node
+			
+			// NOTE:
+			// TODO: reference test case under flow5/tests/www
+			// In WebKit and IE10 it's possible to do this using CSS by setting 
+			// both the carousel (box) and the carousel items to width: 100%
+			// the box act like a block and overflow horizontally
+			// In Firefox, box is treated as width: auto so this approach doesn't work
+			// and the boxes have to be sized explicitly
+			// So use the Firefox behavior everywhere for consistency
+			
+			// TODO: if the reflow is slower this way, special case Firefox
+			var data = this.data[this.el.getAttribute('f5id')];				
+			if (data && data.relativeSize && data.referenceNode) {
+				var node = document.getElementById(data.referenceNode);
+				F5.forEach(getChildren(this), function (child) {
+					var widthValue = node.offsetWidth * data.relativeSize + 'px';
+					child.style.width = widthValue;
+				});					
+			}				
 						
 			// calculate the widths of the child divs to set detents
 			this.detents = [];

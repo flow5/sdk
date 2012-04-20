@@ -66,20 +66,18 @@
 				}
 								
 				var container = document.createElement('div');
+
 				var containerTemplate = F5.loadTemplate(node.id + '-container', F5.getNodeData(node));
 				if (containerTemplate) {
-					F5.addClass(containerTemplate, 'f5containertemplate');
-					container.appendChild(containerTemplate);					
-					var userContainer = containerTemplate.querySelector('[f5id=f5usercontainer]');
-					if (userContainer) {
-						F5.addClass(userContainer, 'f5usercontainer');
-						this.container = userContainer;
-					} else {
-						this.container = containerTemplate;
-					}				
+					var frame = document.createElement('div');
+					F5.addClass(frame, 'f5frame');
+					this.container = containerTemplate;
+					frame.appendChild(containerTemplate);										
+					container.appendChild(frame);					
 				} else {
 					this.container = container;
 				}
+
 				F5.addClass(container, 'f5container');
 				nodeEl.appendChild(container);	
 				

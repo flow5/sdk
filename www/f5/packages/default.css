@@ -684,7 +684,7 @@ body {
 /***************************************/
 
 .f5carousel {
-	display: -webkit-box;
+	display: -webkit-box; /* for left->right flow */
 }
 
 /***************************************/

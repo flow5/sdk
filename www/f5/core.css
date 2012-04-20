@@ -71,7 +71,8 @@ body.f5mobile {
 }
 
 
-/* f5frame is used for the children of container nodes which have a selection */
+/* f5frame is used for the children of container nodes which have a selection
+   and also for containers when the application layer provides a container template */
 .f5frame {
 	position: absolute; 
 	top: 0px;
@@ -103,11 +104,4 @@ body.f5mobile {
 	/* need to keep containers in the hw accelerated space to facilitate hw accelerated transitions within */
 	/* TODO: really? confirm */
 	-webkit-transform: translate3d(0, 0, 0);
-}
-
-/* TODO: is this really needed */
-.f5containertemplate {
-	position: absolute;
-	height: 100%;
-	width: 100%;
 }
