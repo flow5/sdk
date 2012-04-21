@@ -127,9 +127,17 @@
 	
 	function finishScrolling(scroller) {			
 		var snapTo = scroller.snapTo();
+
 		if (snapTo) {
+			if (snapTo.cb) {
+				F5.addTransitionEndListener(scroller.el, function () {
+					snapTo.cb();
+					F5.removeTransitionEndListener(scroller.el);
+				});				
+			}		
+			
 			doTransform(scroller, snapTo.offset, snapTo.duration, snapTo.bezier);
-			scroller.currentOffset = scroller.staticOffset = snapTo.offset;			
+			scroller.currentOffset = scroller.staticOffset = snapTo.offset;				
 		}		
 	}
 		
@@ -172,7 +180,8 @@
 		scroller.tracking = false;		
 		
 		var velocity = updateVelocity(scroller, e);	
-		var flickTo = scroller.flickTo(velocity);
+		var flickTo = scroller.flickTo(velocity);		
+		
 		if (flickTo) {
 			var flickDistance = Math.abs(scroller.staticOffset - flickTo.offset);
 			
@@ -184,7 +193,7 @@
 			scroller.bounceTimeout = setTimeout(function () {
 				scroller.bounceTimeout = null;
 				
-				F5.removeTransitionEndListener(scroller.el);				
+//				F5.removeTransitionEndListener(scroller.el);				
 				
 				// handle a flick past the scroller end
 				var now = Date.now();
@@ -223,8 +232,16 @@
 				}				
 			}, flickTo.duration * 1000 - 10);						
 
-			doTransform(scroller, flickTo.offset, flickTo.duration, flickTo.bezier);
 
+			if (flickTo.cb) {
+				F5.addTransitionEndListener(scroller.el, function () {
+					flickTo.cb();
+					F5.removeTransitionEndListener(scroller.el);
+				});				
+			}		
+
+			doTransform(scroller, flickTo.offset, flickTo.duration, flickTo.bezier);
+						
 			scroller.staticOffset = flickTo.offset;	
 			scroller.currentOffset = scroller.staticOffset;													
 		} else {
@@ -260,7 +277,7 @@
 			easeOut: [0.0, 0.0, 0.58, 1.0],
 			easeIn: [0.42, 0.0, 1.0, 1.0],
 			flickTo: [0.33, 0.66, 0.76, 1],
-			flickPast: [0.33, 0.55, .55, .75],
+			flickPast: [0.33, 0.55, 0.55, 0.75],
 			hardSnap: [0, 0.75, 0.55, 1.0],
 			softSnap: [0.25, 0.25, 0.55, 1.0]
 		};
@@ -394,7 +411,7 @@
 			}
 
 			return offset + delta;
-		}
+		};
 		
 		this.flickTo = function (velocity) {
 			var that = this;			
@@ -477,9 +494,26 @@
 			this.enabled = true;
 		};
 		
-		this.scrollTo = function (offset) {
-			this.staticOffset = offset;
-			doTransform(this, offset, 0.5, this.curves.softSnap);			
+		this.scrollTo = function (offset, cb) {
+			var that = this;
+			
+			function completeScroll() {
+				F5.removeTransitionEndListener(that.el);
+				cb();
+			}
+
+			if (this.staticOffset === offset) {
+				if (cb) {
+					cb();
+				}				
+			} else {
+				this.staticOffset = offset;
+				doTransform(this, offset, 0.5, this.curves.softSnap);			
+
+				if (cb) {
+					F5.addTransitionEndListener(this.el, completeScroll);
+				}				
+			}
 		};
 		
 		this.jumpTo = function (offset) {

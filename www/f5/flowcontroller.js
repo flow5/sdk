@@ -447,8 +447,8 @@
 			return that.getBackNode() !== null;
 		};
 		
-		this.doBack = function (cb) {			
-			var backNode = that.getBackNode();
+		this.doBack = function (cb, from) {			
+			var backNode = that.getBackNode(from);
 			F5.assert(backNode, 'Cannot go back');
 			that.doTransition(backNode, 'back', {}, cb);
 		};

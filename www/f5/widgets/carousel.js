@@ -109,8 +109,23 @@
 			});								
 		}
 		
+		this.setScrollCb = function (cb) {
+			var that = this;
+			this.scrollCb = function () {
+				cb(that.getDetent());
+			};
+		};
+		
 		this.zoomIn = function (cb) {
+			// TODO: move asserts to diags layer
 			F5.assert(this.data.referenceNode);
+			
+			if (this.zoomedIn) {
+				if (cb) {
+					cb();
+				}
+				return;
+			}
 			
 			this.disable();
 			
@@ -122,9 +137,10 @@
 			
 			var that = this;
 			function completeZoomIn() {
+				that.zoomedIn = true;
 				clearTransitions(that);
 				updateDetents(that);
-				F5.removeTransitionEndListener(that.el, completeZoomIn);
+				F5.removeTransitionEndListener(that.el);
 				if (cb) {
 					cb();
 				}
@@ -134,6 +150,13 @@
 		};
 		
 		this.zoomOut = function (cb) {
+			
+			if (!this.zoomedIn) {
+				if (cb) {
+					cb();
+				}
+				return;
+			}			
 
 			setupTransitions(this);
 						
@@ -143,9 +166,10 @@
 
 			var that = this;
 			function completeZoomOut() {
+				that.zoomedIn = false;
 				clearTransitions(that);
 				updateDetents(that);
-				F5.removeTransitionEndListener(that.el, completeZoomOut);
+				F5.removeTransitionEndListener(that.el);
 				that.enable();	
 				if (cb) {
 					cb();
@@ -186,9 +210,13 @@
 		};
 		
 		this.scrollToDetent = function (i) {
-			if (i >= 0 && i < this.detents.length) {
-				this.scrollTo(this.detents[i]);				
-			}
+			F5.assert(i >= 0 && i < this.detents.length);
+			var that = this;
+			this.scrollTo(this.detents[i], function () {
+				if (that.scrollCb) {
+					that.scrollCb();					
+				}
+			});				
 		};
 		
 		this.constrainDrag = function(offset, delta) {				
@@ -216,7 +244,7 @@
 			}
 			
 			if (offset !== this.staticOffset) {
-				return {offset: offset, duration: 0.25, bezier: this.curves.softSnap};				
+				return {offset: offset, duration: 0.25, bezier: this.curves.softSnap, cb: this.scrollCb};				
 			}
 		};
 		
@@ -232,7 +260,7 @@
 				}					
 			}
 			if (typeof offset !== 'undefined') {
-				return {offset: offset, duration: 0.25, bezier: this.curves.softSnap};
+				return {offset: offset, duration: 0.25, bezier: this.curves.softSnap, cb: this.scrollCb};
 			}					
 		};		
 	}
