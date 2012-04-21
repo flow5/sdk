@@ -37,22 +37,15 @@
 		} else {
 			transform = 'translate3d(0px, ' + offset + 'px, 0px)';				
 		}
-		// Android sometimes drops the animation on the ground if there isn't
-		// a delay between the time that -webkit-transition is setup and when
-		// the transform is set
-		if (F5.platform() === 'android' && duration) {
+		
+		// On MSIE, Firefox and Android the animation doesn't fire reliably if it's setup in the same frame
+		// as the transition parameters
+		if (duration) {
 			setTimeout(function () {
 				scroller.el.style[F5.styleName('transform')] = transform;									
 			}, 10);
 		} else {
-			// Android misbehaves if -webkit-transform is left on elements when not required
-			// at application layer this means using a combination of animation and 
-			// positioning to manage element location
-			if (F5.platform() === 'android' && offset === 0) {
-				scroller.el.style[F5.styleName('transform')] = '';
-			} else {
-				scroller.el.style[F5.styleName('transform')] = transform;									
-			}
+			scroller.el.style[F5.styleName('transform')] = transform;									
 		}
 
 		if (duration) {
