@@ -578,17 +578,23 @@
 		if (navigator.userAgent.match('Firefox')) {
 			mapping = {
 				transform: 'MozTransform',
-				transition: 'MozTransition'
+				transition: 'MozTransition',
+				'transition-property': 'MozTransitionProperty',
+				'transition-duration': 'MozTransitionDuration'
 			};			
 		} else if (navigator.userAgent.match('MSIE')){
 			mapping = {
 				transform: '-ms-transform',
-				transition: '-ms-transition'
+				transition: '-ms-transition',
+				'transition-property': '-ms-transition-property',
+				'transition-duration': '-ms-transition-duration'
 			};						
 		} else {
 			mapping = {
 				transform: '-webkit-transform',
-				transition: '-webkit-transition'
+				transition: '-webkit-transition',
+				'transition-property': '-webkit-transition-property',
+				'transition-duration': '-webkit-transition-duration'
 			};						
 			
 		}

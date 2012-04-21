@@ -40,7 +40,7 @@
 			var width = screen.offsetWidth;
 			var that = this;
 			
-			this.data = data;	
+			this.data = data[this.el.getAttribute('f5id')];	
 			
 			window.addEventListener('resize', function () {
 				that.refresh();
@@ -56,10 +56,25 @@
 			});
 			return children;
 		}		
-				
-		this.refresh = function () {
-			var that = this;
-							
+		
+		function updateDetents(carousel) {
+			// calculate the widths of the child divs to set detents
+			carousel.detents = [];
+			var width = 0;
+						
+			F5.forEach(getChildren(carousel), function (child) {
+				carousel.detents.push(-width);										
+				width += child.offsetWidth;	
+				F5.addClass(child, 'f5carouselitem');	
+			});			
+		}
+		
+		function sizeChild(child, node, relativeSize) {
+			var widthValue = node.offsetWidth * relativeSize + 'px';
+			child.style.width = widthValue;			
+		}
+		
+		function sizeChildren(carousel, node, relativeSize) {
 			// resize carousel items relative to a specified node
 			
 			// NOTE:
@@ -72,24 +87,82 @@
 			// So use the Firefox behavior everywhere for consistency
 			
 			// TODO: if the reflow is slower this way, special case Firefox
-			var data = this.data[this.el.getAttribute('f5id')];				
-			if (data && data.relativeSize && data.referenceNode) {
-				var node = document.getElementById(data.referenceNode);
-				F5.forEach(getChildren(this), function (child) {
-					var widthValue = node.offsetWidth * data.relativeSize + 'px';
-					child.style.width = widthValue;
-				});					
+			
+			F5.forEach(getChildren(carousel), function (child) {
+				sizeChild(child, node, relativeSize);
+			});					
+		}
+		
+		
+		function clearTransitions(carousel) {
+			carousel.el.style[F5.styleName('transition')] = '';			
+			F5.forEach(getChildren(carousel), function (child) {
+				child.style[F5.styleName('transition')] = '';
+			});					
+			
+		}
+		
+		function setupTransitions(carousel) {
+			carousel.el.style[F5.styleName('transition')] = 'padding .25s';			
+			F5.forEach(getChildren(carousel), function (child) {
+				child.style[F5.styleName('transition')] = 'width .25s';
+			});								
+		}
+		
+		this.zoomIn = function (cb) {
+			F5.assert(this.data.referenceNode);
+			
+			this.disable();
+			
+			setupTransitions(this);
+						
+			this.el.style.padding = '0px';
+			var referenceNode = document.getElementById(this.data.referenceNode);
+			sizeChild(getChildren(this)[this.getDetent()], referenceNode, 1);
+			
+			var that = this;
+			function completeZoomIn() {
+				clearTransitions(that);
+				updateDetents(that);
+				F5.removeTransitionEndListener(that.el, completeZoomIn);
+				if (cb) {
+					cb();
+				}
+			}
+			
+			F5.addTransitionEndListener(this.el, completeZoomIn);
+		};
+		
+		this.zoomOut = function (cb) {
+
+			setupTransitions(this);
+						
+			this.el.style.padding = '';
+			var referenceNode = document.getElementById(this.data.referenceNode);
+			sizeChild(getChildren(this)[this.getDetent()], referenceNode, this.data.relativeSize);
+
+			var that = this;
+			function completeZoomOut() {
+				clearTransitions(that);
+				updateDetents(that);
+				F5.removeTransitionEndListener(that.el, completeZoomOut);
+				that.enable();	
+				if (cb) {
+					cb();
+				}			
+			}
+			
+			F5.addTransitionEndListener(this.el, completeZoomOut);
+		};
+				
+		this.refresh = function () {
+			var that = this;
+			
+			if (this.data && this.data.relativeSize && this.data.referenceNode) {
+				sizeChildren(this, document.getElementById(this.data.referenceNode), that.data.relativeSize);				
 			}				
-						
-			// calculate the widths of the child divs to set detents
-			this.detents = [];
-			var width = 0;
-						
-			F5.forEach(getChildren(this), function (child) {
-				that.detents.push(-width);										
-				width += child.offsetWidth;	
-				F5.addClass(child, 'f5carouselitem');	
-			});
+												
+			updateDetents(this);		
 			
 			Carousel.prototype.refresh.call(this);																			
 		};
