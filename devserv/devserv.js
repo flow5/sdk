@@ -26,15 +26,14 @@
 ***********************************************************************************************************************/
 
 if (process.env.npm_package_config_root) {
-	console.log(process.cwd())
 	process.chdir(process.env.npm_package_config_root);
-	console.log(process.cwd())
 }
 
 var WEBROOT = process.cwd() + '/www';
 
 // nodelibs
 var http = require('http'),
+	https = require('https'),
 	fs = require('fs'),
 	cli = require('cli'),
 	path = require('path'),
@@ -120,6 +119,40 @@ function dot2svg(req, res) {
 	});	
 	
 	res.writeHead(200, {'Content-Type': 'image/svg+xml', 'sequence-number': req.headers['sequence-number']});		
+}
+
+function doProxy(parsed, req, res) {
+	
+	var proxyRequest = url.parse(parsed.query.url);	
+	var proxyProtocol = proxyRequest.protocol.replace(':', '');
+		
+	var options = {
+		 hostname: proxyRequest.hostname,
+		 port: proxyRequest.port,
+		 path: proxyRequest.path,
+		 method: req.method,
+		 headers: {authorization: req.headers.authorization}
+	};
+
+	var proxyReq = {http: http, https: https}[proxyProtocol].request(options, function (proxyRes) {
+
+		proxyRes.on('data', function(chunk) {
+			res.write(chunk, 'binary');
+		});
+
+		proxyRes.on('end', function() {
+			res.end();
+		});
+		res.writeHead(proxyRes.statusCode, proxyRes.headers);
+	});
+		
+	req.addListener('data', function(chunk) {
+		proxyReq.write(chunk, 'binary');
+	});
+		
+	req.addListener('end', function() {
+		proxyReq.end();
+	});
 }
 
 function showRequest(req, printHeaders) {
@@ -221,6 +254,8 @@ cli.main(function (args, options) {
 				});
 			} else if (req.url.indexOf('dot2svg') !== -1) {
 				dot2svg(req, res);	
+			} else if (req.url.indexOf('proxy?') !== -1) {
+				doProxy(parsed, req, res);
 			} else if (req.url.indexOf('service?') !== -1) {
 				try {
 					service = require('../www/services/' + app + '/' + parsed.query.name + '.js');
@@ -255,6 +290,8 @@ cli.main(function (args, options) {
 		case 'GET':
 			if (req.url.indexOf('generate?') !== -1) {
 				doGenerate(parsed, req, res);
+			} else if (req.url.indexOf('proxy?') !== -1) {
+				doProxy(parsed, req, res);				
 			} else if (req.url.match('cache.manifest')) {
 //				res.writeHead(404);
 				res.writeHead(200, {'Content-Type': 'text/cache-manifest'});

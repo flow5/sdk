@@ -24,7 +24,7 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global F5*/
+/*global F5, Base64*/
 
 
 (function () {
@@ -55,16 +55,18 @@
 	
 	function doXHR(method, url, body, success, error, headers, username, password) {				
 		var xhr = new XMLHttpRequest();
-		xhr.open(method, url, true);
-//		xhr.open(method, url, true, username, password);
+		xhr.open(method, url, true);			
 		if (method === 'POST' || method === 'PUT') {
 			xhr.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
+		}
+		
+		if (username && password) {
+			xhr.setRequestHeader("Authorization", 'Basic ' + F5.Base64.encode(username + ':' + password));			
 		}
 		
 //		console.log(url);
 //		console.log(body);
 		
-//		xhr.setRequestHeader("Authorization", 'Basic c3ByaW50Omp1MWN5anUxYzM=');
 
 		if (headers) {
 			F5.forEach(headers, function (id, value) {
@@ -165,7 +167,8 @@
 		var qualifier = components[1];
 		
 		var service = F5.Services;
-		var protocol = 'http', method = 'GET', baseUrl, username, password, urlParameterKeys, extendedUrl, resourceName;
+		var protocol = 'http', method = 'GET', baseUrl, username, password, 
+			urlParameterKeys, extendedUrl, resourceName, proxy;
 		F5.forEach(name.split('.'), function (component) {
 			if (service) {
 				service = service[component];				
@@ -196,6 +199,8 @@
 			
 			username = get('username') || username;
 			password = get('password') || password;
+
+			proxy = get('proxy') || proxy;
 			
 			F5.extend(parameters, get('parameters'));
 		});
@@ -211,7 +216,7 @@
 		if (resourceName) {
 			url += '/' + resourceName;
 		}
-				
+						
 		function formatUrlParameters(parameters, keys) {
 			var urlParameters = [];
 			F5.forEach(parameters, function (id, value) {
@@ -257,6 +262,10 @@
 			url += formatUrlParameters(parameters);
 			
 						
+			if (proxy) {
+				url = proxy + '/proxy?url=' + encodeURIComponent(url);
+			}
+						
 //			console.log(url);	
 			
 			pending.xhr = doXHR(method, url, null,
@@ -297,6 +306,10 @@
 				}
 			});
 			
+			if (proxy) {
+				url = proxy + '/proxy?url=' + encodeURIComponent(url);
+			}
+						
 			pending.xhr = doXHR(method, url, JSON.stringify(bodyParameters),
 				function success(response, status) {
 					pendingComplete(node, pending);					
