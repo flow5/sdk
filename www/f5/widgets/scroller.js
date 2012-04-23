@@ -88,7 +88,7 @@
 	}
 	
 	function stopScrollingAt(scroller, offset) {
-		scroller.staticOffset = scroller.currentOffset = offset;
+		scroller.staticOffset = Math.round(scroller.currentOffset = offset);
 		doTransform(scroller, scroller.staticOffset);
 	}
 		
@@ -121,7 +121,7 @@
 	function finishScrolling(scroller) {			
 		var snapTo = scroller.snapTo();
 
-		if (snapTo) {
+		if (snapTo && scroller.staticOffset !== snapTo.offset) {
 			if (snapTo.cb) {
 				F5.addTransitionEndListener(scroller.el, function () {
 					snapTo.cb();
@@ -130,7 +130,7 @@
 			}		
 			
 			doTransform(scroller, snapTo.offset, snapTo.duration, snapTo.bezier);
-			scroller.currentOffset = scroller.staticOffset = snapTo.offset;				
+			scroller.currentOffset = scroller.staticOffset = Math.round(snapTo.offset);
 		}		
 	}
 		
@@ -169,7 +169,7 @@
 			return;
 		}		
 				
-		scroller.staticOffset = scroller.currentOffset;				
+		scroller.staticOffset = Math.round(scroller.currentOffset);
 		scroller.tracking = false;		
 		
 		var velocity = updateVelocity(scroller, e);	
@@ -198,8 +198,7 @@
 						bounceOffset = scroller.minOffset - scroller.bounceDistance;
 					}
 
-					scroller.staticOffset = bounceOffset;
-					scroller.currentOffset = bounceOffset;
+					scroller.staticOffset = scroller.currentOffset = Math.round(bounceOffset);
 					
 					// match the starting velocity of the bounce to the ending velocity of the flick
 					var t1, t2;		
@@ -235,8 +234,7 @@
 
 			doTransform(scroller, flickTo.offset, flickTo.duration, flickTo.bezier);
 						
-			scroller.staticOffset = flickTo.offset;	
-			scroller.currentOffset = scroller.staticOffset;													
+			scroller.staticOffset = scroller.currentOffset = Math.round(flickTo.offset);
 		} else {
 			finishScrolling(scroller);			
 		}			
@@ -500,7 +498,7 @@
 					cb();
 				}				
 			} else {
-				this.staticOffset = offset;
+				this.staticOffset = Math.round(offset);
 				doTransform(this, offset, 0.5, this.curves.softSnap);			
 
 				if (cb) {
@@ -510,7 +508,7 @@
 		};
 		
 		this.jumpTo = function (offset) {
-			this.staticOffset = offset;					
+			this.staticOffset = Math.round(offset);
 			doTransform(this, offset);	
 		};
 		
