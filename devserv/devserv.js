@@ -290,7 +290,19 @@ cli.main(function (args, options) {
 		case 'GET':
 			if (req.url.indexOf('generate?') !== -1) {
 				doGenerate(parsed, req, res);
-			} else if (req.url.indexOf('proxy?') !== -1) {
+			} else if (req.url.indexOf('ideview') !== -1) {
+				parsed.query = {
+					app: 'ide',
+					debug: 'true',
+					platform: 'ios',
+					inline: 'true',
+					compress: 'false',
+					mobile: 'false',
+					native: 'false'
+				};
+				doGenerate(parsed, req, res);				
+			}
+			else if (req.url.indexOf('proxy?') !== -1) {
 				doProxy(parsed, req, res);				
 			} else if (req.url.match('cache.manifest')) {
 //				res.writeHead(404);

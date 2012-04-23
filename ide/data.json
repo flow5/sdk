@@ -1,0 +1,10 @@
+{
+	"config": {
+		"form": {
+			"labels": {
+				"url": "url",
+				"geometry": "geometry"
+			}
+		}
+	}
+}

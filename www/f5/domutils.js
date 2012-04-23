@@ -337,7 +337,7 @@
 		var geometry = F5.query.geometry;
 		
 		if (F5.isDebug()) {
-			F5.addClass(document.body, 'f5debug');
+//			F5.addClass(document.body, 'f5debug');
 		}
 		
 		var style, width, height;

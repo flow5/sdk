@@ -104,3 +104,21 @@ body.f5mobile {
 	/* TODO: really? confirm */
 	-webkit-transform: translate3d(0, 0, 0);
 }
+
+
+
+/* move to a debug.css */
+.f5frames .f5node {
+	padding: .04em;
+	border: 1px solid grey;
+}
+
+.f5nodelabel {
+	display: none;
+}
+
+.f5frames .f5nodelabel {
+	font-size:.08em;
+	opacity: .5;
+	display: block;
+}

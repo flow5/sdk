@@ -8,14 +8,8 @@
         }, 
         "desktop": {
             "debug": {
-                "elements": [
-                    "debug/json.css", 
-                    "debug/webharness.css", 
-                    "debug/webharness.html"
-                ], 
                 "scripts": [
-                    "debug/webharness.js", 
-                    "debug/json.js"
+					"debug/idebridge.js"
                 ]
             }
         }, 

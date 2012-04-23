@@ -48,7 +48,7 @@
 							data: {},
 							type: nodeSpec.type || 'node', 
 							parent: parent,
-							viewDelegate: nodeSpec.viewDelegate,
+/*							viewDelegate: nodeSpec.viewDelegate, */
 							spec: nodeSpec, 
 							active: parent && parent.type === 'group'};
 

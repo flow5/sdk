@@ -82,7 +82,12 @@
 			widgetEls.unshift(el);			
 		});
 		
-		var data = F5.getNodeData(node, arg2);							
+		var data;
+		if (node) {
+			data = F5.getNodeData(node, arg2);			
+		} else {
+			data = arg2 || {};
+		}
 		
 		F5.forEach(widgetEls, function attachWidget(el) {
 			F5.attachWidget(el, el.getAttribute('f5widget'), data);

@@ -1,0 +1,24 @@
+{
+	"type": "group",
+	"children": {
+		"app": {
+			
+		},
+		"dev": {
+			"type": "set",
+			"selection": "graph",
+			"children": {
+				"model": {
+					
+				},
+				"graph": {
+					
+				},
+				"config": {
+					
+				}
+			}
+			
+		}
+	}
+}

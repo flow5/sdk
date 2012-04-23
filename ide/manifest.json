@@ -1,0 +1,20 @@
+{
+	"all": {
+		"flowspecs": [
+			"flowspec.json"
+		],
+		"elements": [
+			"/packages/default.css",
+			"/packages/ios.css",
+			"templates.html",
+			"templates.css",
+			"json.css"
+		],
+		"scripts": [
+			"ide.js",
+			"json.js",
+			"viewdelegates.js",
+			"flowdelegates.js"
+		]
+	}
+}
