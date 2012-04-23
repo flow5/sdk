@@ -88,7 +88,7 @@
 	}
 	
 	function stopScrollingAt(scroller, offset) {
-		scroller.staticOffset = Math.round(scroller.currentOffset = offset);
+		scroller.staticOffset = scroller.currentOffset = Math.round(offset);
 		doTransform(scroller, scroller.staticOffset);
 	}
 		
