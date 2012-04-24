@@ -131,8 +131,14 @@ function doProxy(parsed, req, res) {
 		 port: proxyRequest.port,
 		 path: proxyRequest.path,
 		 method: req.method,
-		 headers: {authorization: req.headers.authorization}
+		 headers: req.headers
 	};
+	
+	if (options.headers) {
+		delete options.headers.host;
+	}
+	
+//	console.log(options)
 
 	var proxyReq = {http: http, https: https}[proxyProtocol].request(options, function (proxyRes) {
 

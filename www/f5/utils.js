@@ -168,7 +168,7 @@
 		
 		var service = F5.Services;
 		var protocol = 'http', method = 'GET', baseUrl, username, password, 
-			urlParameterKeys, extendedUrl, resourceName, proxy;
+			urlParameterKeys, extendedUrl, resourceName, headers, proxy;
 		F5.forEach(name.split('.'), function (component) {
 			if (service) {
 				service = service[component];				
@@ -200,6 +200,7 @@
 			username = get('username') || username;
 			password = get('password') || password;
 
+			headers = get('headers') || headers;
 			proxy = get('proxy') || proxy;
 			
 			F5.extend(parameters, get('parameters'));
@@ -294,7 +295,7 @@
 					} else {
 						F5.networkErrorHandler(cb, url, status);
 					}			
-				}, null, username, password);
+				}, headers, username, password);
 		} else if (method === 'POST' || method === 'PUT'){	
 			
 			url += formatUrlParameters(parameters, urlParameterKeys);
@@ -336,7 +337,7 @@
 					} else {
 						F5.networkErrorHandler(cb, url, status);						
 					}			
-				}, null, username, password);							
+				}, headers, username, password);							
 		}	
 		
 		node.pending.push(pending);
