@@ -236,6 +236,8 @@
 			newEl.style.opacity = 0;
 			// move to end so this draws last
 			newEl.parentElement.appendChild(newEl);
+								
+			newEl.style[F5.styleName('transition')] = 'opacity .25s';	
 																		
 			return function (cb) {
 				function completeFadeIn() {
@@ -250,13 +252,15 @@
 						});
 //					};
 
-					F5.removeTransitionEndListener(newEl);
+//					F5.removeTransitionEndListener(newEl);
 
 					cb();
 				}
 				
-				F5.addTransitionEndListener(newEl, completeFadeIn);				
-				newEl.style[F5.styleName('transition')] = 'opacity .25s';	
+//				F5.addTransitionEndListener(newEl, completeFadeIn);				
+				
+				setTimeout(completeFadeIn, 250);			
+				
 				newEl.style.opacity = 1;					
 			};		
 		},
@@ -266,6 +270,8 @@
 			newEl.style.visibility = '';
 			newEl.style.opacity = 1;
 			newEl.parentElement.insertBefore(newEl, oldEl);	
+
+			oldEl.style[F5.styleName('transition')] = 'opacity .25s';	
 																					
 			return function (cb) {
 				function completeFadeOut() {
@@ -280,14 +286,14 @@
 						});
 //					}
 
-					F5.removeTransitionEndListener(oldEl);
+//					F5.removeTransitionEndListener(oldEl);
 
 					cb();
 				}
 				
-				F5.addTransitionEndListener(oldEl, completeFadeOut);				
-				oldEl.style[F5.styleName('transition')] = 'opacity .25s';	
-				oldEl.style.opacity = 0;					
+//				F5.addTransitionEndListener(oldEl, completeFadeOut);				
+				oldEl.style.opacity = 0;		
+				setTimeout(completeFadeOut, 250);			
 			};		
 		},
 				

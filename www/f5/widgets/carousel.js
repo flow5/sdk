@@ -131,10 +131,6 @@
 			
 			setupTransitions(this);
 						
-			this.el.style.padding = '0px';
-			var referenceNode = document.getElementById(this.data.referenceNode);
-			sizeChild(getChildren(this)[this.getDetent()], referenceNode, 1);
-			
 			var that = this;
 			function completeZoomIn() {
 				that.zoomedIn = true;
@@ -147,6 +143,12 @@
 			}
 			
 			F5.addTransitionEndListener(this.el, completeZoomIn);
+
+			setTimeout(function () {
+				that.el.style.padding = '0px';
+				var referenceNode = document.getElementById(that.data.referenceNode);
+				sizeChild(getChildren(that)[that.getDetent()], referenceNode, 1);					
+			}, 0);										
 		};
 		
 		this.zoomOut = function (cb) {

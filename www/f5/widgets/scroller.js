@@ -498,7 +498,7 @@
 					cb();
 				}				
 			} else {
-				this.staticOffset = Math.round(offset);
+				this.staticOffset = this.currentOffset = Math.round(offset);
 				doTransform(this, offset, 0.5, this.curves.softSnap);			
 
 				if (cb) {
@@ -508,7 +508,7 @@
 		};
 		
 		this.jumpTo = function (offset) {
-			this.staticOffset = Math.round(offset);
+			this.staticOffset = this.currentOffset = Math.round(offset);
 			doTransform(this, offset);	
 		};
 		

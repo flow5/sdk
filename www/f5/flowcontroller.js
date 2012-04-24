@@ -393,7 +393,7 @@
 						});		
 
 						// execute all of the transition competion functions
-						flushWaitTasks(function transitionComplete() {
+						flushWaitTasks(function transitionComplete() {														
 							var oldSelection = container.selection;						
 							nodeDidBecomeInactive(oldSelection, function () {
 								if (id === 'back') {
