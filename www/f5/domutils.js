@@ -287,11 +287,11 @@
 	
 	F5.elementAbsolutePosition = function(el) {
 		var x = 0, y = 0;
-		while (el) {
+		while (el && !isNaN( el.offsetLeft ) && !isNaN( el.offsetTop )) {
 			x += el.offsetLeft;
 			y += el.offsetTop;
 
-			el = el.offsetParent;			
+			el = el.parentNode;			
 		}
 		return {x: x, y: y};
 	};
