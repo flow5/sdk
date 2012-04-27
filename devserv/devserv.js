@@ -53,6 +53,14 @@ cli.parse({
 	verbose: ['v', 'verbose logging'],
 });
 
+function appName(pkg) {
+	return pkg && pkg.split('.')[0];
+}
+
+function manifestName(pkg) {
+	return (pkg && pkg.split('.')[1]) || (pkg && 'manifest');
+}
+
 function compress(html, res) {
 		
 	// CSS compression is done in generate() pre-image inlining. this is both for efficiency and
@@ -245,7 +253,12 @@ cli.main(function (args, options) {
 		}
 		
 		// prevent directory climbing through passed parameters
-		var parsed = url.parse(req.url.replace('..', ''), true);
+		var parsed = url.parse(req.url.replace('..', ''), true);		
+//		console.log(parsed)
+		
+		parsed.query.app = parsed.query.app || appName(parsed.query.pkg);
+		parsed.query.manifest = parsed.query.manifest || manifestName(parsed.query.pkg);
+		
 		var app = parsed.query.app;
 		
 		var name, service;

@@ -72,6 +72,8 @@ function boolValue(string) {
 	return string === 'true';	
 }
 
+// TODO: slightly sloppy. processManifest is only interested in the query parameters related 
+// to manifest blocks. it doesn't look at app, manfest or pkg
 function processManifest(manifest, query, type, process) {
 
 	function manifestEntry(manifest, path) {
@@ -117,10 +119,11 @@ function processManifest(manifest, query, type, process) {
 	}
 	
 	processSection('all');
-	processSection(query.platform);
+	processSection(query.platform);	
+	// TODO: can get more specific here e.g. locale
 }
 	
-exports.generateCacheManifest = function(query) {
+exports.generateCacheManifest = function(query) { 
 		
 	function getModDate() {
 		var latestDate;
@@ -136,7 +139,7 @@ exports.generateCacheManifest = function(query) {
 		}
 
 		checkDate('www/f5/start.js');		
-		checkDate(__filename);
+		checkDate(__filename);		
 
 		function checkManifest(path, manifestName) {	
 			manifestName = (manifestName || 'manifest') + '.json';			
@@ -163,16 +166,29 @@ exports.generateCacheManifest = function(query) {
 					}
 				});				
 			}
+			
+			function checkPackages(packages) {
+				packages.forEach(function (pkg) {
+					// TODO: domain?
+					var domain = pkg.split('.')[0];
+					var manifest = pkg.split('.')[1];
+					if (domain === 'f5') {
+						checkManifest('f5/', manifest);
+					} else {
+						checkManifest('apps/'+ domain + '/', manifest);
+					}
+				});
+			}			
 
 			var manifest = parseJSON(path + manifestName);
 
-			processManifest(manifest, query, 'flowspecs', checkDates);											
+			processManifest(manifest, query, 'packages', checkPackages);											
+			processManifest(manifest, query, 'flows', checkDates);											
 			processManifest(manifest, query, 'scripts', checkDates);									
 			processManifest(manifest, query, 'elements', checkDates);									
 			processManifest(manifest, query, 'resources', checkDates);											
 		}
 
-		checkManifest('f5/');
 		checkManifest('apps/' + query.app + '/', query.manifest);
 		
 		return latestDate;		
@@ -266,15 +282,7 @@ exports.generateHtml = function(parsed) {
 //			console.log('Could not find facebook_appid.txt');
 		}		
 	}	
-	
-	function resolvePath(path, base) {		
-		if (path[0] === '/') {
-			return 'f5' + path;
-		} else {
-			return base + path;
-		}
-	}
-	
+		
 	function injectManifest(base, manifestName) {		
 		manifestName = (manifestName || 'manifest') + '.json';
 		
@@ -312,7 +320,7 @@ exports.generateHtml = function(parsed) {
 		// javascript
 		function injectScripts(scripts) {
 			scripts.forEach(function (file) {
-				scriptsEl.appendChild(makeScript(resolvePath(file, base)));				
+				scriptsEl.appendChild(makeScript(base + file));				
 			});				
 		}
 				
@@ -321,7 +329,7 @@ exports.generateHtml = function(parsed) {
 			elements.forEach(function (file) {
 				if (file.match('.css')) {
 					if (boolValue(query.inline)) {
-						var resolvedPath = resolvePath(file, base);
+						var resolvedPath = base + file;
 						var style = fs.readFileSync('www/' + resolvedPath).toString();
 						
 						if (boolValue(query.compress)) {
@@ -346,12 +354,12 @@ exports.generateHtml = function(parsed) {
 						}								
 						styleBlock += statements.join('');							
 					} else {
-						injectLink('stylesheet', resolvePath(file, base), 'text/css');
+						injectLink('stylesheet', base + file, 'text/css');
 					}
 				} else {
 					var elementsDiv = document.createElement('div');
 					try {
-						elementsDiv.innerHTML = fs.readFileSync('www/' + resolvePath(file, base)).toString();						
+						elementsDiv.innerHTML = fs.readFileSync('www/' + base + file).toString();						
 					} catch (e) {
 						console.log(e.stack);
 					}
@@ -368,10 +376,10 @@ exports.generateHtml = function(parsed) {
 		function injectResources(resourceFiles) {
 			resourceFiles.forEach(function (file) {
 				try {
-					var r = parseJSON(resolvePath(file, base));	
+					var r = parseJSON(base + file);	
 					if (boolValue(query.inline)) {
 						handleDataResourcesRecursive(r, function (obj, id, src) {						
-							obj[id] = inlineData(resolvePath(src, base));										
+							obj[id] = inlineData(base + src);										
 						});
 					}
 
@@ -398,16 +406,30 @@ exports.generateHtml = function(parsed) {
 		function injectFlows(flowFiles) {
 			flowFiles.forEach(function (file) {
 				try {
-					flowspec = parseJSON(resolvePath(file, base));						
+					flowspec = parseJSON(base + file);						
 				} catch (e) {
 					console.log('error:' + e.stack);
+				}
+			});
+		}
+		
+		function injectPackages(packages) {
+			packages.forEach(function (pkg) {
+				// TODO: domain?
+				var domain = pkg.split('.')[0];
+				var manifest = pkg.split('.')[1];
+				if (domain === 'f5') {
+					injectManifest('f5/', manifest);
+				} else {
+					injectManifest('apps/'+ domain + '/', manifest);
 				}
 			});
 		}
 
 		var manifest = parseJSON(base + manifestName);
 
-		processManifest(manifest, query, 'flowspecs', injectFlows);											
+		processManifest(manifest, query, 'packages', injectPackages);
+		processManifest(manifest, query, 'flows', injectFlows);											
 		processManifest(manifest, query, 'scripts', injectScripts);									
 		processManifest(manifest, query, 'elements', injectElements);	
 		processManifest(manifest, query, 'resources', injectResources);											
@@ -423,6 +445,11 @@ exports.generateHtml = function(parsed) {
 	
 	// TODO: create a meta section in manifest for this stuff
 	
+	
+	
+	// TODO: if manifest.type === 'app' add this stuff. otherwise not
+	// TODO: can't add styles to head.
+	
 	// standard meta
 	injectMeta({'http-equiv': 'Content-Type', content: 'text/html; charset=UTF-8'});
 	injectMeta({name: 'viewport', content: 'width=device-width initial-scale=1.0 maximum-scale=1.0 user-scalable=0'});
@@ -437,11 +464,12 @@ exports.generateHtml = function(parsed) {
 	injectMeta({name: 'viewport', content: 'target-densitydpi=device-dpi'});
 		
 	// f5.js comes first
+	// TODO: this is only for the root application
 	scriptsEl.appendChild(makeScript('f5/f5.js'));
 					
-	// process the manifests
-	injectManifest('f5/');
+	
 	injectManifest('apps/' + query.app + '/', query.manifest);	
+		
 		
 	// fetch a facebook id if there is one
 	// TODO: might not want this to be a firstclass feature. . .
