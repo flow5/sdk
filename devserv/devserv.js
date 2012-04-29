@@ -408,8 +408,8 @@ cli.main(function (args, options) {
 	}).listen(options.port);
 	
 	var httpsOptions = {
-	  key: fs.readFileSync('./devserv/privatekey.pem'),
-	  cert: fs.readFileSync('./devserv/certificate.pem')
+	  key: fs.readFileSync('./devserv/https/privatekey.pem'),
+	  cert: fs.readFileSync('./devserv/https/certificate.pem')
 	};	
 	https.createServer(httpsOptions, function (req, res) {
 		if (options.verbose) {
