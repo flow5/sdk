@@ -58,7 +58,11 @@ function appName(pkg) {
 }
 
 function manifestName(pkg) {
-	return (pkg && pkg.split('.')[1]) || (pkg && 'manifest');
+	if (pkg && pkg.split('.')[1]) {
+		return pkg.split('.')[1] + '.manifest';
+	} else {
+		return 'manifest';
+	}
 }
 
 function compress(html, res) {

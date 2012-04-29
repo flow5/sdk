@@ -341,7 +341,7 @@ exports.generateHtml = function(parsed) {
 	}	
 		
 	function injectManifest(base, manifestName) {		
-		manifestName = (manifestName || 'manifest') + '.json';
+		manifestName += '.json';
 		
 		function inlineData(path) {			
 			try {
@@ -475,6 +475,11 @@ exports.generateHtml = function(parsed) {
 				// TODO: domain?
 				var domain = pkg.split('.')[0];
 				var manifest = pkg.split('.')[1];
+				if (manifest) {
+					manifest += '.manifest';
+				} else {
+					manifest = 'manifest';
+				}
 				if (domain === 'f5') {
 					injectManifest('f5/', manifest);
 				} else {
