@@ -29,9 +29,25 @@
 
 (function () {	
 	
+	
+	// TODO: one client per pkg
+	var clients = {'f5.core': F5};
+	
+	function Client(pkg) {
+		this.pkg = pkg;
+		
+//		this.getElementById = function (el, f5id) {
+//			Client.prototype.getElementById.call(this, el, this.pkg + '.' + f5id);
+//		};
+	}
+	Client.prototype = F5;
+	
 	F5.pendingModules.forEach(function (module) {
 		console.log(module.pkg);
-		module.cb(F5);
+
+		clients[module.pkg] = clients[module.pkg] || new Client(module.pkg);
+//		clients[module.pkg].prototype = F5;
+		module.cb(clients[module.pkg]);
 	});
 	
 	if (F5.isDebug()) {
@@ -93,6 +109,9 @@
 
 	listener.addEventListener(startEvent, function startHandler(e) {	
 		function startUp() {			
+			
+			F5.scopeTemplates();
+			
 			// create the essential divs
 			var appframeEl = document.createElement('div');
 			appframeEl.id = 'f5appframe';

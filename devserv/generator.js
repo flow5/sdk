@@ -292,17 +292,6 @@ exports.generateHtml = function(query) {
 	document.body = new Element('body');
 	document.appendChild(document.body);	
 	
-	// templates container TODO: these will be added per package
-	var templatesEl = new Element('div');
-	templatesEl.id = 'f5templates';
-	templatesEl.setAttribute('style', 'display:none;');			
-	document.body.appendChild(templatesEl);	
-	
-	var scriptsEl = new Element('div');
-	scriptsEl.id = 'f5scripts';
-	document.body.appendChild(scriptsEl);
-
-
 	// places to stow parsed data
 	// TODO: these will be incorporated per package
 	var resources = {};
@@ -376,7 +365,29 @@ exports.generateHtml = function(query) {
 		} else {
 			manifestName = 'manifest.json';
 		}
+		var manifest = parseJSON(base + manifestName);
 		
+		
+		// recurse
+		function injectPackages(packages) {
+			packages.forEach(function (pkg) {
+				injectManifest(pkg);
+			});
+		}
+		processManifest(manifest, query, 'packages', injectPackages);
+		
+		
+		var scriptsEl = new Element('div');
+		scriptsEl.id = pkg;
+		document.body.appendChild(scriptsEl);
+		
+		var templatesEl = new Element('div');
+		templatesEl.setAttribute('f5id', 'f5applyscope');
+		templatesEl.setAttribute('f5pkg', pkg);
+		templatesEl.setAttribute('style', 'display:none;');			
+		document.body.appendChild(templatesEl);	
+		
+				
 		function inlineData(path) {			
 			try {
 				var ext = require('path').extname(path).substring(1);
@@ -504,15 +515,6 @@ exports.generateHtml = function(query) {
 			});
 		}
 		
-		function injectPackages(packages) {
-			packages.forEach(function (pkg) {
-				injectManifest(pkg);
-			});
-		}
-
-		var manifest = parseJSON(base + manifestName);
-
-		processManifest(manifest, query, 'packages', injectPackages);
 		processManifest(manifest, query, 'flows', injectFlows);											
 		processManifest(manifest, query, 'elements', injectElements);	
 		processManifest(manifest, query, 'resources', injectResources);											
@@ -524,7 +526,7 @@ exports.generateHtml = function(query) {
 		processManifest(manifest, query, 'scripts', injectScripts);									
 		
 		var popPkg = new Element('script');
-		popPkg.innerHTML = 'F5.popPkg();'
+		popPkg.innerHTML = 'F5.popPkg();';
 		scriptsEl.appendChild(popPkg);
 	}			
 	
@@ -566,7 +568,7 @@ exports.generateHtml = function(query) {
 		
 	// f5.js comes first
 	// TODO: this is only for the root application
-	scriptsEl.appendChild(makeScript('f5/f5.js'));
+	document.body.appendChild(makeScript('f5/f5.js'));
 					
 	
 		
@@ -593,7 +595,7 @@ exports.generateHtml = function(query) {
 					
 					
 	// finally			
-	scriptsEl.appendChild(makeScript('f5/start.js'));				
+	document.body.appendChild(makeScript('f5/start.js'));				
 																
 												
 	var html = document.outerHTML();

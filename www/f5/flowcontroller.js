@@ -208,7 +208,7 @@ F5.registerModule(function (F5) {
 			};
 						
 			F5.parseResources();
-			F5.Global.flow.initialize();
+			F5.Global.flow.initialize(F5.query.pkg);
 			F5.Global.viewController.initialize();
 			
 			// flush any tasks that were waiting on init

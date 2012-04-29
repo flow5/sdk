@@ -50,7 +50,7 @@ F5.registerModule(function (F5) {
 			
 	// TODO: I think make this explicit with
 	// loadTemplateByName and loadTemplateForNode
-	F5.loadTemplate = function(arg1, arg2) {
+	F5.loadTemplate = function(arg1, arg2, pkg) {
 		
 		var id;
 		var node;
@@ -60,10 +60,18 @@ F5.registerModule(function (F5) {
 			node = arg1;
 			id = node.id;
 		}
+		
+		// namespacing
+		var templateId = id;
+		if (pkg) {
+			templateId = pkg + '.' + id;
+		} else if (this.pkg) {
+			templateId = this.pkg + '.' + id;
+		}
 				
-		var template = document.getElementById(id);		
+		var template = document.getElementById(templateId);		
 		if (!template) {
-			console.log("No template with id: " + id);
+			console.log("No template with id: " + templateId);
 			return null;
 		}
 		var instance = template.cloneNode(true);
@@ -71,7 +79,9 @@ F5.registerModule(function (F5) {
 		if (!instance.hasAttribute('f5id')) {
 			instance.setAttribute('f5id', id);			
 		}
-				
+		F5.addClass(instance, id);
+		
+						
 		var widgetEls = [];
 		
 		if (instance.hasAttribute('f5widget')) {
@@ -92,9 +102,7 @@ F5.registerModule(function (F5) {
 		F5.forEach(widgetEls, function attachWidget(el) {
 			F5.attachWidget(el, el.getAttribute('f5widget'), data);
 		});
-		
-		F5.addClass(instance, id);
-		
+				
 		return instance;
 	};
 	

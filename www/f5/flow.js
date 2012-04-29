@@ -202,9 +202,10 @@ F5.registerModule(function (F5) {
 			return active;
 		};			
 		
-		this.initialize = function () {
+		this.initialize = function (pkg) {
 			this.root = this.importNode('root', rootSpec);
-			this.root.active = true;			
+			this.root.active = true;		
+			this.root.pkg = pkg;	
 		};
 	}
 	

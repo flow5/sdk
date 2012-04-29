@@ -120,7 +120,7 @@ F5.registerModule(function (F5) {
 				return;
 			}
 			
-			var jsonFormatter = new JSONFormatter();
+			var jsonFormatter = new IDE.JSONFormatter();
 			this.json.innerHTML = jsonFormatter.valueToHTML(model);						
 			jsonFormatter.attachListeners();																	
 

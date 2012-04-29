@@ -476,7 +476,20 @@ F5.registerModule(function (F5) {
 			F5.addClass(el, className);
 		}
 		widget.construct(data);		
-	};	
+	};
+	
+	// finds all of the elements marked with f5applyscope and then
+	// scopes the elements with ids using scope
+	F5.scopeTemplates = function () {
+		F5.forEach(document.querySelectorAll('[f5id=f5applyscope]'), function (scope) {
+			var pkg = scope.getAttribute('f5pkg');
+			F5.forEach(scope.querySelectorAll('[id]'), function (template) {
+				template.id = pkg + '.' + template.id;
+			});			
+			
+//			console.log(el.id);
+		});	
+	};
 	
 	F5.createWidget = function(f5widget, data, f5id, f5class) {
 		var el = document.createElement('div');
@@ -491,7 +504,7 @@ F5.registerModule(function (F5) {
 	};
 	
 	F5.getElementById = function (el, f5id) {
-		var result = el.querySelector('[f5id=' + f5id + ']');
+		var result = el.querySelector('[f5id="' + f5id + '"]');
 		if (!result) {
 			console.log('Did not find element with f5id=' + f5id + ' in element with id: ' + el.id);			
 		}

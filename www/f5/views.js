@@ -49,23 +49,32 @@ F5.registerModule(function (F5) {
 					that.tabset.widget.select(node.selection.id);											
 				}				
 			}		
+			
+			var search = node;
+			var pkg = search.pkg;
+			while (!pkg && search.parent) {
+				search = search.parent;
+				pkg = search.pkg;
+			}
+			
 																					
-			var nodeEl = F5.loadTemplate(node.id, F5.getNodeData(node));
+			var nodeEl = F5.loadTemplate(node.id, F5.getNodeData(node), pkg);
 			if (!nodeEl) {
 				nodeEl = document.createElement('div');
 				F5.addClass(nodeEl, node.id);					
 			}
 			F5.addClass(nodeEl, 'f5node');	
+			
 																		
 			if (node.children) {								
-				var headerTemplate = F5.loadTemplate(node.id + '-header', F5.getNodeData(node));
+				var headerTemplate = F5.loadTemplate(node.id + '-header', F5.getNodeData(node), pkg);
 				if (headerTemplate) {
 					attachTabset(headerTemplate);
 					nodeEl.appendChild(headerTemplate);
 				}
 								
 				var container = document.createElement('div');
-				var containerTemplate = F5.loadTemplate(node.id + '-container', F5.getNodeData(node));
+				var containerTemplate = F5.loadTemplate(node.id + '-container', F5.getNodeData(node), pkg);
 				if (containerTemplate) {
 					var frame = document.createElement('div');
 					F5.addClass(frame, 'f5frame');
@@ -80,7 +89,7 @@ F5.registerModule(function (F5) {
 				F5.addClass(container, 'f5container');
 				nodeEl.appendChild(container);	
 				
-				var footerTemplate = F5.loadTemplate(node.id + '-footer', F5.getNodeData(node));
+				var footerTemplate = F5.loadTemplate(node.id + '-footer', F5.getNodeData(node), pkg);
 				if (footerTemplate) {
 					attachTabset(footerTemplate);
 					nodeEl.appendChild(footerTemplate, this.container);

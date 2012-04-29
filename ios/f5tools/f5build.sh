@@ -2,14 +2,14 @@
 defaults write ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/f5 devservhost -string $HOSTNAME
 
 #get the app name from the f5.plist (may be a command line option at some point)
-APP=`defaults read ${SRCROOT}/f5 appname`
+PKG=`defaults read ${SRCROOT}/f5 package`
 COMPANY=`defaults read ${SRCROOT}/f5 company`
 
 #set the bundle display name
-defaults write ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Info CFBundleName -string $APP
-defaults write ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Info CFBundleIdentifier -string "com.$COMPANY.$APP"
+defaults write ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Info CFBundleName -string $PKG
+defaults write ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Info CFBundleIdentifier -string "com.$COMPANY.$PKG"
 
-FBAPPID=`curl http://$HOSTNAME:8008/apps/$APP/facebook_appid.txt`
+FBAPPID=`curl http://$HOSTNAME:8008/apps/$PKG/facebook_appid.txt`
 defaults write ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Info CFBundleURLTypes -array "<dict><key>CFBundleURLSchemes</key><array><string>fb$FBAPPID</string></array></dict>"
 
 CONFIG=$CONFIGURATION
@@ -41,7 +41,7 @@ PINLINE="inline=true"
 PCOMPRESS="compress=true"
 fi
 
-URL="http://$HOSTNAME:8008/generate?app=$APP&native=true&mobile=true&platform=ios&$PINLINE&$PDEBUG&$PCOMPRESS"
+URL="http://$HOSTNAME:8008/generate?pkg=$PKG&native=true&mobile=true&platform=ios&$PINLINE&$PDEBUG&$PCOMPRESS"
 
 echo $URL
 
