@@ -208,39 +208,96 @@ exports.generateCacheManifest = function(query) {
 	return cacheManifest;
 };
 
+
+// Minimalist DOM construction
+function Element(tag) {
+	
+	this.innerHTML = '';
+	this.children = [];
+	this.attributes = [];
+	
+	this.selfClosing = function () {
+		var tags = {meta: true, link: true, img: true};
+		return tags[tag];
+	};
+	
+	this.openTag = function () {
+		var result = '<' + tag;
+		if (this.id) {
+			result += ' id="' + this.id + '"';
+		}
+		this.attributes.forEach(function (attribute) {
+			result += ' ' + attribute.name + '="' + attribute.value + '"';
+		});
+		
+		result += this.selfClosing() ? '/>\n' : '>\n';
+		
+		return result;
+	};
+	
+	this.closeTag = function () {
+		return this.selfClosing() ? '' : '</' + tag + '>\n';
+	};
+	
+	this.setAttribute = function (name, value) {
+		this.attributes.push({name: name, value: value});
+	};
+
+	this.outerHTML = function () {
+		var that = this;
+		this.children.forEach(function (child) {
+			that.innerHTML += child.outerHTML();
+		});
+
+		return this.openTag() + this.innerHTML + this.closeTag();
+	};
+	
+	this.appendChild = function (element) {
+		this.children.push(element);
+	};
+
+	this.prependChild = function (element) {
+		this.children.unshift(element);
+	};
+}
+
+
+
+
 exports.generateHtml = function(parsed) {
 	
 	var query = parsed.query;
-		
-	var jsdom = require('jsdom');
-	jsdom.defaultDocumentFeatures = {
-		FetchExternalResources: [],
-		ProcessExternalResources: [],
-		MutationEvents: false,
-		QuerySelector: false
-	};			
-	var document = jsdom.jsdom();
-	
 
-	// templates container
-	var templatesEl = document.createElement('div');
+	var document = new Element('html');
+	document.head = new Element('head');
+	document.appendChild(document.head);
+	document.body = new Element('body');
+	document.appendChild(document.body);	
+	
+	// templates container TODO: these will be added per package
+	var templatesEl = new Element('div');
 	templatesEl.id = 'f5templates';
 	templatesEl.setAttribute('style', 'display:none;');			
 	document.body.appendChild(templatesEl);	
 	
-	var scriptsEl = document.createElement('div');
+	var scriptsEl = new Element('div');
 	scriptsEl.id = 'f5scripts';
 	document.body.appendChild(scriptsEl);
 
+
 	// places to stow parsed data
-	var styleBlock = '';
+	// TODO: these will be incorporated per package
 	var resources = {};
 	var flowspec = {};	
+	
+	
+	// REVISIT
 	var facebookId;		
+			
 			
 	/* helper functions */
 	function injectMeta(properties) {
-		var meta = document.createElement('meta');
+		var meta = new Element('meta');
 		var name;
 		for (name in properties) {
 			if (properties.hasOwnProperty(name)) {
@@ -251,20 +308,20 @@ exports.generateHtml = function(parsed) {
 	}
 	
 	function injectLink(rel, href, type) {
-		var link = document.createElement('link');
-		link.rel = rel;
-		link.href = href;
+		var link = new Element('link');
+		link.setAttribute('rel', rel);
+		link.setAttribute('href', href);
 		if (type) {
-			link.type = type;
+			link.setAttribute('type', type);
 		}
 		document.head.appendChild(link);
 	}
 		
 	function makeScript(src) {
-		var script = document.createElement('script');		
+		var script = new Element('script');		
 		if (!boolValue(query.inline)) {
 			// reference scripts
-			script.src = src;				
+			script.setAttribute('src', src);
 		} else {
 			// inline scripts
 			// devserv layer will compress and minify	
@@ -294,9 +351,7 @@ exports.generateHtml = function(parsed) {
 				if (ext === 'ttf') {
 					data = 'data:font/truetype;base64,' + fs.readFileSync('www/' + path, 'base64');
 				} else if (ext === 'svg') {
-					// jsdom doesn't like the non-b64 encoded svg :(
-//					data = 'data:image/svg+xml;utf8,' + fs.readFileSync(path).toString().replace(/(\r\n|\n|\r)/gm, '');	
-					data = 'data:image/svg+xml;base64,' + fs.readFileSync('www/' + path, 'base64');
+					data = 'data:image/svg+xml;utf8,' + fs.readFileSync('www/' + path).toString().replace(/(\r\n|\n|\r)/gm, '');	
 				} else if (ext === 'html' || ext === 'css') {
 					data = 'base64,' + fs.readFileSync('www/' + path, 'base64');
 				} else {
@@ -352,12 +407,14 @@ exports.generateHtml = function(parsed) {
 								statements[i] = statements[i].replace(url, imageData);
 							}
 						}								
-						styleBlock += statements.join('');							
+						var styleDiv = new Element('style');
+						styleDiv.innerHTML = statements.join('');
+						document.head.appendChild(styleDiv);												
 					} else {
 						injectLink('stylesheet', base + file, 'text/css');
 					}
 				} else {
-					var elementsDiv = document.createElement('div');
+					var elementsDiv = new Element('div');
 					try {
 						elementsDiv.innerHTML = fs.readFileSync('www/' + base + file).toString();						
 					} catch (e) {
@@ -440,62 +497,62 @@ exports.generateHtml = function(parsed) {
 	/***********************************/
 	
 	// manifest
-	var manifestString = 'cache.manifest' + parsed.search;
-	document.documentElement.setAttribute('manifest', manifestString);	
+//	var manifestString = 'cache.manifest' + parsed.search;
+//	document.setAttribute('manifest', manifestString);	
 	
-	// TODO: create a meta section in manifest for this stuff
-	
-	
-	
+		
+	// TODO: create a meta section in manifest for this stuff		
 	// TODO: if manifest.type === 'app' add this stuff. otherwise not
-	// TODO: can't add styles to head.
 	
-	// standard meta
+	// ios webapp stuff
+//	injectMeta({name: 'apple-mobile-web-app-status-bar-style', content: 'black'});
+//	injectMeta({name: 'apple-mobile-web-app-capable', content: 'yes'});
+//	injectLink('apple-touch-icon', 'apps/' + query.app + '/images/icon.png', null);
+//	injectLink('apple-touch-startup-image', 'apps/' + query.app + '/images/splash.png', null);
+	
+	// ios
 	injectMeta({'http-equiv': 'Content-Type', content: 'text/html; charset=UTF-8'});
 	injectMeta({name: 'viewport', content: 'width=device-width initial-scale=1.0 maximum-scale=1.0 user-scalable=0'});
 
-	// ios webapp stuff
-	injectMeta({name: 'apple-mobile-web-app-status-bar-style', content: 'black'});
-	injectMeta({name: 'apple-mobile-web-app-capable', content: 'yes'});
-	injectLink('apple-touch-icon', 'apps/' + query.app + '/images/icon.png');
-	injectLink('apple-touch-startup-image', 'apps/' + query.app + '/images/splash.png');
-
-	// Android
+	// android
 	injectMeta({name: 'viewport', content: 'target-densitydpi=device-dpi'});
+		
+		
+		
 		
 	// f5.js comes first
 	// TODO: this is only for the root application
 	scriptsEl.appendChild(makeScript('f5/f5.js'));
 					
 	
+		
+	// inject the app manifest (and recursively insert packages)
 	injectManifest('apps/' + query.app + '/', query.manifest);	
-		
-		
+									
 	// fetch a facebook id if there is one
 	// TODO: might not want this to be a firstclass feature. . .
 	getFacebookId();
 	
+	
+	
+	// TODO: move resources, flowspec etc. into the manifest parsing and accumulate as the doc is parsed
 	// inject the merged (and possibly inlined) resources, flowspec and query
-	var resourcesScript = document.createElement('script');
+	var resourcesScript = new Element('script');
 	var F5 = {Resources: resources, flowspec: flowspec, query: query};
 	if (facebookId) {
 		F5.facebook_appid = facebookId;
 	}
 	resourcesScript.innerHTML = "F5 = " + JSON.stringify(F5);
-	document.head.insertBefore(resourcesScript, document.head.firstChild);
-		
-	// create the essential divs
-	var appframeEl = document.createElement('div');
-	appframeEl.id = 'f5appframe';
-	var screenframeEl = document.createElement('div');
-	screenframeEl.id = 'f5screen';
-		
-	appframeEl.appendChild(screenframeEl);
-	document.body.appendChild(appframeEl);
-				
+	document.head.prependChild(resourcesScript);
+	
+					
+					
+					
+	// finally			
 	scriptsEl.appendChild(makeScript('f5/start.js'));				
-				
-	var html = document.outerHTML.replace('<head>', '<head><style>' + styleBlock + '</style>');	
+																
+												
+	var html = document.outerHTML();
 	
 	// TODO: this is quite inefficient since it's happening after image inlining
 	// should do this transform when loading elements and scripts

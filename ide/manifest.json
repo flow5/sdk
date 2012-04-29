@@ -1,11 +1,14 @@
 {
 	"all": {
-		"flowspecs": [
+		"packages": [
+			"f5.core",
+			"f5.defaultstyles",
+			"f5.iosstyles"
+		],
+		"flows": [
 			"flowspec.json"
 		],
 		"elements": [
-			"/packages/default.css",
-			"/packages/ios.css",
 			"templates.html",
 			"templates.css",
 			"json.css"

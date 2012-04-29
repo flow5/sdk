@@ -142,8 +142,8 @@ function JSONFormatterPrototype() {
 	    });
 
 	    if (hasContents) {
-			if (json.id) {
-				output = '{<ul class="obj collapsible" id="json-' + json.id + '">' + output + '</ul>}';		       
+			if (json.path) {
+				output = '{<ul class="obj collapsible" id="json-' + json.path + '">' + output + '</ul>}';		       
 			} else {
 		        output = '{<ul class="obj collapsible">' + output + '</ul>}';				
 			}

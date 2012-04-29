@@ -225,7 +225,14 @@
 						nodeDidBecomeActive(flow.root, function () {
 							that.refresh();
 							// flush any tasks that were queued up during lifecycle events
-							flushWaitTasks(cb);
+							flushWaitTasks(function () {
+								flowObservers.forEach(function (observer) {									
+									if (observer.update) {
+										observer.update();
+									}
+								});								
+								cb();
+							});
 						});
 					});																		
 				});								
@@ -302,6 +309,13 @@
 							nodeDidBecomeInactive(oldSelection, function () {
 								nodeDidBecomeActive(node.selection, function () {
 									lockout = false;	
+									
+									flowObservers.forEach(function (observer) {									
+										if (observer.update) {
+											observer.update();
+										}
+									});
+									
 									cb();			
 								});					
 							});							
@@ -411,7 +425,14 @@
 												observer.release(oldSelection);
 											}
 										});
-									}								
+									}	
+
+									flowObservers.forEach(function (observer) {
+										if (observer.update) {
+											observer.update();
+										}
+									});
+																
 									lockout = false;				
 									cb();
 								});		

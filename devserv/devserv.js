@@ -312,6 +312,7 @@ cli.main(function (args, options) {
 			} else if (req.url.indexOf('ideview') !== -1) {
 				parsed.query = {
 					app: 'ide',
+					manifest: 'manifest',
 					debug: 'true',
 					platform: 'ios',
 					inline: 'true',
@@ -327,7 +328,7 @@ cli.main(function (args, options) {
 //				res.writeHead(404);
 				res.writeHead(200, {'Content-Type': 'text/cache-manifest'});
 				try {
-					verifyQueryParameters(parsed.query);					
+//					verifyQueryParameters(parsed.query);					
 					res.write(generator.generateCacheManifest(parsed.query));					
 				} catch (e) {
 					console.log('error:' + e.stack);

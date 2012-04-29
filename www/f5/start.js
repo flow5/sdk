@@ -89,8 +89,16 @@
 
 	listener.addEventListener(startEvent, function startHandler(e) {	
 		function startUp() {
-			F5.setupScreenGeometry(F5.isMobile(), F5.isNative());		
-			
+			// create the essential divs
+			var appframeEl = document.createElement('div');
+			appframeEl.id = 'f5appframe';
+			var screenframeEl = document.createElement('div');
+			screenframeEl.id = 'f5screen';		
+			appframeEl.appendChild(screenframeEl);
+			document.body.appendChild(appframeEl);
+
+			F5.setupScreenGeometry(F5.isMobile(), F5.isNative());	
+										
 			try {
 				F5.Global.flowController.start(function () {
 					// TODO: extract

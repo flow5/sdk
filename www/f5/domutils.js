@@ -368,7 +368,7 @@
 			}
 			style = document.createElement('style');
 			style.innerHTML = '#f5screen {width:' + width + 'px; height:' + height + 'px;}';
-			document.head.appendChild(style);
+			document.body.appendChild(style);
 		} else if (isMobile && !isNative) {
 			if (window.innerWidth > window.innerHeight) {
 				width = window.innerHeight;
@@ -410,7 +410,7 @@
 										height:' + (screen.width - (statusbar + landscapeToolbar)) + 'px;\n\
 									}\n\
 								}';
-			document.head.appendChild(style);						
+			document.body.appendChild(style);						
 
 			document.addEventListener('orientationchange', function () {
 				setTimeout(function () {

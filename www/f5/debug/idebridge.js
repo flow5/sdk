@@ -35,54 +35,37 @@
 	
 	F5.Global.flowController.addWaitTask(function (cb) {
 		
-		function ObserverBridge() {
+		function Bridge() {
 			
 			function postMessage(message) {
-				window.parent.postMessage({id: 'root', message: message}, '*');
+				window.parent.postMessage(message, '*');
 			}
-
-			this.start = function () {	
-				postMessage('start');		
+			
+			this.update = function () {
+				postMessage({
+					model: F5.Global.flow.diags.toJSON(F5.Global.flow.root),
+					dot: F5.Global.flow.diags.toDOT(F5.Global.flow.root)
+				});
 			};
 
-			this.doSelection = function (node, id) {
-				postMessage('doSelection');	
-				
-				return function (cb) {
-					cb();
-				};
-			};
+//			this.startSubflow = function () {
+//				postMessage('startSubflow');		
+//			};
 
-			this.doTransition = function (container, from, id, to, animation) {
-				postMessage('doTransition');		
-				
-				return function (cb) {
-					cb();
-				};
-			};
-
-			this.startSubflow = function () {
-				postMessage('startSubflow');		
-			};
-
-			this.syncSelection = function (node) {
-				postMessage('syncSelection');		
-			};
-
-			this.completeSubflow = function () {
-				postMessage('completeSubflow');		
-			};			
+//			this.completeSubflow = function () {
+//				postMessage('completeSubflow');		
+//			};			
 		}
 
-		F5.Global.flowController.addFlowObserver(new ObserverBridge());	
+		F5.Global.flowController.addFlowObserver(new Bridge());	
 		
 		
-		window.addEventListener('message', function (e) {
-			var data = e.data;
-			if (data.type === 'eval') {
-				window.parent.postMessage({id: data.id, message: eval(data.message)}, '*');
-			}
-		});
+//		window.addEventListener('message', function (e) {
+//			var data = e.data;
+//			if (data.type === 'eval') {
+//				window.parent.postMessage({id: data.id, message: eval(data.message)}, '*');
+//			}
+//		});
 		
 		cb();
 	});
