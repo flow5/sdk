@@ -26,7 +26,7 @@
 ***********************************************************************************************************************/
 /*global F5*/
 
-(function () {
+F5.registerModule(function (F5) {
 	
 	function isLifecycleSubflow(id) {
 		return {DidBecomeActive: true, 
@@ -37,6 +37,7 @@
 	
 	function View() {
 		this.initialize = function (node) {	
+			var that = this;																						
 			
 			function attachTabset(el) {
 				if (el.getAttribute('f5widget') === 'Tabset') {
@@ -48,9 +49,7 @@
 					that.tabset.widget.select(node.selection.id);											
 				}				
 			}		
-			
-			var that = this;																						
-																		
+																					
 			var nodeEl = F5.loadTemplate(node.id, F5.getNodeData(node));
 			if (!nodeEl) {
 				nodeEl = document.createElement('div');
@@ -274,4 +273,4 @@
 	}
 	
 	F5.Prototypes.View = new View();	
-}());
+});

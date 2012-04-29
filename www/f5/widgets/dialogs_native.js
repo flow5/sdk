@@ -26,7 +26,7 @@
 ***********************************************************************************************************************/
 /*global F5, PhoneGap*/
 
-(function () {	
+F5.registerModule(function (F5) {	
 	
 	function Dialog() {
 		this.constructDialog = function (data) {	
@@ -89,4 +89,4 @@
 	F5.Prototypes.Widgets.Alert = new Alert();
 	F5.Prototypes.Widgets.Confirm = new Confirm();
 	
-}());
+});

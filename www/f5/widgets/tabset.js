@@ -26,7 +26,7 @@
 ***********************************************************************************************************************/
 /*global F5*/
 
-(function () {
+F5.registerModule(function(F5) {
 	
 	// NOTE: TabButton shouldn't be used standalone
 	function IOSTabButton() {
@@ -111,4 +111,4 @@
 
 	F5.Prototypes.Widgets.Tabset = new Tabset();
 
-}());
+});

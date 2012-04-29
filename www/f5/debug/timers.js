@@ -24,8 +24,9 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
+/*global F5*/
 
-(function () {
+F5.registerModule(function (F5) {
 		
 	var last = Date.now();
 	var longest = 0;		
@@ -42,6 +43,6 @@
 	F5.resetJitterTimer = function () {
 		last = Date.now();
 		longest = 0;
-	}
+	};
 	
-}());
+});

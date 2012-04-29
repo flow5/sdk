@@ -26,13 +26,13 @@
 ***********************************************************************************************************************/
 /*global F5*/
 
-(function () {
+F5.registerModule(function (F5) {
 	
 	function ImagePreloader() {
 		
 		this.isImagePreloader = function (obj) {
 			return obj instanceof ImagePreloader;
-		}
+		};
 		
 		this.load = function (url) {
 			var that = this;
@@ -40,7 +40,7 @@
 			if (url.match('data:image/') || url.match('http://')) {
 				this.url = url;
 			} else {
-				this.url = 'apps/' + F5.query.app + '/' + url;
+				this.url = 'apps/' + F5.query.pkg.split('.')[0] + '/' + url;
 			}			
 
 			var completed, error, completionCb;
@@ -79,4 +79,4 @@
 
 	F5.ImagePreloader = new ImagePreloader();
 	
-}());
+});

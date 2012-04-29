@@ -26,7 +26,7 @@
 ***********************************************************************************************************************/
 /*global F5*/
 
-(function () {
+F5.registerModule(function (F5) {
 
 	function instrument (cb) {
 		var flow = F5.Global.flow;
@@ -577,4 +577,4 @@
 		F5.Global.flowController.addWaitTask(instrument);
 	}
 	
-}());
+});

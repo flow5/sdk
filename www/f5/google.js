@@ -26,7 +26,7 @@
 ***********************************************************************************************************************/
 /*global F5*/
 
-(function () {		
+F5.registerModule(function (F5) {		
 	// TODO: make the apis available configurable from client
 	
 	
@@ -54,4 +54,4 @@
 		
 		cb();
 	});			
-}());
+});

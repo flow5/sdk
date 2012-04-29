@@ -26,7 +26,7 @@
 ***********************************************************************************************************************/
 /*global F5*/
 
-(function () {
+F5.registerModule(function (F5) {
 		
 	function pushHorizontal(container, oldEl, newEl, distance) {
 		
@@ -373,5 +373,5 @@
 			return inverse;
 		}		
 	};
-}());
+});
 

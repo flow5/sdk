@@ -29,12 +29,16 @@
 
 (function () {	
 	
+	F5.pendingModules.forEach(function (module) {
+		console.log(module.pkg);
+		module.cb(F5);
+	});
+	
 	if (F5.isDebug()) {
 		F5.forEach(localStorage, function (id, value) {
 //			console.log(id + ': ' + value);			
 		});
 	}
-	
 		
 	// TODO: specify a mock image server location
 	if (F5.isMobile()) {
@@ -88,7 +92,7 @@
 	};
 
 	listener.addEventListener(startEvent, function startHandler(e) {	
-		function startUp() {
+		function startUp() {			
 			// create the essential divs
 			var appframeEl = document.createElement('div');
 			appframeEl.id = 'f5appframe';

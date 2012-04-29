@@ -26,7 +26,7 @@
 ***********************************************************************************************************************/
 /*global F5, HTMLDivElement*/
 
-(function () {
+F5.registerModule(function (F5) {
 	
 	function Carousel() {
 		
@@ -269,4 +269,4 @@
 	Carousel.prototype = F5.Prototypes.Widgets.Scroller;
 	
 	F5.Prototypes.Widgets.Carousel = new Carousel();	
-}());
+});

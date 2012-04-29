@@ -26,7 +26,7 @@
 ***********************************************************************************************************************/
 /*global F5, WebKitCSSMatrix*/
 
-(function () {
+F5.registerModule(function(F5) {
 		
 	// see below
 	var useAndroidTransformWorkaround = false;			
@@ -554,4 +554,4 @@
 
 	F5.Prototypes.Widgets.Scroller = new Scroller();
 		
-}());
+});

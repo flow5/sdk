@@ -26,7 +26,7 @@
 ***********************************************************************************************************************/
 /*global F5, PhoneGap*/
 
-(function () {
+F5.registerModule(function (F5) {
 
 /* setting up for android version specific css
    TODO: probably going to want to be more specific here */
@@ -190,4 +190,4 @@ F5.Global.flowController.addWaitTask(function (cb) {
 	cb();
 });
 	
-}());
+});

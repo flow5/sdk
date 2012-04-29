@@ -26,7 +26,7 @@
 ***********************************************************************************************************************/
 /*global F5, PhoneGap*/
 
-(function () {
+F5.registerModule(function(F5) {
 	
 	function WebFrame() {
 		
@@ -174,4 +174,4 @@
 	}
 	
 	F5.Prototypes.Widgets.WebFrame = new WebFrame();	
-}());
+});

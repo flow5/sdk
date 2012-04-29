@@ -26,10 +26,10 @@
 ***********************************************************************************************************************/
 /*global F5*/
 
-(function () {
+F5.registerModule(function (F5) {
 	
 	// TODO: the IDE bridge package shouldn't be included in the IDE app!
-	if (F5.query.app === 'ide') {
+	if (F5.query.pkg === 'ide') {
 		return;
 	}
 	
@@ -70,4 +70,4 @@
 		cb();
 	});
 	
-}());
+});

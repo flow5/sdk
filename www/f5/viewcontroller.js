@@ -26,7 +26,7 @@
 ***********************************************************************************************************************/
 /*global F5*/
 
-(function () {	
+F5.registerModule(function (F5) {	
 		
 	function ViewController(flow) {
 						
@@ -178,4 +178,4 @@
 	
 	F5.Global.viewController = new ViewController(F5.Global.flow);
 	
-}());
+});

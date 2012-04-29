@@ -26,7 +26,7 @@
 ***********************************************************************************************************************/
 /*global F5, IDE, JSONFormatter*/
 
-(function () {	
+F5.registerModule(function (F5) {	
 	
 	var model;
 	var dot;
@@ -245,7 +245,7 @@
 	F5.Prototypes.ViewDelegates.graph = new Graph();
 		
 
-}());	
+});	
 
 
 

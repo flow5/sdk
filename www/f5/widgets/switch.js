@@ -26,7 +26,7 @@
 ***********************************************************************************************************************/
 /*global F5*/
 
-(function () {
+F5.registerModule(function(F5) {
 	
 	function Switch() {
 		this.construct = function () {
@@ -137,4 +137,4 @@
 
 	F5.Prototypes.Widgets.Switch = new Switch();
 	
-}());
+});

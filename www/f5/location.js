@@ -28,7 +28,7 @@
 
 // OPTION: break the phonegap dependency out. doesn't seem worth it since the APIs are so close. . .
 
-(function () {
+F5.registerModule(function (F5) {
 	
 	function Location() {
 		
@@ -97,4 +97,4 @@
 	
 	F5.location = new Location();
 	
-}());
+});

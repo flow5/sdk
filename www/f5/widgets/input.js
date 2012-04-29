@@ -26,7 +26,7 @@
 ***********************************************************************************************************************/
 /*global F5*/
 
-(function () {
+F5.registerModule(function (F5) {
 
 function Input() {
 	
@@ -262,4 +262,4 @@ F5.Prototypes.Widgets.Input = new Input();
 
 
 	
-}());
+});

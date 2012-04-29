@@ -26,7 +26,7 @@
 ***********************************************************************************************************************/
 /*global F5*/
 
-(function () {
+F5.registerModule(function (F5) {
 
 	F5.Global.flowController.addWaitTask(function(cb) {
 		
@@ -72,4 +72,4 @@
 		cb();							
 	});
 	
-}());
+});

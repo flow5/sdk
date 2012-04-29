@@ -27,7 +27,7 @@
 /*global F5, Base64*/
 
 
-(function () {
+F5.registerModule(function (F5) {
 	
 	/*global PhoneGap*/
 //	var networkActivityCount = 0;
@@ -533,7 +533,7 @@
 	};
 	
 	
-}());
+});
 
 
 

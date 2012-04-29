@@ -46,6 +46,19 @@ function forEach(obj, fn) {
 	}
 }
 
+// TODO: this is duplicated in devserv. why?
+function pkgDomain(pkg) {
+	return pkg && pkg.split('.')[0];
+}
+
+function pkgName(pkg) {
+	if (pkg && pkg.split('.')[1]) {
+		return pkg.split('.')[1] + '.manifest';
+	} else {
+		return 'manifest';
+	}
+}
+
 function parseJSON(path) {
 	// strip out commments		
 	var json = minify(fs.readFileSync('www/' + path).toString());
@@ -72,8 +85,6 @@ function boolValue(string) {
 	return string === 'true';	
 }
 
-// TODO: slightly sloppy. processManifest is only interested in the query parameters related 
-// to manifest blocks. it doesn't look at app, manfest or pkg
 function processManifest(manifest, query, type, process) {
 
 	function manifestEntry(manifest, path) {
@@ -138,12 +149,15 @@ exports.generateCacheManifest = function(query) {
 			}
 		}
 
+		checkDate('www/f5/f5.js');		
 		checkDate('www/f5/start.js');		
 		checkDate(__filename);		
 
 		function checkManifest(path, manifestName) {	
 			manifestName += '.json';			
 			checkDate('www/' + path + manifestName);
+			
+			console.log('www/' + path + manifestName)
 
 			function checkDates(files, type) {
 				files.forEach(function (file) {
@@ -194,8 +208,9 @@ exports.generateCacheManifest = function(query) {
 			processManifest(manifest, query, 'resources', checkDates);											
 		}
 
-		checkManifest('apps/' + query.app + '/', query.manifest);
+		checkManifest('apps/' + pkgDomain(query.pkg) + '/', pkgName(query.pkg));
 		
+		console.log(latestDate)
 		return latestDate;		
 	}
 
@@ -269,10 +284,8 @@ function Element(tag) {
 
 
 
-exports.generateHtml = function(parsed) {
+exports.generateHtml = function(query) {
 	
-	var query = parsed.query;
-
 	var document = new Element('html');
 	document.head = new Element('head');
 	document.appendChild(document.head);
@@ -338,15 +351,31 @@ exports.generateHtml = function(parsed) {
 	
 	function getFacebookId() {
 		try {
-			var path = 'www/apps/' + query.app + '/facebook_appid.txt';
+			var path = 'www/apps/' + pkgDomain(query.pkg) + '/facebook_appid.txt';
 			facebookId = fs.readFileSync(path).toString();
 		} catch (e) {
 //			console.log('Could not find facebook_appid.txt');
 		}		
 	}	
 		
-	function injectManifest(base, manifestName) {		
-		manifestName += '.json';
+	function injectManifest(pkg) {		
+		
+		var pkgDomain = pkg.split('.')[0];
+		var pkgName = pkg.split('.')[1];
+
+		var base;
+		if (pkgDomain === 'f5') {
+			base = 'f5/';
+		} else {
+			base = 'apps/' + pkgDomain + '/';
+		}
+
+		var manifestName;
+		if (pkgName) {
+			manifestName = pkgName + '.manifest.json';
+		} else {
+			manifestName = 'manifest.json';
+		}
 		
 		function inlineData(path) {			
 			try {
@@ -477,19 +506,7 @@ exports.generateHtml = function(parsed) {
 		
 		function injectPackages(packages) {
 			packages.forEach(function (pkg) {
-				// TODO: domain?
-				var domain = pkg.split('.')[0];
-				var manifest = pkg.split('.')[1];
-				if (manifest) {
-					manifest += '.manifest';
-				} else {
-					manifest = 'manifest';
-				}
-				if (domain === 'f5') {
-					injectManifest('f5/', manifest);
-				} else {
-					injectManifest('apps/'+ domain + '/', manifest);
-				}
+				injectManifest(pkg);
 			});
 		}
 
@@ -497,9 +514,18 @@ exports.generateHtml = function(parsed) {
 
 		processManifest(manifest, query, 'packages', injectPackages);
 		processManifest(manifest, query, 'flows', injectFlows);											
-		processManifest(manifest, query, 'scripts', injectScripts);									
 		processManifest(manifest, query, 'elements', injectElements);	
 		processManifest(manifest, query, 'resources', injectResources);											
+
+		var pushPkg = new Element('script');
+		pushPkg.innerHTML = 'F5.pushPkg("' + pkg + '");';
+		scriptsEl.appendChild(pushPkg);
+		
+		processManifest(manifest, query, 'scripts', injectScripts);									
+		
+		var popPkg = new Element('script');
+		popPkg.innerHTML = 'F5.popPkg();'
+		scriptsEl.appendChild(popPkg);
 	}			
 	
 	/***********************************/
@@ -507,7 +533,15 @@ exports.generateHtml = function(parsed) {
 	/***********************************/
 	
 	// manifest
-	var manifestString = 'cache.manifest' + parsed.search;
+	function parameters(query) {
+		var result = [];
+		forEach(query, function (id, value) {
+			result.push(id + '=' + value);
+		});
+		return result.join('&');
+	}
+	
+	var manifestString = 'cache.manifest?' + parameters(query);
 	document.setAttribute('manifest', manifestString);	
 	
 		
@@ -517,8 +551,8 @@ exports.generateHtml = function(parsed) {
 	// ios webapp stuff
 //	injectMeta({name: 'apple-mobile-web-app-status-bar-style', content: 'black'});
 //	injectMeta({name: 'apple-mobile-web-app-capable', content: 'yes'});
-//	injectLink('apple-touch-icon', 'apps/' + query.app + '/images/icon.png', null);
-//	injectLink('apple-touch-startup-image', 'apps/' + query.app + '/images/splash.png', null);
+//	injectLink('apple-touch-icon', 'apps/' + pkgDomain(query.pkg) + '/images/icon.png', null);
+//	injectLink('apple-touch-startup-image', 'apps/' + pkgDomain(query.pkg) + '/images/splash.png', null);
 	
 	// ios
 	injectMeta({'http-equiv': 'Content-Type', content: 'text/html; charset=UTF-8'});
@@ -537,7 +571,7 @@ exports.generateHtml = function(parsed) {
 	
 		
 	// inject the app manifest (and recursively insert packages)
-	injectManifest('apps/' + query.app + '/', query.manifest);	
+	injectManifest(query.pkg);	
 									
 	// fetch a facebook id if there is one
 	// TODO: might not want this to be a firstclass feature. . .

@@ -26,7 +26,7 @@
 ***********************************************************************************************************************/
 /*global F5*/
 
-(function () {
+F5.registerModule(function (F5) {
 	
 	function Flow(rootSpec) {
 		
@@ -210,5 +210,5 @@
 	
 		
 	F5.Global.flow = new Flow(F5.flowspec);	
-}());
+});
 

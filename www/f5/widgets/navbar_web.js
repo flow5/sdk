@@ -26,7 +26,7 @@
 ***********************************************************************************************************************/
 /*global F5*/
 
-(function () {
+F5.registerModule(function (F5) {
 			
 	function NavBar() {
 	
@@ -278,4 +278,4 @@
 	NavBar.prototype = F5.Prototypes.Widgets.NavController;
 
 	F5.Prototypes.Widgets.NavBar = new NavBar();
-}());
+});

@@ -26,7 +26,7 @@
 ***********************************************************************************************************************/
 /*global F5, RegExp*/
 
-(function () {
+F5.registerModule(function (F5) {
 		
 	function startEventName() {
 		if (F5.isMobile()) {
@@ -519,7 +519,7 @@
 					resources[id] = F5.objectFromPrototype(F5.ImagePreloader);
 					resources[id].load(resource);
 				} else if (isHTMLResource(resource)) {
-					resources[id] = 'apps/' + F5.query.app + '/' + resource;
+					resources[id] = 'apps/' + F5.query.pkg.split('.')[0] + '/' + resource;
 				}
 			});			
 		}
@@ -602,7 +602,7 @@
 		return mapping[canonicalName];
 	};
 			
-}());
+});
 
 
 /*

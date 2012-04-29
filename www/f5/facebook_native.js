@@ -26,7 +26,7 @@
 ***********************************************************************************************************************/
 /*global F5, PhoneGap*/
 
-(function () {
+F5.registerModule(function (F5) {
 	
 	F5.Global.flowController.addWaitTask(function (cb) {
 		PhoneGap.exec(		
@@ -66,4 +66,4 @@
 		login: login,
 		logout: logout
 	};
-}());
+});

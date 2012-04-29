@@ -27,7 +27,7 @@
 /*global F5, PhoneGap*/
 
 
-(function() {
+F5.registerModule(function(F5) {
 	
 	function UDP() {
 				
@@ -53,4 +53,4 @@
 	
 	F5.UDP = UDP;
 	
-}());
+});

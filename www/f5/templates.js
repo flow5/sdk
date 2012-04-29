@@ -26,7 +26,7 @@
 ***********************************************************************************************************************/
 /*global F5*/
 
-(function () {	
+F5.registerModule(function (F5) {	
 	
 	// experimental
 	// requires that all widget 'construct' methods can be called multiple times
@@ -98,4 +98,4 @@
 		return instance;
 	};
 	
-}());
+});

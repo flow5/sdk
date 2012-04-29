@@ -26,7 +26,7 @@
 ***********************************************************************************************************************/
 /*global F5*/
 
-(function () {	
+F5.registerModule(function (F5) {	
 	
 	function Button() {			
 		
@@ -305,4 +305,4 @@
 	ToggleButton.prototype = F5.Prototypes.Widgets.Button;
 	
 	F5.Prototypes.Widgets.ToggleButton = new ToggleButton();				
-}());
+});

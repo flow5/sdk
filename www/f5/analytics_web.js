@@ -26,7 +26,7 @@
 ***********************************************************************************************************************/
 /*global F5, PhoneGap*/
 
-(function () {
+F5.registerModule(function (F5) {
 	
 	F5.Analytics = {
 		logEvent: function (name, data) {
@@ -45,4 +45,4 @@
 			return function (cb) {cb();};
 		}
 	});			
-}());
+});

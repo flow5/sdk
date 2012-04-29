@@ -25,9 +25,9 @@
 
 ***********************************************************************************************************************/
 
-/*global F5*/
+/*global F5, IDE*/
 
-(function () {
+F5.registerModule(function (F5) {
 	
 	function Config() {
 		
@@ -37,9 +37,9 @@
 					url: IDE.cache.url,
 					geometry: IDE.cache.geometry
 				}
-			}
-		}		
+			};
+		};
 	}
 	
 	F5.Prototypes.FlowDelegates.config = new Config();
-}());
+});

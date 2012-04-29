@@ -27,7 +27,7 @@
 /*global F5*/
 
 
-(function () {
+F5.registerModule(function (F5) {
 	
 	function Activity() {
 		
@@ -71,4 +71,4 @@
 	
 	F5.Prototypes.Widgets.Activity = new Activity();
 	
-}());
+});

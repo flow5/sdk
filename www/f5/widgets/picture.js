@@ -26,7 +26,7 @@
 ***********************************************************************************************************************/
 /*global F5*/
 
-(function () {
+F5.registerModule(function(F5) {
 	
 	function Picture() {
 		this.construct = function (data) {	
@@ -76,4 +76,4 @@
 	
 	F5.Prototypes.Widgets.Picture = new Picture();
 		
-}());
+});

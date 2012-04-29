@@ -26,7 +26,7 @@
 ***********************************************************************************************************************/
 /*global F5*/
 
-(function () {
+F5.registerModule(function (F5) {
 		
 function Form() {
 		
@@ -209,4 +209,4 @@ Form.prototype = F5.Prototypes.Widgets.Scroller;
 
 F5.Prototypes.Widgets.Form = new Form();
 	
-}());
+});

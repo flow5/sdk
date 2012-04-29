@@ -26,7 +26,7 @@
 ***********************************************************************************************************************/
 /*global F5, WebKitCSSMatrix*/
 
-(function () {
+F5.registerModule(function(F5) {
 	
 	function Tracker() {
 		this.construct = function () {
@@ -105,4 +105,4 @@
 	}
 	
 	F5.Prototypes.Widgets.Tracker = new Tracker();
-}());
+});

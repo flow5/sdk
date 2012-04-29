@@ -26,7 +26,7 @@
 ***********************************************************************************************************************/
 /*global F5, google*/
 
-(function () {
+F5.registerModule(function(F5) {
 	
 	function StreetView() {
 		
@@ -57,4 +57,4 @@
 	}
 	
 	F5.Prototypes.Widgets.StreetView = new StreetView();		
-}());
+});

@@ -26,7 +26,7 @@
 ***********************************************************************************************************************/
 /*global F5*/
 
-(function () {
+F5.registerModule(function (F5) {
 	
 	// from http://www.movable-type.co.uk/scripts/latlong.html	
 	function distance(loc1, loc2) {
@@ -92,4 +92,4 @@
 		
 	F5.Prototypes.Widgets.Distance = new Distance();
 		
-}());
+});

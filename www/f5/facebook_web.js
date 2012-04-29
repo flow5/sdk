@@ -26,7 +26,7 @@
 ***********************************************************************************************************************/
 /*global F5, FB*/
 
-(function () {
+F5.registerModule(function (F5) {
 	
 	if (!F5.facebook_appid) {
 		return;
@@ -115,4 +115,4 @@
 		login: login,
 		logout: logout
 	};		
-}());
+});

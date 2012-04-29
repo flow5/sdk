@@ -26,7 +26,7 @@
 ***********************************************************************************************************************/
 /*global F5*/
 
-(function () {
+F5.registerModule(function (F5) {
 
 	function MapView() {
 		
@@ -201,4 +201,4 @@
 	}	
 	
 	F5.Prototypes.Widgets.MapView = new MapView();			
-}());
+});

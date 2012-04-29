@@ -53,11 +53,11 @@ cli.parse({
 	verbose: ['v', 'verbose logging'],
 });
 
-function appName(pkg) {
+function pkgDomain(pkg) {
 	return pkg && pkg.split('.')[0];
 }
 
-function manifestName(pkg) {
+function pkgName(pkg) {
 	if (pkg && pkg.split('.')[1]) {
 		return pkg.split('.')[1] + '.manifest';
 	} else {
@@ -166,30 +166,30 @@ function verifyQueryParameters(query) {
 	assert(isBool(query.compress), 'Bad parameter "compress" = ' + query.compress);
 	assert(isBool(query.mobile), 'Bad parameter "mobile" = ' + query.mobile);
 	assert(isPlatform(query.platform), 'Bad parameter "platform" = ' + query.platform);
-	assert(query.app, 'Bad parameter "app" = ' + query.app);
+	assert(query.pkg, 'Bad parameter "pkg" = ' + query.pkg);
 }	
 
-function doGenerate(parsed, req, res) {
+function doGenerate(query, req, res) {
 	try {
 		var agent = req.headers['user-agent'];
-		if (!parsed.query.platform) {
+		if (!query.platform) {
 			if (agent.match(/android/i)) {
-				parsed.query.platform = 'android';
+				query.platform = 'android';
 			} else {
-				parsed.query.platform = 'ios';						
+				query.platform = 'ios';						
 			}
 		}
-		if (!parsed.query.mobile) {
+		if (!query.mobile) {
 			if (agent.match(/(iphone)|(android)/i)) {
-				parsed.query.mobile = 'true';
+				query.mobile = 'true';
 			} else {
-				parsed.query.mobile = 'false';
+				query.mobile = 'false';
 			}
 		}
 		
-		verifyQueryParameters(parsed.query);
-		var html = generator.generateHtml(parsed);
-		if (parsed.query.compress === 'false') {
+		verifyQueryParameters(query);
+		var html = generator.generateHtml(query);
+		if (query.compress === 'false') {
 			res.writeHead(200, {'Content-Type': 'text/html'});
 			res.write(html);
 			res.end();					
@@ -205,22 +205,20 @@ function doGenerate(parsed, req, res) {
 }
 
 function doIDE(parsed, req, res) {
-	parsed.query = {
-		app: 'ide',
-		manifest: 'manifest',
+	doGenerate({
+		pkg: 'ide',
 		debug: 'true',
 		platform: 'ios',
 		inline: 'true',
 		compress: 'false',
 		mobile: 'false',
 		native: 'false'
-	};
-	doGenerate(parsed, req, res);	
+	}, req, res);	
 }
 
-function doProxy(parsed, req, res) {
+function doProxy(query, req, res) {
 
-	var proxyRequest = url.parse(parsed.query.url);	
+	var proxyRequest = url.parse(query.url);	
 	var proxyProtocol = proxyRequest.protocol.replace(':', '');
 
 	var options = {
@@ -256,21 +254,21 @@ function doProxy(parsed, req, res) {
 	});
 }
 
-function doManifest(parsed, req, res) {
+function doManifest(query, req, res) {
 //	res.writeHead(404);
 	res.writeHead(200, {'Content-Type': 'text/cache-manifest'});
 	try {
-		verifyQueryParameters(parsed.query);					
-		res.write(generator.generateCacheManifest(parsed.query));					
+		verifyQueryParameters(query);					
+		res.write(generator.generateCacheManifest(query));					
 	} catch (e) {
 		console.log('error:' + e.stack);
 	}
 	res.end();	
 }
 
-function doService(parsed, req, res) {
+function doService(query, req, res) {
 	try {
-		var service = require('../www/services/' + parsed.query.app + '/' + parsed.query.name + '.js');
+		var service = require('../www/services/' + pkgDomain(query.pkg) + '/' + query.name + '.js');
 
 		req.body = '';
 		req.on('data', function (chunk) {
@@ -278,7 +276,7 @@ function doService(parsed, req, res) {
 		});	
 		req.on('end', function () {
 			try {
-				service.exec(parsed.query, req.body, function (results) {
+				service.exec(query, req.body, function (results) {
 					res.writeHead(200, {'Content-Type': 'application/json',
 										'Access-Control-Allow-Origin': '*'});
 					res.write(results);						
@@ -296,7 +294,7 @@ function doService(parsed, req, res) {
 	}	
 }
 
-function doDefault(parsed, req, res) {
+function doDefault(query, req, res) {
 	paperboy
 		.deliver(WEBROOT, req, res)
 		.addHeader('Access-Control-Allow-Origin', '*')
@@ -318,9 +316,6 @@ cli.main(function (args, options) {
 		// prevent directory climbing through passed parameters
 		var parsed = url.parse(req.url.replace('..', ''), true);		
 		
-		parsed.query.app = parsed.query.app || appName(parsed.query.pkg);
-		parsed.query.manifest = parsed.query.manifest || manifestName(parsed.query.pkg);
-
 		var pathname = url.parse(req.url).pathname;
 		
 //		if (options.verbose) {
@@ -335,17 +330,17 @@ cli.main(function (args, options) {
 						getMessageBody(req, function (body) {
 							// assume that the body is a facebook signed request
 							parsed.query.body = body;
-							doGenerate(parsed, req, res);					
+							doGenerate(parsed.query, req, res);					
 						});
 						break;
 					case '/dot2svg':
 						doDot2Svg(req, res);	
 						break;
 					case '/proxy':
-						doProxy(parsed, req, res);
+						doProxy(parsed.query, req, res);
 						break;
 					case '/service':
-						doService(parsed, req, res);
+						doService(parsed.query, req, res);
 						break;
 					default:
 						res.writeHead(404);
@@ -355,21 +350,21 @@ cli.main(function (args, options) {
 			case 'GET':
 				switch (pathname) {
 					case '/generate':
-						doGenerate(parsed, req, res);
+						doGenerate(parsed.query, req, res);
 						break;
 					case '/ide':
-						doIDE(parsed, req, res);
+						doIDE(parsed.query, req, res);
 						break;
 					case '/proxy':
-						doProxy(parsed, req, res);				
+						doProxy(parsed.query, req, res);				
 						break;
 					case '/cache.manifest':
-						doManifest(parsed, req, res);
+						doManifest(parsed.query, req, res);
 						break;	
 					case '/service':
 						try {
 							var service = require(process.cwd() + '/www/services/' + 
-														parsed.query.app + '/' + parsed.query.name + '.js');
+														pkgDomain(parsed.query.pkg) + '/' + parsed.query.name + '.js');
 
 							service.exec(parsed.query, function (results) {
 								res.writeHead(200, {'Content-Type': 'application/json',
@@ -384,7 +379,7 @@ cli.main(function (args, options) {
 						}				
 						break;
 					default:
-						doDefault(parsed, req, res);					
+						doDefault(parsed.query, req, res);					
 				}
 				break;
 			case 'OPTIONS':

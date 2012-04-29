@@ -28,7 +28,7 @@
 
 // TODO: OBSOLETE??
 
-(function () {
+F5.registerModule(function (F5) {
 	function NavBar() {
 				
 		this.construct = function () {
@@ -143,5 +143,5 @@
 	
 	F5.Prototypes.Widgets.NavBar = new NavBar();
 	
-}());
+});
 	
