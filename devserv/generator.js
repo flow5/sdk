@@ -142,7 +142,7 @@ exports.generateCacheManifest = function(query) {
 		checkDate(__filename);		
 
 		function checkManifest(path, manifestName) {	
-			manifestName = (manifestName || 'manifest') + '.json';			
+			manifestName += '.json';			
 			checkDate('www/' + path + manifestName);
 
 			function checkDates(files, type) {
@@ -172,6 +172,11 @@ exports.generateCacheManifest = function(query) {
 					// TODO: domain?
 					var domain = pkg.split('.')[0];
 					var manifest = pkg.split('.')[1];
+					if (manifest) {
+						manifest += '.manifest';
+					} else {
+						manifest = 'manifest';
+					}
 					if (domain === 'f5') {
 						checkManifest('f5/', manifest);
 					} else {
