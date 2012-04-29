@@ -98,8 +98,7 @@ function getMessageBody(req, cb) {
 	});
 }
 
-
-function dot2svg(req, res) {	
+function doDot2Svg(req, res) {	
 	/*global Iuppiter*/
 //	require('3p/Iuppiter.js');	
 		
@@ -129,46 +128,6 @@ function dot2svg(req, res) {
 	res.writeHead(200, {'Content-Type': 'image/svg+xml', 'sequence-number': req.headers['sequence-number']});		
 }
 
-function doProxy(parsed, req, res) {
-	
-	var proxyRequest = url.parse(parsed.query.url);	
-	var proxyProtocol = proxyRequest.protocol.replace(':', '');
-		
-	var options = {
-		 hostname: proxyRequest.hostname,
-		 port: proxyRequest.port,
-		 path: proxyRequest.path,
-		 method: req.method,
-		 headers: req.headers
-	};
-	
-	if (options.headers) {
-		delete options.headers.host;
-	}
-	
-//	console.log(options)
-
-	var proxyReq = {http: http, https: https}[proxyProtocol].request(options, function (proxyRes) {
-
-		proxyRes.on('data', function(chunk) {
-			res.write(chunk, 'binary');
-		});
-
-		proxyRes.on('end', function() {
-			res.end();
-		});
-		res.writeHead(proxyRes.statusCode, proxyRes.headers);
-	});
-		
-	req.addListener('data', function(chunk) {
-		proxyReq.write(chunk, 'binary');
-	});
-		
-	req.addListener('end', function() {
-		proxyReq.end();
-	});
-}
-
 function showRequest(req, printHeaders) {
 	sys.puts('------------------------------------');
 	sys.puts(req.url);
@@ -182,205 +141,285 @@ function showRequest(req, printHeaders) {
 	}
 }
 
+function assert(cond, message) {
+	if (!cond) {
+		throw new Error(message);
+	}
+}
+
+function isBool(value) {
+	return value && (value === 'true' || value === 'false');
+}
+
+function isPlatform(value) {
+	return value && (value === 'ios' || value === 'android');
+}
+
+function verifyQueryParameters(query) {
+	assert(isBool(query.debug), 'Bad parameter "debug" = ' + query.debug);
+	assert(isBool(query.native), 'Bad parameter "native" = ' + query.native);
+	assert(isBool(query.inline), 'Bad parameter "inline" = ' + query.inline);
+	assert(isBool(query.compress), 'Bad parameter "compress" = ' + query.compress);
+	assert(isBool(query.mobile), 'Bad parameter "mobile" = ' + query.mobile);
+	assert(isPlatform(query.platform), 'Bad parameter "platform" = ' + query.platform);
+	assert(query.app, 'Bad parameter "app" = ' + query.app);
+}	
+
+function doGenerate(parsed, req, res) {
+	try {
+		var agent = req.headers['user-agent'];
+		if (!parsed.query.platform) {
+			if (agent.match(/android/i)) {
+				parsed.query.platform = 'android';
+			} else {
+				parsed.query.platform = 'ios';						
+			}
+		}
+		if (!parsed.query.mobile) {
+			if (agent.match(/(iphone)|(android)/i)) {
+				parsed.query.mobile = 'true';
+			} else {
+				parsed.query.mobile = 'false';
+			}
+		}
+		
+		verifyQueryParameters(parsed.query);
+		var html = generator.generateHtml(parsed);
+		if (parsed.query.compress === 'false') {
+			res.writeHead(200, {'Content-Type': 'text/html'});
+			res.write(html);
+			res.end();					
+		} else {
+			compress(html, res);					
+		}					
+	} catch (e2) {
+		console.log('error:' + e2.message);
+		// TODO: would be nice to return 404 if the appname is bad
+		res.writeHead(500);
+		res.end();					
+	}		
+}
+
+function doIDE(parsed, req, res) {
+	parsed.query = {
+		app: 'ide',
+		manifest: 'manifest',
+		debug: 'true',
+		platform: 'ios',
+		inline: 'true',
+		compress: 'false',
+		mobile: 'false',
+		native: 'false'
+	};
+	doGenerate(parsed, req, res);	
+}
+
+function doProxy(parsed, req, res) {
+
+	var proxyRequest = url.parse(parsed.query.url);	
+	var proxyProtocol = proxyRequest.protocol.replace(':', '');
+
+	var options = {
+		 hostname: proxyRequest.hostname,
+		 port: proxyRequest.port,
+		 path: proxyRequest.path,
+		 method: req.method,
+		 headers: req.headers
+	};
+
+	if (options.headers) {
+		delete options.headers.host;
+	}
+
+	var proxyReq = {http: http, https: https}[proxyProtocol].request(options, function (proxyRes) {
+
+		proxyRes.on('data', function(chunk) {
+			res.write(chunk, 'binary');
+		});
+
+		proxyRes.on('end', function() {
+			res.end();
+		});
+		res.writeHead(proxyRes.statusCode, proxyRes.headers);
+	});
+
+	req.addListener('data', function(chunk) {
+		proxyReq.write(chunk, 'binary');
+	});
+
+	req.addListener('end', function() {
+		proxyReq.end();
+	});
+}
+
+function doManifest(parsed, req, res) {
+//	res.writeHead(404);
+	res.writeHead(200, {'Content-Type': 'text/cache-manifest'});
+	try {
+		verifyQueryParameters(parsed.query);					
+		res.write(generator.generateCacheManifest(parsed.query));					
+	} catch (e) {
+		console.log('error:' + e.stack);
+	}
+	res.end();	
+}
+
+function doService(parsed, req, res) {
+	try {
+		var service = require('../www/services/' + parsed.query.app + '/' + parsed.query.name + '.js');
+
+		req.body = '';
+		req.on('data', function (chunk) {
+			req.body += chunk;
+		});	
+		req.on('end', function () {
+			try {
+				service.exec(parsed.query, req.body, function (results) {
+					res.writeHead(200, {'Content-Type': 'application/json',
+										'Access-Control-Allow-Origin': '*'});
+					res.write(results);						
+					res.end();
+				});							
+			} catch (e2) {
+				console.log('error:' + e2.message);
+				res.writeHead(500);
+				res.end();											
+			}
+		});										
+	} catch (e1) {
+		console.log('error:' + e1.message);
+		res.end();				
+	}	
+}
+
+function doDefault(parsed, req, res) {
+	paperboy
+		.deliver(WEBROOT, req, res)
+		.addHeader('Access-Control-Allow-Origin', '*')
+		.error(function () {
+			sys.puts('Error delivering: ' + req.url);
+		})
+		.otherwise(function () {
+			res.writeHead(404, {'Content-Type': 'text/plain'});
+			res.end();
+		});		
+}
+
 // http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
 cli.main(function (args, options) {
 	
 	options.port = process.env.npm_package_config_port || options.port || 8008;
-
-	http.createServer(function (req, res) {
-		
-		function assert(cond, message) {
-			if (!cond) {
-				throw new Error(message);
-			}
-		}
-		
-		function isBool(value) {
-			return value && (value === 'true' || value === 'false');
-		}
-		
-		function isPlatform(value) {
-			return value && (value === 'ios' || value === 'android');
-		}
-		
-		function verifyQueryParameters(query) {
-			assert(isBool(query.debug), 'Bad parameter "debug" = ' + query.debug);
-			assert(isBool(query.native), 'Bad parameter "native" = ' + query.native);
-			assert(isBool(query.inline), 'Bad parameter "inline" = ' + query.inline);
-			assert(isBool(query.compress), 'Bad parameter "compress" = ' + query.compress);
-			assert(isBool(query.mobile), 'Bad parameter "mobile" = ' + query.mobile);
-			assert(isPlatform(query.platform), 'Bad parameter "platform" = ' + query.platform);
-			assert(query.app, 'Bad parameter "app" = ' + query.app);
-		}	
-		
-		function doGenerate(parsed, req, res) {
-			try {
-				var agent = req.headers['user-agent'];
-				if (!parsed.query.platform) {
-					if (agent.match(/android/i)) {
-						parsed.query.platform = 'android';
-					} else {
-						parsed.query.platform = 'ios';						
-					}
-				}
-				if (!parsed.query.mobile) {
-					if (agent.match(/(iphone)|(android)/i)) {
-						parsed.query.mobile = 'true';
-					} else {
-						parsed.query.mobile = 'false';
-					}
-				}
-				
-				verifyQueryParameters(parsed.query);
-				var html = generator.generateHtml(parsed);
-				if (parsed.query.compress === 'false') {
-					res.writeHead(200, {'Content-Type': 'text/html'});
-					res.write(html);
-					res.end();					
-				} else {
-					compress(html, res);					
-				}					
-			} catch (e2) {
-				console.log('error:' + e2.message);
-				// TODO: would be nice to return 404 if the appname is bad
-				res.writeHead(500);
-				res.end();					
-			}		
-		}
-			
-		if (options.verbose) {
-			showRequest(req, true);			
-		}
-		
+	
+	function handleRequest(req, res) {
 		// prevent directory climbing through passed parameters
 		var parsed = url.parse(req.url.replace('..', ''), true);		
-//		console.log(parsed)
 		
 		parsed.query.app = parsed.query.app || appName(parsed.query.pkg);
 		parsed.query.manifest = parsed.query.manifest || manifestName(parsed.query.pkg);
+
+		var pathname = url.parse(req.url).pathname;
 		
-		var app = parsed.query.app;
-		
-		var name, service;
+//		if (options.verbose) {
+			console.log(pathname);
+//			console.log(parsed);		
+//		}
 				
 		switch (req.method) {
-		case 'POST':
-			if (req.url.indexOf('generate?') !== -1) {
-				getMessageBody(req, function (body) {
-					// assume that the body is a facebook signed request
-					parsed.query.body = body;
-					doGenerate(parsed, req, res);					
-				});
-			} else if (req.url.indexOf('dot2svg') !== -1) {
-				dot2svg(req, res);	
-			} else if (req.url.indexOf('proxy?') !== -1) {
-				doProxy(parsed, req, res);
-			} else if (req.url.indexOf('service?') !== -1) {
-				try {
-					service = require('../www/services/' + app + '/' + parsed.query.name + '.js');
-					
-					req.body = '';
-					req.on('data', function (chunk) {
-						req.body += chunk;
-					});	
-					req.on('end', function () {
+			case 'POST':
+				switch(pathname) {
+					case '/generate':
+						getMessageBody(req, function (body) {
+							// assume that the body is a facebook signed request
+							parsed.query.body = body;
+							doGenerate(parsed, req, res);					
+						});
+						break;
+					case '/dot2svg':
+						doDot2Svg(req, res);	
+						break;
+					case '/proxy':
+						doProxy(parsed, req, res);
+						break;
+					case '/service':
+						doService(parsed, req, res);
+						break;
+					default:
+						res.writeHead(404);
+						res.end();				
+				}
+				break;		
+			case 'GET':
+				switch (pathname) {
+					case '/generate':
+						doGenerate(parsed, req, res);
+						break;
+					case '/ide':
+						doIDE(parsed, req, res);
+						break;
+					case '/proxy':
+						doProxy(parsed, req, res);				
+						break;
+					case '/cache.manifest':
+						doManifest(parsed, req, res);
+						break;	
+					case '/service':
 						try {
-							service.exec(parsed.query, req.body, function (results) {
+							var service = require(process.cwd() + '/www/services/' + 
+														parsed.query.app + '/' + parsed.query.name + '.js');
+
+							service.exec(parsed.query, function (results) {
 								res.writeHead(200, {'Content-Type': 'application/json',
 													'Access-Control-Allow-Origin': '*'});
-								res.write(results);						
+								res.write(JSON.stringify(results));						
 								res.end();
-							});							
-						} catch (e2) {
-							console.log('error:' + e2.message);
-							res.writeHead(500);
-							res.end();											
-						}
-					});										
-				} catch (e1) {
-					console.log('error:' + e1.message);
-					res.end();				
+							});
+						} catch (e3) {
+							console.log('error:' + e3.message);
+							res.writeHead(500);					
+							res.end();
+						}				
+						break;
+					default:
+						doDefault(parsed, req, res);					
 				}
-			} else {
-				res.writeHead(404);
-				res.end();				
-			}
-			break;		
-		case 'GET':
-			if (req.url.indexOf('generate?') !== -1) {
-				doGenerate(parsed, req, res);
-			} else if (req.url.indexOf('ideview') !== -1) {
-				parsed.query = {
-					app: 'ide',
-					manifest: 'manifest',
-					debug: 'true',
-					platform: 'ios',
-					inline: 'true',
-					compress: 'false',
-					mobile: 'false',
-					native: 'false'
+				break;
+			case 'OPTIONS':
+				// allow everything
+				var responseHeaders = {
+					'Access-Control-Allow-Origin': '*',
+					'Access-Control-Allow-Methods': req.headers['access-control-request-method'],
+					'Access-Control-Allow-Headers': req.headers['access-control-request-headers']
 				};
-				doGenerate(parsed, req, res);				
-			}
-			else if (req.url.indexOf('proxy?') !== -1) {
-				doProxy(parsed, req, res);				
-			} else if (req.url.match('cache.manifest')) {
-//				res.writeHead(404);
-				res.writeHead(200, {'Content-Type': 'text/cache-manifest'});
-				try {
-//					verifyQueryParameters(parsed.query);					
-					res.write(generator.generateCacheManifest(parsed.query));					
-				} catch (e) {
-					console.log('error:' + e.stack);
-				}
-				res.end();				
-			} else if (req.url.indexOf('service?') !== -1) {
-				try {
-					service = require(process.cwd() + '/www/services/' + app + '/' + parsed.query.name + '.js');
-
-					service.exec(parsed.query, function (results) {
-						res.writeHead(200, {'Content-Type': 'application/json',
-											'Access-Control-Allow-Origin': '*'});
-						res.write(JSON.stringify(results));						
-						res.end();
-					});
-				} catch (e3) {
-					console.log('error:' + e3.message);
-					res.writeHead(500);					
-					res.end();
-				}
-			} else {
-				paperboy
-					.deliver(WEBROOT, req, res)
-					.addHeader('Access-Control-Allow-Origin', '*')
-					.error(function () {
-						sys.puts('Error delivering: ' + req.url);
-					})
-					.otherwise(function () {
-						res.writeHead(404, {'Content-Type': 'text/plain'});
-						res.end();
-					});				
-			}
-			break;
-		case 'OPTIONS':
-			// allow everything
-			var responseHeaders = {
-				'Access-Control-Allow-Origin': '*',
-				'Access-Control-Allow-Methods': req.headers['access-control-request-method'],
-				'Access-Control-Allow-Headers': req.headers['access-control-request-headers']
-			};
-			console.log(responseHeaders);
+				res.writeHead(200, responseHeaders);
+				res.end();
+				break;
+			default:
+				res.writeHead(405);
+				res.end();
+				break;
+		}		
+	}
 			
-			res.writeHead(200, 'OK', responseHeaders);
-			res.end();
-			break;
-		default:
-			res.writeHead(405);
-			res.end();
-			break;
-		}
+	http.createServer(function (req, res) {					
+		if (options.verbose) {
+			showRequest(req, true);			
+		}		
+		handleRequest(req, res);		
 	}).listen(options.port);
 	
-	console.log('HTTP server listening on port ' + options.port);
+	var httpsOptions = {
+	  key: fs.readFileSync('./devserv/privatekey.pem'),
+	  cert: fs.readFileSync('./devserv/certificate.pem')
+	};	
+	https.createServer(httpsOptions, function (req, res) {
+		if (options.verbose) {
+			showRequest(req, true);			
+		}
+		handleRequest(req, res);										
+	}).listen(options.port + 1);
+		
 	console.log('WEBROOT:' + WEBROOT);
+	console.log('HTTPS server listening on port ' + options.port + 1);
+	console.log('HTTP server listening on port ' + options.port);	
 });
+

@@ -497,8 +497,8 @@ exports.generateHtml = function(parsed) {
 	/***********************************/
 	
 	// manifest
-//	var manifestString = 'cache.manifest' + parsed.search;
-//	document.setAttribute('manifest', manifestString);	
+	var manifestString = 'cache.manifest' + parsed.search;
+	document.setAttribute('manifest', manifestString);	
 	
 		
 	// TODO: create a meta section in manifest for this stuff		
