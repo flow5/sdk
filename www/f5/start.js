@@ -28,27 +28,45 @@
 /*global F5*/
 
 (function () {	
-	
-	
-	// TODO: one client per pkg
-	var clients = {'f5.core': F5};
+				
+	// TODO: not so happy with this
+	var clients = {};
 	
 	function Client(pkg) {
 		this.pkg = pkg;
 		
-//		this.getElementById = function (el, f5id) {
-//			Client.prototype.getElementById.call(this, el, this.pkg + '.' + f5id);
-//		};
+		// setup a prototype root for the package
+		var prototypeRoot = F5.Global.Prototypes;
+		pkg.split('.').forEach(function (component) {
+			prototypeRoot[component] = {};
+			prototypeRoot = prototypeRoot[component];
+		});
+		
+		this.Prototypes = prototypeRoot;
+		this.Prototypes.Widgets = {};
+		this.Prototypes.FlowDelegates = {};
+		this.Prototypes.ViewDelegates = {};
 	}
+	
+	// bootstrap
 	Client.prototype = F5;
+
+	clients.f5 = new Client('f5');
+	
+	// all clients get the f5 root namespace
+	// TODO: probably want to limit this to the needed set of interfaces
+	Client.prototype = clients.f5;
 	
 	F5.pendingModules.forEach(function (module) {
-		console.log(module.pkg);
-
 		clients[module.pkg] = clients[module.pkg] || new Client(module.pkg);
-//		clients[module.pkg].prototype = F5;
 		module.cb(clients[module.pkg]);
 	});
+	
+	
+	
+	// TODO: this is a bit strange. pass in the newly created F5 Client below
+(function (F5) {
+		
 	
 	if (F5.isDebug()) {
 		F5.forEach(localStorage, function (id, value) {
@@ -191,7 +209,10 @@
 				start();
 			}, false);			
 		}				
-	}, false);					
+	}, false);	
+	
+}(clients.f5));
+					
 }());
 
 

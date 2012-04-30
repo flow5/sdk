@@ -378,7 +378,7 @@ exports.generateHtml = function(query) {
 		
 		
 		var scriptsEl = new Element('div');
-		scriptsEl.id = pkg;
+		scriptsEl.setAttribute('f5id', pkg + '.scripts');
 		document.body.appendChild(scriptsEl);
 		
 		var templatesEl = new Element('div');
@@ -465,7 +465,7 @@ exports.generateHtml = function(query) {
 					} catch (e) {
 						console.log(e.stack);
 					}
-					elementsDiv.id = file;				
+					elementsDiv.setAttribute('f5id', file);				
 
 					templatesEl.appendChild(elementsDiv);
 				}

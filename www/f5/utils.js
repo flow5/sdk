@@ -426,7 +426,7 @@ F5.registerModule(function (F5) {
 	};
 	
 	F5.createCache = function () {
-		return F5.objectFromPrototype(F5.Prototypes.Utils.Cache);
+		return F5.objectFromPrototype(F5.Prototypes.Cache);
 	};
 	
 	F5.callback = function (cb, arg) {
@@ -532,7 +532,21 @@ F5.registerModule(function (F5) {
 		return google.maps.geometry.spherical.computeDistanceBetween(latLng1, latLng2);		
 	};
 	
+	F5.nodePackage = function (node) {
+		var pkg = node.pkg;
+		while (!pkg && node.parent) {
+			node = node.parent;
+			pkg = node.pkg;
+		}	
+		return pkg;	
+	};	
 	
+	F5.getPrototype = function (type, id) {
+		var components = id.split('.');
+		var name = components.pop();
+		var prototypeRoot = F5.valueFromId(F5.Global.Prototypes, components.join('.'));
+		return prototypeRoot[type][name];
+	};			
 });
 
 

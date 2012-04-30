@@ -40,7 +40,9 @@ F5.registerModule(function (F5) {
 			var that = this;																						
 			
 			function attachTabset(el) {
-				if (el.getAttribute('f5widget') === 'Tabset') {
+				// TODO: still not happy with this
+				var widget = el.getAttribute('f5widget');
+				if (widget && widget.match('Tabset')) {
 					that.tabset = el;
 					that.tabset.widget.attachToNode(node);
 					that.tabset.widget.setAction(function selectionChangeCb(id) {
@@ -50,13 +52,7 @@ F5.registerModule(function (F5) {
 				}				
 			}		
 			
-			var search = node;
-			var pkg = search.pkg;
-			while (!pkg && search.parent) {
-				search = search.parent;
-				pkg = search.pkg;
-			}
-			
+			var pkg = F5.nodePackage(node);			
 																					
 			var nodeEl = F5.loadTemplate(node.id, F5.getNodeData(node), pkg);
 			if (!nodeEl) {
@@ -122,8 +118,10 @@ F5.registerModule(function (F5) {
 			this.node = node;
 			node.view = this;
 			
-			if (F5.Prototypes.ViewDelegates[node.id]) {
-				this.delegate = F5.objectFromPrototype(F5.Prototypes.ViewDelegates[node.id]);
+			var id = F5.nodePackage(node) + '.' + node.id;
+			var viewDelegatePrototype = F5.getPrototype('ViewDelegates', id);					
+			if (viewDelegatePrototype) {
+				this.delegate = F5.objectFromPrototype(viewDelegatePrototype);
 				this.delegate.node = node;
 				this.delegate.el = nodeEl;
 

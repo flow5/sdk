@@ -98,7 +98,7 @@ function Form() {
 		}
 												
 		var blurTimeout;
-		F5.forEach(this.el.querySelectorAll('[f5widget=Input]'), function (el) {	
+		F5.forEach(this.el.querySelectorAll('[f5widget="f5.Input"]'), function (el) {	
 			// NOTE: on iOS 4.3 and Android, executing the blur logic when switching fields
 			// causes problems. so delay so that a subsequent focus call can abort
 			el.widget.setOnBlur(function () {
@@ -144,21 +144,21 @@ function Form() {
 	
 	this.getFormData = function () {
 		var data = {};
-		F5.forEach(this.el.querySelectorAll('[f5widget=Input]'), function (el) {
+		F5.forEach(this.el.querySelectorAll('[f5widget="f5.Input"]'), function (el) {
 			data[el.getAttribute('f5id')] = el.widget.getValue();
 		});
 		return data;
 	};
 	
 	this.deactivate = function () {
-		F5.forEach(this.el.querySelectorAll('[f5widget=Input]'), function (el) {
+		F5.forEach(this.el.querySelectorAll('[f5widget="f5.Input"]'), function (el) {
 			el.widget.deactivate();
 		});	
 		this.el.style.top = '';							
 	};
 	
 	this.blur = function () {
-		F5.forEach(this.el.querySelectorAll('[f5widget=Input]'), function (el) {
+		F5.forEach(this.el.querySelectorAll('[f5widget="f5.Input"]'), function (el) {
 			el.widget.blur();
 		});	
 		
@@ -173,7 +173,7 @@ function Form() {
 	}
 	
 	this.reset = function () {
-		F5.forEach(this.el.querySelectorAll('[f5widget=Input]'), function (el) {
+		F5.forEach(this.el.querySelectorAll('[f5widget="f5.Input"]'), function (el) {
 			el.widget.reset();
 		});				
 	};
@@ -190,7 +190,7 @@ function Form() {
 		}		
 		
 		var index = 1;
-		F5.forEach(this.el.querySelectorAll('[f5widget=Input]'), function (el) {
+		F5.forEach(this.el.querySelectorAll('[f5widget="f5.Input"]'), function (el) {
 			el.widget.activate(index);
 			index += 1;
 		});		

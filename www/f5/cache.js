@@ -125,6 +125,6 @@ F5.registerModule(function (F5) {
 		};
 	}	
 	
-	F5.Prototypes.Utils.Cache = new Cache();	
+	F5.Prototypes.Cache = new Cache();	
 });
 

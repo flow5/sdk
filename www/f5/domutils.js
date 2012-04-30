@@ -459,15 +459,30 @@ F5.registerModule(function (F5) {
 		return F5.query['native'] === 'true';		
 	};
 	
-	F5.attachWidget = function(el, f5widget, data) {
+	F5.attachWidget = function(el, f5widget, data, pkg) {
 		F5.assert(!el.widget, 'Widget already attached to element');
 		
 		// NOTE: this is just for readability in the DOM inspector
 		if (!el.getAttribute('f5widget')) {
 			el.setAttribute('f5widget', f5widget);
 		}
-		F5.assert(F5.Prototypes.Widgets[f5widget], 'No widget: ' + f5widget);
-		var widget = F5.objectFromPrototype(F5.Prototypes.Widgets[f5widget]);
+
+		pkg = pkg || this.pkg;
+
+		// fully qualifed widget name
+		var prototype;
+		if (f5widget.split('.').length === 1) {
+			var prototypes = F5.valueFromId(F5.Global.Prototypes, pkg);
+			prototype = prototypes.Widgets[f5widget];
+		} else {
+			var components = f5widget.split('.');
+			var widget = components.pop();
+			prototypes = F5.valueFromId(F5.Global.Prototypes, components.join('.'));
+			prototype = prototypes.Widgets[widget];
+		}					
+		F5.assert(prototype, 'No widget: ' + f5widget);
+		
+		var widget = F5.objectFromPrototype(prototype);
 		widget.el = el;
 		el.widget = widget;
 		
@@ -499,7 +514,7 @@ F5.registerModule(function (F5) {
 		if (f5class) {
 			el.setAttribute('f5class', f5class);			
 		}		
-		F5.attachWidget(el, f5widget, data);
+		F5.attachWidget(el, f5widget, data, this.pkg);
 		return el;		
 	};
 	

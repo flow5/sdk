@@ -151,7 +151,7 @@ function Input() {
 					if (that.form) {
 						// always focus the first element in the form. then use prev/next
 						if (!that.form.focused) {
-							that.form.el.querySelector('[f5widget=Input]').widget.focus();														
+							that.form.el.querySelector('[f5widget="f5.Input"]').widget.focus();														
 						}
 					} else {
 						that.focus();							

@@ -29,18 +29,9 @@
 (function () {
 	F5.mockDataHost = 'http://www.flow5.com/';
 //	F5.mockDataHost = 'http://flow5.local:8008/';
+						
+	F5.Global = {Prototypes: {}};
 		
-				
-	F5.Global = {};
-	F5.Prototypes = {};
-	F5.Prototypes.FlowDelegates = {};
-	F5.Prototypes.Utils = {};	
-
-	if (typeof document !== 'undefined') {
-		F5.Prototypes.Widgets = {};
-		F5.Prototypes.ViewDelegates = {};
-	}
-	
 	F5.pendingModules = [];
 	var packageStack = [];
 	F5.registerModule = function (cb) {
@@ -53,6 +44,5 @@
 	
 	F5.popPkg = function () {
 		packageStack.pop();
-	};
-	
+	};	
 }());	

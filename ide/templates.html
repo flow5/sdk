@@ -33,29 +33,29 @@
 </div>
 
 <div id='dev-header'>
-	<div f5widget='Button' f5id='backbutton' class='backbutton'>&larr;</div>
-	<div f5widget='Button' f5id='menubutton' class='menubutton'>HW Menu</div>	
-	<div f5widget='Button' f5id='resetbutton' class='resetbutton'>Reset</div>				
+	<div f5widget='f5.Button' f5id='backbutton' class='backbutton'>&larr;</div>
+	<div f5widget='f5.Button' f5id='menubutton' class='menubutton'>HW Menu</div>	
+	<div f5widget='f5.Button' f5id='resetbutton' class='resetbutton'>Reset</div>				
 </div>
 
-<div id='dev-footer' f5widget='Tabset'></div>
+<div id='dev-footer' f5widget='f5.Tabset'></div>
 
 <div id='config'>
-	<form f5widget='Form' f5id='form'>
-		<div f5widget='Input' f5id='url'></div>
-		<div f5widget='Input' f5id='geometry'></div>
+	<form f5widget='f5.Form' f5id='form'>
+		<div f5widget='f5.Input' f5id='url'></div>
+		<div f5widget='f5.Input' f5id='geometry'></div>
 	</form>	
 </div>
 
 <div id='app'>
-	<div f5widget='WebFrame' f5id='frame'></div>
+	<div f5widget='f5.WebFrame' f5id='frame'></div>
 </div>
 
 <div id='model'>
 	<div f5id='json' class='json'></div>
 </div>
 
-<div id='graph' f5widget='Tracker'>
+<div id='graph' f5widget='f5.Tracker'>
 	<div f5id='svgframe' class='svgframe'></div>
 </div>
 
@@ -67,10 +67,10 @@
 	<div f5widget='ToggleButton' f5id='framesbutton' class='framesbutton'>Frames</div>			
 	<div f5widget='ToggleButton' f5id='jsonbutton' class='jsonbutton'>Graph</div>			
 	<div f5widget='ToggleButton' f5id='jsonbutton' class='jsonbutton'>Model</div>			
-	<div f5widget='Button' f5id='resetbutton' class='resetbutton'>Config</div>			
+	<div f5widget='f5.Button' f5id='resetbutton' class='resetbutton'>Config</div>			
 </div>
 <div f5id='viewer' class='viewer'>
-	<div f5widget='Tracker' f5id='svgframe' class='svgframe'></div>
+	<div f5widget='f5.Tracker' f5id='svgframe' class='svgframe'></div>
 	<div f5id='jsonframe' class='jsonframe' style='display:none;'>
 		<div f5id='json' class='json'></div>
 	</div>

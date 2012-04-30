@@ -63,10 +63,9 @@ F5.registerModule(function (F5) {
 		
 		// namespacing
 		var templateId = id;
+		pkg = pkg || this.pkg;		
 		if (pkg) {
 			templateId = pkg + '.' + id;
-		} else if (this.pkg) {
-			templateId = this.pkg + '.' + id;
 		}
 				
 		var template = document.getElementById(templateId);		
@@ -100,7 +99,7 @@ F5.registerModule(function (F5) {
 		}
 		
 		F5.forEach(widgetEls, function attachWidget(el) {
-			F5.attachWidget(el, el.getAttribute('f5widget'), data);
+			F5.attachWidget(el, el.getAttribute('f5widget'), data, pkg);
 		});
 				
 		return instance;
