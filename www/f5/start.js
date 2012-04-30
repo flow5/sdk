@@ -138,7 +138,8 @@
 	listener.addEventListener(startEvent, function startHandler(e) {	
 		function startUp() {			
 			
-			F5.scopeTemplates();
+			// also do this after importing a package
+			F5.scopePackages();
 									
 			// create the essential divs
 			var appframeEl = document.createElement('div');

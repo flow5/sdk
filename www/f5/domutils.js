@@ -470,15 +470,15 @@
 		pkg = pkg || this.pkg;
 
 		// fully qualifed widget name
-		var prototype;
+		var prototypes, prototype;
 		if (f5widget.split('.').length === 1) {
-			var prototypes = F5.valueFromId(F5.Prototypes, pkg);
+			prototypes = F5.valueFromId(F5.Prototypes, pkg);
 			prototype = prototypes.Widgets[f5widget];
 		} else {
 			var components = f5widget.split('.');
-			var widget = components.pop();
+			var widgetName = components.pop();
 			prototypes = F5.valueFromId(F5.Prototypes, components.join('.'));
-			prototype = prototypes.Widgets[widget];
+			prototype = prototypes.Widgets[widgetName];
 		}					
 		F5.assert(prototype, 'No widget: ' + f5widget);
 		
@@ -495,15 +495,26 @@
 	
 	// finds all of the elements marked with f5applyscope and then
 	// scopes the elements with ids using scope
-	F5.scopeTemplates = function () {
+	F5.scopePackages = function () {
 		F5.forEach(document.querySelectorAll('[f5id=f5applyscope]'), function (scope) {
 			var pkg = scope.getAttribute('f5pkg');
 			F5.forEach(scope.querySelectorAll('[id]'), function (template) {
 				template.id = pkg + '.' + template.id;
 			});			
-			
-//			console.log(el.id);
 		});	
+		
+		F5.forEach(document.styleSheets, function (stylesheet) {
+			var owner = stylesheet.ownerNode || stylesheet.ownerElement;
+			if (owner) {
+				var pkg = owner.getAttribute('f5pkg');
+				if (pkg) {
+					F5.forEach(stylesheet.cssRules, function (cssRule) {
+						console.log(pkg + ' : ' + cssRule.selectorText);
+					});
+				}				
+			}
+		});
+		
 	};
 	
 	F5.createWidget = function(f5widget, data, f5id, f5class) {

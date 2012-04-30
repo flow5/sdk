@@ -239,7 +239,8 @@ exports.generateCacheManifest = function(query) {
 
 		checkManifest('apps/' + pkgDomain(query.pkg) + '/', pkgName(query.pkg));
 		
-//		console.log(latestDate)
+		console.log(latestDate)
+		
 		return latestDate;		
 	}
 
@@ -333,12 +334,15 @@ exports.generateHtml = function(query) {
 		document.head.appendChild(meta);
 	}
 	
-	function injectLink(rel, href, type) {
+	function injectLink(rel, href, type, pkg) {
 		var link = new Element('link');
 		link.setAttribute('rel', rel);
 		link.setAttribute('href', href);
 		if (type) {
 			link.setAttribute('type', type);
+		}
+		if (pkg) {
+			link.setAttribute('f5pkg', pkg);			
 		}
 		document.head.appendChild(link);
 	}
@@ -483,10 +487,12 @@ exports.generateHtml = function(query) {
 							}
 						}								
 						var styleDiv = new Element('style');
+						styleDiv.setAttribute('f5id', resolvedPath);
+						styleDiv.setAttribute('f5pkg', pkg);
 						styleDiv.innerHTML = statements.join('');
 						document.head.appendChild(styleDiv);												
 					} else {
-						injectLink('stylesheet', base + file, 'text/css');
+						injectLink('stylesheet', base + file, 'text/css', pkg);
 					}
 				} else {
 					var elementsDiv = new Element('div');
