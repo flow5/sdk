@@ -5,7 +5,9 @@
 *
 **/
 
-(function () {
+/*global F5*/
+
+F5.registerModule(function (F5) {
 	
 var Base64 = {
  
@@ -145,4 +147,4 @@ var Base64 = {
 
 F5.Base64 = Base64;
 
-}());
+});

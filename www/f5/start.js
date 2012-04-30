@@ -61,7 +61,7 @@
 		clients[module.pkg] = clients[module.pkg] || new Client(module.pkg);
 		module.cb(clients[module.pkg]);
 	});
-	
+	delete F5.pendingModules;
 	
 	
 	// TODO: this is a bit strange. pass in the newly created F5 Client below

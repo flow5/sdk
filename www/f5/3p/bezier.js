@@ -1,6 +1,9 @@
 // http://www.netzgesta.de/dev/cubic-bezier-timing-function.html
 
 /*global F5*/
+
+F5.registerModule(function (F5) {
+	
 F5.cubicBezierAtTime = function(t, p1x, p1y, p2x, p2y, duration) {
     var ax = 0,
 		bx = 0,
@@ -85,3 +88,5 @@ F5.cubicBezierAtTime = function(t, p1x, p1y, p2x, p2y, duration) {
 	// Convert from input time to parametric value in curve, then from that to output time.
 	return solve(t, solveEpsilon(duration));
 };
+
+});

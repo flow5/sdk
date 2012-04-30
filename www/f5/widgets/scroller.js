@@ -217,7 +217,7 @@ F5.registerModule(function(F5) {
 					});										
 					
 					doTransform(scroller, bounceOffset, duration, scroller.curves.bounce);	
-					console.log(Date.now() - now);												
+//					console.log(Date.now() - now);												
 				} else {
 					// TODO: not necessary?
 					finishScrolling(scroller);										
