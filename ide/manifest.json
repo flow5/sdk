@@ -2,11 +2,10 @@
 	"all": {
 		"packages": [
 			"f5",
-			"f5.defaultstyles",
-			"f5.iosstyles"
+			"f5.defaultstyles"
 		],
 		"flows": [
-			"flowspec.json"
+			"flow.json"
 		],
 		"elements": [
 			"templates.html",
@@ -18,6 +17,9 @@
 			"json.js",
 			"viewdelegates.js",
 			"flowdelegates.js"
+		],
+		"resources": [
+			"data.json"
 		]
 	}
 }

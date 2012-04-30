@@ -46,6 +46,15 @@ function forEach(obj, fn) {
 	}
 }
 
+function parameters(query) {
+	var result = [];
+	forEach(query, function (id, value) {
+		result.push(id + '=' + value);
+	});
+	return result.join('&');
+}
+
+
 // TODO: this is duplicated in devserv. why?
 function pkgDomain(pkg) {
 	return pkg && pkg.split('.')[0];
@@ -152,12 +161,13 @@ exports.generateCacheManifest = function(query) {
 		checkDate('www/f5/f5.js');		
 		checkDate('www/f5/start.js');		
 		checkDate(__filename);		
+		checkDate(__dirname + '/devserv.js');		
 
 		function checkManifest(path, manifestName) {	
 			manifestName += '.json';			
 			checkDate('www/' + path + manifestName);
 			
-			console.log('www/' + path + manifestName)
+//			console.log('www/' + path + manifestName)
 
 			function checkDates(files, type) {
 				files.forEach(function (file) {
@@ -210,7 +220,7 @@ exports.generateCacheManifest = function(query) {
 
 		checkManifest('apps/' + pkgDomain(query.pkg) + '/', pkgName(query.pkg));
 		
-		console.log(latestDate)
+//		console.log(latestDate)
 		return latestDate;		
 	}
 
@@ -471,9 +481,7 @@ exports.generateHtml = function(query) {
 				}
 			});
 		}	
-		
-		
-		
+						
 		// resource files
 		function injectResources(resourceFiles) {
 			resourceFiles.forEach(function (file) {
@@ -534,15 +542,7 @@ exports.generateHtml = function(query) {
 	/************** BUILD **************/
 	/***********************************/
 	
-	// manifest
-	function parameters(query) {
-		var result = [];
-		forEach(query, function (id, value) {
-			result.push(id + '=' + value);
-		});
-		return result.join('&');
-	}
-	
+	// manifest	
 	var manifestString = 'cache.manifest?' + parameters(query);
 	document.setAttribute('manifest', manifestString);	
 	

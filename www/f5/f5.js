@@ -24,12 +24,9 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global define, F5: true*/
+/*global F5*/
 
 (function () {
-	F5.mockDataHost = 'http://www.flow5.com/';
-//	F5.mockDataHost = 'http://flow5.local:8008/';
-						
 	F5.Global = {Prototypes: {}};
 		
 	F5.pendingModules = [];

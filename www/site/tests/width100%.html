@@ -1,0 +1,67 @@
+<!-- 
+
+-moz-box-align center defeats the width 100% on the child box
+-webkit-box-align center does not and the child box sizes to width 100%
+
+
+TODO: clean this up to the minimal test case
+
+-->
+
+<html>
+<head>
+<style>
+
+body {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+}
+
+.vbox {
+	display: -moz-box;
+	display: -webkit-box;
+	-moz-box-orient: vertical;
+	-webkit-box-orient: vertical;
+	-moz-box-flex: 1.0;
+	-webkit-box-flex: 1.0;
+	
+	-webkit-box-pack: center;
+	-webkit-box-align: center;	
+	-moz-box-pack: center;
+	-moz-box-align: center;	
+
+	height: 100%;
+	width: 100%;
+}
+
+.flex {
+	border: 1px solid black;
+	-moz-box-flex: 1.0;
+	-webkit-box-flex: 1.0;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	height: 100%;
+	width: 100%;
+}
+
+.padding {
+	padding: 50px;
+	position: relative;
+}
+
+</style>
+</head>
+<body>
+	
+<div class='vbox'>
+
+	<div class='flex'></div>
+	<div class='flex padding'></div>
+	<div class='flex padding'></div>
+	
+</div>	
+	
+	
+</body>
+</html>

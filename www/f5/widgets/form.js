@@ -80,13 +80,13 @@ function Form() {
 		submit.style.width = '0px';
 		submit.style.position = 'absolute';
 		submit.style.top = '0px';
-		submit.style.left = '-100px'
+		submit.style.left = '-100px';
 		submit.style.visibility = 'hidden';
 		submit.style['font-size'] = '0em';
 		submit.setAttribute('tabindex', -1);
 		submit.addEventListener('click', function (e) {
 			e.stopPropagation();
-		})
+		});
 		this.el.appendChild(submit);
 		
 		this.el.onsubmit = function () {
@@ -95,10 +95,10 @@ function Form() {
 				that.onSubmit();
 			}
 			return false;
-		}
+		};
 												
 		var blurTimeout;
-		F5.forEach(this.el.querySelectorAll('[f5widget="f5.Input"]'), function (el) {	
+		F5.forEach(this.getInputs(), function (el) {	
 			// NOTE: on iOS 4.3 and Android, executing the blur logic when switching fields
 			// causes problems. so delay so that a subsequent focus call can abort
 			el.widget.setOnBlur(function () {
@@ -138,27 +138,32 @@ function Form() {
 		this.refresh();			
 	};
 	
+	this.getInputs = function () {
+		// TODO: how to get rid of the scope here
+		return this.el.querySelectorAll('[f5widget="f5.Input"]');
+	};
+	
 	this.widgetWillBecomeInactive = function () {
 		this.blur();
 	};
 	
 	this.getFormData = function () {
 		var data = {};
-		F5.forEach(this.el.querySelectorAll('[f5widget="f5.Input"]'), function (el) {
+		F5.forEach(this.getInputs(), function (el) {
 			data[el.getAttribute('f5id')] = el.widget.getValue();
 		});
 		return data;
 	};
 	
 	this.deactivate = function () {
-		F5.forEach(this.el.querySelectorAll('[f5widget="f5.Input"]'), function (el) {
+		F5.forEach(this.getInputs(), function (el) {
 			el.widget.deactivate();
 		});	
 		this.el.style.top = '';							
 	};
 	
 	this.blur = function () {
-		F5.forEach(this.el.querySelectorAll('[f5widget="f5.Input"]'), function (el) {
+		F5.forEach(this.getInputs(), function (el) {
 			el.widget.blur();
 		});	
 		
@@ -170,10 +175,10 @@ function Form() {
 	
 	this.setOnSubmit = function (cb) {
 		this.onSubmit = cb;
-	}
+	};
 	
 	this.reset = function () {
-		F5.forEach(this.el.querySelectorAll('[f5widget="f5.Input"]'), function (el) {
+		F5.forEach(this.getInputs(), function (el) {
 			el.widget.reset();
 		});				
 	};
@@ -190,7 +195,7 @@ function Form() {
 		}		
 		
 		var index = 1;
-		F5.forEach(this.el.querySelectorAll('[f5widget="f5.Input"]'), function (el) {
+		F5.forEach(this.getInputs(), function (el) {
 			el.widget.activate(index);
 			index += 1;
 		});		

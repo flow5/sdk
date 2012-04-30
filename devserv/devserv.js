@@ -418,7 +418,7 @@ cli.main(function (args, options) {
 	}).listen(options.port + 1);
 		
 	console.log('WEBROOT:' + WEBROOT);
-	console.log('HTTPS server listening on port ' + options.port + 1);
+	console.log('HTTPS server listening on port ' + (options.port + 1));
 	console.log('HTTP server listening on port ' + options.port);	
 });
 

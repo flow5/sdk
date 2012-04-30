@@ -388,7 +388,7 @@ F5.registerModule(function (F5) {
 		var data = {};
 		F5.merge(userData, data);
 		
-		// then add all of the strings resources associated with this node and ancestors
+		// then add all of the resources associated with this node and ancestors
 		var traverse = node;
 		while (traverse) {
 			var resourceData = {};
