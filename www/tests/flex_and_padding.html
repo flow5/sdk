@@ -1,6 +1,14 @@
 <!-- 
 
+Goal is to layout 3 divs with variable contents so that they take up equal space in the parent
+
 Demonstrating the very different way that the 3 browsers handle box-flex, padding and contents
+
+For a div with box-flex:
+
+Firefox uses padding and content to calculate minimum size. (also required size?)
+WebKit uses only padding.
+
 
 
 -->
@@ -10,7 +18,7 @@ Demonstrating the very different way that the 3 browsers handle box-flex, paddin
 <style>
 
 body {
-	height: 400px; /* also try smaller values to see variations */
+	height: 500px; /* also try smaller or larger values to see variations */
 }
 
 .vbox {
@@ -39,6 +47,8 @@ body {
 	
 	height: 100%;
 	width: 100%;
+	
+/*	height: 1000px; */
 }
 
 .padding {
@@ -47,8 +57,8 @@ body {
 }
 
 .content {
-	height: 100px;
-	width: 100px;
+	height: 20px;
+	width: 20px;
 	background-color: blue;
 }
 

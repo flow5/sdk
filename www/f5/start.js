@@ -28,6 +28,10 @@
 /*global F5*/
 
 (function () {	
+
+	F5.Global.flow = new F5.Flow(F5.valueFromId(F5.Flows, F5.query.pkg));		
+	F5.Global.flowController = new F5.FlowController(F5.Global.flow);	
+	F5.Global.viewController = new F5.ViewController(F5.Global.flow);
 				
 	// TODO: not so happy with this
 	var clients = {};
@@ -36,16 +40,22 @@
 		this.pkg = pkg;
 		
 		// setup a prototype root for the package
-		var prototypeRoot = F5.Global.Prototypes;
+		var prototypeRoot = F5.Prototypes;
+		var resourcesRoot = F5.Resources;
 		pkg.split('.').forEach(function (component) {
-			prototypeRoot[component] = {};
+			prototypeRoot[component] = prototypeRoot[component] || {};
 			prototypeRoot = prototypeRoot[component];
+
+			resourcesRoot[component] = resourcesRoot[component] || {};
+			resourcesRoot = resourcesRoot[component];
 		});
 		
 		this.Prototypes = prototypeRoot;
 		this.Prototypes.Widgets = {};
 		this.Prototypes.FlowDelegates = {};
 		this.Prototypes.ViewDelegates = {};
+		
+		this.Resources = resourcesRoot;
 	}
 	
 	// bootstrap
@@ -129,7 +139,7 @@
 		function startUp() {			
 			
 			F5.scopeTemplates();
-			
+									
 			// create the essential divs
 			var appframeEl = document.createElement('div');
 			appframeEl.id = 'f5appframe';

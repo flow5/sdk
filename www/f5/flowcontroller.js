@@ -26,9 +26,9 @@
 ***********************************************************************************************************************/
 /*global F5*/
 
-F5.registerModule(function (F5) {
+(function () {
 						
-	function FlowController(flow) {
+	F5.FlowController = function (flow) {
 
 		var that = this;
 
@@ -614,8 +614,5 @@ F5.registerModule(function (F5) {
 				completionCb();					
 			}
 		};												
-	}	
-	
-	F5.Global.flowController = new FlowController(F5.Global.flow);	
-
-});
+	};		
+}());

@@ -26,8 +26,8 @@
 ***********************************************************************************************************************/
 /*global F5*/
 
-F5.registerModule(function (F5) {
+(function () {
 	F5.flushTasks = function (tasks, cb) {
 		F5.parallelizeTasks(tasks, cb);	
 	};	
-});
+}());

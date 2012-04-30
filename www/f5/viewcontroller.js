@@ -26,9 +26,9 @@
 ***********************************************************************************************************************/
 /*global F5*/
 
-F5.registerModule(function (F5) {	
+(function () {	
 		
-	function ViewController(flow) {
+	F5.ViewController = function (flow) {
 						
 		F5.Global.flowController.addFlowObserver(this);						
 		
@@ -71,7 +71,7 @@ F5.registerModule(function (F5) {
 		
 		this.nodeInitialize = function (node) {
 			if (!node.view) {
-				F5.objectFromPrototype(F5.Prototypes.View).initialize(node);
+				F5.objectFromPrototype(F5.View).initialize(node);
 			}			
 		};		
 		
@@ -174,8 +174,5 @@ F5.registerModule(function (F5) {
 		this.completeSubflow = function (subflow) {
 			subflow.menu.widget.dismiss();			
 		};				
-	}
-	
-	F5.Global.viewController = new ViewController(F5.Global.flow);
-	
-});
+	};		
+}());

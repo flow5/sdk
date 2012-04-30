@@ -26,7 +26,7 @@
 ***********************************************************************************************************************/
 /*global F5*/
 
-F5.registerModule(function (F5) {
+(function () {
 	
 	// http://blogs.msdn.com/b/ie/archive/2010/09/07/transitioning-existing-code-to-the-es5-getter-setter-apis.aspx	
 	try {
@@ -125,6 +125,6 @@ F5.registerModule(function (F5) {
 		};
 	}	
 	
-	F5.Prototypes.Cache = new Cache();	
-});
+	F5.Cache = new Cache();	
+}());
 

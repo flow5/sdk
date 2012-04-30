@@ -27,7 +27,7 @@
 /*global F5*/
 
 
-F5.registerModule(function (F5) {	
+(function () {	
 	
 	F5.Services = {
 		facebook: {
@@ -73,4 +73,4 @@ F5.registerModule(function (F5) {
 		}
 	};		
 	
-});
+}());

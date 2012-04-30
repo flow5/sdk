@@ -26,7 +26,7 @@
 ***********************************************************************************************************************/
 /*global F5*/
 
-F5.registerModule(function (F5) {
+(function () {
 	
 	function isLifecycleSubflow(id) {
 		return {DidBecomeActive: true, 
@@ -279,5 +279,5 @@ F5.registerModule(function (F5) {
 		};		
 	}
 	
-	F5.Prototypes.View = new View();	
-});
+	F5.View = new View();	
+}());

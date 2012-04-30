@@ -46,6 +46,19 @@ function forEach(obj, fn) {
 	}
 }
 
+function extend(obj1, obj2) {
+	forEach(obj2, function (id, value) {
+		if (!obj1[id]) {
+			obj1[id] = value;
+		} else if (typeof value === 'object') {
+			extend(obj1[id], value);
+		} else {
+			console.log('Resource shadowed: ' + id);
+			obj1[id] = value;								
+		}
+	});
+}
+
 function parameters(query) {
 	var result = [];
 	forEach(query, function (id, value) {
@@ -185,7 +198,7 @@ exports.generateCacheManifest = function(query) {
 								checkDate('www/' + path + src);
 							});			
 						} catch (e) {
-							console.log('error:' + e.stack);
+							console.log('error parsing: ' + resolvedPath + ' : ' + e.stack);
 						}										
 					}
 				});				
@@ -209,7 +222,13 @@ exports.generateCacheManifest = function(query) {
 				});
 			}			
 
-			var manifest = parseJSON(path + manifestName);
+			var manifest;
+			try {
+				manifest = parseJSON(path + manifestName);
+			} catch (e) {
+				console.log('error parsing: ' + path + manifestName + ' : ' + e.stack);
+				throw e;				
+			}
 
 			processManifest(manifest, query, 'packages', checkPackages);											
 			processManifest(manifest, query, 'flows', checkDates);											
@@ -301,17 +320,7 @@ exports.generateHtml = function(query) {
 	document.appendChild(document.head);
 	document.body = new Element('body');
 	document.appendChild(document.body);	
-	
-	// places to stow parsed data
-	// TODO: these will be incorporated per package
-	var resources = {};
-	var flowspec = {};	
-	
-	
-	// REVISIT
-	var facebookId;		
-			
-			
+				
 	/* helper functions */
 	function injectMeta(properties) {
 		var meta = new Element('meta');
@@ -348,10 +357,10 @@ exports.generateHtml = function(query) {
 		return script;
 	}		
 	
-	function getFacebookId() {
+	function facebookId() {
 		try {
 			var path = 'www/apps/' + pkgDomain(query.pkg) + '/facebook_appid.txt';
-			facebookId = fs.readFileSync(path).toString();
+			return fs.readFileSync(path).toString();
 		} catch (e) {
 //			console.log('Could not find facebook_appid.txt');
 		}		
@@ -386,17 +395,28 @@ exports.generateHtml = function(query) {
 		}
 		processManifest(manifest, query, 'packages', injectPackages);
 		
+		var pkgEl = new Element('div');
+		pkgEl.setAttribute('f5pkg', pkg);
+		document.body.appendChild(pkgEl);
+		
 		
 		var scriptsEl = new Element('div');
 		scriptsEl.setAttribute('f5id', pkg + '.scripts');
-		document.body.appendChild(scriptsEl);
+		pkgEl.appendChild(scriptsEl);
 		
 		var templatesEl = new Element('div');
 		templatesEl.setAttribute('f5id', 'f5applyscope');
 		templatesEl.setAttribute('f5pkg', pkg);
 		templatesEl.setAttribute('style', 'display:none;');			
-		document.body.appendChild(templatesEl);	
+		pkgEl.appendChild(templatesEl);	
+
+		var flowsEl = new Element('script');
+		flowsEl.setAttribute('f5id', pkg + '.flows');
+		pkgEl.appendChild(flowsEl);
 		
+		var resourcesEl = new Element('script');
+		resourcesEl.setAttribute('f5id', pkg + '.resources');
+		pkgEl.appendChild(resourcesEl);				
 				
 		function inlineData(path) {			
 			try {
@@ -483,6 +503,7 @@ exports.generateHtml = function(query) {
 		}	
 						
 		// resource files
+		var resources = {};
 		function injectResources(resourceFiles) {
 			resourceFiles.forEach(function (file) {
 				try {
@@ -492,41 +513,38 @@ exports.generateHtml = function(query) {
 							obj[id] = inlineData(base + src);										
 						});
 					}
-
-					function extend(obj1, obj2) {
-						forEach(obj2, function (id, value) {
-							if (!obj1[id]) {
-								obj1[id] = value;
-							} else if (typeof value === 'object') {
-								extend(obj1[id], value);
-							} else {
-								console.log('Resource shadowed: ' + id);
-								obj1[id] = value;								
-							}
-						});
-					}
 					extend(resources, r);		
 					
 				} catch (e) {
-					console.log('error:' + e.stack);
+					console.log('error parsing: ' + base + file + ' : ' + e.stack);
 				}				
-			});				
+			});	
+			
 		}
 		
+		var flows = {};
 		function injectFlows(flowFiles) {
 			flowFiles.forEach(function (file) {
 				try {
-					flowspec = parseJSON(base + file);						
+					extend(flows, parseJSON(base + file));
 				} catch (e) {
 					console.log('error:' + e.stack);
 				}
-			});
+			});			
 		}
 		
-		processManifest(manifest, query, 'flows', injectFlows);											
-		processManifest(manifest, query, 'elements', injectElements);	
-		processManifest(manifest, query, 'resources', injectResources);											
+		processManifest(manifest, query, 'flows', injectFlows);	
+		if (Object.keys(flows).length) {
+			flowsEl.innerHTML = 'F5.addFlows("' + pkg + '", ' + JSON.stringify(flows) + ');';									
+		}
+											
+		processManifest(manifest, query, 'resources', injectResources);	
+		if (Object.keys(resources).length) {
+			resourcesEl.innerHTML = 'F5.addResources("' + pkg + '", ' + JSON.stringify(resources) + ');';						
+		}
 
+		processManifest(manifest, query, 'elements', injectElements);	
+												
 		var pushPkg = new Element('script');
 		pushPkg.innerHTML = 'F5.pushPkg("' + pkg + '");';
 		scriptsEl.appendChild(pushPkg);
@@ -564,35 +582,26 @@ exports.generateHtml = function(query) {
 	injectMeta({name: 'viewport', content: 'target-densitydpi=device-dpi'});
 		
 		
+	// setup
+	document.body.appendChild(makeScript('f5/f5.js'));						
 		
 		
-	// f5.js comes first
-	// TODO: this is only for the root application
-	document.body.appendChild(makeScript('f5/f5.js'));
-					
+	var queryScript = new Element('script');
+	queryScript.setAttribute('f5id', 'F5.query');
+	queryScript.innerHTML = "F5.query = " + JSON.stringify(query);
+	document.body.appendChild(queryScript);
 	
+	// TODO: don't make facebook id a first class feature
+	var facebook_appid = facebookId();
+	if (facebook_appid) {
+		var facebookScript = new Element('script');
+		facebookScript.innerHTML = "F5.facebook_appid = " + facebook_appid;
+		document.body.appendChild(facebookScript);		
+	}							
 		
 	// inject the app manifest (and recursively insert packages)
-	injectManifest(query.pkg);	
-									
-	// fetch a facebook id if there is one
-	// TODO: might not want this to be a firstclass feature. . .
-	getFacebookId();
-	
-	
-	
-	// TODO: move resources, flowspec etc. into the manifest parsing and accumulate as the doc is parsed
-	// inject the merged (and possibly inlined) resources, flowspec and query
-	var resourcesScript = new Element('script');
-	var F5 = {Resources: resources, flowspec: flowspec, query: query};
-	if (facebookId) {
-		F5.facebook_appid = facebookId;
-	}
-	resourcesScript.innerHTML = "F5 = " + JSON.stringify(F5);
-	document.head.prependChild(resourcesScript);
-	
-					
-					
+	injectManifest(query.pkg);																							
+																				
 					
 	// finally			
 	document.body.appendChild(makeScript('f5/start.js'));				

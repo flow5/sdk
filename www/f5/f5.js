@@ -24,10 +24,10 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global F5*/
+/*global F5:true*/
 
 (function () {
-	F5.Global = {Prototypes: {}};
+	F5 = {Prototypes: {}, Flows: {}, Resources: {}, pkg: 'f5', Global: {}};
 		
 	F5.pendingModules = [];
 	var packageStack = [];
@@ -42,4 +42,24 @@
 	F5.popPkg = function () {
 		packageStack.pop();
 	};	
+	
+	function add(obj, path, data) {
+		var elements = path.split('.');
+		while (elements.length) {
+			var key = elements.shift();
+			if (!obj[key]) {
+				obj[key] = {};
+			}
+			obj = obj[key];
+		}
+		F5.extend(obj, data);
+	}
+	
+	F5.addFlows = function (pkg, flows) {
+		add(F5.Flows, pkg, flows);
+	};
+
+	F5.addResources = function (pkg, flows) {
+		add(F5.Resources, pkg, flows);
+	};
 }());	

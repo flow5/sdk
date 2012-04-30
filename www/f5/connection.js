@@ -26,7 +26,7 @@
 ***********************************************************************************************************************/
 /*global F5, PhoneGap*/
 
-F5.registerModule(function (F5) {
+(function () {
 	
 	function Connection() {
 		
@@ -64,4 +64,4 @@ F5.registerModule(function (F5) {
 	}
 			
 	F5.connection = new Connection();
-});
+}());

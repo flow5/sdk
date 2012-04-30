@@ -26,7 +26,7 @@
 ***********************************************************************************************************************/
 /*global F5, RegExp*/
 
-F5.registerModule(function (F5) {
+(function () {
 		
 	function startEventName() {
 		if (F5.isMobile()) {
@@ -472,12 +472,12 @@ F5.registerModule(function (F5) {
 		// fully qualifed widget name
 		var prototype;
 		if (f5widget.split('.').length === 1) {
-			var prototypes = F5.valueFromId(F5.Global.Prototypes, pkg);
+			var prototypes = F5.valueFromId(F5.Prototypes, pkg);
 			prototype = prototypes.Widgets[f5widget];
 		} else {
 			var components = f5widget.split('.');
 			var widget = components.pop();
-			prototypes = F5.valueFromId(F5.Global.Prototypes, components.join('.'));
+			prototypes = F5.valueFromId(F5.Prototypes, components.join('.'));
 			prototype = prototypes.Widgets[widget];
 		}					
 		F5.assert(prototype, 'No widget: ' + f5widget);
@@ -630,7 +630,7 @@ F5.registerModule(function (F5) {
 		return mapping[canonicalName];
 	};
 			
-});
+}());
 
 
 /*

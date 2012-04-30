@@ -26,11 +26,11 @@
 ***********************************************************************************************************************/
 /*global F5*/
 
-F5.registerModule(function (F5) {
+(function (){
 	
-	function Flow(rootSpec) {
+	F5.Flow = function(rootSpec) {
 		
-		this.importNode = function (id, flowspec, parent) {
+		this.importNode = function (id, flowspec, parent, pkg) {
 			var that = this;
 
 			function findNodeUp(node, name) {
@@ -190,6 +190,8 @@ F5.registerModule(function (F5) {
 			
 			addPathsRecursive(node);			
 
+			node.pkg = pkg;	
+			
 			return node;
 		};
 		
@@ -203,13 +205,9 @@ F5.registerModule(function (F5) {
 		};		
 				
 		this.initialize = function (pkg) {
-			this.root = this.importNode('root', rootSpec);
+			this.root = this.importNode('root', rootSpec, null, pkg);
 			this.root.active = true;		
-			this.root.pkg = pkg;	
 		};
-	}
-	
-		
-	F5.Global.flow = new Flow(F5.flowspec);	
-});
+	};				
+}());
 

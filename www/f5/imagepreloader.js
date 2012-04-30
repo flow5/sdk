@@ -26,7 +26,7 @@
 ***********************************************************************************************************************/
 /*global F5*/
 
-F5.registerModule(function (F5) {
+(function () {
 	
 	function ImagePreloader() {
 		
@@ -79,4 +79,4 @@ F5.registerModule(function (F5) {
 
 	F5.ImagePreloader = new ImagePreloader();
 	
-});
+}());

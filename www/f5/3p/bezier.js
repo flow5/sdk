@@ -2,7 +2,7 @@
 
 /*global F5*/
 
-F5.registerModule(function (F5) {
+(function () {
 	
 F5.cubicBezierAtTime = function(t, p1x, p1y, p2x, p2y, duration) {
     var ax = 0,
@@ -89,4 +89,4 @@ F5.cubicBezierAtTime = function(t, p1x, p1y, p2x, p2y, duration) {
 	return solve(t, solveEpsilon(duration));
 };
 
-});
+}());

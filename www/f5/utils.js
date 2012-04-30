@@ -27,7 +27,7 @@
 /*global F5, Base64*/
 
 
-F5.registerModule(function (F5) {
+(function () {
 	
 	/*global PhoneGap*/
 //	var networkActivityCount = 0;
@@ -166,7 +166,7 @@ F5.registerModule(function (F5) {
 		var name = components[0];
 		var qualifier = components[1];
 		
-		var service = F5.Services;
+		var service = this.Services;
 		var protocol = 'http', method = 'GET', baseUrl, username, password, 
 			urlParameterKeys, extendedUrl, resourceName, headers, proxy;
 		F5.forEach(name.split('.'), function (component) {
@@ -392,7 +392,9 @@ F5.registerModule(function (F5) {
 		var traverse = node;
 		while (traverse) {
 			var resourceData = {};
-			F5.merge(F5.Resources[traverse.id], resourceData);
+			
+			var pkgResources = F5.valueFromId(F5.Resources, F5.nodePackage(node));			
+			F5.merge(pkgResources[traverse.id], resourceData);
 						
 			if (traverse !== node) {
 				F5.forEach(resourceData, function (id, value) {
@@ -426,7 +428,7 @@ F5.registerModule(function (F5) {
 	};
 	
 	F5.createCache = function () {
-		return F5.objectFromPrototype(F5.Prototypes.Cache);
+		return F5.objectFromPrototype(F5.Cache);
 	};
 	
 	F5.callback = function (cb, arg) {
@@ -544,10 +546,10 @@ F5.registerModule(function (F5) {
 	F5.getPrototype = function (type, id) {
 		var components = id.split('.');
 		var name = components.pop();
-		var prototypeRoot = F5.valueFromId(F5.Global.Prototypes, components.join('.'));
+		var prototypeRoot = F5.valueFromId(F5.Prototypes, components.join('.'));
 		return prototypeRoot[type][name];
 	};			
-});
+}());
 
 
 

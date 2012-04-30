@@ -26,7 +26,7 @@
 ***********************************************************************************************************************/
 /*global F5, PhoneGap*/
 
-F5.registerModule(function (F5) {
+(function () {
 	function call(number) {
 		var cleanNumber = number.replace(/[^0-9]/g, '');
 		if (typeof PhoneGap !== 'undefined') {
@@ -58,4 +58,4 @@ F5.registerModule(function (F5) {
 		call: call,
 		canMakeCall: canMakeCall
 	};
-});
+}());

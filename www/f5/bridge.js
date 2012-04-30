@@ -26,7 +26,7 @@
 ***********************************************************************************************************************/
 /*global F5, PhoneGap*/
 
-F5.registerModule(function (F5) {
+(function () {
 	
 	function generateToken() {
 		return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -93,4 +93,4 @@ F5.registerModule(function (F5) {
 		);								
 	};
 	
-});
+}());
