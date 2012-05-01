@@ -188,7 +188,9 @@ function doGenerate(query, req, res) {
 		}
 		
 		verifyQueryParameters(query);
+		
 		var html = generator.generateHtml(query);
+		
 		if (query.compress === 'false') {
 			res.writeHead(200, {'Content-Type': 'text/html'});
 			res.write(html);
@@ -267,27 +269,40 @@ function doManifest(query, req, res) {
 }
 
 function doService(query, req, res) {
-	try {
-		var service = require('../www/services/' + pkgDomain(query.pkg) + '/' + query.name + '.js');
-
-		req.body = '';
-		req.on('data', function (chunk) {
-			req.body += chunk;
-		});	
-		req.on('end', function () {
-			try {
-				service.exec(query, req.body, function (results) {
-					res.writeHead(200, {'Content-Type': 'application/json',
-										'Access-Control-Allow-Origin': '*'});
-					res.write(results);						
-					res.end();
-				});							
-			} catch (e2) {
-				console.log('error:' + e2.message);
-				res.writeHead(500);
-				res.end();											
+	
+	var service = require('../www/services/' + pkgDomain(query.pkg) + '/' + query.name + '.js');
+	
+	function execService(body) {
+		try {
+			function complete(results) {
+				// TODO: allow-origin shouldn't be required here since the page is loaded from same domain?
+				res.writeHead(200, {'Content-Type': 'application/json',
+									'Access-Control-Allow-Origin': '*'});
+				res.write(JSON.stringify(results));						
+				res.end();				
 			}
-		});										
+			if (body) {
+				service.exec(query, body, complete);			
+			} else {
+				service.exec(query, complete);							
+			}
+		} catch (e2) {
+			console.log('error:' + e2.message);
+			res.writeHead(500);
+			res.end();											
+		}		
+	}
+	
+	try {
+		switch (req.method) {
+			case 'POST':
+			case 'PUT':
+				getMessageBody(execService);
+				break;
+			default:
+				execService();
+				break;
+		}
 	} catch (e1) {
 		console.log('error:' + e1.message);
 		res.end();				
@@ -295,6 +310,7 @@ function doService(query, req, res) {
 }
 
 function doDefault(query, req, res) {
+	// TODO: allow-origin shouldn't be required here since the page is loaded from same domain?	
 	paperboy
 		.deliver(WEBROOT, req, res)
 		.addHeader('Access-Control-Allow-Origin', '*')
@@ -318,10 +334,11 @@ cli.main(function (args, options) {
 		
 		var pathname = url.parse(req.url).pathname;
 		
-//		if (options.verbose) {
+		if (options.verbose) {
+			console.log(req.method);
 			console.log(pathname);
-//			console.log(parsed);		
-//		}
+			console.log(parsed);		
+		}
 				
 		switch (req.method) {
 			case 'POST':
@@ -362,21 +379,7 @@ cli.main(function (args, options) {
 						doManifest(parsed.query, req, res);
 						break;	
 					case '/service':
-						try {
-							var service = require(process.cwd() + '/www/services/' + 
-														pkgDomain(parsed.query.pkg) + '/' + parsed.query.name + '.js');
-
-							service.exec(parsed.query, function (results) {
-								res.writeHead(200, {'Content-Type': 'application/json',
-													'Access-Control-Allow-Origin': '*'});
-								res.write(JSON.stringify(results));						
-								res.end();
-							});
-						} catch (e3) {
-							console.log('error:' + e3.message);
-							res.writeHead(500);					
-							res.end();
-						}				
+						doService(parsed.query, req, res);
 						break;
 					default:
 						doDefault(parsed.query, req, res);					

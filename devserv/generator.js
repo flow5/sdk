@@ -239,7 +239,7 @@ exports.generateCacheManifest = function(query) {
 
 		checkManifest('apps/' + pkgDomain(query.pkg) + '/', pkgName(query.pkg));
 		
-		console.log(latestDate)
+		console.log(query.pkg + ' last modified ' + latestDate);
 		
 		return latestDate;		
 	}
@@ -315,6 +315,8 @@ function Element(tag) {
 
 
 exports.generateHtml = function(query) {
+	
+	console.log(query.pkg + ' generating');
 	
 	var document = new Element('html');
 	document.head = new Element('head');
