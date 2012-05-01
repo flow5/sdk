@@ -18,7 +18,7 @@
 				"lib/facebook_web.js",
 				"lib/analytics_web.js",
                 "widgets/webframe_web.js",
-	            "widgets/dialogs.js"		
+	            "widgets/dialogs_web.js"		
 			]
 		},
 		"app": {
@@ -47,8 +47,8 @@
 			"lib/cache.js",
 			"lib/imagepreloader.js",
 			"modules/analyticsobserver.js",
-			"modules/facebook.js",
-            "modules/google.js", 			
+			"modules/facebookinit.js",
+            "modules/googleinit.js", 			
             "widgets/buttons.js", 
             "widgets/statictext.js", 
             "widgets/picture.js", 
@@ -71,7 +71,7 @@
     "android": {
         "app": {
             "scripts": [
-                "3p/phonegap-1.3.0.js", 
+                "phonegap/phonegap-1.3.0.js", 
                 "lib/bridge_web.js"
             ],
 			"debug": {
@@ -89,11 +89,11 @@
             "css/android.css"
         ], 
         "scripts": [
-            "modules/android.js", 
+            "modules/androidhwbuttons.js", 
             "widgets/navbar_web.js", 
             "widgets/mapview_web.js",
             "widgets/webframe_web.js",
-            "widgets/activity.js"
+            "widgets/activity_web.js"
         ]
     }, 
     "ios": {
@@ -104,7 +104,7 @@
                 "widgets/mapview_native.js", 
 	            "widgets/activity_native.js",
                 "lib/udp.js", 
-                "3p/phonegap-1.1.0.js",
+                "phonegap/phonegap-1.1.0.js",
                 "widgets/webframe_native.js"
             ],
 			"debug": {
@@ -118,7 +118,7 @@
                 "lib/bridge_web.js", 
                 "widgets/navbar_web.js", 
                 "widgets/mapview_web.js",
-	            "widgets/activity.js"
+	            "widgets/activity_web.js"
             ]
         }, 
         "elements": [

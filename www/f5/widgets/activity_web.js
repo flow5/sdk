@@ -52,8 +52,6 @@ F5.registerModule(function (F5) {
 		};
 		
 		this.stop = function (el) {
-//			return
-			
 			// make sure that the activity is actually contained by this element
 			var search = this.el;
 			while (search) {

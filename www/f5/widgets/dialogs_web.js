@@ -168,6 +168,5 @@ F5.registerModule(function (F5) {
 	Confirm.prototype = new Dialog();	
 		
 	F5.Prototypes.Widgets.Alert = new Alert();
-	F5.Prototypes.Widgets.Confirm = new Confirm();
-	
+	F5.Prototypes.Widgets.Confirm = new Confirm();	
 });
