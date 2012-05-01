@@ -454,6 +454,10 @@
 		return F5.query.debug === 'true';
 	};
 	
+	F5.isInline = function () {
+		return F5.query.inline === 'true';		
+	}
+	
 	F5.isNative = function () {
 		// F5.query.native confuses the JavaScript compressor
 		return F5.query['native'] === 'true';		
@@ -503,17 +507,54 @@
 			});			
 		});	
 		
-		F5.forEach(document.styleSheets, function (stylesheet) {
-			var owner = stylesheet.ownerNode || stylesheet.ownerElement;
+		
+		var i;
+		for (i=0; i < document.styleSheets.length; i += 1) {
+			var styleSheet = document.styleSheets[i];	
+			
+			var owner = styleSheet.ownerNode || styleSheet.ownerElement;
 			if (owner) {
 				var pkg = owner.getAttribute('f5pkg');
-				if (pkg) {
-					F5.forEach(stylesheet.cssRules, function (cssRule) {
-						console.log(pkg + ' : ' + cssRule.selectorText);
-					});
+				if (pkg && !pkg.match('f5')) {
+					var j;
+					var length = styleSheet.cssRules.length;
+					
+					if (F5.isInline()) {
+						var rules = [];
+						for (j = 0; j < length; j += 1) {
+							rules.push({selectorText: styleSheet.cssRules[j].selectorText, cssText: styleSheet.cssRules[j].cssText});
+						}
+						for (j = 0; j < length; j += 1) {
+							styleSheet.deleteRule(0);
+						}
+						rules.forEach(function (rule) {
+							if (rule.selectorText) {
+								var selectors = rule.selectorText.split(',');
+								var k;
+								for (k = 0; k < selectors.length; k += 1) {
+									selectors[k] = '.' + pkg.split('.').join('_') + ' ' + selectors[k];
+								}												
+								styleSheet.insertRule(rule.cssText.replace(rule.selectorText, selectors.join(',')), styleSheet.cssRules.length);							
+							} else {
+								styleSheet.insertRule(rule.cssText, styleSheet.cssRules.length);
+							}					
+						});						
+					} else {
+						for (j = 0; j < length; j += 1) {
+							var rule = styleSheet.cssRules[j];
+							if (rule.selectorText) {
+								var selectors = rule.selectorText.split(',');
+								var k;
+								for (k = 0; k < selectors.length; k += 1) {
+									selectors[k] = '.' + pkg.split('.').join('_') + ' ' + selectors[k];
+								}	
+								rule.selectorText = selectors.join(',');								
+							}
+						}
+					}
 				}				
 			}
-		});
+		}
 		
 	};
 	

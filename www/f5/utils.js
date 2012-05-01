@@ -496,9 +496,7 @@
 	F5.forEach = function (obj, fn) {
 		if (obj) {
 			/*global NodeList*/
-			if (typeof NodeList !== 'undefined' && obj.constructor === NodeList || 
-				typeof StyleSheetList !== 'undefined' && obj.constructor === StyleSheetList ||
-				typeof CSSRuleList !== 'undefined' && obj.constructor === CSSRuleList) {
+			if (typeof NodeList !== 'undefined' && obj.constructor === NodeList) {
 				var list = [];
 				var i;
 				for (i = 0; i < obj.length; i += 1) {

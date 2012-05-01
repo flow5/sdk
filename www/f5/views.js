@@ -60,8 +60,7 @@
 				F5.addClass(nodeEl, node.id);					
 			}
 			F5.addClass(nodeEl, 'f5node');	
-			
-																		
+																								
 			if (node.children) {								
 				var headerTemplate = F5.loadTemplate(node.id + '-header', F5.getNodeData(node), pkg);
 				if (headerTemplate) {
@@ -107,6 +106,10 @@
 				F5.addClass(frameEl, 'f5frame');				
 				frameEl.appendChild(nodeEl);
 			}
+			
+			if (node.pkg) {
+				F5.addClass(frameEl, node.pkg.split('.').join('_'))							
+			}			
 			
 			if (!node.active) {
 				frameEl.style.visibility = 'hidden';
