@@ -1,6 +1,6 @@
 /***********************************************************************************************************************
 
-	Copyright (c) 2011 Paul Greyson
+	Copyright (c) 2012 Paul Greyson
 
 	Permission is hereby granted, free of charge, to any person 
 	obtaining a copy of this software and associated documentation 
@@ -24,8 +24,47 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global F5*/
+/*global F5, PhoneGap*/
 
 (function () {
-
+	
+	function initialize(cb) {
+		PhoneGap.exec(		
+			function (result) { // success
+				console.log(result);
+				cb();
+			}, 
+			function (result) { // failure
+				console.log(result);
+				cb();
+			}, "com.flow5.facebookconnect", "initialize", [{appId: F5.facebook_appid}]);				
+	}
+	
+	function login(permissions, cb) {
+		PhoneGap.exec(
+			function (result) { // success
+				cb(result);
+			}, 
+			function (result) { // failure
+				console.log(result);
+				cb(null);
+			}, "com.flow5.facebookconnect", "login", [{permissions:permissions}]);
+	} 
+	
+	function logout(cb) {
+		PhoneGap.exec(
+			function (result) { // success
+				cb(result);
+			}, 
+			function (result) { // failure
+				console.log(result);
+				cb(null);
+			}, "com.flow5.facebookconnect", "logout", []);
+	}
+			
+	F5.facebook = {
+		initialize: initialize,
+		login: login,
+		logout: logout
+	};
 }());

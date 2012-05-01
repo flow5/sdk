@@ -24,5 +24,53 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
+/*global F5*/
 
-/* default.css contains rules which are optimized for webapp (small images, svg backgrounds etc) */
+// TODO: use namespacing for Services like Widgets
+(function () {	
+	
+	F5.Services = {
+		facebook: {
+			protocol: 'https',
+			method: 'GET',
+			baseUrl: 'graph.facebook.com/',
+			me: {
+				extendedUrl: 'me'
+			}
+		},
+		foursquare: {
+			protocol: 'https',
+			method: 'GET',
+			parameters: {
+				v: '20111111'
+//				client_id: <provided by client>
+//				client_secret: <provided by client>								
+			},
+			venueSearch: {
+				baseUrl: 'api.foursquare.com/v2/venues/search',
+				parameterSchema: {},
+				responseSchema: {},	
+				postprocess: function (response) {
+					return response.response.venues;
+				}				
+			},
+			venue: {
+				baseUrl: 'api.foursquare.com/v2/venues/',
+				parameterSchema: {},
+				responseSchema: {},	
+				postprocess: function (response) {
+					return response.response.venue;
+				}				
+			},
+			categories: {
+				baseUrl: 'api.foursquare.com/v2/venues/categories',
+				parameterSchema: {},
+				responseSchema: {},	
+				postprocess: function (response) {
+					return response.response.categories;
+				}								
+			}				
+		}
+	};		
+	
+}());

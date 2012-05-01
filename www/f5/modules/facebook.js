@@ -1,6 +1,6 @@
 /***********************************************************************************************************************
 
-	Copyright (c) 2011 Paul Greyson
+	Copyright (c) 2012 Paul Greyson
 
 	Permission is hereby granted, free of charge, to any person 
 	obtaining a copy of this software and associated documentation 
@@ -24,6 +24,15 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
+/*global F5*/
 
-/* default.css contains rules which are optimized for a native build (large images etc.) */
-
+F5.registerModule(function (F5) {
+	
+	F5.Global.flowController.addWaitTask(function (cb) {
+		if (F5.facebook_appid) {
+			F5.facebook.initialize(cb);
+		} else {
+			cb();
+		}		
+	});
+});

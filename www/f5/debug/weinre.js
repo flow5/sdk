@@ -26,10 +26,10 @@
 ***********************************************************************************************************************/
 /*global F5*/
 
-F5.registerModule(function (F5) {
+(function (F5) {
 
 	var weinre = document.createElement('script');
 	weinre.src = 'http://' + window.location.hostname + ':8081/target/target-script-min.js#anonymous';
 	document.head.appendChild(weinre);			
 		
-});
+}());

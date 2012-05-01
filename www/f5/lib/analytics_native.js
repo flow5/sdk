@@ -1,6 +1,6 @@
 /***********************************************************************************************************************
 
-	Copyright (c) 2011 Paul Greyson
+	Copyright (c) 2012 Paul Greyson
 
 	Permission is hereby granted, free of charge, to any person 
 	obtaining a copy of this software and associated documentation 
@@ -24,53 +24,14 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global F5*/
+/*global F5, PhoneGap*/
 
-
-(function () {	
+(function () {
 	
-	F5.Services = {
-		facebook: {
-			protocol: 'https',
-			method: 'GET',
-			baseUrl: 'graph.facebook.com/',
-			me: {
-				extendedUrl: 'me'
-			}
-		},
-		foursquare: {
-			protocol: 'https',
-			method: 'GET',
-			parameters: {
-				v: '20111111'
-//				client_id: <provided by client>
-//				client_secret: <provided by client>								
-			},
-			venueSearch: {
-				baseUrl: 'api.foursquare.com/v2/venues/search',
-				parameterSchema: {},
-				responseSchema: {},	
-				postprocess: function (response) {
-					return response.response.venues;
-				}				
-			},
-			venue: {
-				baseUrl: 'api.foursquare.com/v2/venues/',
-				parameterSchema: {},
-				responseSchema: {},	
-				postprocess: function (response) {
-					return response.response.venue;
-				}				
-			},
-			categories: {
-				baseUrl: 'api.foursquare.com/v2/venues/categories',
-				parameterSchema: {},
-				responseSchema: {},	
-				postprocess: function (response) {
-					return response.response.categories;
-				}								
-			}				
+	F5.Analytics = {
+		logEvent: function (name, data) {
+			PhoneGap.exec(F5.noop, F5.noop, "com.flow5.analytics", "logEvent",					
+				[name, data]);
 		}
-	};		
-	
+	};	
 }());

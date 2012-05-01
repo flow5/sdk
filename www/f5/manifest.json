@@ -15,38 +15,40 @@
         }, 
 		"browser": {
 			"scripts": [
-				"facebook_web.js",
-				"analytics_web.js",
+				"lib/facebook_web.js",
+				"lib/analytics_web.js",
                 "widgets/webframe_web.js",
 	            "widgets/dialogs.js"		
 			]
 		},
 		"app": {
 			"scripts": [
-				"facebook_native.js",
-				"analytics_native.js",
+				"lib/facebook_native.js",
+				"lib/analytics_native.js",
 	            "widgets/dialogs_native.js"						
 			]
 		},	
         "elements": [
-            "core.css"            
+            "css/core.css"            
         ], 
         "scripts": [
-            "utils.js", 
-            "domutils.js", 
-            "flow.js", 
-            "flowcontroller.js", 
-            "views.js", 
-            "templates.js", 
-            "viewcontroller.js", 
-            "animation.js", 
-            "services.js", 
-            "location.js", 
-            "connection.js", 
-            "google.js", 
-			"phone.js",
-			"cache.js",
-			"imagepreloader.js",
+            "lib/utils.js", 
+            "lib/domutils.js", 
+            "lib/flow.js", 
+            "lib/flowcontroller.js", 
+            "lib/views.js", 
+            "lib/templates.js", 
+            "lib/viewcontroller.js", 
+            "lib/animation.js", 
+            "lib/services.js", 
+            "lib/location.js", 
+            "lib/connection.js", 
+			"lib/phone.js",
+			"lib/cache.js",
+			"lib/imagepreloader.js",
+			"modules/analyticsobserver.js",
+			"modules/facebook.js",
+            "modules/google.js", 			
             "widgets/buttons.js", 
             "widgets/statictext.js", 
             "widgets/picture.js", 
@@ -70,7 +72,7 @@
         "app": {
             "scripts": [
                 "3p/phonegap-1.3.0.js", 
-                "nobridge.js"
+                "lib/bridge_web.js"
             ],
 			"debug": {
 				"scripts": [
@@ -80,14 +82,14 @@
         }, 
         "browser": {
             "scripts": [
-                "nobridge.js"
+                "lib/bridge_web.js"
             ]
         }, 
         "elements": [
-            "android.css"
+            "css/android.css"
         ], 
         "scripts": [
-            "android.js", 
+            "modules/android.js", 
             "widgets/navbar_web.js", 
             "widgets/mapview_web.js",
             "widgets/webframe_web.js",
@@ -97,7 +99,7 @@
     "ios": {
         "app": {
             "scripts": [
-                "bridge.js", 
+                "bridge_native.js", 
                 "widgets/navbar_web.js", 
                 "widgets/mapview_native.js", 
 	            "widgets/activity_native.js",
@@ -113,14 +115,14 @@
         }, 
         "browser": {
             "scripts": [
-                "nobridge.js", 
+                "lib/bridge_web.js", 
                 "widgets/navbar_web.js", 
                 "widgets/mapview_web.js",
 	            "widgets/activity.js"
             ]
         }, 
         "elements": [
-            "ios.css"
+            "css/ios.css"
         ]
     }
 }

@@ -26,14 +26,7 @@
 ***********************************************************************************************************************/
 /*global F5, PhoneGap*/
 
-F5.registerModule(function (F5) {
-	
-	F5.Analytics = {
-		logEvent: function (name, data) {
-			console.log(name + ': ' + JSON.stringify(data));
-		}
-	};
-	
+F5.registerModule(function (F5) {		
 	F5.Global.flowController.addFlowObserver({
 		doSelection: function (node, id) {
 			F5.Analytics.logEvent('doSelection', {container: node.id, selection: id});

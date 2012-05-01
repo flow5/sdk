@@ -26,12 +26,8 @@
 ***********************************************************************************************************************/
 /*global F5, FB*/
 
-F5.registerModule(function (F5) {
-	
-	if (!F5.facebook_appid) {
-		return;
-	}
-	
+(function () {
+		
 	window.fbAsyncInit = function() {
 		console.log('Facebook initialized');
 		
@@ -49,7 +45,7 @@ F5.registerModule(function (F5) {
 	  };
 
 
-	F5.Global.flowController.addWaitTask(function (cb) {
+	function initialize(cb) {
 		  // Load the SDK Asynchronously
 		var fbId = 'facebook-jssdk';
 		if (!document.getElementById(fbId)) {
@@ -65,7 +61,7 @@ F5.registerModule(function (F5) {
 		}
 
 		cb();
-	});
+	}
 
 	if (F5.query.body) {
 		// TODO: should also verify the SHA signature
@@ -112,7 +108,8 @@ F5.registerModule(function (F5) {
 	}
 
 	F5.facebook = {
+		initialize: initialize,
 		login: login,
 		logout: logout
 	};		
-});
+}());

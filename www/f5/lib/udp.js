@@ -27,7 +27,7 @@
 /*global F5, PhoneGap*/
 
 
-(function() {
+(function(F5) {
 	
 	function UDP() {
 				

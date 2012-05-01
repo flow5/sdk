@@ -26,6 +26,7 @@
 ***********************************************************************************************************************/
 /*global F5*/
 
+// TODO: move animation definitions into a F5.Animations namespace to parallel Widgets etc.
 (function () {
 		
 	function pushHorizontal(container, oldEl, newEl, distance) {

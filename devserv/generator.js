@@ -171,8 +171,8 @@ exports.generateCacheManifest = function(query) {
 			}
 		}
 
-		checkDate('www/f5/f5.js');		
-		checkDate('www/f5/start.js');		
+		checkDate('www/f5/lib/f5.js');		
+		checkDate('www/f5/lib/start.js');		
 		checkDate(__filename);		
 		checkDate(__dirname + '/devserv.js');		
 
@@ -589,7 +589,7 @@ exports.generateHtml = function(query) {
 		
 		
 	// setup
-	document.body.appendChild(makeScript('f5/f5.js'));						
+	document.body.appendChild(makeScript('f5/lib/f5.js'));						
 		
 		
 	var queryScript = new Element('script');
@@ -610,7 +610,7 @@ exports.generateHtml = function(query) {
 																				
 					
 	// finally			
-	document.body.appendChild(makeScript('f5/start.js'));				
+	document.body.appendChild(makeScript('f5/lib/start.js'));				
 																
 												
 	var html = document.outerHTML();

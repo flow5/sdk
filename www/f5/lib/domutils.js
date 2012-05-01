@@ -507,7 +507,9 @@
 			});			
 		});	
 		
-		
+		// scope the css rules as well
+		// see corresponding logic in views.js to apply the package name as a class to div at the root
+		// of the div where the package is imported
 		var i;
 		for (i=0; i < document.styleSheets.length; i += 1) {
 			var styleSheet = document.styleSheets[i];	
@@ -519,7 +521,21 @@
 					var j;
 					var length = styleSheet.cssRules.length;
 					
-					if (F5.isInline()) {
+					// WebKit allows CSSRules to be modified in places and maintains
+					// the source line number which is nice for debugging
+					if (navigator.userAgent.match(/WebKit/)) {					
+						for (j = 0; j < length; j += 1) {
+							var rule = styleSheet.cssRules[j];
+							if (rule.selectorText) {
+								var selectors = rule.selectorText.split(',');
+								var k;
+								for (k = 0; k < selectors.length; k += 1) {
+									selectors[k] = '.' + pkg.split('.').join('-') + ' ' + selectors[k];
+								}	
+								rule.selectorText = selectors.join(',');								
+							}
+						}
+					} else {
 						var rules = [];
 						for (j = 0; j < length; j += 1) {
 							rules.push({selectorText: styleSheet.cssRules[j].selectorText, cssText: styleSheet.cssRules[j].cssText});
@@ -532,25 +548,13 @@
 								var selectors = rule.selectorText.split(',');
 								var k;
 								for (k = 0; k < selectors.length; k += 1) {
-									selectors[k] = '.' + pkg.split('.').join('_') + ' ' + selectors[k];
+									selectors[k] = '.' + pkg.split('.').join('-') + ' ' + selectors[k];
 								}												
 								styleSheet.insertRule(rule.cssText.replace(rule.selectorText, selectors.join(',')), styleSheet.cssRules.length);							
 							} else {
 								styleSheet.insertRule(rule.cssText, styleSheet.cssRules.length);
 							}					
 						});						
-					} else {
-						for (j = 0; j < length; j += 1) {
-							var rule = styleSheet.cssRules[j];
-							if (rule.selectorText) {
-								var selectors = rule.selectorText.split(',');
-								var k;
-								for (k = 0; k < selectors.length; k += 1) {
-									selectors[k] = '.' + pkg.split('.').join('_') + ' ' + selectors[k];
-								}	
-								rule.selectorText = selectors.join(',');								
-							}
-						}
 					}
 				}				
 			}

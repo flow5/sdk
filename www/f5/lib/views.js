@@ -108,7 +108,7 @@
 			}
 			
 			if (node.pkg) {
-				F5.addClass(frameEl, node.pkg.split('.').join('_'))							
+				F5.addClass(frameEl, node.pkg.split('.').join('-'))							
 			}			
 			
 			if (!node.active) {

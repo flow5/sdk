@@ -26,7 +26,7 @@
 ***********************************************************************************************************************/
 /*global F5*/
 
-F5.registerModule(function (F5) {
+(function (F5) {
 		
 	var last = Date.now();
 	var longest = 0;		
@@ -45,4 +45,4 @@ F5.registerModule(function (F5) {
 		longest = 0;
 	};
 	
-});
+}());

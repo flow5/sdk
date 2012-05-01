@@ -26,24 +26,10 @@
 ***********************************************************************************************************************/
 /*global F5, PhoneGap*/
 
-F5.registerModule(function (F5) {
-	
+(function () {	
 	F5.Analytics = {
 		logEvent: function (name, data) {
-			PhoneGap.exec(F5.noop, F5.noop, "com.flow5.analytics", "logEvent",					
-				[name, data]);
+			console.log(name + ': ' + JSON.stringify(data));
 		}
 	};
-	
-	F5.Global.flowController.addFlowObserver({
-		doSelection: function (node, id) {
-			F5.Analytics.logEvent('doSelection', {container: node.id, selection: id});
-			return function (cb) {cb();};
-		},
-		
-		doTransition: function (container, from, id, to, animation) {
-			F5.Analytics.logEvent('doTransition', {from: from.id, to: to.id});
-			return function (cb) {cb();};
-		}
-	});			
-});
+}());
