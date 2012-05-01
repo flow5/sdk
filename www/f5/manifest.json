@@ -99,11 +99,11 @@
     "ios": {
         "app": {
             "scripts": [
-                "bridge_native.js", 
+                "lib/bridge_native.js", 
                 "widgets/navbar_web.js", 
                 "widgets/mapview_native.js", 
 	            "widgets/activity_native.js",
-                "udp.js", 
+                "lib/udp.js", 
                 "3p/phonegap-1.1.0.js",
                 "widgets/webframe_native.js"
             ],
