@@ -28,8 +28,7 @@
 
 (function () {	
 	
-	// experimental
-	// requires that all widget 'construct' methods can be called multiple times
+	// TODO: => refresh widgets
 	F5.refreshTemplate = function(el, data) {
 		var widgetEls = [];
 		

@@ -261,6 +261,7 @@
 		return Math.sqrt(deltaX*deltaX+deltaY*deltaY);
 	};
 	
+	// TODO: unused?
 	F5.modifyCSSRule = function (selectorText, properties) {	
 		var styleSheets = document.styleSheets;
 		var i;
@@ -636,6 +637,12 @@
 		var reflow = document.body.offsetTop;		
 	};
 	
+	
+	
+	
+	
+	
+	// TODO; move mapping to manifest user agent targets	
 	F5.eventName = function (canonicalName) {
 		// TODO; move mapping to manifest user agent targets
 		var mapping;
@@ -655,9 +662,7 @@
 		
 		return mapping[canonicalName];
 	};	
-
 	F5.styleName = function (canonicalName) {
-		// TODO; move mapping to manifest user agent targets
 		var mapping;
 		if (navigator.userAgent.match('Firefox')) {
 			mapping = {

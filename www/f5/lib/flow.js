@@ -48,9 +48,8 @@
 							data: {},
 							type: nodeSpec.type || 'node', 
 							parent: parent,
-/*							viewDelegate: nodeSpec.viewDelegate, */
 							spec: nodeSpec, 
-							active: parent && parent.type === 'group'};
+							active: parent && parent.type === 'group'}; // redundant?
 
 				if (nodeSpec.children) {
 					node.children = {};
