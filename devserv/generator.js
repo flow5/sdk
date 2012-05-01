@@ -59,7 +59,7 @@ function extend(obj1, obj2) {
 	});
 }
 
-function parameters(query) {
+function urlParameters(query) {
 	var result = [];
 	forEach(query, function (id, value) {
 		result.push(id + '=' + value);
@@ -81,10 +81,15 @@ function pkgName(pkg) {
 	}
 }
 
-function parseJSON(path) {
-	// strip out commments		
-	var json = minify(fs.readFileSync('www/' + path).toString());
-	return JSON.parse(json);
+function parseJSON(path) {	
+	try {
+		// strip out commments		
+		var json = minify(fs.readFileSync('www/' + path).toString());
+		return JSON.parse(json);
+	} catch (e) {
+		console.log('error parsing: ' + path + ' : ' + e.stack);
+		throw e;
+	}										
 }
 
 // the image references are at the leaf nodes
@@ -192,14 +197,10 @@ exports.generateCacheManifest = function(query) {
 					}
 					checkDate('www/' + resolvedPath);
 					if (type === 'resources') {
-						try {
-							var resources = parseJSON(resolvedPath);
-							handleDataResourcesRecursive(resources, function (obj, id, src) {
-								checkDate('www/' + path + src);
-							});			
-						} catch (e) {
-							console.log('error parsing: ' + resolvedPath + ' : ' + e.stack);
-						}										
+						var resources = parseJSON(resolvedPath);
+						handleDataResourcesRecursive(resources, function (obj, id, src) {
+							checkDate('www/' + path + src);
+						});			
 					}
 				});				
 			}
@@ -222,13 +223,7 @@ exports.generateCacheManifest = function(query) {
 				});
 			}			
 
-			var manifest;
-			try {
-				manifest = parseJSON(path + manifestName);
-			} catch (e) {
-				console.log('error parsing: ' + path + manifestName + ' : ' + e.stack);
-				throw e;				
-			}
+			var manifest = parseJSON(path + manifestName);
 
 			processManifest(manifest, query, 'packages', checkPackages);											
 			processManifest(manifest, query, 'flows', checkDates);											
@@ -324,7 +319,7 @@ exports.generateHtml = function(query) {
 	document.body = new Element('body');
 	document.appendChild(document.body);	
 				
-	/* helper functions */
+
 	function injectMeta(properties) {
 		var meta = new Element('meta');
 		var name;
@@ -391,8 +386,7 @@ exports.generateHtml = function(query) {
 			manifestName = 'manifest.json';
 		}
 		var manifest = parseJSON(base + manifestName);
-		
-		
+				
 		// recurse
 		function injectPackages(packages) {
 			packages.forEach(function (pkg) {
@@ -514,18 +508,13 @@ exports.generateHtml = function(query) {
 		var resources = {};
 		function injectResources(resourceFiles) {
 			resourceFiles.forEach(function (file) {
-				try {
-					var r = parseJSON(base + file);	
-					if (boolValue(query.inline)) {
-						handleDataResourcesRecursive(r, function (obj, id, src) {						
-							obj[id] = inlineData(base + src);										
-						});
-					}
-					extend(resources, r);		
-					
-				} catch (e) {
-					console.log('error parsing: ' + base + file + ' : ' + e.stack);
-				}				
+				var r = parseJSON(base + file);	
+				if (boolValue(query.inline)) {
+					handleDataResourcesRecursive(r, function (obj, id, src) {						
+						obj[id] = inlineData(base + src);										
+					});
+				}
+				extend(resources, r);		
 			});	
 			
 		}
@@ -533,11 +522,7 @@ exports.generateHtml = function(query) {
 		var flows = {};
 		function injectFlows(flowFiles) {
 			flowFiles.forEach(function (file) {
-				try {
-					extend(flows, parseJSON(base + file));
-				} catch (e) {
-					console.log('error:' + e.stack);
-				}
+				extend(flows, parseJSON(base + file));
 			});			
 		}
 		
@@ -569,7 +554,7 @@ exports.generateHtml = function(query) {
 	/***********************************/
 	
 	// manifest	
-	var manifestString = 'cache.manifest?' + parameters(query);
+	var manifestString = 'cache.manifest?' + urlParameters(query);
 	document.setAttribute('manifest', manifestString);	
 	
 		
