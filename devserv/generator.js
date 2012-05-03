@@ -527,14 +527,10 @@ exports.generateHtml = function(query) {
 		}
 		
 		processManifest(manifest, query, 'flows', injectFlows);	
-		if (Object.keys(flows).length) {
-			flowsEl.innerHTML = 'F5.addFlows("' + pkg + '", ' + JSON.stringify(flows) + ');';									
-		}
+		flowsEl.innerHTML = 'F5.addFlows("' + pkg + '", ' + JSON.stringify(flows) + ');';									
 											
 		processManifest(manifest, query, 'resources', injectResources);	
-		if (Object.keys(resources).length) {
-			resourcesEl.innerHTML = 'F5.addResources("' + pkg + '", ' + JSON.stringify(resources) + ');';						
-		}
+		resourcesEl.innerHTML = 'F5.addResources("' + pkg + '", ' + JSON.stringify(resources) + ');';						
 
 		processManifest(manifest, query, 'elements', injectElements);	
 												

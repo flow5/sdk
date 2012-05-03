@@ -393,8 +393,10 @@
 		while (traverse) {
 			var resourceData = {};
 			
-			var pkgResources = F5.valueFromId(F5.Resources, F5.nodePackage(node));			
-			F5.merge(pkgResources[traverse.id], resourceData);
+			var pkgResources = F5.valueFromId(F5.Resources, F5.nodePackage(node));	
+			if (pkgResources) {
+				F5.merge(pkgResources[traverse.id], resourceData);				
+			}	
 						
 			if (traverse !== node) {
 				F5.forEach(resourceData, function (id, value) {
@@ -547,7 +549,7 @@
 		var components = id.split('.');
 		var name = components.pop();
 		var prototypeRoot = F5.valueFromId(F5.Prototypes, components.join('.'));
-		return prototypeRoot[type][name];
+		return prototypeRoot && prototypeRoot[type] && prototypeRoot[type][name];
 	};			
 }());
 

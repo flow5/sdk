@@ -120,59 +120,49 @@ function Input() {
 
 			this.el.appendChild(this.input);
 		}			
-
-		// take control of the touch events
-		if (F5.platform() === 'android') {
-/*			this.input.style['pointer-events'] = 'none';
-			this.el.addEventListener('click', function (e) {
-				// if the form is scrolling when the click comes in
-				// the input will end up in the wrong place
-				// so toss out click events while moving
-				if (!that.form.el.style['-webkit-transform']) {
-					that.focus();					
-				}
-				e.stopPropagation();
-				e.preventDefault();
-
-			});									
-*/
-		} else {
-			if (navigator.userAgent.match(/OS 4/)) {
-				// failed attempt to prevent scrolling on iOS 4
-/*				
-				var mask = document.createElement('div');
-				mask.style.position = 'absolute';
-				mask.style.top = '0px';
-				mask.style.left = '0px';
-				mask.style.width = '100%';
-				mask.style.height = '100%';
-				this.el.appendChild(mask);
-				mask.addEventListener('click', function (e) {
-					if (that.form) {
-						// always focus the first element in the form. then use prev/next
-						if (!that.form.focused) {
-							that.form.el.querySelector('[f5widget="f5.Input"]').widget.focus();														
-						}
-					} else {
-						that.focus();							
-					}
-					e.stopPropagation();
-					e.preventDefault();
-				});	
-*/						
-			} else {
-				// in iOS5 it is possible to properly prevent scrolling in forms
-				this.input.style['pointer-events'] = 'none';				
-				F5.addTapListener(this.el, function (e) {
-					that.focus();
-				});				
-				F5.addTouchStartListener(this.el, function (e) {
-					e.preventDefault();
-				});	
+		
+		this.input.onblur = function () {
+			if (that.onblur) {
+				that.onblur();
 			}
-		}
-						
+			setTimeout(function () {
+				that.hijack();			
+			}, 0);					
+		};
+		
+		this.input.onfocus = function () {
+			if (that.onfocus) {
+				that.onfocus();
+			}
+			setTimeout(function () {
+				that.unhijack();			
+			}, 0);			
+		};
+
+		this.hijack();
 		this.refresh(data);		
+	};
+	
+	// in iOS5 it is possible to properly prevent uiwebview scrolling in forms
+	this.hijack = function () {
+		if (F5.platform() === 'ios' && !navigator.userAgent.match(/OS 4/)) {
+			this.input.style['pointer-events'] = 'none';	
+			var that = this;			
+			F5.addTapListener(this.el, function (e) {
+				that.focus();
+			});				
+			F5.addTouchStartListener(this.el, function (e) {
+				e.preventDefault();						
+			});			
+		}
+	};
+	
+	this.unhijack = function () {
+		if (F5.platform() === 'ios' && !navigator.userAgent.match(/OS 4/)) {	
+			this.input.style['pointer-events'] = '';						
+			F5.removeTapListener(this.el);				
+			F5.removeTouchStartListener(this.el);		
+		}
 	};
 	
 	// TODO: might want to be able to make menu options dynamic also
@@ -193,10 +183,6 @@ function Input() {
 		this.input.setAttribute('tabindex', index);					
 	};
 	
-	this.blur = function () {
-		this.input.blur();
-	};
-
 	this.deactivate = function () {
 		this.el.style['pointer-events'] = 'none';
 		this.clearError();
@@ -221,23 +207,17 @@ function Input() {
 		return this.input.value;			
 	};
 	
-	// Android seems to sometimes produce extra blur events
-	// only process on blur event after a focus
 	this.setOnBlur = function (cb) {
-		var that = this;
-		this.onblur = function () {
-			cb();
-			that.input.onblur = null;
-		};
+		this.onblur = cb;
 	};
 	
 	this.setOnFocus = function (cb) {
-		var that = this;
-		this.input.onfocus = function () {
-			that.input.onblur = that.onblur;
-			cb();
-		};
+		this.onfocus = cb;
 	};
+	
+	this.blur = function () {
+		this.input.blur();
+	};	
 	
 	this.focus = function () {
 		this.input.focus();											
@@ -260,6 +240,56 @@ function Input() {
 
 F5.Prototypes.Widgets.Input = new Input();
 
-
-	
 });
+
+
+
+/*
+
+// Android seems to sometimes produce extra blur events
+// only process on blur event after a focus
+
+
+		// take control of the touch events
+		if (F5.platform() === 'android') {
+			this.input.style['pointer-events'] = 'none';
+			this.el.addEventListener('click', function (e) {
+				// if the form is scrolling when the click comes in
+				// the input will end up in the wrong place
+				// so toss out click events while moving
+				if (!that.form.el.style['-webkit-transform']) {
+					that.focus();					
+				}
+				e.stopPropagation();
+				e.preventDefault();
+
+			});									
+
+		} else {
+			if (navigator.userAgent.match(/OS 4/)) {
+				// failed attempt to prevent scrolling on iOS 4
+				
+				var mask = document.createElement('div');
+				mask.style.position = 'absolute';
+				mask.style.top = '0px';
+				mask.style.left = '0px';
+				mask.style.width = '100%';
+				mask.style.height = '100%';
+				this.el.appendChild(mask);
+				mask.addEventListener('click', function (e) {
+					if (that.form) {
+						// always focus the first element in the form. then use prev/next
+						if (!that.form.focused) {
+							that.form.el.querySelector('[f5widget="f5.Input"]').widget.focus();														
+						}
+					} else {
+						that.focus();							
+					}
+					e.stopPropagation();
+					e.preventDefault();
+				});	
+						
+			} else {
+				this.hijack();
+			}
+*/
