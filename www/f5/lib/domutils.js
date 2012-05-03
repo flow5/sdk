@@ -531,7 +531,7 @@
 								var selectors = rule.selectorText.split(',');
 								var k;
 								for (k = 0; k < selectors.length; k += 1) {
-									selectors[k] = '.' + pkg.split('.').join('-') + ' ' + selectors[k];
+									selectors[k] = '.' + F5.packageClass(pkg) + ' ' + selectors[k];
 								}	
 								rule.selectorText = selectors.join(',');								
 							}
@@ -549,7 +549,7 @@
 								var selectors = rule.selectorText.split(',');
 								var k;
 								for (k = 0; k < selectors.length; k += 1) {
-									selectors[k] = '.' + pkg.split('.').join('-') + ' ' + selectors[k];
+									selectors[k] = '.' + F5.packageClass(pkg) + ' ' + selectors[k];
 								}												
 								styleSheet.insertRule(rule.cssText.replace(rule.selectorText, selectors.join(',')), styleSheet.cssRules.length);							
 							} else {

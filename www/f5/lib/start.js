@@ -144,6 +144,12 @@
 			// create the essential divs
 			var appframeEl = document.createElement('div');
 			appframeEl.id = 'f5appframe';
+			
+			// NOTE: by adding the application package class to the appframe, system objects like
+			// dialogs etc. can be styled by the application css packages by applying styling
+			// #f5screen (which is one level below appframe)
+			F5.addClass(appframeEl, F5.packageClass());
+			
 			var screenframeEl = document.createElement('div');
 			screenframeEl.id = 'f5screen';		
 			appframeEl.appendChild(screenframeEl);

@@ -550,6 +550,11 @@
 		var name = components.pop();
 		var prototypeRoot = F5.valueFromId(F5.Prototypes, components.join('.'));
 		return prototypeRoot && prototypeRoot[type] && prototypeRoot[type][name];
+	};
+	
+	F5.packageClass = function (pkg) {
+		pkg = pkg || F5.query.pkg;
+		return pkg.split('.').join('-');
 	};			
 }());
 
