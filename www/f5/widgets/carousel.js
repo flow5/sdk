@@ -266,7 +266,7 @@ F5.registerModule(function (F5) {
 			}					
 		};		
 	}
-	Carousel.prototype = F5.Prototypes.Widgets.Scroller;
+	Carousel.prototype = F5.Prototypes.Widgets.TouchScroller;
 	
 	F5.Prototypes.Widgets.Carousel = new Carousel();	
 });

@@ -260,7 +260,7 @@ F5.registerModule(function(F5) {
 		doTransform(scroller, scroller.currentOffset);
 	}	
 		
-	function Scroller(el) {
+	function TouchScroller(el) {
 
 		// prototype functions
 		this.curves = {
@@ -551,7 +551,52 @@ F5.registerModule(function(F5) {
 //			}			
 		};
 	}
+	
 
-	F5.Prototypes.Widgets.Scroller = new Scroller();
+	// TODO: refactor. don't like having the non-generic methods (commented out below) in the TouchScroller
+	function DesktopScroller() {
+						
+			this.construct = function () {
+				this.el.parentElement.style.overflow = 'auto';								
+			};
+
+			this.refresh = function () {
+				// noop. overflow logic handles this
+			};	
+			
+			
+			// used by mobile forms (to keep scroller from moving when an input is focused)
+			// but also by application layer (which it should not be)
+			this.enable = F5.noop;				
+			this.disable = F5.noop;								
+
+			// this is only called by the touchscroller implementation and
+			// mobile forms
+			// also called by application layer occassionly (which it should not be)
+			this.stopScrolling = F5.noop;
+
+			// this is only called by the mobile version of forms
+//			this.jumpTo
+			
+			// this is used by forms			
+//			this.finishScrolling	
+			
+			// this is only called by Carousel (when going to detents) and by the 
+			// status bar touch event handler
+//			this.scrollTo
+
+	}
+	
+	
+	
+
+	F5.Prototypes.Widgets.TouchScroller = new TouchScroller();
+	
+	if (F5.isMobile()) {
+		F5.Prototypes.Widgets.Scroller = F5.Prototypes.Widgets.TouchScroller;
+	} else {
+		F5.Prototypes.Widgets.Scroller = new DesktopScroller();
+	}
+			
 		
 });

@@ -27,6 +27,26 @@
 /*global F5*/
 
 F5.registerModule(function (F5) {
+	
+function makeHiddenSubmitButton() {
+	var submit = document.createElement('input');
+	submit.type = 'submit';
+	submit.style.height = '0px';
+	submit.style.width = '0px';
+	submit.style.position = 'absolute';
+	submit.style.top = '0px';
+	submit.style.left = '-100px';
+	submit.style.visibility = 'hidden';
+	submit.style['font-size'] = '0em';
+	submit.setAttribute('tabindex', -1);
+	submit.addEventListener('click', function (e) {
+		e.stopPropagation();
+	});	
+	
+	return submit;
+}
+
+
 		
 function Form() {
 		
@@ -34,7 +54,23 @@ function Form() {
 		var that = this;	
 		
 		Form.prototype.construct.call(this);				
+		F5.addClass(this.el, 'f5form');
+		
+		this.el.onsubmit = function () {
+			that.blur();
+			if (that.onSubmit) {
+				that.onSubmit();
+			}
+			return false;
+		};
+		
+		// create a hidden submit button so we can hook the keyboard "Go" button
+		this.el.appendChild(makeHiddenSubmitButton());						
 
+
+		
+						
+												
 		// NOTE: on iOS and Android the text input controls are not tied into the -webkit-transform
 		// system very well. so if the form is animated using -webkit-transform while the caret is visible, it
 		// gets out of sync with the form. annoying. the sync is pretty good when using top for positioning
@@ -44,8 +80,11 @@ function Form() {
 		// on blur, switch back to smooth scrolling. this ends up feeling pretty good. not quite
 		// as nice as a fully native form, but close. sigh.
 		
-		function onBlur() {
-			that.focused = false;
+		// TODO: factor the mobile code out into a derived class
+		
+		var blurTimeout;
+		
+		function scrollBlurBehavior() {
 			var offset = that.el.style.top.replace('px', '');
 			if (offset) {
 				that.jumpTo(offset);	
@@ -57,80 +96,49 @@ function Form() {
 			that.enable();					
 		}
 		
-		function onFocus() {
-			that.focused = true;
+		function scrollFocusBehavior(el) {
+			if (navigator.userAgent.match(/OS 4/)) {
+				// not possible to cleanly disable scrolling on iOS4
+			} else {
+				// disable scrolling
+				window.scrollTo(0, 0);
+				document.body.scrollTop = 0;	
+
+				// do the scrolling ourselves		
+				that.el.style.top = (-el.offsetTop +
+						parseInt(window.getComputedStyle(that.el)['padding-top'].replace('px', ''), 10)) + 'px';
+			}
+						
 			var offset = that.el.style.top.replace('px', '');
 			if (!offset) {
 				that.el.style.top = that.staticOffset + 'px';
 			}				
 			that.jumpTo(0);					
-			that.disable();					
-			
-			if (that.onFocus) {
-				that.onFocus();
-			}							
-		}
-					
-		F5.addClass(this.el, 'f5form');
-		
-		// create a hidden submit button so we can hook the keyboard "Go" button
-		var submit = document.createElement('input');
-		submit.type = 'submit';
-		submit.style.height = '0px';
-		submit.style.width = '0px';
-		submit.style.position = 'absolute';
-		submit.style.top = '0px';
-		submit.style.left = '-100px';
-		submit.style.visibility = 'hidden';
-		submit.style['font-size'] = '0em';
-		submit.setAttribute('tabindex', -1);
-		submit.addEventListener('click', function (e) {
-			e.stopPropagation();
-		});
-		this.el.appendChild(submit);
-		
-		this.el.onsubmit = function () {
-			that.blur();
-			if (that.onSubmit) {
-				that.onSubmit();
-			}
-			return false;
-		};
-												
-		var blurTimeout;
+			that.disable();								
+		}							
+														
 		F5.forEach(this.getInputs(), function (el) {	
-			// NOTE: on iOS 4.3 and Android, executing the blur logic when switching fields
-			// causes problems. so delay so that a subsequent focus call can abort
+			
+			var blurFunction = F5.isMobile() ? scrollBlurBehavior : F5.noop;
+			var focusFunction = F5.isMobile() ? scrollFocusBehavior : F5.noop;
+						
 			el.widget.setOnBlur(function () {
 				blurTimeout = setTimeout(function () {
 					blurTimeout = null;		
-					onBlur();
+					blurFunction();
 				}, 100);					
 			});
 
-			el.widget.setOnFocus(
-				function () {	
-					if (blurTimeout) {
-						clearTimeout(blurTimeout);
-						blurTimeout = null;
-					}	
-					if (navigator.userAgent.match(/OS 4/)) {
-						// not possible to cleanly disable scrolling on iOS4
-					} else {
-						// disable scrolling
-						window.scrollTo(0, 0);
-						document.body.scrollTop = 0;	
-
-						// do the scrolling ourselves		
-						that.el.style.top = (-el.offsetTop +
-								parseInt(window.getComputedStyle(that.el)['padding-top'].replace('px', ''), 10)) + 'px';
-					}
-							
-					onFocus();
-				});
-			
-			// let the input know about the form
-			el.widget.form = that;
+			el.widget.setOnFocus(function () {
+				if (blurTimeout) {
+					clearTimeout(blurTimeout);
+					blurTimeout = null;
+				}	
+													
+				focusFunction(el);
+				
+				that.onFocus();
+			});			
 		});					
 	};
 	
@@ -169,8 +177,15 @@ function Form() {
 		
 	};
 	
+	this.onFocus = function () {
+		this.activate();
+		if (this.onFocusCb) {
+			this.onFocusCb();
+		}
+	};
+	
 	this.setOnFocus = function (cb) {
-		this.onFocus = cb;
+		this.onFocusCb = cb;
 	};
 	
 	this.setOnSubmit = function (cb) {
@@ -199,6 +214,8 @@ function Form() {
 			el.widget.activate(index);
 			index += 1;
 		});		
+		
+		// TODO: on desktop?
 		this.el.style.top = '';		
 	};
 	

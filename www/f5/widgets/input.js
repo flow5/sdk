@@ -246,6 +246,10 @@ F5.Prototypes.Widgets.Input = new Input();
 
 /*
 
+Attempts to make things work nicely on Android and iOS 4.3
+
+
+
 // Android seems to sometimes produce extra blur events
 // only process on blur event after a focus
 
