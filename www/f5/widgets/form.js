@@ -28,25 +28,6 @@
 
 F5.registerModule(function (F5) {
 	
-function makeHiddenSubmitButton() {
-	var submit = document.createElement('input');
-	submit.type = 'submit';
-	submit.style.height = '0px';
-	submit.style.width = '0px';
-	submit.style.position = 'absolute';
-	submit.style.top = '0px';
-	submit.style.left = '-100px';
-	submit.style.visibility = 'hidden';
-	submit.style['font-size'] = '0em';
-	submit.setAttribute('tabindex', -1);
-	submit.addEventListener('click', function (e) {
-		e.stopPropagation();
-	});	
-	
-	return submit;
-}
-
-
 		
 function Form() {
 		
@@ -63,14 +44,7 @@ function Form() {
 			}
 			return false;
 		};
-		
-		// create a hidden submit button so we can hook the keyboard "Go" button
-		this.el.appendChild(makeHiddenSubmitButton());						
-
-
-		
-						
-												
+														
 		// NOTE: on iOS and Android the text input controls are not tied into the -webkit-transform
 		// system very well. so if the form is animated using -webkit-transform while the caret is visible, it
 		// gets out of sync with the form. annoying. the sync is pretty good when using top for positioning
@@ -138,9 +112,15 @@ function Form() {
 				focusFunction(el);
 				
 				that.onFocus();
-			});			
+			});	
+			
+			el.widget.form = that;		
 		});					
 	};
+	
+	this.submit = function () {
+		this.el.onsubmit();
+	}
 	
 	this.widgetWillBecomeActive = function () {
 		this.refresh();			

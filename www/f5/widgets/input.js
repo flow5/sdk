@@ -86,17 +86,33 @@ function Input() {
 			this.input = document.createElement('input');
 			this.input.setAttribute('tabindex', -1);
 
-			this.input.pattern = this.el.getAttribute('pattern');
+			if (this.el.getAttribute('pattern')) {
+				this.input.pattern = this.el.getAttribute('pattern');				
+			}
 			
-			this.input.setAttribute('type', this.el.getAttribute('type'));
-			this.input.setAttribute('maxlength', this.el.getAttribute('maxlength'));			
+			if (this.el.getAttribute('type')) {
+				this.input.setAttribute('type', this.el.getAttribute('type'));				
+			}
+			
+			if (this.el.getAttribute('maxlength')) {
+				this.input.setAttribute('maxlength', this.el.getAttribute('maxlength'));							
+			}
 
-			this.input.setAttribute('autocorrect', this.el.getAttribute('autocorrect'));			
-			this.input.setAttribute('autocapitalize', this.el.getAttribute('autocapitalize'));			
+			if (this.el.getAttribute('autocorrect')) {
+				this.input.setAttribute('autocorrect', this.el.getAttribute('autocorrect'));							
+			}
+			
+			if (this.el.getAttribute('autocapitalize')) {
+				this.input.setAttribute('autocapitalize', this.el.getAttribute('autocapitalize'));							
+			}
 
 			this.input.onkeypress = function (e) {
 				// enter key
-				if (e.keyCode !== 13) {
+				if (e.keyCode === 13) {
+					if (that.form) {
+						that.form.submit();
+					}
+				} else {
 					clearErrorAndLabel();					
 				}
 			};
@@ -145,7 +161,7 @@ function Input() {
 	
 	// in iOS5 it is possible to properly prevent uiwebview scrolling in forms
 	this.hijack = function () {
-		if (F5.platform() === 'ios' && !navigator.userAgent.match(/OS 4/)) {
+		if (F5.isMobile() && F5.platform() === 'ios' && !navigator.userAgent.match(/OS 4/)) {
 			this.input.style['pointer-events'] = 'none';	
 			var that = this;			
 			F5.addTapListener(this.el, function (e) {
@@ -158,7 +174,7 @@ function Input() {
 	};
 	
 	this.unhijack = function () {
-		if (F5.platform() === 'ios' && !navigator.userAgent.match(/OS 4/)) {	
+		if (F5.isMobile() && F5.platform() === 'ios' && !navigator.userAgent.match(/OS 4/)) {	
 			this.input.style['pointer-events'] = '';						
 			F5.removeTapListener(this.el);				
 			F5.removeTouchStartListener(this.el);		
