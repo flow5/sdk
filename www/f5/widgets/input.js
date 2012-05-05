@@ -35,29 +35,44 @@ function Input() {
 		
 		F5.addClass(this.el, 'f5input');
 		
+		var container = document.createElement('div');
+		F5.addClass(container, 'f5inputcontainer');
+		this.el.appendChild(container);
+		
+		this.placeholder = document.createElement('div');
+		container.appendChild(this.placeholder);
+		F5.addClass(this.placeholder, 'f5placeholder');			
+		
+		this.error = document.createElement('div');
+		F5.addClass(this.error, 'f5inputerror');
+		container.appendChild(this.error);			
+		
+		function clearErrorAndLabel() {
+			that.placeholder.style.display = 'none';
+			that.error.textContent = '';									
+		}			
+
+		this.label = document.createElement('div');
+		container.appendChild(this.label);
+		F5.addClass(this.label, 'f5label');	
+
+		var spacer = document.createElement('div');
+		container.appendChild(spacer);
+		F5.addClass(spacer, 'f5spacer');	
+		
+		
 		var id = this.el.getAttribute('f5id');
-
-		if (!this.label) {
-			this.label = document.createElement('div');
-			this.el.appendChild(this.label);
-			F5.addClass(this.label, 'f5label');			
-		}
-
+		
 		var labelText = F5.valueFromId(data.labels, id);
 		if (labelText) {
 			this.label.textContent = labelText;			
 		}
 		
-		if (!this.error) {
-			this.error = document.createElement('div');
-			F5.addClass(this.error, 'f5inputerror');
-			this.el.appendChild(this.error);			
-		}
-		
-		function clearErrorAndLabel() {
-			that.label.style.display = 'none';
-			that.error.textContent = '';									
-		}			
+		var placeholderText = F5.valueFromId(data.placeholders, id);
+		if (placeholderText) {
+			this.placeholder.textContent = placeholderText;			
+		}					
+
 					
 		this.type = this.el.getAttribute('type');
 		if (this.type === 'menu') {
@@ -71,20 +86,21 @@ function Input() {
 				});
 			}
 
-			this.el.appendChild(this.input);
-			this.input.style.position = 'absolute';
+			container.appendChild(this.input);
 
 			this.input.addEventListener('focus', function () {
 				clearErrorAndLabel();
 			});
 			this.input.addEventListener('blur', function () {
 				if (!that.input.value) {
-					that.label.style.display = '';					
+					that.placeholder.style.display = '';					
 				}
 			});
 		} else {
 			this.input = document.createElement('input');
 			this.input.setAttribute('tabindex', -1);
+			
+			F5.addClass(this.el, 'f5text');
 
 			if (this.el.getAttribute('pattern')) {
 				this.input.pattern = this.el.getAttribute('pattern');				
@@ -123,18 +139,18 @@ function Input() {
 				});
 				this.input.addEventListener('blur', function () {
 					if (!that.input.value) {
-						that.label.style.display = '';					
+						that.placeholder.style.display = '';					
 					}
 				});
 			}
 
 			this.input.onkeyup = function () {
 				if (!that.input.value) {
-					that.label.style.display = '';					
+					that.placeholder.style.display = '';					
 				}
 			};
 
-			this.el.appendChild(this.input);
+			container.appendChild(this.input);
 		}			
 		
 		this.input.onblur = function () {
@@ -186,10 +202,10 @@ function Input() {
 		var valueText = F5.valueFromId(data.values, this.el.getAttribute('f5id'));	
 		if (valueText) {
 			this.setValue(valueText);
-			this.label.style.display = 'none';
+			this.placeholder.style.display = 'none';
 		} else {
 			this.setValue('');
-			this.label.style.display = '';
+			this.placeholder.style.display = '';
 		}					
 	};
 	
@@ -241,7 +257,7 @@ function Input() {
 		
 	this.reset = function () {
 		this.error.textContent = '';
-		this.label.style.display = '';
+		this.placeholder.style.display = '';
 		this.input.value = '';
 	};
 		

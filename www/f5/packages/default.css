@@ -243,13 +243,17 @@ body {
 }
 
 .f5form .f5label {
+	display: -webkit-box;
+	-webkit-box-align: center;
+}
+
+.f5form .f5placeholder {
 	pointer-events: none;
 }
 
-.f5form .f5label {
+.f5form .f5placeholder {
 	color: darkgrey;
 	position: absolute;
-	top: .75em;
 	left: .25em;
 }
 
@@ -258,25 +262,11 @@ body {
 }
 
 .f5form input {
-	display: -webkit-box;
-	-webkit-box-flex: 1.0;
-	-webkit-box-sizing: border-box;
-	margin: .75em;
-	margin-left: .25em;
-	margin-right: .25em;
-	padding: 0px;
-	border: none;
-	border-bottom: 1px dotted lightgrey;
-	height: 1.5em;
-	
-	background-color: transparent;	
-	-webkit-border-radius: 0px;
-	-webkit-appearance: none;	
-	
 	font-size: inherit;
+	display: block;
 }
 
-.f5form .f5input.f5required .f5label:after {
+.f5form .f5input.f5required .f5placeholder:after {
 	content: '*';
 	color: red;
 	padding-left: .15em;
@@ -285,8 +275,12 @@ body {
 .f5form .f5input {
 	font-size: .16em;
 	position: relative;
+}
+
+.f5form .f5inputcontainer {
 	display: -webkit-box;
-	-webkit-box-flex: 1.0;	
+/*	-webkit-box-align: center; */
+	width: 100%;
 }
 
 .f5inputerror {
@@ -661,6 +655,17 @@ body {
 .f5slider .f5label {
 	font-size: .14em;
 	font-weight: 600;	
+	color: darkgrey;
+	position: absolute;
+	top: .45em;
+}
+
+.f5slider .left .f5label {
+	left: .9em;		
+}
+
+.f5slider .right .f5label {
+	left: 1.35em;		
 }
 
 .f5slider .left {
@@ -678,6 +683,7 @@ body {
 	-webkit-box-sizing: border-box;
 	color: rgba(127,127,127,1.0);	
 }
+
 
 /***************************************/
 /*             carousel                */

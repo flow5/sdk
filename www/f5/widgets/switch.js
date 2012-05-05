@@ -64,7 +64,7 @@ F5.registerModule(function(F5) {
 		};
 		
 		this.widgetWillBecomeActive = function () {
-			this.control.style.width = this.control.offsetHeight;
+			this.control.style.width = this.control.offsetHeight + 'px';
 			this.deadZone = this.el.offsetWidth / 5;
 			var paddingLeft = parseInt(window.getComputedStyle(this.slider)['padding-left'].replace('px', ''), 10);
 			var paddingRight = parseInt(window.getComputedStyle(this.slider)['padding-right'].replace('px', ''), 10);
