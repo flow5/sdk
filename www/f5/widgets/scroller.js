@@ -557,7 +557,7 @@ F5.registerModule(function(F5) {
 	function DesktopScroller() {
 						
 			this.construct = function () {
-				this.el.parentElement.style.overflow = 'auto';								
+				this.el.parentElement.style.overflow = 'scroll';								
 			};
 
 			this.refresh = function () {

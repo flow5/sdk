@@ -148,6 +148,9 @@ function Input() {
 				if (!that.input.value) {
 					that.placeholder.style.display = '';					
 				}
+				if (that.form) {
+					that.form.inputChanged();
+				}
 			};
 
 			container.appendChild(this.input);
@@ -224,6 +227,7 @@ function Input() {
 	};	
 	
 	this.setValue = function (value) {
+		this.value = value;
 		if (this.type === 'menu') {
 			F5.forEach(this.input.querySelectorAll('option'), function (option) {
 				if (option.textContent === value) {
@@ -258,7 +262,7 @@ function Input() {
 	this.reset = function () {
 		this.error.textContent = '';
 		this.placeholder.style.display = '';
-		this.input.value = '';
+		this.input.value = this.value;
 	};
 		
 	this.showError = function (message) {

@@ -120,7 +120,7 @@ function Form() {
 	
 	this.submit = function () {
 		this.el.onsubmit();
-	}
+	};
 	
 	this.widgetWillBecomeActive = function () {
 		this.refresh();			
@@ -129,6 +129,29 @@ function Form() {
 	this.getInputs = function () {
 		// TODO: how to get rid of the scope here
 		return this.el.querySelectorAll('[f5widget="f5.Input"]');
+	};
+	
+	this.setFormChangedAction = function (cb) {
+		this.formChangedAction = cb;
+	};
+	
+	this.clearFormChanged = function () {
+		F5.forEach(this.getInputs(), function (el) {
+			el.widget.value = el.widget.input.value;
+		});				
+		if (this.formChangedAction) {
+			this.formChangedAction(false);
+		}
+	};
+	
+	this.inputChanged = function () {
+		var changed = false;
+		F5.forEach(this.getInputs(), function (el) {
+			changed = changed || el.widget.value !== el.widget.input.value;
+		});		
+		if (this.formChangedAction) {
+			this.formChangedAction(changed);
+		}
 	};
 	
 	this.widgetWillBecomeInactive = function () {
@@ -175,7 +198,10 @@ function Form() {
 	this.reset = function () {
 		F5.forEach(this.getInputs(), function (el) {
 			el.widget.reset();
-		});				
+		});		
+		if (this.formChangedAction) {
+			this.formChangedAction(false);
+		}		
 	};
 	
 	this.activate = function () {
