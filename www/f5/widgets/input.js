@@ -77,6 +77,13 @@ function Input() {
 		this.type = this.el.getAttribute('type');
 		if (this.type === 'menu') {
 			this.input = document.createElement('select');
+			
+			this.input.onchange = function () {
+				if (that.form) {
+					that.form.inputChanged();
+				}				
+			};
+			
 			var options = F5.valueFromId(data.options, id);
 			if (options) {
 				options.forEach(function (option) {
@@ -103,7 +110,8 @@ function Input() {
 			F5.addClass(this.el, 'f5text');
 
 			if (this.el.getAttribute('pattern')) {
-				this.input.pattern = this.el.getAttribute('pattern');				
+				this.input.pattern = this.el.getAttribute('pattern');
+				this.regexp = new RegExp(this.input.pattern);				
 			}
 			
 			if (this.el.getAttribute('type')) {
@@ -129,7 +137,12 @@ function Input() {
 						that.form.submit();
 					}
 				} else {
-					clearErrorAndLabel();					
+					var text = that.input.value + String.fromCharCode(e.keyCode);
+					if (that.regexp && !that.regexp.test(text)) {
+						return false;						
+					} else {
+						clearErrorAndLabel();											
+					}
 				}
 			};
 
