@@ -222,7 +222,7 @@ function Form() {
 		});		
 		
 		// TODO: on desktop?
-		this.el.style.top = '';		
+//		this.el.style.top = '';		
 	};
 	
 	this.showErrors = function (errors) {

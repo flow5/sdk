@@ -56,9 +56,9 @@ function Input() {
 		container.appendChild(this.label);
 		F5.addClass(this.label, 'f5label');	
 
-		var spacer = document.createElement('div');
-		container.appendChild(spacer);
-		F5.addClass(spacer, 'f5spacer');	
+//		var spacer = document.createElement('div');
+//		container.appendChild(spacer);
+//		F5.addClass(spacer, 'f5spacer');	
 		
 		
 		var id = this.el.getAttribute('f5id');
