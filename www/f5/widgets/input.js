@@ -137,12 +137,14 @@ function Input() {
 						that.form.submit();
 					}
 				} else {
-					var text = that.input.value + String.fromCharCode(e.keyCode);
-					if (that.regexp && !that.regexp.test(text)) {
-						return false;						
-					} else {
-						clearErrorAndLabel();											
-					}
+					if (e.charCode) {
+						var text = that.input.value + String.fromCharCode(e.charCode);
+						if (that.regexp && !that.regexp.test(text)) {
+							return false;						
+						}						
+					}					
+					
+					clearErrorAndLabel();
 				}
 			};
 
