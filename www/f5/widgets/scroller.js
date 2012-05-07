@@ -557,13 +557,16 @@ F5.registerModule(function(F5) {
 	function DesktopScroller() {
 						
 			this.construct = function () {
-				this.el.parentElement.style.overflow = 'scroll';								
+				
 			};
 
 			this.refresh = function () {
 				// noop. overflow logic handles this
 			};	
 			
+			this.widgetWillBecomeActive = function () {
+				this.el.parentElement.style.overflow = 'scroll';												
+			};
 			
 			// used by mobile forms (to keep scroller from moving when an input is focused)
 			// but also by application layer (which it should not be)

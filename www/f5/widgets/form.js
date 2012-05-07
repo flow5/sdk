@@ -123,6 +123,8 @@ function Form() {
 	};
 	
 	this.widgetWillBecomeActive = function () {
+		Form.prototype.widgetWillBecomeActive.call(this);
+		
 		this.refresh();			
 	};
 	
