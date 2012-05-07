@@ -123,7 +123,6 @@ body {
 
 	font-family: arial;	
 	height: .30em;	
-	border-radius: .06em;	
 	padding-left: .12em;
 	padding-right: .12em;
 }
@@ -431,6 +430,8 @@ body {
 /***************************************/
 /*                Alerts               */
 /***************************************/
+
+
 .f5alertroot {
 	position: absolute;
 	width: 100%;
@@ -438,32 +439,25 @@ body {
 	z-index: 1000;
 	-webkit-transition: opacity .3s;	
 	opacity: 0;	
-	background-image: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 200, from(rgba(0,0,0,.1)), to(rgba(0,0,0,.4)));
-	/* TODO: FF and IE compatibility */
-	background-color: rgba(0,0,0,.35);
 }
+
 
 .f5alert {
 	display: -webkit-box;
 	-webkit-box-pack: center;
 
 	-webkit-box-align: center;
-	-webkit-box-align: middle; /* TODO MSIE */
+	-webkit-box-align: middle;
 
 	width: 100%;
 	height: 100%;
-
-	text-shadow: -0px -1px black;
 }
+
 
 .f5alertcontainer {
 	padding: .12em;
 	padding-bottom: .04em;
-	background-color: rgba(30, 46, 86, .95);
 	-webkit-box-sizing: border-box;
-	border-radius: .12em;
-	border: .02em solid #EEE;
-	-webkit-box-shadow: inset 0px 0px .01em .015em rgba(0,0,0,.35), 0px 0px .01em .01em rgba(0,0,0,.5);
 	display: -webkit-box;
 	-webkit-box-pack: justify;
 	-webkit-box-align: center;
@@ -473,7 +467,7 @@ body {
 	position: relative;
 	overflow: hidden;
 	text-align: center;
-	text-shadow: -0px -1px black;	
+	background-color: darkgrey;
 }
 
 .f5alerttitle {
@@ -498,25 +492,7 @@ body {
 	width: 100%;
 }
 
-.f5alerthighlight {
-	height: .25em;
-	background-image: -webkit-gradient(linear, center bottom, center top, 
-							from(rgba(83,95,126,.8)), to(rgba(143,149,168,.8)));	
-	width: 100%;
-	position: absolute;
-	left: 0px;
-	border-top-left-radius: .1em;
-	border-top-right-radius: .1em;
-	border-bottom-left-radius: 45%;
-	border-bottom-right-radius: 45%;
-	top: 0px;
-}
-
 .f5alertbutton  {	
-	-webkit-box-shadow: 
-		inset 0px .01em .01em rgba(255, 255, 255, .75), 
-		0px -.5px 1px rgba(0, 0, 0, .5), 
-		0px .01em .01em rgba(255, 255, 255, .25);
 	border: .01em solid rgba(0, 0, 0, 1);
 	margin: .04em;
 	margin-bottom: .02em;
@@ -529,31 +505,6 @@ body {
 	font-size: .18em;
 	font-weight: 600;
 	text-shadow: 0px -1px black;
-}
-
-
-.f5alert .f5button.f5button-up {
-	background-image: -webkit-gradient(linear, center bottom, center top, 
-		from(rgba(102, 113, 141, .85)), 
-			color-stop(0.5, rgba(87, 99, 131, .85)), 
-			color-stop(0.5, rgba(108, 118, 146, .85)), 
-		to(rgba(181, 186, 201, .75)));
-}
-
-.f5alert .f5button.f5button-up.f5not-default {
-	background-image: -webkit-gradient(linear, center bottom, center top, 
-		from(rgba(52, 65, 101, .85)), 
-			color-stop(0.5, rgba(31, 46, 86, .85)), 
-			color-stop(0.5, rgba(54, 68, 104, .85)), 
-		to(rgba(132, 140, 163, .75)));
-}
-
-.f5alert .f5button.f5button-up.f5button-press {
-	background-image: -webkit-gradient(linear, center bottom, center top, 
-		from(rgba(32, 39, 56, .85)), 
-			color-stop(0.5, rgba(20, 26, 42, .85)), 
-			color-stop(0.5, rgba(50, 56, 72, .85)), 
-		to(rgba(118, 122, 132, .75)));
 }
 
 /***************************************/

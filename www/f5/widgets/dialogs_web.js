@@ -37,16 +37,11 @@ F5.registerModule(function (F5) {
 			
 			var alertEl = document.createElement('div');			
 			F5.addClass(alertEl, 'f5alert');
-			
-			
+						
 			var containerEl = document.createElement('div');
 			F5.addClass(containerEl, 'f5alertcontainer');
 			alertEl.appendChild(containerEl);
 			
-			var highlightEl = document.createElement('div');
-			F5.addClass(highlightEl, 'f5alerthighlight');
-			containerEl.appendChild(highlightEl);									
-
 			var titleEl = document.createElement('div');
 			F5.addClass(titleEl, 'f5alerttitle');
 			titleEl.innerHTML = data.title;
