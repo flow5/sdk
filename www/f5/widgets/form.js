@@ -43,8 +43,16 @@ function Form() {
 				that.onSubmit();
 			}
 			return false;
-		};
-														
+		};																																							
+	};
+	
+	this.submit = function () {
+		this.el.onsubmit();
+	};
+	
+	this.refresh = function () {
+		
+		var that = this;
 		// NOTE: on iOS and Android the text input controls are not tied into the -webkit-transform
 		// system very well. so if the form is animated using -webkit-transform while the caret is visible, it
 		// gets out of sync with the form. annoying. the sync is pretty good when using top for positioning
@@ -53,11 +61,11 @@ function Form() {
 		// when an element focues, then switch to discrete steps using top
 		// on blur, switch back to smooth scrolling. this ends up feeling pretty good. not quite
 		// as nice as a fully native form, but close. sigh.
-		
+
 		// TODO: factor the mobile code out into a derived class
-		
+
 		var blurTimeout;
-		
+
 		function scrollBlurBehavior() {
 			var offset = that.el.style.top.replace('px', '');
 			if (offset) {
@@ -69,7 +77,7 @@ function Form() {
 			}				
 			that.enable();					
 		}
-		
+
 		function scrollFocusBehavior(el) {
 			if (navigator.userAgent.match(/OS 4/)) {
 				// not possible to cleanly disable scrolling on iOS4
@@ -82,20 +90,24 @@ function Form() {
 				that.el.style.top = (-el.offsetTop +
 						parseInt(window.getComputedStyle(that.el)['padding-top'].replace('px', ''), 10)) + 'px';
 			}
-						
+
 			var offset = that.el.style.top.replace('px', '');
 			if (!offset) {
 				that.el.style.top = that.staticOffset + 'px';
 			}				
 			that.jumpTo(0);					
 			that.disable();								
-		}							
-														
+		}
+
+		var index = 1;
 		F5.forEach(this.getInputs(), function (el) {	
-			
+
+			el.widget.activate(index);
+			index += 1;			
+
 			var blurFunction = F5.isMobile() ? scrollBlurBehavior : F5.noop;
 			var focusFunction = F5.isMobile() ? scrollFocusBehavior : F5.noop;
-						
+
 			el.widget.setOnBlur(function () {
 				blurTimeout = setTimeout(function () {
 					blurTimeout = null;		
@@ -108,23 +120,28 @@ function Form() {
 					clearTimeout(blurTimeout);
 					blurTimeout = null;
 				}	
-													
+
 				focusFunction(el);
-				
+
 				that.onFocus();
 			});	
-			
+
 			el.widget.form = that;		
-		});					
-	};
-	
-	this.submit = function () {
-		this.el.onsubmit();
-	};
-	
-	this.widgetWillBecomeActive = function () {
-		Form.prototype.widgetWillBecomeActive.call(this);
+		});		
 		
+		if (!this.formData) {
+			this.formData = this.getFormData();
+		} else {
+			if (this.formChangedAction) {
+				this.formChangedAction(JSON.stringify(this.formData) !== JSON.stringify(this.getFormData()));
+			}
+		}
+
+		
+		Form.prototype.refresh.call(this);						
+	};
+	
+	this.widgetDidBecomeActive = function () {					
 		this.refresh();			
 	};
 	
@@ -139,21 +156,18 @@ function Form() {
 	
 	this.clearFormChanged = function () {
 		F5.forEach(this.getInputs(), function (el) {
-			el.widget.value = el.widget.input.value;
+			el.widget.value = el.widget.getValue();
 		});				
+		this.formData = this.getFormData();
 		if (this.formChangedAction) {
 			this.formChangedAction(false);
 		}
 	};
 	
 	this.inputChanged = function () {
-		var changed = false;
-		F5.forEach(this.getInputs(), function (el) {
-			changed = changed || el.widget.value !== el.widget.input.value;
-		});		
 		if (this.formChangedAction) {
-			this.formChangedAction(changed);
-		}
+			this.formChangedAction(JSON.stringify(this.formData) !== JSON.stringify(this.getFormData()));
+		}		
 	};
 	
 	this.widgetWillBecomeInactive = function () {
@@ -163,7 +177,17 @@ function Form() {
 	this.getFormData = function () {
 		var data = {};
 		F5.forEach(this.getInputs(), function (el) {
-			data[el.getAttribute('f5id')] = el.widget.getValue();
+			var id = el.getAttribute('f5id');
+			if (typeof data[id] !== 'undefined') {
+				if (data[id].constructor !== Array) {
+					var tmp = data[id];
+					data[id] = [];
+					data[id].push(tmp);					
+				}
+				data[id].push(el.widget.getValue());
+			} else {
+				data[id] = el.widget.getValue();				
+			}
 		});
 		return data;
 	};
@@ -217,11 +241,7 @@ function Form() {
 			};			
 		}		
 		
-		var index = 1;
-		F5.forEach(this.getInputs(), function (el) {
-			el.widget.activate(index);
-			index += 1;
-		});		
+		this.refresh();
 		
 		// TODO: on desktop?
 //		this.el.style.top = '';		

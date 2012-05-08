@@ -75,7 +75,8 @@ function Input() {
 
 					
 		this.type = this.el.getAttribute('type');
-		if (this.type === 'menu') {
+		switch (this.type) {
+		case 'menu':
 			this.input = document.createElement('select');
 			
 			this.input.onchange = function () {
@@ -93,8 +94,6 @@ function Input() {
 				});
 			}
 
-			container.appendChild(this.input);
-
 			this.input.addEventListener('focus', function () {
 				clearErrorAndLabel();
 			});
@@ -103,7 +102,24 @@ function Input() {
 					that.placeholder.style.display = '';					
 				}
 			});
-		} else {
+			break;
+		case 'checkbox':
+			this.input = document.createElement('input');
+			this.input.setAttribute('tabindex', -1);
+			this.input.setAttribute('type', 'checkbox');
+						
+			this.input.onchange = function (e) {
+				if (that.form) {
+					that.form.inputChanged();
+				}	
+			};
+			
+			this.input.addEventListener('click', function (e) {
+				e.stopPropagation();
+			});
+																
+			break;
+		default:
 			this.input = document.createElement('input');
 			this.input.setAttribute('tabindex', -1);
 			
@@ -167,9 +183,8 @@ function Input() {
 					that.form.inputChanged();
 				}
 			};
-
-			container.appendChild(this.input);
-		}			
+		}	
+		container.appendChild(this.input);
 		
 		this.input.onblur = function () {
 			if (that.onblur) {
@@ -249,13 +264,19 @@ function Input() {
 					option.selected = true;
 				}
 			});
+		} else if (this.type === 'checkbox'){
+			this.input.checked = value;
 		} else {
 			this.input.value = value;				
 		}
 	};
 	
 	this.getValue = function () {
-		return this.input.value;			
+		if (this.input.type === 'checkbox') {
+			return this.input.checked;						
+		} else {
+			return this.input.value;						
+		}
 	};
 	
 	this.setOnBlur = function (cb) {
@@ -277,7 +298,7 @@ function Input() {
 	this.reset = function () {
 		this.error.textContent = '';
 		this.placeholder.style.display = '';
-		this.input.value = this.value;
+		this.setValue(this.value);
 	};
 		
 	this.showError = function (message) {

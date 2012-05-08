@@ -169,6 +169,12 @@ body {
 	-webkit-box-align: end;	
 }
 
+.f5togglebutton {
+	height: .20em;
+	width: .20em;
+	padding: 0px;
+}
+
 /***************************************/
 /*              Tab Set                */
 /***************************************/

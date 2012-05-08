@@ -274,11 +274,14 @@ F5.registerModule(function (F5) {
 				}
 			}
 			
-			var instanceData = data[this.el.getAttribute('f5id')];
-			if (typeof instanceData === 'string') {
-				mergedData.label = instanceData;
-			} else {
-				F5.merge(instanceData, mergedData);				
+			var id = this.el.getAttribute('f5id');
+			if (id) {
+				var instanceData = data[id];
+				if (typeof instanceData === 'string') {
+					mergedData.label = instanceData;
+				} else {
+					F5.merge(instanceData, mergedData);				
+				}				
 			}
 
 			applyResourceData(mergedData);			
@@ -290,6 +293,11 @@ F5.registerModule(function (F5) {
 	
 	function ToggleButton() {		
 		this.state = false;
+		
+		this.construct = function () {
+			ToggleButton.prototype.construct.call(this);
+			F5.addClass(this.el, 'f5togglebutton');
+		};
 				
 		this.setAction = function (cb) {
 			var that = this;
