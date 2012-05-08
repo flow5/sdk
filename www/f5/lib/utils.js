@@ -474,6 +474,7 @@
 		return x/Math.abs(x);
 	};
 	
+	// TODO: why not path === null returns obj?
 	F5.valueFromId = function (obj, path) {
 		if (path) {
 			var pathComponents = path.split('.');
@@ -555,7 +556,16 @@
 	F5.packageClass = function (pkg) {
 		pkg = pkg || F5.query.pkg;
 		return pkg.split('.').join('-');
-	};			
+	};	
+	
+	// TODO: decompose path to allow references to nested components
+	F5.subflow = function (pkg, path) {
+		var id = pkg;
+		if (path) {
+			id += '.children.' + path;
+		}
+		return F5.clone(F5.valueFromId(F5.Flows, id));
+	};
 }());
 
 

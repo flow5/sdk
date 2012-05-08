@@ -45,7 +45,7 @@
 
 			function injectNodeRecursive(id, nodeSpec, parent) {
 				var node = {id: id, 
-							data: {},
+							data: nodeSpec.data || {}, // node can be initialized with data
 							type: nodeSpec.type || 'node', 
 							parent: parent,
 							spec: nodeSpec, 
@@ -88,6 +88,11 @@
 				}
 
 				if (parent) {
+					// allows import into a vanilla node
+					if (!parent.children) {
+						parent.children = {};
+						parent.type = 'group';
+					}
 					parent.children[id] = node;
 				}
 

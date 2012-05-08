@@ -177,6 +177,9 @@
 		};
 		
 		this.release = function (node) {
+			if (node.flowDelegate && node.flowDelegate.release) {
+				node.flowDelegate.release();
+			}
 			delete node.flowDelegate;
 			if (node.defaultSelection) {
 				node.selection = node.children[node.defaultSelection];	

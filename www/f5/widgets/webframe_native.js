@@ -80,6 +80,7 @@ F5.registerModule(function(F5) {
 						if (that.onLoadAction) {
 							that.onLoadAction();
 						}
+						that.show();
 					} else	if (that.messageAction) {
 						that.messageAction(message.message);
 					}
@@ -97,6 +98,10 @@ F5.registerModule(function(F5) {
 			
 		};
 		
+		this.widgetWillBecomeInactive = function () {
+			this.hide();
+		};
+				
 		// TODO: releaseCallback
 		
 		this.open = function (url) {
@@ -121,6 +126,7 @@ F5.registerModule(function(F5) {
 						if (that.onLoadAction) {
 							that.onLoadAction();
 						}
+						that.show();						
 					} else if (message.message && that.messageAction) {
 						that.messageAction(message.message);
 					}

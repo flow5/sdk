@@ -74,6 +74,15 @@ F5.registerModule(function(F5) {
 	}
 	Telephone.prototype = new StaticText();
 	
-	F5.Prototypes.Widgets.Telephone = new Telephone();		
+	F5.Prototypes.Widgets.Telephone = new Telephone();	
+	
+	function Date() {
+		this.formatValue = function (value) {
+			return value.toDateString();
+		};
+	}
+	Date.prototype = new StaticText();
+	
+	F5.Prototypes.Widgets.Date = new Date();		
 		
 });
