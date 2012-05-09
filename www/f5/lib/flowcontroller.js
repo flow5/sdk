@@ -84,6 +84,10 @@
 						}		
 					}													
 				}					
+			} else {
+				if (node.flowDelegate) {
+					doLifecycleEvent(node.flowDelegate);					
+				}
 			}
 								
 			if (event === 'WillBecomeInactive') {
@@ -97,7 +101,7 @@
 					node.defaultSelection = node.selection.id;
 				}				
 			}
-					
+			
 			flowObservers.forEach(doLifecycleEvent);
 			
 			function recurse(node) {

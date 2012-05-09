@@ -42,12 +42,16 @@
 		// setup a prototype root for the package
 		var prototypeRoot = F5.Prototypes;
 		var resourcesRoot = F5.Resources;
+		var servicesRoot = F5.Services;
 		pkg.split('.').forEach(function (component) {
 			prototypeRoot[component] = prototypeRoot[component] || {};
 			prototypeRoot = prototypeRoot[component];
 
 			resourcesRoot[component] = resourcesRoot[component] || {};
 			resourcesRoot = resourcesRoot[component];
+
+			servicesRoot[component] = servicesRoot[component] || {};
+			servicesRoot = servicesRoot[component];
 		});
 		
 		this.Prototypes = prototypeRoot;
@@ -56,6 +60,8 @@
 		this.Prototypes.ViewDelegates = {};
 		
 		this.Resources = resourcesRoot;
+		
+		this.Services = servicesRoot;
 	}
 	
 	// bootstrap

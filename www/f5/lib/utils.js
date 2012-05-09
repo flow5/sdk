@@ -165,15 +165,11 @@
 		var components = id.split(':');
 		var name = components[0];
 		var qualifier = components[1];
-		
-		var service = this.Services;
+								
 		var protocol = 'http', method = 'GET', baseUrl, username, password, 
 			urlParameterKeys, extendedUrl, resourceName, headers, proxy;
-		F5.forEach(name.split('.'), function (component) {
-			if (service) {
-				service = service[component];				
-			}
-			
+						
+		function extendParameters(service) {
 			function get(which) {
 				if (service) {
 					var value;
@@ -188,7 +184,7 @@
 					return value;					
 				}
 			}			
-			
+
 			protocol = get('protocol') || protocol;
 			baseUrl = get('baseUrl') || baseUrl;
 			extendedUrl = get('extendedUrl') || extendedUrl;
@@ -196,15 +192,36 @@
 			method = get('method') || method;
 			// which parameters should go into the URL for POST/PUT
 			urlParameterKeys = get('urlParameterKeys') || urlParameterKeys;
-			
+
 			username = get('username') || username;
 			password = get('password') || password;
 
 			headers = get('headers') || headers;
 			proxy = get('proxy') || proxy;
-			
-			F5.extend(parameters, get('parameters'));
+
+			F5.extend(parameters, get('parameters'));			
+		}
+		
+		var service = F5.valueFromId(F5.Services, F5.nodePackage(node));		
+		extendParameters(service);						
+		F5.forEach(name.split('.'), function (component) {
+			service = service && service[component];
+			if (service) {
+				extendParameters(service);										
+			}
 		});
+		// try at global scope (fully qualified service id)
+		if (!service) {
+			service = F5.Services;
+			extendParameters(service);						
+			F5.forEach(name.split('.'), function (component) {
+				service = service && service[component];
+				if (service) {
+					extendParameters(service);										
+				}
+			});
+		}
+		
 		F5.assert(service, 'No service called: ' + name);		
 
 		// TODO
