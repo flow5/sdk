@@ -31,7 +31,7 @@
 	// http://blogs.msdn.com/b/ie/archive/2010/09/07/transitioning-existing-code-to-the-es5-getter-setter-apis.aspx	
 	try {
 	   if (!Object.prototype.__defineGetter__ &&
-	        Object.defineProperty({},"x",{get: function(){return true}}).x) {
+	        Object.defineProperty({},"x",{get: function(){return true;}}).x) {
 	      Object.defineProperty(Object.prototype, "__defineGetter__",
 	         {enumerable: false, configurable: true,
 	          value: function(name,func)
@@ -45,7 +45,7 @@
 	                 {set:func,enumerable: true,configurable: true});
 	      }});
 	   }
-	} catch(defPropException) {/*Do nothing if an exception occurs*/};
+	} catch(defPropException) {/*Do nothing if an exception occurs*/}
 	
 		
 	
@@ -53,46 +53,52 @@
 	function Cache() {
 		
 		this.initialize = function (fields) {
-			this.fields = fields;
+			this.fields = fields || {};
 			this.values = {};
 
 
 			var that = this;
-			this.fields.forEach(function (field) {
+			F5.forEach(this.fields, function (id, field) {
 				if (field.persist) {
 					
-					if (typeof field.value !== 'undefined' && !localStorage.getItem(field.name)) {
+					if (typeof field.value !== 'undefined' && !localStorage.getItem(id)) {
 						if (typeof field.value === 'object') {
-							localStorage.setItem(field.name, JSON.stringify(field.value));
+							localStorage.setItem(id, JSON.stringify(field.value));
 						} else if (typeof field.value === 'string') {
-							localStorage.setItem(field.name, '"' + field.value + '"');	
+							localStorage.setItem(id, '"' + field.value + '"');	
 						} else {
-							localStorage.setItem(field.name, field.value);	
+							localStorage.setItem(id, field.value);	
 						}
 					}
 
-					that.__defineGetter__(field.name, function(){
-						if (localStorage.getItem(field.name)) {
-							return JSON.parse(localStorage.getItem(field.name));							
+					that.__defineGetter__(id, function(){
+						if (localStorage.getItem(id)) {
+							return JSON.parse(localStorage.getItem(id));							
 						} else {
 							return undefined;
 						}
 				    });
 
-				    that.__defineSetter__(field.name, function(value){
-						localStorage.setItem(field.name, JSON.stringify(value));
+				    that.__defineSetter__(id, function(value){
+						localStorage.setItem(id, JSON.stringify(value));
+						if (that.objectChanged) {
+							that.objectChanged(id);
+						}
 				    });					    
 				} else {
 					if (typeof field.value !== 'undefined') {
-						that.values[field.name] = F5.clone(field.value);					
+						that.values[id] = F5.clone(field.value);					
 					}
 
-					that.__defineGetter__(field.name, function(){
-				        return that.values[field.name];
+					that.__defineGetter__(id, function(){
+				        return that.values[id];
 				    });
 
-				    that.__defineSetter__(field.name, function(value){
-				        that.values[field.name] = value;
+				    that.__defineSetter__(id, function(value){
+				        that.values[id] = value;
+						if (that.objectChanged) {
+							that.objectChanged(id);
+						}				
 					});			
 				}
 			});	
@@ -102,14 +108,14 @@
 				
 		this.reset = function () {
 			var that = this;			
-			this.fields.forEach(function (field) {
+			F5.forEach(this.fields, function (id, field) {
 				if (typeof field.value !== 'undefined') {
-					that[field.name] = F5.clone(field.value);
+					that[id] = F5.clone(field.value);
 				} else {
 					if (field.persist) {
-						localStorage.removeItem(field.name);
+						localStorage.removeItem(id);
 					} else {
-						delete that.values[field.name];
+						delete that.values[id];
 					}					
 				}
 			});
@@ -118,8 +124,8 @@
 		this.dump = function () {
 			var dump = {};
 			var that = this;
-			this.fields.forEach(function (field) {
-				dump[field.name] = that[field.name];
+			F5.forEach(this.fields, function (id, field) {
+				dump[id] = that[id];
 			});			
 			return dump;
 		};

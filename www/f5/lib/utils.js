@@ -450,6 +450,12 @@
 		return F5.objectFromPrototype(F5.Cache);
 	};
 	
+	F5.createModel = function (node) {
+		var model = F5.objectFromPrototype(F5.Model);
+		model.node = node;
+		return model;
+	}
+	
 	F5.callback = function (cb, arg) {
 		try {
 			cb(arg);

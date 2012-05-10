@@ -45,11 +45,15 @@
 
 			function injectNodeRecursive(id, nodeSpec, parent) {
 				var node = {id: id, 
-							data: nodeSpec.data || {}, // node can be initialized with data
 							type: nodeSpec.type || 'node', 
 							parent: parent,
 							spec: nodeSpec, 
 							active: parent && parent.type === 'group'}; // redundant?
+							
+				node.data = F5.createModel(node).initialize(nodeSpec.schema);
+				
+				// can initialize node model from spec. used with mock data
+				F5.extend(node.data, nodeSpec.data || {});
 
 				if (nodeSpec.children) {
 					node.children = {};

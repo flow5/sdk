@@ -45,6 +45,7 @@
             "lib/connection.js", 
 			"lib/phone.js",
 			"lib/cache.js",
+			"lib/model.js",
 			"lib/imagepreloader.js",
 			"modules/analyticsobserver.js",
 			"modules/facebookinit.js",
