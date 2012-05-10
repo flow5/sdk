@@ -30,16 +30,17 @@ F5.registerModule(function (F5) {
 	
 	IDE = {};
 	
-	IDE.cache = F5.createCache().initialize([
-		{
-			name: 'url',
+	IDE.cache = F5.createCache().initialize({
+		pkg: {
 			persist: true
 		},
-		{
-			name: "geometry",
+		url: {
+			persist: true
+		},
+		geometry: {
 			value: '320x480',			
 			persist: true
 		}	
-	]);	
+	});	
 	
 });

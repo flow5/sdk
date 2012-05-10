@@ -27,47 +27,75 @@
 /*global F5*/
 
 F5.registerModule(function (F5) {
+		
+	F5.extend(F5.Services, {
+		devserv: {
+			protocol: 'http',
+			baseUrl: window.location.host,  // TODO: make this work headless
+			clientid: {
+				extendedUrl: '/clientid'
+			},
+			postMessage: {
+				method: 'POST',
+				extendedUrl: '/message',
+				urlParameterKeys: ['clientid', 'channel']
+			},
+			getMessage: {
+				extendedUrl: '/message'					
+			}
+		}}
+	);	
 	
 	// TODO: the IDE bridge package shouldn't be included in the IDE app!
 	if (F5.query.pkg === 'ide') {
 		return;
 	}
-	
-	F5.Global.flowController.addWaitTask(function (cb) {
-		
-		function Bridge() {
 			
-			function postMessage(message) {
-				window.parent.postMessage(message, '*');
+	F5.Global.flowController.addWaitTask(function (cb) {		
+		
+		F5.execService(null, 'f5.devserv.clientid', {}, function (clientid, status) {									
+			function Bridge() {
+
+				function postMessage(message) {
+					F5.execService(null, 'f5.devserv.postMessage', {
+												clientid: clientid, 
+												channel: F5.query.pkg + '.ide',
+												message: message}, F5.noop);
+//					window.parent.postMessage(message, '*');
+				}
+
+				this.update = function () {
+					postMessage({
+						model: F5.Global.flow.diags.toJSON(F5.Global.flow.root),
+						dot: F5.Global.flow.diags.toDOT(F5.Global.flow.root)
+					});						
+				};
+				
+				function listen() {
+					F5.execService(null, 'f5.devserv.getMessage', {
+										clientid: clientid,
+										channel: F5.query.pkg + '.app' },
+						function (result, status) {
+							// now any js can execute remotely through the devserv channel
+							if (result && result.message && result.message.exec) {
+								var response = '';
+								try {
+									response = eval(result.message.exec);
+								} catch (e) {
+									response = e.message;
+								}
+								postMessage(response);
+							}	
+							listen();					
+						});
+				}
+				listen();				
 			}
-			
-			this.update = function () {
-				postMessage({
-					model: F5.Global.flow.diags.toJSON(F5.Global.flow.root),
-					dot: F5.Global.flow.diags.toDOT(F5.Global.flow.root)
-				});
-			};
 
-//			this.startSubflow = function () {
-//				postMessage('startSubflow');		
-//			};
+			F5.Global.flowController.addFlowObserver(new Bridge());					
 
-//			this.completeSubflow = function () {
-//				postMessage('completeSubflow');		
-//			};			
-		}
-
-		F5.Global.flowController.addFlowObserver(new Bridge());	
-		
-		
-//		window.addEventListener('message', function (e) {
-//			var data = e.data;
-//			if (data.type === 'eval') {
-//				window.parent.postMessage({id: data.id, message: eval(data.message)}, '*');
-//			}
-//		});
-		
-		cb();
+			cb();			
+		});
 	});
 	
 });

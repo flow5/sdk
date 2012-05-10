@@ -46,7 +46,7 @@ F5.registerModule(function(F5) {
 			
 			if (value) {				
 				if (this.formatValue) {
-					value = this.formatValue(value);
+					value = this.formatValue(value, id, data);
 				}
 				
 				this.el.textContent = value;				
@@ -83,6 +83,29 @@ F5.registerModule(function(F5) {
 	}
 	Date.prototype = new StaticText();
 	
-	F5.Prototypes.Widgets.Date = new Date();		
+	F5.Prototypes.Widgets.Date = new Date();	
+	
+	
+	// TODO: quick and dirty. could use fleshing out
+	function TextWithLabel() {
+		this.formatValue = function (value, id, data) {
+			var label = F5.valueFromId(data, 'labels.' + id);
+			
+			if (!label) {
+				var className = this.el.getAttribute('f5class');
+				if (className) {
+					label = F5.valueFromId(data['.' + className], 'labels.' + id);
+				}								
+			}
+			
+			return label + ': ' + value;
+		};
+		
+	}	
+	TextWithLabel.prototype = new StaticText();
+	
+	
+	F5.Prototypes.Widgets.TextWithLabel = new TextWithLabel();	
+	
 		
 });

@@ -131,12 +131,14 @@
 	};
 		
 	function pendingComplete(node, pending) {
-		node.pending.splice(node.pending.indexOf(pending), 1);
-		clearTimeout(pending.timeout);
-		pending.timeout = null;
-		if (pending.confirmWidget) {
-			pending.confirmWidget.dismiss();
-		}		
+		if (node) {
+			node.pending.splice(node.pending.indexOf(pending), 1);
+			clearTimeout(pending.timeout);
+			pending.timeout = null;
+			if (pending.confirmWidget) {
+				pending.confirmWidget.dismiss();
+			}					
+		}
 	}
 	
 	F5.networkErrorHandler = function (cb, url, message) {
@@ -150,7 +152,7 @@
 		
 	F5.execService = function (node, id, parameters, cb) {
 		
-		if (!node.pending) {
+		if (node && !node.pending) {
 			node.pending = [];
 		}
 				
@@ -202,14 +204,17 @@
 			F5.extend(parameters, get('parameters'));			
 		}
 		
-		var service = F5.valueFromId(F5.Services, F5.nodePackage(node));		
-		extendParameters(service);						
-		F5.forEach(name.split('.'), function (component) {
-			service = service && service[component];
-			if (service) {
-				extendParameters(service);										
-			}
-		});
+		var service;
+		if (node) {
+			service = F5.valueFromId(F5.Services, F5.nodePackage(node));		
+			extendParameters(service);						
+			F5.forEach(name.split('.'), function (component) {
+				service = service && service[component];
+				if (service) {
+					extendParameters(service);										
+				}
+			});			
+		}
 		// try at global scope (fully qualified service id)
 		if (!service) {
 			service = F5.Services;
@@ -231,9 +236,19 @@
 		if (extendedUrl) {
 			url += extendedUrl;
 		}
+		
+		// TODO: obsolete
 		if (resourceName) {
 			url += '/' + resourceName;
 		}
+		
+		F5.forEach(parameters, function (id, value) {
+			var key = '<' + id + '>';
+			if (url.match(key)) {
+				url = url.replace(key, value);
+				delete parameters[id];
+			}
+		});		
 						
 		function formatUrlParameters(parameters, keys) {
 			var urlParameters = [];
@@ -274,7 +289,10 @@
 						});
 		}		
 		
-		pending.timeout = setTimeout(timeout, timeoutMS);
+		// TODO: might also want to allow cancelling if there's no node (currently only done from tools)
+		if (node) {
+			pending.timeout = setTimeout(timeout, timeoutMS);			
+		}
 		
 		if (method === 'GET' || method === 'DELETE') {			
 			url += formatUrlParameters(parameters);
@@ -357,8 +375,11 @@
 				}, headers, username, password);							
 		}	
 		
-		node.pending.push(pending);
-			
+		if (node) {
+			node.pending.push(pending);			
+		} else {
+			return pending;
+		}
 	};	
 	
 	// TODO: need a unit test for this one
@@ -454,7 +475,7 @@
 		var model = F5.objectFromPrototype(F5.Model);
 		model.node = node;
 		return model;
-	}
+	};
 	
 	F5.callback = function (cb, arg) {
 		try {
@@ -499,7 +520,7 @@
 	
 	// TODO: why not path === null returns obj?
 	F5.valueFromId = function (obj, path) {
-		if (path) {
+		if (obj && path) {
 			var pathComponents = path.split('.');
 			while (obj && typeof obj === 'object' && pathComponents.length) {
 				obj = obj[pathComponents.shift()];

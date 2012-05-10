@@ -119,15 +119,22 @@
 			this.el = frameEl;
 			frameEl.view = this;
 			this.node = node;
-			node.view = this;
+			node.view = this;						
 			
 			var id = F5.nodePackage(node) + '.' + node.id;
 			var viewDelegatePrototype = F5.getPrototype('ViewDelegates', id);					
 			if (viewDelegatePrototype) {
-				this.delegate = F5.objectFromPrototype(viewDelegatePrototype);
+				var delegate = F5.objectFromPrototype(viewDelegatePrototype);
+				
+				this.delegate = delegate;
 				this.delegate.node = node;
 				this.delegate.el = nodeEl;
-
+				
+				// automatically populate the delegate with members for each identified element in the template
+				F5.forEach(nodeEl.querySelectorAll('[f5id]'), function (el) {
+					delegate[el.getAttribute('f5id')] = el;
+				});
+				
 				if (this.delegate.initialize) {
 					this.delegate.initialize();					
 				}								
@@ -137,7 +144,7 @@
 			// Would require an additional build target for device
 			// TODO: Don't like to have to create a stub initialize method to make these go away
 			if (!this.delegate || !this.delegate.initialize) {				
-				this.addDevOverlay(node);
+//				this.addDevOverlay(node);
 			}			
 			
 			if (node.parent) {

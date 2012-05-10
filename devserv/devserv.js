@@ -65,6 +65,19 @@ function pkgName(pkg) {
 	}
 }
 
+function forEach(obj, fn) {
+	if (obj.constructor === Array) {
+		obj.forEach(fn);
+	} else {
+		var name;
+		for (name in obj) {
+			if (obj.hasOwnProperty(name)) {
+				fn(name, obj[name]);
+			}
+		}							
+	}
+}
+
 function compress(html, res) {
 		
 	// CSS compression is done in generate() pre-image inlining. this is both for efficiency and
@@ -309,6 +322,55 @@ function doService(query, req, res) {
 	}	
 }
 
+var listeners = {};
+function doMessage(query, req, res) {
+	function getChannel() {
+		if (!listeners[query.channel]) {
+			listeners[query.channel] = {};
+		}
+		return listeners[query.channel];
+	}
+	var channel;
+	
+	switch (req.method) {
+	case 'POST':
+		getMessageBody(req, function (body) {	
+			channel = getChannel();
+			// write to all of the open channels
+			forEach(channel, function (clientid) {
+				if (clientid !== query.clientid) {
+					channel[clientid].write(body);
+					channel[clientid].end();
+					delete channel[clientid];					
+				}
+			});
+			res.writeHead(200);
+			res.write(JSON.stringify({result: 'ok'}));
+			res.end();
+		});
+		break;
+	case 'GET':
+		// create a hanging get
+		channel = getChannel();
+		console.log(query)
+		channel[query.clientid] = res;
+		res.writeHead(200, {'Content-Type': 'application/json',
+							'Access-Control-Allow-Origin': '*'});		
+		break;
+	default:
+		console.log('Bad method: ' + req.method + ' for /message');
+	}
+}
+
+var clientid = 0;
+function doClientId(query, req, res) {
+	clientid +=1 ;	
+	res.writeHead(200, {'Content-Type': 'application/json',
+						'Access-Control-Allow-Origin': '*'});		
+	res.write(clientid.toString());
+	res.end();
+}
+
 function doDefault(query, req, res) {
 	// TODO: allow-origin shouldn't be required here since the page is loaded from same domain?	
 	paperboy
@@ -359,6 +421,9 @@ cli.main(function (args, options) {
 					case '/service':
 						doService(parsed.query, req, res);
 						break;
+					case '/message': 
+						doMessage(parsed.query, req, res);
+						break;
 					default:
 						res.writeHead(404);
 						res.end();				
@@ -381,6 +446,12 @@ cli.main(function (args, options) {
 					case '/service':
 						doService(parsed.query, req, res);
 						break;
+					case '/message': 
+						doMessage(parsed.query, req, res);
+						break;						
+					case '/clientid': 
+						doClientId(parsed.query, req, res);
+						break;						
 					default:
 						doDefault(parsed.query, req, res);					
 				}

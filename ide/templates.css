@@ -75,7 +75,15 @@
 }
 
 .dev .f5input input {
+	-webkit-box-flex: 1.0;
 	border: 1px solid black;
+}
+
+.dev .f5input .f5label {
+	width: 5em;
+	display: -webkit-box;
+	-webkit-box-pack: end;
+	margin-right: .5em;
 }
 
 .model {

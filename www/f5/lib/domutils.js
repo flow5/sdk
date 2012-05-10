@@ -457,7 +457,7 @@
 	
 	F5.isInline = function () {
 		return F5.query.inline === 'true';		
-	}
+	};
 	
 	F5.isNative = function () {
 		// F5.query.native confuses the JavaScript compressor
@@ -637,8 +637,11 @@
 		var reflow = document.body.offsetTop;		
 	};
 	
-	
-	
+	F5.clear = function (el) {
+		// workaround for pre-ios 5 touch listener memory leak
+		F5.removeTouchEventListenersRecursive(el);
+		el.innerHTML = '';
+	};	
 	
 	
 	
