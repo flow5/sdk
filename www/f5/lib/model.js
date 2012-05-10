@@ -32,7 +32,12 @@
 
 		var notifications = {};
 		var pendingTimeout;
+		var syncing = false;
 		this.objectChanged = function (fieldName) {
+			if (syncing) {
+				return;
+			}
+			
 			notifications[this.node.path] = this.node;
 			if (!pendingTimeout) {
 				pendingTimeout = setTimeout(function () {
@@ -40,18 +45,20 @@
 						if (node.flowDelegate && node.flowDelegate.modelChanged) {
 							node.flowDelegate.modelChanged();
 						}
-						if (node.viewDelegate && node.viewDelegate.modelChanged) {
-							node.viewDelegate.modelChanged();
+						if (node.view.delegate && node.view.delegate.modelChanged) {
+							node.view.delegate.modelChanged();
 						}
 					});
 					notifications = {};
+					pendingTimeout = null;
 				}, 0);
 			}
 		};
-		
+				
 		// TODO: move to diags
 		this.validateAll = function () {
 			function validateNodeRecursive(node) {
+				F5.assert(node.data.validate, 'wtf: ' + node.path);
 				node.data.validate();
 				if (node.children) {
 					F5.forEach(node.children, function (id, node) {
@@ -62,14 +69,21 @@
 			validateNodeRecursive(F5.Global.flow.root);
 		};
 		
+		this.sync = function (field, value) {
+			syncing = true;
+			this[field] = value;
+			syncing = false;
+		};
+		
 		this.validate = function () {
 			var that = this;
 			F5.forEach(this, function (id, value) {
-				// TODO: slightly ugly
+				// TODO: slightly ugly. at least need a reserved words mechanism
 				switch (id) {
 				case 'fields':
 				case 'values':
 				case 'node':
+				case 'sync':
 					break;
 				default:
 					if (typeof that.fields[id] === 'undefined') {

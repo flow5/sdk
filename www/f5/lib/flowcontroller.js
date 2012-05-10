@@ -192,7 +192,7 @@
 				});		
 			}
 			delete node.defaultSelection;
-			node.data = {};
+			node.data.reset();
 			var that = this;
 			if (node.children) {
 				F5.forEach(node.children, function (id, child) {
@@ -395,11 +395,11 @@
 			var animation = node.transitions && node.transitions[id] ? node.transitions[id].animation : null;
 									
 			if (parameters) {
-				if (id === 'back') {
-					F5.extend(target.data, parameters);
-				} else {
-					target.data = parameters;
-				}
+				// TODO: sync going forward makes sense since it's the initial population of the model
+				// and shouldn't trigger a change. but what about on back?
+				F5.forEach(parameters, function (id, value) {
+					target.data.sync(id, value);
+				});
 			}										
 															 
 			nodeWillBecomeInactive(node, function () {						
