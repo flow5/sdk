@@ -294,8 +294,8 @@ F5.registerModule(function (F5) {
 	function ToggleButton() {		
 		this.state = false;
 		
-		this.construct = function () {
-			ToggleButton.prototype.construct.call(this);
+		this.construct = function (data) {
+			ToggleButton.prototype.construct.call(this, data);
 			F5.addClass(this.el, 'f5togglebutton');
 		};
 				

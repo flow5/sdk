@@ -325,15 +325,16 @@
 					}			
 				}, headers, username, password);
 		} else if (method === 'POST' || method === 'PUT'){	
-			
-			url += formatUrlParameters(parameters, urlParameterKeys);
-			
+						
 			var bodyParameters = {};
 			F5.forEach(parameters, function (id, value) {
 				if (!urlParameterKeys || urlParameterKeys.indexOf(id) === -1) {
 					bodyParameters[id] = value;
+					delete parameters[id];
 				}
 			});
+			
+			url += formatUrlParameters(parameters, urlParameterKeys);			
 			
 			if (proxy) {
 				url = proxy + '/proxy?url=' + encodeURIComponent(url);
