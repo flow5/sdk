@@ -37,14 +37,14 @@ F5.registerModule(function(F5) {
 			var id = this.el.getAttribute('f5id');
 			var value = F5.valueFromId(data, id);
 			
-			if (!value) {
+			if (typeof value === 'undefined') {
 				var className = this.el.getAttribute('f5class');
 				if (className) {
 					value = data['.' + className];
 				}								
 			}
 			
-			if (value) {				
+			if (typeof value !== 'undefined') {				
 				if (this.formatValue) {
 					value = this.formatValue(value, id, data);
 				}

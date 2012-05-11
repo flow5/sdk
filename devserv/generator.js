@@ -160,6 +160,77 @@ function processManifest(manifest, query, type, process) {
 	processSection(query.platform);	
 	// TODO: can get more specific here e.g. locale
 }
+
+exports.generateScript = function (query) {
+	
+	var script = '';
+			
+	function injectManifest(pkg) {		
+		
+		var pkgDomain = pkg.split('.')[0];
+		var pkgName = pkg.split('.')[1];
+
+		var base;
+		if (pkgDomain === 'f5') {
+			base = 'f5/';
+		} else {
+			base = 'apps/' + pkgDomain + '/';
+		}
+
+		var manifestName;
+		if (pkgName) {
+			manifestName = pkgName + '.manifest.json';
+		} else {
+			manifestName = 'manifest.json';
+		}
+		var manifest = parseJSON(base + manifestName);
+				
+		// recurse
+		function injectPackages(packages) {
+			packages.forEach(function (pkg) {
+				injectManifest(pkg);
+			});
+		}
+		processManifest(manifest, query, 'packages', injectPackages);
+		
+							
+		script += 'F5.pushPkg("' + pkg + '");\n';
+
+		function injectScripts(scripts) {
+			scripts.forEach(function (file) {
+				script += '// ' + 'www/' + base + file + '\n';
+				script += fs.readFileSync('www/' + base + file).toString() + '\n';
+			});				
+		}
+		processManifest(manifest, query, 'scripts', injectScripts);	
+		
+		
+		var flows = {};
+		function injectFlows(flowFiles) {
+			flowFiles.forEach(function (file) {
+				extend(flows, parseJSON(base + file));
+			});			
+		}		
+		processManifest(manifest, query, 'flows', injectFlows);	
+		script += 'F5.addFlows("' + pkg + '", ' + JSON.stringify(flows) + ');\n';										
+
+		script += 'F5.popPkg();\n';
+	}
+			
+	script += '// www/f5/lib/f5.js\n';				
+	script += fs.readFileSync('www/f5/lib/f5.js').toString() + '\n';	
+	script += 'F5.query = ' + JSON.stringify(query) + '\n';		
+				
+	injectManifest(query.pkg);
+
+	script += '// www/f5/lib/register.js\n';				
+	script += fs.readFileSync('www/f5/lib/register.js').toString() + '\n';	
+	script += '// www/f5/lib/headlessstart.js\n';				
+	script += fs.readFileSync('www/f5/lib/headlessstart.js').toString() + '\n';	
+	
+	return script;
+};
+
 	
 exports.generateCacheManifest = function(query) { 
 		
@@ -177,7 +248,8 @@ exports.generateCacheManifest = function(query) {
 		}
 
 		checkDate('www/f5/lib/f5.js');		
-		checkDate('www/f5/lib/start.js');		
+		checkDate('www/f5/lib/register.js');		
+		checkDate('www/f5/lib/domstart.js');		
 		checkDate(__filename);		
 		checkDate(__dirname + '/devserv.js');		
 
@@ -228,6 +300,7 @@ exports.generateCacheManifest = function(query) {
 			processManifest(manifest, query, 'packages', checkPackages);											
 			processManifest(manifest, query, 'flows', checkDates);											
 			processManifest(manifest, query, 'scripts', checkDates);									
+			processManifest(manifest, query, 'domscripts', checkDates);									
 			processManifest(manifest, query, 'elements', checkDates);									
 			processManifest(manifest, query, 'resources', checkDates);											
 		}
@@ -306,10 +379,7 @@ function Element(tag) {
 	};
 }
 
-
-
-
-exports.generateHtml = function(query) {
+exports.generateHtml = function (query) {
 	
 	console.log(query.pkg + ' generating');
 	
@@ -539,6 +609,7 @@ exports.generateHtml = function(query) {
 		scriptsEl.appendChild(pushPkg);
 		
 		processManifest(manifest, query, 'scripts', injectScripts);									
+		processManifest(manifest, query, 'domscripts', injectScripts);									
 		
 		var popPkg = new Element('script');
 		popPkg.innerHTML = 'F5.popPkg();';
@@ -593,7 +664,8 @@ exports.generateHtml = function(query) {
 																				
 					
 	// finally			
-	document.body.appendChild(makeScript('f5/lib/start.js'));				
+	document.body.appendChild(makeScript('f5/lib/register.js'));				
+	document.body.appendChild(makeScript('f5/lib/domstart.js'));				
 																
 												
 	var html = document.outerHTML();

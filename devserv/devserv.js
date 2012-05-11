@@ -183,40 +183,49 @@ function verifyQueryParameters(query) {
 }	
 
 function doGenerate(query, req, res) {
-	try {
-		var agent = req.headers['user-agent'];
-		if (!query.platform) {
-			if (agent.match(/android/i)) {
-				query.platform = 'android';
-			} else {
-				query.platform = 'ios';						
-			}
-		}
-		if (!query.mobile) {
-			if (agent.match(/(iphone)|(android)/i)) {
-				query.mobile = 'true';
-			} else {
-				query.mobile = 'false';
-			}
-		}
-		
-		verifyQueryParameters(query);
-		
-		var html = generator.generateHtml(query);
-		
-		if (query.compress === 'false') {
-			res.writeHead(200, {'Content-Type': 'text/html'});
-			res.write(html);
-			res.end();					
+	var agent = req.headers['user-agent'];
+	if (!query.platform) {
+		if (agent.match(/android/i)) {
+			query.platform = 'android';
 		} else {
-			compress(html, res);					
-		}					
+			query.platform = 'ios';						
+		}
+	}
+	if (!query.mobile) {
+		if (agent.match(/(iphone)|(android)/i)) {
+			query.mobile = 'true';
+		} else {
+			query.mobile = 'false';
+		}
+	}
+	
+	query.devserv = req.headers.host;
+	
+	try {			
+		verifyQueryParameters(query);
+
+		if (query.headless) {
+			var script = generator.generateScript(query);
+			res.writeHead(200, {'Content-Type': 'application/javascript'});
+			res.write(script);
+			res.end();								
+		} else {
+			var html = generator.generateHtml(query);
+
+			if (query.compress === 'false') {
+				res.writeHead(200, {'Content-Type': 'text/html'});
+				res.write(html);
+				res.end();					
+			} else {
+				compress(html, res);					
+			}							
+		}
 	} catch (e2) {
 		console.log('error:' + e2.message);
 		// TODO: would be nice to return 404 if the appname is bad
 		res.writeHead(500);
 		res.end();					
-	}		
+	}	
 }
 
 function doIDE(parsed, req, res) {

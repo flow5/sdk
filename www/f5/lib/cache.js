@@ -24,7 +24,7 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global F5*/
+/*global F5, localStorage:true*/
 
 (function () {
 	
@@ -47,7 +47,16 @@
 	   }
 	} catch(defPropException) {/*Do nothing if an exception occurs*/}
 	
-		
+	
+	if (typeof localStorage === 'undefined') {
+		localStorage = {
+			store: {},
+			getItem: function (id) {return this.store[id];},
+			setItem: function (id, value) {this.store[id] = value;},
+			removeItem: function (id) {delete this.store[id];},
+			clear: function () {this.store = {};}
+		};
+	}			
 	
 	/* fields is array of {name, persist:true/false(default), value:value/null(default)} */
 	function Cache() {

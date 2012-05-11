@@ -53,11 +53,17 @@ F5.registerModule(function (F5) {
 			};
 
 			this.load = function (data) {
-				var geometry = data.geometry.split('x');
-				this.frame.style.width = geometry[0];
-				this.frame.style.height = geometry[1];
+				if (data.url) {
+					var geometry = data.geometry.split('x');
+					this.frame.style.width = geometry[0];
+					this.frame.style.height = geometry[1];
+					
+					document.getElementById('root-app').style.display = '';
 
-				this.frame.widget.open(data.url + '&bridge=true&pkg=' + data.pkg);
+					this.frame.widget.open(data.url + '&bridge=true&pkg=' + data.pkg);					
+				} else {
+					document.getElementById('root-app').style.display = 'none';
+				}
 
 				IDE.cache.pkg = data.pkg;
 				IDE.cache.url = data.url;

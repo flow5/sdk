@@ -215,9 +215,12 @@
 				console.log('start complete');
 			};
 						
-			F5.parseResources();
 			F5.Global.flow.initialize(F5.query.pkg);
-			F5.Global.viewController.initialize();
+			
+			// TODO: sloppy. why isn't initialize part of observer?
+			if (F5.Global.viewController) {
+				F5.Global.viewController.initialize();				
+			}
 			
 			// flush any tasks that were waiting on init
 			flushWaitTasks(function () {

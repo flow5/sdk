@@ -154,7 +154,8 @@
 			node.pending = [];
 		}
 				
-		if (!F5.connection.online()) {
+		// TODO: connection test for headless mode
+		if (F5.connection && !F5.connection.online()) {
 			// TODO: make this message configurable from client
 			F5.alert('Oops! No Network Connection', "Please enable your network connection and try again.", function () {
 				cb(null);				
@@ -270,18 +271,24 @@
 		
 		var timeoutMS = 10000;
 		function timeout() {
+			var title = "A network operation is taking a long time.";
+			var message = "Press OK to keep waiting or Cancel to cancel the operation.";
 			// TODO: should move this up to the DOM aware layer
-			pending.confirmWidget = F5.confirm("A network operation is taking a long time.", 
-						"Press OK to keep waiting or Cancel to cancel the operation.", function (result) {
-							if (result) {
-								if (pending.timeout) {
-									pending.timeout = setTimeout(timeout, timeoutMS);									
+			if (F5.confirm) {
+				pending.confirmWidget = F5.confirm(title, message, function (result) {
+								if (result) {
+									if (pending.timeout) {
+										pending.timeout = setTimeout(timeout, timeoutMS);									
+									}
+								} else {
+									pending.abort();
 								}
-							} else {
-								pending.abort();
-							}
-							delete pending.confirmWidget;
-						});
+								delete pending.confirmWidget;
+							});				
+			} else {
+				console.log(title + ' ' + message);
+				pending.timeout = setTimeout(timeout, timeoutMS);				
+			}
 		}		
 		
 		// TODO: might also want to allow cancelling if there's no node (currently only done from tools)

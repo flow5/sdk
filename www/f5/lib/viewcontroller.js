@@ -76,7 +76,7 @@
 		};		
 		
 		this.initialize = function () {
-							
+			F5.parseResources();							
 		};
 		
 		this.start = function () {

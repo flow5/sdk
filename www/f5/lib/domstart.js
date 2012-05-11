@@ -28,58 +28,7 @@
 /*global F5*/
 
 (function () {	
-
-	F5.Global.flow = new F5.Flow(F5.valueFromId(F5.Flows, F5.query.pkg));		
-	F5.Global.flowController = new F5.FlowController(F5.Global.flow);	
-	F5.Global.viewController = new F5.ViewController(F5.Global.flow);
-				
-	// TODO: not so happy with this
-	var clients = {};
-	
-	function Client(pkg) {
-		this.pkg = pkg;
-		
-		// setup a prototype root for the package
-		var prototypeRoot = F5.Prototypes;
-		var resourcesRoot = F5.Resources;
-		var servicesRoot = F5.Services;
-		pkg.split('.').forEach(function (component) {
-			prototypeRoot[component] = prototypeRoot[component] || {};
-			prototypeRoot = prototypeRoot[component];
-
-			resourcesRoot[component] = resourcesRoot[component] || {};
-			resourcesRoot = resourcesRoot[component];
-
-			servicesRoot[component] = servicesRoot[component] || {};
-			servicesRoot = servicesRoot[component];
-		});
-		
-		this.Prototypes = prototypeRoot;
-		this.Prototypes.Widgets = {};
-		this.Prototypes.FlowDelegates = {};
-		this.Prototypes.ViewDelegates = {};
-		
-		this.Resources = resourcesRoot;
-		
-		this.Services = servicesRoot;
-	}
-	
-	// bootstrap
-	Client.prototype = F5;
-
-	clients.f5 = new Client('f5');
-	
-	// all clients get the f5 root namespace
-	// TODO: probably want to limit this to the needed set of interfaces
-	Client.prototype = clients.f5;
-	
-	F5.pendingModules.forEach(function (module) {
-		clients[module.pkg] = clients[module.pkg] || new Client(module.pkg);
-		module.cb(clients[module.pkg]);
-	});
-	delete F5.pendingModules;
-	
-	
+					
 	// TODO: this is a bit strange. pass in the newly created F5 Client below
 (function (F5) {
 		
@@ -234,7 +183,7 @@
 		}				
 	}, false);	
 	
-}(clients.f5));
+}(F5.Clients.f5));
 					
 }());
 

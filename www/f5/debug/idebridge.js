@@ -33,7 +33,7 @@ F5.registerModule(function (F5) {
 		return;
 	}
 	
-	if (!F5.query.bridge) {
+	if (!F5.query.bridge && !F5.query.headless) {
 		return;
 	}
 									
@@ -46,21 +46,25 @@ F5.registerModule(function (F5) {
 				function postMessage(message) {
 					pipe.talk(F5.query.pkg + '.listener', JSON.stringify(message));
 				}
-
-				this.update = function () {
+				
+				function update() {
+					console.log('updating')
 					postMessage({
 						model: F5.Global.flow.diags.toJSON(F5.Global.flow.root),
 						dot: F5.Global.flow.diags.toDOT(F5.Global.flow.root)
-					});						
-				};
+					});											
+				}
+
+				this.update = update;
 		
 				function listen() {
-					pipe.listen(function (result) {
+					pipe.listen(function (message) {
+						message = JSON.parse(message);
 						// now any js can execute remotely through the devserv channel
-						if (result && result.message && result.message.exec) {
+						if (message.exec) {
 							var response = '';
 							try {
-								response = eval(result.message.exec);
+								response = eval(message.exec);
 							} catch (e) {
 								response = e.message;
 							}

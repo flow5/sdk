@@ -1,6 +1,6 @@
 /***********************************************************************************************************************
 
-	Copyright (c) 2011 Paul Greyson
+	Copyright (c) 2012 Paul Greyson
 
 	Permission is hereby granted, free of charge, to any person 
 	obtaining a copy of this software and associated documentation 
@@ -24,49 +24,44 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global F5:true*/
 
-(function () {
-	if (typeof F5 === 'undefined') {
-		F5 = {};
-	}
-	F5.pkg = 'f5';
-	F5.Prototypes = {};
-	F5.Flows = {};
-	F5.Resources = {};
-	F5.Global = {};
+
+var http = require('http'),
+	cli = require('cli'),
+	vm = require('vm');
 		
-	F5.pendingModules = [];
-	var packageStack = [];
-	F5.registerModule = function (cb) {
-		F5.pendingModules.push({pkg: packageStack[0], cb: cb});
-	};
-	
-	F5.pushPkg = function (pkg) {
-		packageStack.push(pkg);
-	};
-	
-	F5.popPkg = function () {
-		packageStack.pop();
-	};	
-	
-	function add(obj, path, data) {
-		var elements = path.split('.');
-		while (elements.length) {
-			var key = elements.shift();
-			if (!obj[key]) {
-				obj[key] = {};
-			}
-			obj = obj[key];
-		}
-		F5.extend(obj, data);
-	}
-	
-	F5.addFlows = function (pkg, flows) {
-		add(F5.Flows, pkg, flows);
-	};
+XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
-	F5.addResources = function (pkg, flows) {
-		add(F5.Resources, pkg, flows);
-	};
-}());	
+cli.setUsage("node runheadless.js [OPTIONS]");
+
+cli.parse({
+	pkg: ['p', 'pkg', 'string']
+});
+
+cli.main(function (args, options) {
+	var path = '/generate?' +
+				'pkg=' + options.pkg + 
+				'&debug=true' +
+				'&platform=ios' + 
+				'&native=false' + 
+				'&inline=false' + 
+				'&compress=false' +
+				'&mobile=false' +
+				'&headless=true';
+
+
+	http.get({host: 'localhost', port: 8008, path: path}, function(res) {
+		res.setEncoding('utf8');
+
+		var script = '';
+
+		res.on('data', function(chunk){
+			script += chunk;
+		});
+
+		res.on('end', function(chunk){
+			vm.runInThisContext(script, 'app.js');
+		});	
+	});	
+});
+

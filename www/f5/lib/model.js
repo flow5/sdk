@@ -45,7 +45,8 @@
 						if (node.flowDelegate && node.flowDelegate.modelChanged) {
 							node.flowDelegate.modelChanged();
 						}
-						if (node.view.delegate && node.view.delegate.modelChanged) {
+						// TODO: sloppy. node.view is undefined in headless mode
+						if (node.view && node.view.delegate && node.view.delegate.modelChanged) {
 							node.view.delegate.modelChanged();
 						}
 					});

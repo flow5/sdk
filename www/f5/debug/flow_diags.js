@@ -80,14 +80,17 @@ F5.registerModule(function (F5) {
 
 			function copyForPrettyPrintRecursive(obj) {
 				/*global HTMLDivElement */
-				if (obj.constructor === HTMLDivElement) {
+				// TODO: slightly sloppy. check is required for headless mode
+				if (typeof HTMLDivElement !== 'undefined' && obj.constructor === HTMLDivElement) {
 					console.log('div');
 				}
 				
 				var copy = {};
 				F5.forEach(obj, function (id, child) {
 					if (child && typeof child === 'object') {
-						if (id === 'pending') {
+						if (id === 'data') {
+							copy[id] = child.dump();
+						} else if (id === 'pending') {
 							copy[id] = '[' + child.length +']';
 						} else if (child.constructor === Array) {
 							copy[id] = [];
