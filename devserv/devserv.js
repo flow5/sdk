@@ -322,26 +322,23 @@ function doService(query, req, res) {
 	}	
 }
 
-var listeners = {};
-function doMessage(query, req, res) {
-	function getChannel() {
-		if (!listeners[query.channel]) {
-			listeners[query.channel] = {};
-		}
-		return listeners[query.channel];
-	}
-	var channel;
+var channels = {};
+function doMessage(query, req, res) {	
+	var channel = channels[query.channel];
 	
 	switch (req.method) {
 	case 'POST':
 		getMessageBody(req, function (body) {	
-			channel = getChannel();
 			// write to all of the open channels
-			forEach(channel, function (clientid) {
+			forEach(channel, function (clientid, client) {
 				if (clientid !== query.clientid) {
-					channel[clientid].write(body);
-					channel[clientid].end();
-					delete channel[clientid];					
+					if (client.res) {
+						client.res.write(body);
+						client.res.end();
+						client.res = null;
+					} else {
+						client.queue.push(body);
+					}
 				}
 			});
 			res.writeHead(200);
@@ -350,12 +347,21 @@ function doMessage(query, req, res) {
 		});
 		break;
 	case 'GET':
-		// create a hanging get
-		channel = getChannel();
-		console.log(query)
-		channel[query.clientid] = res;
-		res.writeHead(200, {'Content-Type': 'application/json',
-							'Access-Control-Allow-Origin': '*'});		
+		if (channel[query.clientid]) {
+			res.writeHead(200, {'Content-Type': 'application/json',
+								'Access-Control-Allow-Origin': '*'});
+			if (channel[query.clientid].queue.length) {
+				res.write(channel[query.clientid].queue.shift());
+				res.end();
+			} else {
+				// hanging get
+				channel[query.clientid].res = res;
+			}			
+		} else {
+			console.log(channels)
+			res.writeHead(404);
+			res.end();
+		}
 		break;
 	default:
 		console.log('Bad method: ' + req.method + ' for /message');
@@ -370,6 +376,31 @@ function doClientId(query, req, res) {
 	res.write(clientid.toString());
 	res.end();
 }
+
+function doConnect(query, req, res) {
+	console.log('connecting client: ' + query.clientid);
+	if (!channels[query.channel]) {
+		channels[query.channel] = {};
+	}
+	
+	channels[query.channel][query.clientid] = {res: null, queue: []};
+	res.writeHead(200);
+	res.on('close', function () {
+		delete channels[query.channel][query.clientid];
+		console.log('client disconnected: ' + query.clientid);		
+	});
+}
+
+function doConfirm(query, req, res) {
+	res.writeHead(200);
+	if (channels[query.channel][query.clientid]) {
+		res.write(JSON.stringify({result: 'connected'}));
+	} else {
+		res.write(JSON.stringify({result: 'not connected'}));
+	}
+	res.end();
+}
+
 
 function doDefault(query, req, res) {
 	// TODO: allow-origin shouldn't be required here since the page is loaded from same domain?	
@@ -451,6 +482,12 @@ cli.main(function (args, options) {
 						break;						
 					case '/clientid': 
 						doClientId(parsed.query, req, res);
+						break;						
+					case '/connect': 
+						doConnect(parsed.query, req, res);
+						break;						
+					case '/confirm': 
+						doConfirm(parsed.query, req, res);
 						break;						
 					default:
 						doDefault(parsed.query, req, res);					

@@ -122,7 +122,7 @@
 			node.view = this;						
 			
 			var id = F5.nodePackage(node) + '.' + node.id;
-			var viewDelegatePrototype = F5.getPrototype('ViewDelegates', id);					
+			var viewDelegatePrototype = this.getViewDelegatePrototype(id);			
 			if (viewDelegatePrototype) {
 				var delegate = F5.objectFromPrototype(viewDelegatePrototype);
 				
@@ -152,6 +152,10 @@
 			} else {
 				document.getElementById('f5screen').appendChild(frameEl);
 			}						
+		};
+		
+		this.getViewDelegatePrototype = function (id) {
+			return F5.getPrototype('ViewDelegates', id);
 		};
 				
 		this.doSelection = function (node, id) {

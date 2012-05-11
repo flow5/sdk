@@ -30,7 +30,7 @@ F5.registerModule(function (F5) {
 	
 	F5.Global.flowController.addWaitTask(function (cb) {
 		F5.execService(null, 'f5.devserv.clientid', {}, function (clientid, status) {
-				
+							
 			var model;
 			var dot;
 			var modelListeners = {};
@@ -59,21 +59,28 @@ F5.registerModule(function (F5) {
 					this.frame.style.width = geometry[0];
 					this.frame.style.height = geometry[1];
 
-					this.frame.widget.open(data.url + '&pkg=' + data.pkg);
+					this.frame.widget.open(data.url + '&bridge=true&pkg=' + data.pkg);
 
 					IDE.cache.pkg = data.pkg;
 					IDE.cache.url = data.url;
 					IDE.cache.geometry = data.geometry;
 
-					if (this.pending) {
-						this.pending.abort();
+					if (this.pendingGet) {
+						this.pendingGet.abort();
+					}
+					if (this.pendingConnect) {						
+						this.pendingConnect.abort();					
 					}
 
 					var that = this;
 					function listen() {
-						that.pending = F5.execService(null, 'f5.devserv.getMessage', {
+						var channel = data.pkg + '.listener';
+						
+						// this is a hanging get. it's used to keep the connection open
+						that.pendingConnect = F5.execService(null, 'f5.devserv.connect', {clientid: clientid, channel: channel}, F5.noop);						
+						that.pendingGet = F5.execService(null, 'f5.devserv.getMessage', {
 											clientid: clientid,
-											channel: data.pkg + '.ide' },
+											channel: channel },
 							function (result, status) {
 								try {
 									if (result && result.message && result.message.model) {
@@ -84,7 +91,7 @@ F5.registerModule(function (F5) {
 											listener.update();
 										});			
 									} else {
-										console.log(result && result.message);
+//										console.log(result && result.message && JSON.stringify(result.message));
 									}							
 								} catch (e) {
 									console.log(e.message);

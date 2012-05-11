@@ -42,6 +42,9 @@ F5.registerModule(function (F5) {
 			},
 			getMessage: {
 				extendedUrl: '/message'					
+			},
+			connect: {
+				extendedUrl: '/connect'					
 			}
 		}}
 	);	
@@ -50,18 +53,57 @@ F5.registerModule(function (F5) {
 	if (F5.query.pkg === 'ide') {
 		return;
 	}
-			
+	
+	if (!F5.query.bridge) {
+		return;
+	}
+									
 	F5.Global.flowController.addWaitTask(function (cb) {		
 		
-		F5.execService(null, 'f5.devserv.clientid', {}, function (clientid, status) {									
+		F5.execService(null, 'f5.devserv.clientid', {}, function (clientid, status) {	
+			F5.execService(null, 'f5.devserv.connect', {clientid: clientid, channel: F5.query.pkg + '.app'}, F5.noop);						
+			
+
+			// hijack the view delegates so that the scripting engine can decide what to do
+			F5.View.getViewDelegatePrototype = function (id) {
+				var prototype = F5.getPrototype('ViewDelegates', id);
+				function Wrapper() {
+					var that = this;
+					[
+						'initialize', 
+						'viewDidBecomeActive',
+						'viewWillBecomeActive',
+						'viewWillBecomeInactive',
+						'viewDidBecomeInactive',
+						'release'			
+					].forEach(function (event) {				
+						that[event] = function () {
+							var message = {
+								path: this.node.path,
+								event: event
+							};
+							F5.execService(null, 'f5.devserv.postMessage', {
+														clientid: clientid, 
+														channel: F5.query.pkg + '.listener',
+														message: message}, F5.noop);
+							if (prototype && prototype[event]) {
+								prototype[event].call(this);					
+							}					
+						};
+					});
+				}
+				Wrapper.prototype = prototype;
+
+				return new Wrapper();
+			};
+			
 			function Bridge() {
 
 				function postMessage(message) {
 					F5.execService(null, 'f5.devserv.postMessage', {
 												clientid: clientid, 
-												channel: F5.query.pkg + '.ide',
+												channel: F5.query.pkg + '.listener',
 												message: message}, F5.noop);
-//					window.parent.postMessage(message, '*');
 				}
 
 				this.update = function () {
