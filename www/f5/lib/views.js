@@ -131,8 +131,9 @@
 				this.delegate.el = nodeEl;
 				
 				// automatically populate the delegate with members for each identified element in the template
+				delegate.widgets = {};
 				F5.forEach(nodeEl.querySelectorAll('[f5id]'), function (el) {
-					delegate[el.getAttribute('f5id')] = el;
+					delegate.widgets[el.getAttribute('f5id')] = el.widget;
 				});
 				
 				if (this.delegate.initialize) {
