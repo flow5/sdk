@@ -32,12 +32,7 @@ F5.registerModule(function (F5) {
 	function Config() {
 		
 		this.initialize = function () {
-			this.node.data = {
-				values: {
-					url: IDE.cache.url,
-					geometry: IDE.cache.geometry
-				}
-			};
+			this.node.data.values = IDE.cache;
 		};
 	}
 	

@@ -53,7 +53,7 @@
 		}
 	}		
 	
-	function doXHR(method, url, body, success, error, headers, username, password) {				
+	F5.doXHR = function(method, url, body, success, error, headers, username, password) {				
 		var xhr = new XMLHttpRequest();
 		xhr.open(method, url, true);			
 		if (method === 'POST' || method === 'PUT') {
@@ -123,22 +123,20 @@
 		}, 0);	
 		
 		return xhr;	
-	}
+	};
 			
 	// TODO: get rid of this
 	F5.upload = function(method, url, body, success, error, headers, username, password) {
-		return doXHR(method, url, body, success, error, headers, username, password);
+		return F5.doXHR(method, url, body, success, error, headers, username, password);
 	};
 		
 	function pendingComplete(node, pending) {
-		if (node) {
-			node.pending.splice(node.pending.indexOf(pending), 1);
-			clearTimeout(pending.timeout);
-			pending.timeout = null;
-			if (pending.confirmWidget) {
-				pending.confirmWidget.dismiss();
-			}					
-		}
+		node.pending.splice(node.pending.indexOf(pending), 1);
+		clearTimeout(pending.timeout);
+		pending.timeout = null;
+		if (pending.confirmWidget) {
+			pending.confirmWidget.dismiss();
+		}					
 	}
 	
 	F5.networkErrorHandler = function (cb, url, message) {
@@ -152,7 +150,7 @@
 		
 	F5.execService = function (node, id, parameters, cb) {
 		
-		if (node && !node.pending) {
+		if (!node.pending) {
 			node.pending = [];
 		}
 				
@@ -204,17 +202,14 @@
 			F5.extend(parameters, get('parameters'));			
 		}
 		
-		var service;
-		if (node) {
-			service = F5.valueFromId(F5.Services, F5.nodePackage(node));		
-			extendParameters(service);						
-			F5.forEach(name.split('.'), function (component) {
-				service = service && service[component];
-				if (service) {
-					extendParameters(service);										
-				}
-			});			
-		}
+		var service = F5.valueFromId(F5.Services, F5.nodePackage(node));		
+		extendParameters(service);						
+		F5.forEach(name.split('.'), function (component) {
+			service = service && service[component];
+			if (service) {
+				extendParameters(service);										
+			}
+		});			
 		// try at global scope (fully qualified service id)
 		if (!service) {
 			service = F5.Services;
@@ -290,9 +285,7 @@
 		}		
 		
 		// TODO: might also want to allow cancelling if there's no node (currently only done from tools)
-		if (node) {
-			pending.timeout = setTimeout(timeout, timeoutMS);			
-		}
+		pending.timeout = setTimeout(timeout, timeoutMS);			
 		
 		if (method === 'GET' || method === 'DELETE') {			
 			url += formatUrlParameters(parameters);
@@ -304,7 +297,7 @@
 						
 //			console.log(url);	
 			
-			pending.xhr = doXHR(method, url, null,
+			pending.xhr = F5.doXHR(method, url, null,
 				function success(response, status) {
 					pendingComplete(node, pending);
 					try {
@@ -346,7 +339,7 @@
 				url = proxy + '/proxy?url=' + encodeURIComponent(url);
 			}
 						
-			pending.xhr = doXHR(method, url, JSON.stringify(bodyParameters),
+			pending.xhr = F5.doXHR(method, url, JSON.stringify(bodyParameters),
 				function success(response, status) {
 					pendingComplete(node, pending);					
 					try {
@@ -375,11 +368,7 @@
 				}, headers, username, password);							
 		}	
 		
-		if (node) {
-			node.pending.push(pending);			
-		} else {
-			return pending;
-		}
+		node.pending.push(pending);			
 	};	
 	
 	// TODO: need a unit test for this one

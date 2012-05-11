@@ -27,27 +27,6 @@
 /*global F5*/
 
 F5.registerModule(function (F5) {
-		
-	F5.extend(F5.Services, {
-		devserv: {
-			protocol: 'http',
-			baseUrl: window.location.host,  // TODO: make this work headless
-			clientid: {
-				extendedUrl: '/clientid'
-			},
-			postMessage: {
-				method: 'POST',
-				extendedUrl: '/message',
-				urlParameterKeys: ['clientid', 'channel']
-			},
-			getMessage: {
-				extendedUrl: '/message'					
-			},
-			connect: {
-				extendedUrl: '/connect'					
-			}
-		}}
-	);	
 	
 	// TODO: the IDE bridge package shouldn't be included in the IDE app!
 	if (F5.query.pkg === 'ide') {
@@ -58,52 +37,14 @@ F5.registerModule(function (F5) {
 		return;
 	}
 									
-	F5.Global.flowController.addWaitTask(function (cb) {		
-		
-		F5.execService(null, 'f5.devserv.clientid', {}, function (clientid, status) {	
-			F5.execService(null, 'f5.devserv.connect', {clientid: clientid, channel: F5.query.pkg + '.app'}, F5.noop);						
-			
+	F5.Global.flowController.addWaitTask(function (cb) {	
 
-			// hijack the view delegates so that the scripting engine can decide what to do
-			F5.View.getViewDelegatePrototype = function (id) {
-				var prototype = F5.getPrototype('ViewDelegates', id);
-				function Wrapper() {
-					var that = this;
-					[
-						'initialize', 
-						'viewDidBecomeActive',
-						'viewWillBecomeActive',
-						'viewWillBecomeInactive',
-						'viewDidBecomeInactive',
-						'release'			
-					].forEach(function (event) {				
-						that[event] = function () {
-							var message = {
-								path: this.node.path,
-								event: event
-							};
-							F5.execService(null, 'f5.devserv.postMessage', {
-														clientid: clientid, 
-														channel: F5.query.pkg + '.listener',
-														message: message}, F5.noop);
-							if (prototype && prototype[event]) {
-								prototype[event].call(this);					
-							}					
-						};
-					});
-				}
-				Wrapper.prototype = prototype;
-
-				return new Wrapper();
-			};
+		F5.openPipe(F5.query.pkg, F5.query.pkg + '.app', function (pipe) {
 			
 			function Bridge() {
 
 				function postMessage(message) {
-					F5.execService(null, 'f5.devserv.postMessage', {
-												clientid: clientid, 
-												channel: F5.query.pkg + '.listener',
-												message: message}, F5.noop);
+					pipe.talk(F5.query.pkg + '.listener', JSON.stringify(message));
 				}
 
 				this.update = function () {
@@ -112,32 +53,65 @@ F5.registerModule(function (F5) {
 						dot: F5.Global.flow.diags.toDOT(F5.Global.flow.root)
 					});						
 				};
-				
+		
 				function listen() {
-					F5.execService(null, 'f5.devserv.getMessage', {
-										clientid: clientid,
-										channel: F5.query.pkg + '.app' },
-						function (result, status) {
-							// now any js can execute remotely through the devserv channel
-							if (result && result.message && result.message.exec) {
-								var response = '';
-								try {
-									response = eval(result.message.exec);
-								} catch (e) {
-									response = e.message;
-								}
-								postMessage(response);
-							}	
-							listen();					
-						});
+					pipe.listen(function (result) {
+						// now any js can execute remotely through the devserv channel
+						if (result && result.message && result.message.exec) {
+							var response = '';
+							try {
+								response = eval(result.message.exec);
+							} catch (e) {
+								response = e.message;
+							}
+							postMessage(response);
+						}	
+						listen();					
+						
+					});
 				}
 				listen();				
 			}
-
 			F5.Global.flowController.addFlowObserver(new Bridge());					
 
 			cb();			
-		});
+		});			
 	});
 	
 });
+
+
+/*
+// hijack the view delegates so that the scripting engine can decide what to do
+F5.View.getViewDelegatePrototype = function (id) {
+	var prototype = F5.getPrototype('ViewDelegates', id);
+	function Wrapper() {
+		var that = this;
+		[
+			'initialize', 
+			'viewDidBecomeActive',
+			'viewWillBecomeActive',
+			'viewWillBecomeInactive',
+			'viewDidBecomeInactive',
+			'release'			
+		].forEach(function (event) {				
+			that[event] = function () {
+				var message = {
+					path: this.node.path,
+					event: event
+				};
+				F5.execService(null, 'f5.devserv.talk', {
+											clientid: clientid, 
+											channel: F5.query.pkg + '.listener',
+											message: message}, F5.noop);
+				if (prototype && prototype[event]) {
+					prototype[event].call(this);					
+				}					
+			};
+		});
+	}
+	Wrapper.prototype = prototype;
+
+	return new Wrapper();
+};
+*/

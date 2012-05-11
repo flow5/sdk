@@ -323,11 +323,33 @@ function doService(query, req, res) {
 }
 
 var channels = {};
-function doMessage(query, req, res) {	
+
+function doListen(query, req, res) {
+//	console.log(req.url);
+	
 	var channel = channels[query.channel];
 	
-	switch (req.method) {
-	case 'POST':
+	if (channel && channel[query.clientid]) {
+		res.writeHead(200, {'Content-Type': 'application/json',
+							'Access-Control-Allow-Origin': '*'});
+		if (channel[query.clientid].queue.length) {
+			res.write(channel[query.clientid].queue.shift());
+			res.end();
+		} else {
+			// hanging get
+			channel[query.clientid].res = res;
+		}			
+	} else {
+		res.writeHead(404);
+		res.end();
+	}	
+}
+function doTalk(query, req, res) {	
+//	console.log(req.url);
+	
+	var channel = channels[query.channel];
+	
+	if (channel) {
 		getMessageBody(req, function (body) {	
 			// write to all of the open channels
 			forEach(channel, function (clientid, client) {
@@ -344,27 +366,10 @@ function doMessage(query, req, res) {
 			res.writeHead(200);
 			res.write(JSON.stringify({result: 'ok'}));
 			res.end();
-		});
-		break;
-	case 'GET':
-		if (channel[query.clientid]) {
-			res.writeHead(200, {'Content-Type': 'application/json',
-								'Access-Control-Allow-Origin': '*'});
-			if (channel[query.clientid].queue.length) {
-				res.write(channel[query.clientid].queue.shift());
-				res.end();
-			} else {
-				// hanging get
-				channel[query.clientid].res = res;
-			}			
-		} else {
-			console.log(channels)
-			res.writeHead(404);
-			res.end();
-		}
-		break;
-	default:
-		console.log('Bad method: ' + req.method + ' for /message');
+		});		
+	} else {
+		res.writeHead(404);
+		res.end();		
 	}
 }
 
@@ -377,30 +382,37 @@ function doClientId(query, req, res) {
 	res.end();
 }
 
-function doConnect(query, req, res) {
-	console.log('connecting client: ' + query.clientid);
+function doConnectListener(query, req, res) {
 	if (!channels[query.channel]) {
 		channels[query.channel] = {};
 	}
 	
-	channels[query.channel][query.clientid] = {res: null, queue: []};
+	if (channels[query.channel][query.clientid]) {
+		console.log('reconnecting listener: ' + query.clientid + ' channel: ' + query.channel);				
+		if (channels[query.channel][query.clientid].timeout) {
+			clearTimeout(channels[query.channel][query.clientid].timeout);
+			delete channels[query.channel][query.clientid].timeout;		
+		}
+	} else {
+		console.log('connecting listener: ' + query.clientid + ' channel: ' + query.channel);		
+		channels[query.channel][query.clientid] = {res: null, queue: []};		
+	}
 	res.writeHead(200);
 	res.on('close', function () {
-		delete channels[query.channel][query.clientid];
-		console.log('client disconnected: ' + query.clientid);		
+		console.log('listener disconnected: ' + query.clientid + ' waiting for reconnect. . .');					
+		// wait 1s after connection close to give the client time to reconnect
+		channels[query.channel][query.clientid].timeout = setTimeout(function () {
+			delete channels[query.channel][query.clientid];
+			console.log('listener disconnected: ' + query.clientid + ' closing connection');					
+		}, 1000);
 	});
 }
 
-function doConfirm(query, req, res) {
+function doWaitForConnection(query, req, res) {
 	res.writeHead(200);
-	if (channels[query.channel][query.clientid]) {
-		res.write(JSON.stringify({result: 'connected'}));
-	} else {
-		res.write(JSON.stringify({result: 'not connected'}));
-	}
+	res.write(JSON.stringify({result: 'ok'}));
 	res.end();
 }
-
 
 function doDefault(query, req, res) {
 	// TODO: allow-origin shouldn't be required here since the page is loaded from same domain?	
@@ -452,8 +464,8 @@ cli.main(function (args, options) {
 					case '/service':
 						doService(parsed.query, req, res);
 						break;
-					case '/message': 
-						doMessage(parsed.query, req, res);
+					case '/talk': 
+						doTalk(parsed.query, req, res);
 						break;
 					default:
 						res.writeHead(404);
@@ -477,17 +489,17 @@ cli.main(function (args, options) {
 					case '/service':
 						doService(parsed.query, req, res);
 						break;
-					case '/message': 
-						doMessage(parsed.query, req, res);
+					case '/listen': 
+						doListen(parsed.query, req, res);
 						break;						
 					case '/clientid': 
 						doClientId(parsed.query, req, res);
 						break;						
-					case '/connect': 
-						doConnect(parsed.query, req, res);
+					case '/connectListener': 
+						doConnectListener(parsed.query, req, res);
 						break;						
-					case '/confirm': 
-						doConfirm(parsed.query, req, res);
+					case '/waitForConnection': 
+						doWaitForConnection(parsed.query, req, res);
 						break;						
 					default:
 						doDefault(parsed.query, req, res);					

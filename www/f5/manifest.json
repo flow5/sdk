@@ -3,13 +3,14 @@
         "debug": {
             "scripts": [
                 "debug/flow_diags.js", 
-                "debug/flowcontroller_diags.js"
+                "debug/flowcontroller_diags.js",
+				"debug/pipe.js",
+				"debug/idebridge.js"
             ]
         }, 
         "desktop": {
             "debug": {
                 "scripts": [
-					"debug/idebridge.js"
                 ]
             }
         }, 

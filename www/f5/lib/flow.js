@@ -53,7 +53,9 @@
 				node.data = F5.createModel(node).initialize(nodeSpec.schema);
 				
 				// can initialize node model from spec. used with mock data
-				F5.extend(node.data, nodeSpec.data || {});
+				F5.forEach(nodeSpec.data || {}, function (id, value) {
+					node.data.sync(id, value);
+				});
 
 				if (nodeSpec.children) {
 					node.children = {};
