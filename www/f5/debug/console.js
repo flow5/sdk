@@ -56,11 +56,10 @@ F5.registerModule(function (F5) {
 				function listen() {
 					pipe.listen(function (message) {						
 						message = JSON.parse(message);
+						
+//						console.log(message)
+						
 						var response = {type: 'response', id: message.id};
-						var node;
-						
-						console.log(message)
-						
 						var action;
 						
 						try {
@@ -71,16 +70,26 @@ F5.registerModule(function (F5) {
 							case 'update':
 								update();
 								break;
-							case 'delegate':
-								node = F5.Global.flow.diags.getNodeFromPath(message.path);
+							case 'flowDelegate':
 								action = function (cb) {
-									node.flowDelegate[message.method](cb);									
+									var node = F5.Global.flow.diags.getNodeFromPath(message.path);								
+									var args = message.args || [];
+									args.push(cb);								
+									node.flowDelegate[message.method].apply(node.flowDelegate, args);									
+								};
+								break;
+							case 'viewDelegate':
+								action = function (cb) {
+									var node = F5.Global.flow.diags.getNodeFromPath(message.path);
+									var args = message.args || [];
+									args.push(cb);								
+									args.push(cb);
+									node.viewDelegate[message.method].apply(node.viewDelegate, args);									
 								};
 								break;
 							case 'transition':
-								node = F5.Global.flow.diags.getNodeFromPath(message.path);
 								action = function (cb) {
-									console.log('dotransition: ' + message.to);
+									var node = F5.Global.flow.diags.getNodeFromPath(message.path);
 									F5.Global.flowController.doTransition(node, message.to, message.parameters, cb);
 								};
 								break;
@@ -97,6 +106,7 @@ F5.registerModule(function (F5) {
 						} catch (e) {
 							response.type = 'error';
 							response.value = e.message;
+							console.log(e);
 						}
 						
 						if (action) {

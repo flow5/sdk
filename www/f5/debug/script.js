@@ -60,8 +60,8 @@ var executeScript;
 function makeTask(command, pipe, channel, options) {
 	function complete(message, cb) {
 		var script;
-		if (command.cb) {
-			script = command.cb(message);	
+		if (command.postprocess) {
+			script = command.postprocess(message.value);	
 		}
 		if (script) {
 			setTimeout(function () {
@@ -73,6 +73,10 @@ function makeTask(command, pipe, channel, options) {
 	}
 		
 	return function (cb) {
+		if (command.preprocess) {
+			command.preprocess();
+		}
+		
 		command.message.id = id();
 		pipe.talk(channel, command.message);
 		function listen() {
