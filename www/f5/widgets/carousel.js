@@ -211,12 +211,15 @@ F5.registerModule(function (F5) {
 			return index;									
 		};
 		
-		this.scrollToDetent = function (i) {
+		this.scrollToDetent = function (i, cb) {
 			F5.assert(i >= 0 && i < this.detents.length);
 			var that = this;
 			this.scrollTo(this.detents[i], function () {
 				if (that.scrollCb) {
 					that.scrollCb();					
+				}
+				if (cb) {
+					cb();
 				}
 			});				
 		};

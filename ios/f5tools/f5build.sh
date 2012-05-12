@@ -28,6 +28,7 @@ PLATFORM=$PLATFORM_NAME
 if [ $CONFIG = "Debug" ]
 then
 PDEBUG="debug=true"
+PCONSOLE="&console=true"
 else
 PDEBUG="debug=false"
 fi
@@ -41,7 +42,7 @@ PINLINE="inline=true"
 PCOMPRESS="compress=true"
 fi
 
-URL="http://$HOSTNAME:8008/generate?pkg=$PKG&native=true&mobile=true&platform=ios&$PINLINE&$PDEBUG&$PCOMPRESS"
+URL="http://$HOSTNAME:8008/generate?pkg=$PKG&native=true&mobile=true&platform=ios&$PINLINE&$PDEBUG&$PCOMPRESS$PCONSOLE"
 
 echo $URL
 

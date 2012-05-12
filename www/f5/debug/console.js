@@ -84,7 +84,7 @@ F5.registerModule(function (F5) {
 									var args = message.args || [];
 									args.push(cb);								
 									args.push(cb);
-									node.viewDelegate[message.method].apply(node.viewDelegate, args);									
+									node.view.delegate[message.method].apply(node.view.delegate, args);									
 								};
 								break;
 							case 'transition':
