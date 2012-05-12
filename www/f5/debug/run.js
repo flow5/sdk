@@ -32,7 +32,7 @@ var http = require('http'),
 		
 XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
-cli.setUsage("node runheadless.js [OPTIONS]");
+cli.setUsage("node run.js [OPTIONS]");
 
 cli.parse({
 	pkg: ['p', 'pkg', 'string']
@@ -47,8 +47,8 @@ cli.main(function (args, options) {
 				'&inline=false' + 
 				'&compress=false' +
 				'&mobile=false' +
-				'&headless=true';
-
+				'&headless=true' +
+				'&console=true';
 
 	http.get({host: 'localhost', port: 8008, path: path}, function(res) {
 		res.setEncoding('utf8');

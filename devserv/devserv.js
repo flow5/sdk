@@ -204,18 +204,19 @@ function doGenerate(query, req, res) {
 	try {			
 		verifyQueryParameters(query);
 
+		var html;
 		if (query.headless) {
 			var script = generator.generateScript(query);
 			res.writeHead(200, {'Content-Type': 'application/javascript'});
 			res.write(script);
 			res.end();								
 		} else if (query.geometry) {
-			var html = generator.generateFrame(query);
+			html = generator.generateFrame(query);
 			res.writeHead(200, {'Content-Type': 'text/html'});
 			res.write(html);
 			res.end();								
 		} else {
-			var html = generator.generateHtml(query);
+			html = generator.generateHtml(query);
 
 			if (query.compress === 'false') {
 				res.writeHead(200, {'Content-Type': 'text/html'});

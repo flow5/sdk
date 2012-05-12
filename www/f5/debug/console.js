@@ -28,12 +28,9 @@
 
 F5.registerModule(function (F5) {
 	
-	// TODO: the IDE bridge package shouldn't be included in the IDE app!
-	if (F5.query.pkg === 'ide') {
-		return;
-	}
-	
-	if (!F5.query.bridge && !F5.query.headless) {
+	// TODO: maybe make a separate console section in manifest instead
+	// currently console is include with debug scripts
+	if (!F5.query.console) {
 		return;
 	}
 									
@@ -41,7 +38,7 @@ F5.registerModule(function (F5) {
 
 		F5.openPipe(F5.query.pkg, F5.query.pkg + '.app', function (pipe) {
 			
-			function Bridge() {
+			function Console() {
 
 				function postMessage(message) {
 					pipe.talk(F5.query.pkg + '.listener', message);
@@ -57,10 +54,14 @@ F5.registerModule(function (F5) {
 				this.update = update;
 		
 				function listen() {
-					pipe.listen(function (message) {
-						var response = {type: 'json'};
-						
+					pipe.listen(function (message) {						
 						message = JSON.parse(message);
+						var response = {type: 'response', id: message.id};
+						var node;
+						
+						console.log(message)
+						
+						var action;
 						
 						try {
 							switch (message.type) {
@@ -70,6 +71,26 @@ F5.registerModule(function (F5) {
 							case 'update':
 								update();
 								break;
+							case 'delegate':
+								node = F5.Global.flow.diags.getNodeFromPath(message.path);
+								action = function (cb) {
+									node.flowDelegate[message.method](cb);									
+								};
+								break;
+							case 'transition':
+								node = F5.Global.flow.diags.getNodeFromPath(message.path);
+								action = function (cb) {
+									console.log('dotransition: ' + message.to);
+									F5.Global.flowController.doTransition(node, message.to, message.parameters, cb);
+								};
+								break;
+							case 'selection':
+								response.message = 'did selection';
+								break;
+							case 'data': 
+								node = F5.Global.flow.diags.getNodeFromPath(message.path);
+								response.message = JSON.stringify(node.data.dump());
+								break;
 							default:
 								response.value = 'unknown message type: ' + message.type;
 							}
@@ -78,14 +99,21 @@ F5.registerModule(function (F5) {
 							response.value = e.message;
 						}
 						
-						postMessage(response);
-						
-						listen();																		
+						if (action) {
+							action(function (result) {
+								response.value = result;
+								postMessage(response);								
+								listen();																		
+							});
+						} else {
+							postMessage(response);
+							listen();																		
+						}						
 					});
 				}
 				listen();				
 			}
-			F5.Global.flowController.addFlowObserver(new Bridge());					
+			F5.Global.flowController.addFlowObserver(new Console());					
 
 			cb();			
 		});			

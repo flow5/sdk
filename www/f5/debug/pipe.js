@@ -43,7 +43,7 @@
 					
 					function keepAlive() {
 						// hanging get to keep connection open
-						this.keepAliveXHR = F5.doXHR('GET', baseUrl + 'connectListener' + that.parameters, null, 
+						that.keepAliveXHR = F5.doXHR('GET', baseUrl + 'connectListener' + that.parameters, null, 
 							function success() {
 
 							}, 

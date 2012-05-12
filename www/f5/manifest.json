@@ -5,7 +5,7 @@
                 "debug/flow_diags.js", 
                 "debug/flowcontroller_diags.js",
 				"debug/pipe.js",
-				"debug/idebridge.js"
+				"debug/console.js"
             ]
         }, 
         "desktop": {
