@@ -335,42 +335,14 @@
 	};
 		
 	F5.setupScreenGeometry = function (isMobile, isNative) {
-		var geometry = F5.query.geometry;
-		
 		if (F5.isDebug()) {
 //			F5.addClass(document.body, 'f5debug');
 		}
 		
-		var style, width, height;
-		if (geometry) {
-			var size;
-			switch (geometry) {
-			case 'iphone-portrait':
-				width = 320;
-				height = 460;
-				break;
-			case 'iphone-landscape':
-				width = 480;
-				height = 300;
-				break;
-			case 'ipad-portrait':
-				height = 1004;
-				width = 768;
-				break;
-			case 'ipad-landscape':
-				height = 748;
-				width = 1024;
-				break;
-			default:			
-				size = geometry.split('x');
-				width = size[0];
-				height = size[1];
-				break;
-			}
-			style = document.createElement('style');
-			style.innerHTML = '#f5screen {width:' + width + 'px; height:' + height + 'px;}';
-			document.body.appendChild(style);
-		} else if (isMobile && !isNative) {
+		var width, height;
+		// in mobile browser, to get the full height of the device, have to size content so that it overflows
+		// the window by the same amount as the top toolbar. then scrolling to 0 will move the toolbar up
+		if (isMobile && !isNative && navigator.userAgent.match(/iphone/i)) {
 			if (window.innerWidth > window.innerHeight) {
 				width = window.innerHeight;
 				height = window.innerWidth;
@@ -396,7 +368,7 @@
 				landscapeToolbar = 30;			
 			}
 			
-			style = document.createElement('style');			
+			var style = document.createElement('style');			
 			style.innerHTML = '@media screen and (orientation: portrait)\n\
 								{\n\
 									.f5mobile #f5screen {\n\
@@ -418,22 +390,7 @@
 					window.scrollTo(0, 0);
 				}, 0);			
 			});		
-		} else {
-			var screenEl = document.getElementById('f5screen');
-			height = screenEl.offsetHeight;
-			width = screenEl.offsetWidth;			
-		}
-		
-		/* for resolution independence, sizes should be expressed in em */
-		/* by specifying a default size of 100px
-		   em = px * 100. default sizes are based on iOS screen densities */
-		// default is based on iPhone height
-		var metric = width/320;
-		if (metric > 1.5) {
-			metric = 1.5;
-		}
-		
-		document.getElementById('f5appframe').style.fontSize = metric*100 + 'px';		
+		}	
 	};	
 		
 	F5.elementOffsetGeometry = function (el) {
@@ -539,7 +496,8 @@
 					} else {
 						var rules = [];
 						for (j = 0; j < length; j += 1) {
-							rules.push({selectorText: styleSheet.cssRules[j].selectorText, cssText: styleSheet.cssRules[j].cssText});
+							rules.push({selectorText: styleSheet.cssRules[j].selectorText, 
+												cssText: styleSheet.cssRules[j].cssText});
 						}
 						for (j = 0; j < length; j += 1) {
 							styleSheet.deleteRule(0);
@@ -551,7 +509,8 @@
 								for (k = 0; k < selectors.length; k += 1) {
 									selectors[k] = '.' + F5.packageClass(pkg) + ' ' + selectors[k];
 								}												
-								styleSheet.insertRule(rule.cssText.replace(rule.selectorText, selectors.join(',')), styleSheet.cssRules.length);							
+								styleSheet.insertRule(rule.cssText.replace(rule.selectorText, selectors.join(',')), 
+												styleSheet.cssRules.length);							
 							} else {
 								styleSheet.insertRule(rule.cssText, styleSheet.cssRules.length);
 							}					

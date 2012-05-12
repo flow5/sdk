@@ -1,9 +1,7 @@
 {
 	"config": {
 		"labels": {
-			"pkg": "pkg",
-			"url": "url",
-			"geometry": "geometry"
+			"pkg": "pkg"
 		}
 	}
 }

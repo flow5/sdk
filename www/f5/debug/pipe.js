@@ -85,6 +85,10 @@
 		};
 		
 		this.talk = function (channel, message) {
+			if (typeof message === 'object') {
+				message = JSON.stringify(message);
+			}
+			
 			var parameters = '?id=' + this.id + '&clientid=' + this.clientid + '&channel=' + channel;
 			
 			F5.doXHR('POST', baseUrl + 'talk' + parameters, message, 

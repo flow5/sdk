@@ -26,39 +26,23 @@
 ***********************************************************************************************************************/
 
 
-.root-container {
-	display: -webkit-box;
-	background-color: darkslategray;
-}
-
-.app, .dev {
-	-webkit-box-flex: 1.0;
+.root {
 	height: 100%;
-	width: auto;
-}
-
-.app {
-	display: -webkit-box;
-	-webkit-box-pack: center;
-	-webkit-box-align: center;
-	-webkit-box-align: middle;
-	max-width: 75%;
-}
-
-.dev {
+	width: 100%;
 	display: -webkit-box;
 	-webkit-box-orient: vertical;
 	border-left: 4px double black;	
 	-webkit-user-select: none;	
 	-webkit-box-sizing: border-box;
-	font-size: 100px;			
+	font-size: 100px;	
+	background-color: darkslategrey;		
 }
 
-.dev-header {
+.root-header {
 	display: -webkit-box;
 }
 
-.dev .f5button {
+.root .f5button {
 	background-color: grey;
 	display: -webkit-box;
 	-webkit-box-pack: center;
@@ -70,16 +54,16 @@
 	-webkit-box-flex: 1.0;
 }
 
-.dev .f5button-label {
+.root .f5button-label {
 	font-size: .16em;	
 }
 
-.dev .f5input input {
+.root .f5input input {
 	-webkit-box-flex: 1.0;
 	border: 1px solid black;
 }
 
-.dev .f5input .f5label {
+.root .f5input .f5label {
 	width: 5em;
 	display: -webkit-box;
 	-webkit-box-pack: end;
@@ -148,19 +132,19 @@
 	border: 1px solid black;	
 }
 
-.dev .f5button-down, .dev .f5button-press, .viewerbutton.f5button.f5button-down  {
+.root .f5button-down, .root .f5button-press, .viewerbutton.f5button.f5button-down  {
 	background-color: lightgrey;
 	border: 1px solid white;
 }
 
-.dev .f5button-down .f5button-label, 
-.dev .f5button-press .f5button-label, 
+.root .f5button-down .f5button-label, 
+.root .f5button-press .f5button-label, 
 .viewerbutton.f5button-down .f5button-label {
 	color: black;
 }
 
 
-.dev .backbutton .f5button-label {
+.root .backbutton .f5button-label {
 	font-size: .40em;
 	margin-top: -.24em;	
 }

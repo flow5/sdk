@@ -379,6 +379,58 @@ function Element(tag) {
 	};
 }
 
+exports.generateFrame = function (query) {
+	var document = new Element('html');
+	
+	document.head = new Element('head');
+	document.appendChild(document.head);
+
+	document.body = new Element('body');
+	document.body.setAttribute('style', 
+								'width:100%;' +
+								'height:100%;' +
+								'display:-webkit-box;' +
+								'-webkit-box-align:center;' + 
+								'-webkit-box-pack:center;' + 
+								'background-color:darkslategrey;');	
+	document.appendChild(document.body);	
+			
+	var width, height;
+	switch (query.geometry) {
+	case 'iphone-portrait':
+		width = 320;
+		height = 460;
+		break;
+	case 'iphone-landscape':
+		width = 480;
+		height = 300;
+		break;
+	case 'ipad-portrait':
+		height = 1004;
+		width = 768;
+		break;
+	case 'ipad-landscape':
+		height = 748;
+		width = 1024;
+		break;
+	default:			
+		var size = query.geometry.split('x');
+		width = size[0];
+		height = size[1];
+		break;
+	}			
+	delete query.geometry;
+	
+	var frame = new Element('iframe');
+	frame.setAttribute('width', width);
+	frame.setAttribute('height', height);
+	frame.setAttribute('src', '/generate?' + urlParameters(query));
+	frame.setAttribute('frameborder', '0');
+	document.body.appendChild(frame);
+	
+	return document.outerHTML();
+};
+
 exports.generateHtml = function (query) {
 	
 	console.log(query.pkg + ' generating');

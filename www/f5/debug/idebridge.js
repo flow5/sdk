@@ -44,11 +44,10 @@ F5.registerModule(function (F5) {
 			function Bridge() {
 
 				function postMessage(message) {
-					pipe.talk(F5.query.pkg + '.listener', JSON.stringify(message));
+					pipe.talk(F5.query.pkg + '.listener', message);
 				}
 				
 				function update() {
-					console.log('updating')
 					postMessage({
 						model: F5.Global.flow.diags.toJSON(F5.Global.flow.root),
 						dot: F5.Global.flow.diags.toDOT(F5.Global.flow.root)
@@ -59,19 +58,29 @@ F5.registerModule(function (F5) {
 		
 				function listen() {
 					pipe.listen(function (message) {
-						message = JSON.parse(message);
-						// now any js can execute remotely through the devserv channel
-						if (message.exec) {
-							var response = '';
-							try {
-								response = eval(message.exec);
-							} catch (e) {
-								response = e.message;
-							}
-							postMessage(response);
-						}	
-						listen();					
+						var response = {type: 'json'};
 						
+						message = JSON.parse(message);
+						
+						try {
+							switch (message.type) {
+							case 'exec':
+								response.value = eval(message.value);
+								break;
+							case 'update':
+								update();
+								break;
+							default:
+								response.value = 'unknown message type: ' + message.type;
+							}
+						} catch (e) {
+							response.type = 'error';
+							response.value = e.message;
+						}
+						
+						postMessage(response);
+						
+						listen();																		
 					});
 				}
 				listen();				

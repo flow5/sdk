@@ -209,6 +209,11 @@ function doGenerate(query, req, res) {
 			res.writeHead(200, {'Content-Type': 'application/javascript'});
 			res.write(script);
 			res.end();								
+		} else if (query.geometry) {
+			var html = generator.generateFrame(query);
+			res.writeHead(200, {'Content-Type': 'text/html'});
+			res.write(html);
+			res.end();								
 		} else {
 			var html = generator.generateHtml(query);
 
@@ -233,7 +238,7 @@ function doIDE(parsed, req, res) {
 		pkg: 'ide',
 		debug: 'true',
 		platform: 'ios',
-		inline: 'true',
+		inline: 'false',
 		compress: 'false',
 		mobile: 'false',
 		native: 'false'
