@@ -46,8 +46,7 @@ F5.registerModule(function (F5) {
 				
 				function update() {
 					postMessage({
-						model: F5.Global.flow.diags.toJSON(F5.Global.flow.root),
-						dot: F5.Global.flow.diags.toDOT(F5.Global.flow.root)
+						model: F5.Global.flow.toJSON(F5.Global.flow.root)
 					});											
 				}
 
@@ -72,7 +71,7 @@ F5.registerModule(function (F5) {
 								break;
 							case 'flowDelegate':
 								action = function (cb) {
-									var node = F5.Global.flow.diags.getNodeFromPath(message.path);								
+									var node = F5.Global.flow.getNodeFromPath(message.path);								
 									var args = message.args || [];
 									args.push(cb);								
 									node.flowDelegate[message.method].apply(node.flowDelegate, args);									
@@ -80,7 +79,7 @@ F5.registerModule(function (F5) {
 								break;
 							case 'viewDelegate':
 								action = function (cb) {
-									var node = F5.Global.flow.diags.getNodeFromPath(message.path);
+									var node = F5.Global.flow.getNodeFromPath(message.path);
 									var args = message.args || [];
 									args.push(cb);								
 									args.push(cb);
@@ -89,15 +88,24 @@ F5.registerModule(function (F5) {
 								break;
 							case 'transition':
 								action = function (cb) {
-									var node = F5.Global.flow.diags.getNodeFromPath(message.path);
+									var node = F5.Global.flow.getNodeFromPath(message.path);
 									F5.Global.flowController.doTransition(node, message.to, message.parameters, cb);
 								};
 								break;
 							case 'selection':
 								response.message = 'did selection';
 								break;
+							case 'reset':
+								response.message = 'reloading. . .';
+								if (typeof window !== 'undefined') {
+									postMessage(response);
+									setTimeout(function () {
+										location.reload();										
+									}, 0);
+								}
+								break;
 							case 'data': 
-								node = F5.Global.flow.diags.getNodeFromPath(message.path);
+								var node = F5.Global.flow.getNodeFromPath(message.path);
 								response.message = JSON.stringify(node.data.dump());
 								break;
 							default:
@@ -133,7 +141,8 @@ F5.registerModule(function (F5) {
 
 
 /*
-// hijack the view delegates so that the scripting engine can decide what to do
+// this highjacks the delegates allowing a listener to track all lifecycle events
+// should use flowDelegates though I think
 F5.View.getViewDelegatePrototype = function (id) {
 	var prototype = F5.getPrototype('ViewDelegates', id);
 	function Wrapper() {

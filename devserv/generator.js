@@ -422,11 +422,17 @@ exports.generateFrame = function (query) {
 	delete query.geometry;
 	
 	var frame = new Element('iframe');
+	frame.id = 'frame';
 	frame.setAttribute('width', width);
 	frame.setAttribute('height', height);
 	frame.setAttribute('src', '/generate?' + urlParameters(query));
 	frame.setAttribute('frameborder', '0');
 	document.body.appendChild(frame);
+	
+	var script = new Element('script');
+	script.innerHTML = 'var frame = document.getElementById("frame");' + 
+					   'frame.onload = function () {F5 = frame.contentWindow.F5;};';
+	document.body.appendChild(script);
 	
 	return document.outerHTML();
 };

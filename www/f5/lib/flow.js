@@ -28,7 +28,7 @@
 
 (function (){
 	
-	F5.Flow = function(rootSpec) {
+	function Flow() {
 		
 		this.importNode = function (id, flowspec, parent, pkg) {
 			var that = this;
@@ -214,10 +214,54 @@
 			return active;
 		};		
 				
-		this.initialize = function (pkg) {
+		this.initialize = function (pkg, rootSpec) {
 			this.root = this.importNode('root', rootSpec, null, pkg);
 			this.root.active = true;		
 		};
-	};				
+		
+			// creates JSON representation of the current Flow graph
+		this.toJSON = function (node) {
+			var filteredCopy = {};
+
+			function isDOM(id) {
+				return {el: true}[id];
+			}
+			
+			function deepCopy(obj) {
+				var copy = {};
+				F5.forEach(obj, function (id, child) {
+					if (child && typeof child === 'object') {
+						if (!isDOM(id)) {							
+							if (id === 'data') {
+								copy[id] = child.dump();
+							} else if (id === 'pending') {
+								copy[id] = '[' + child.length +']';
+							} else if (child.constructor === Array) {
+								copy[id] = [];
+								F5.forEach(child, function (item) {
+									copy[id].push(deepCopy(item));
+								});
+							} else {
+								// break cycles and use paths to indicate references
+								if (F5.isReference(id)) {
+									copy[id] = child.id;
+								} else if (!obj.id || id !== 'view' && id !== 'menu' && id !== 'flowDelegate') {
+									copy[id] = deepCopy(child);
+								}							
+							}
+						}
+					} else {
+						copy[id] = child;
+					}
+				});
+				return copy;
+			}	
+
+			// NOTE: stringify strips out any fields with function objects
+			return JSON.stringify(deepCopy(node || this.root, ''));
+		};		
+	}
+	
+	F5.Flow = new Flow();			
 }());
 

@@ -39,14 +39,14 @@ F5.registerModule(function (F5) {
 		
 		var doSelection = F5.Global.flowController.doSelection;
 		F5.Global.flowController.doSelection = function (node, id, cb) {	
-			F5.assert(!flow.diags.isSubflowActive(node), 'Cannot select with a subflow active');				
+			F5.assert(!flow.isSubflowActive(node), 'Cannot select with a subflow active');				
 							
 			doSelection.call(F5.Global.flowController, node, id, cb);
 		};
 		
 		var doTransition = F5.Global.flowController.doTransition;
 		F5.Global.flowController.doTransition = function (node, id, parameters, cb) {
-			F5.assert(!flow.diags.isSubflowActive(node), 'Cannot transition with a subflow active');	
+			F5.assert(!flow.isSubflowActive(node), 'Cannot transition with a subflow active');	
 		
 			doTransition.call(F5.Global.flowController, node, id, parameters, cb);
 		};
@@ -55,7 +55,7 @@ F5.registerModule(function (F5) {
 		F5.Global.flowController.doSubflow = function (node, id, cb) {
 			F5.assert(id === 'WillBecomeActive' || id === 'DidBecomeInactive' || flow.isNodePathActive(node), 
 				'Attempt to execute subflow from an inactive node');	
-			F5.assert(!flow.diags.isSubflowActive(node), 'Subflow already in progress');	
+			F5.assert(!flow.isSubflowActive(node), 'Subflow already in progress');	
 			
 			doSubflow.call(F5.Global.flowController, node, id, cb);
 		};
@@ -64,7 +64,7 @@ F5.registerModule(function (F5) {
 		F5.Global.flowController.doBack = function (cb) {			
 			var backNode = F5.Global.flowController.getBackNode();
 			F5.assert(backNode, 'Cannot go back');			
-			F5.assert(!flow.diags.isSubflowActive(backNode), 'Cannot go back with a subflow active');
+			F5.assert(!flow.isSubflowActive(backNode), 'Cannot go back with a subflow active');
 			
 			doBack.call(F5.Global.flowController, cb);
 		};	

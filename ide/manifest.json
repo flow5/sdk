@@ -13,10 +13,8 @@
 			"json.css"
 		],
 		"scripts": [
-			"ide.js",
 			"json.js",
-			"viewdelegates.js",
-			"flowdelegates.js"
+			"viewdelegates.js"
 		],
 		"resources": [
 			"data.json"

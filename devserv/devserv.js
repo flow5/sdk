@@ -234,7 +234,7 @@ function doGenerate(query, req, res) {
 	}	
 }
 
-function doIDE(parsed, req, res) {
+function doIDE(query, req, res) {
 	doGenerate({
 		pkg: 'ide',
 		debug: 'true',
@@ -242,7 +242,8 @@ function doIDE(parsed, req, res) {
 		inline: 'false',
 		compress: 'false',
 		mobile: 'false',
-		native: 'false'
+		native: 'false',
+		app: query.app
 	}, req, res);	
 }
 
@@ -416,10 +417,12 @@ function doConnectListener(query, req, res) {
 	res.on('close', function () {
 		console.log('listener disconnected: ' + query.clientid + ' waiting for reconnect. . .');					
 		// wait 1s after connection close to give the client time to reconnect
-		channels[query.channel][query.clientid].timeout = setTimeout(function () {
-			delete channels[query.channel][query.clientid];
-			console.log('listener disconnected: ' + query.clientid + ' closing connection');					
-		}, 1000);
+		if (channels[query.channel][query.clientid]) {
+			channels[query.channel][query.clientid].timeout = setTimeout(function () {
+				delete channels[query.channel][query.clientid];
+				console.log('listener disconnected: ' + query.clientid + ' closing connection');					
+			}, 1000);			
+		}
 	});
 }
 

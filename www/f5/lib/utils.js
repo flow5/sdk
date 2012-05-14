@@ -607,6 +607,14 @@
 		}
 		return F5.clone(F5.valueFromId(F5.Flows, id));
 	};
+	
+	F5.isReference = function (id) {
+		return {parent: true,
+				selection: true,
+				node: true,
+				to: true,
+				back: true}[id];		
+	};
 }());
 
 

@@ -28,7 +28,7 @@
 /*global F5*/
 
 (function () {
-	F5.Global.flow = new F5.Flow(F5.valueFromId(F5.Flows, F5.query.pkg));		
+	F5.Global.flow = F5.objectFromPrototype(F5.Flow);		
 	F5.Global.flowController = new F5.FlowController(F5.Global.flow);	
 	if (F5.ViewController) {
 		F5.Global.viewController = new F5.ViewController(F5.Global.flow);		

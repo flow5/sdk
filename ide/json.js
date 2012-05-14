@@ -211,9 +211,9 @@ F5.registerModule(function (F5) {
 		};
 	}	
 
-	IDE.JSONFormatter = function () {
+	JSONFormatter = function () {
 	
 	}	
-	IDE.JSONFormatter.prototype = new JSONFormatterPrototype();
+	JSONFormatter.prototype = new JSONFormatterPrototype();
 
 });
