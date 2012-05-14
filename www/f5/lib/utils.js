@@ -140,6 +140,7 @@
 	}
 	
 	F5.networkErrorHandler = function (cb, url, message) {
+		// TODO: sloppy
 		F5.alert('Network Error', '', function () {
 			cb();
 		});
@@ -229,9 +230,6 @@
 		
 		F5.assert(service, 'No service called: ' + name);		
 
-		// TODO
-		// validate(parameters, service.parameterSchema);
-
 		var url = protocol + '://' + baseUrl;
 		if (extendedUrl) {
 			url += extendedUrl;
@@ -242,6 +240,26 @@
 			url += '/' + resourceName;
 		}
 		
+		function validate(obj, schema) {
+			var report = F5.JSV.env.validate(obj, schema);
+			F5.assert(report.errors.length === 0,
+				'Error validating service parameter schema: ' + 
+					JSON.stringify(obj) + ' : ' +
+					JSON.stringify(report.errors));
+			
+		}
+		
+		// NOTE: url parameters for substitution are considered to be part of the schema
+		if (F5.isDebug()) {
+			/*global JSV*/
+			if (!F5.JSV) {
+				F5.JSV = {env: JSV.createEnvironment()};
+			}
+			if (parameterSchema) {
+				validate(parameters, parameterSchema);
+			}
+		}		
+		
 		// DO URL path component replacement
 		F5.forEach(parameters, function (id, value) {
 			var key = '<' + id + '>';
@@ -250,21 +268,7 @@
 				delete parameters[id];
 			}
 		});		
-		
-		
-		if (F5.isDebug()) {
-			/*global JSV*/
-			if (!F5.JSV) {
-				F5.JSV = {env: JSV.createEnvironment()};
-			}
-			if (parameterSchema) {
-				var report = F5.JSV.env.validate(parameters, parameterSchema);
-				F5.assert(report.errors.length === 0,
-					'Error validating service parameter schema: ' + JSON.stringify(report.errors));
-			}
-		}
-		
-		
+								
 						
 		function formatUrlParameters(parameters, keys) {
 			var urlParameters = [];
@@ -327,9 +331,14 @@
 			pending.xhr = F5.doXHR(method, url, null,
 				function success(response, status) {
 					pendingComplete(node, pending);
+					
+					if (F5.isDebug() && responseSchema) {
+						validate(JSON.parse(response), responseSchema);
+					}
+					
 					try {
 //						console.log(response);
-						var obj = JSON.parse(response);
+						var obj = JSON.parse(response);												
 						if (service.postprocess) {
 							obj = service.postprocess(obj);
 						}
@@ -369,10 +378,20 @@
 						
 			pending.xhr = F5.doXHR(method, url, JSON.stringify(bodyParameters),
 				function success(response, status) {
-					pendingComplete(node, pending);					
+					pendingComplete(node, pending);		
+					
+					if (F5.isDebug() && responseSchema) {
+						validate(JSON.parse(response), responseSchema);
+					}
+								
 					try {
 //						console.log(response);
 						var obj = JSON.parse(response);
+						
+						if (F5.isDebug() && responseSchema) {
+							validate(obj, responseSchema);
+						}
+												
 						if (service.postprocess) {
 							obj = service.postprocess(obj);
 						}
