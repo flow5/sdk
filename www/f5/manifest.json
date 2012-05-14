@@ -5,7 +5,12 @@
                 "debug/flow_diags.js", 
                 "debug/flowcontroller_diags.js",
 				"debug/pipe.js",
-				"debug/console.js"
+				"debug/console.js",
+				/* JSV */
+				"debug/3p/JSV/lib/uri/uri.js",
+				"debug/3p/JSV/lib/uri/schemes/urn.js",
+				"debug/3p/JSV/lib/jsv.js",
+				"debug/3p/JSV/lib/json-schema-draft-03.js"				
             ]
         }, 
         "desktop": {

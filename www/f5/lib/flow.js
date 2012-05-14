@@ -219,46 +219,27 @@
 			this.root.active = true;		
 		};
 		
-			// creates JSON representation of the current Flow graph
+		// serialize to JSON
 		this.toJSON = function (node) {
-			var filteredCopy = {};
-
-			function isDOM(id) {
-				return {el: true}[id];
-			}
-			
-			function deepCopy(obj) {
-				var copy = {};
-				F5.forEach(obj, function (id, child) {
-					if (child && typeof child === 'object') {
-						if (!isDOM(id)) {							
-							if (id === 'data') {
-								copy[id] = child.dump();
-							} else if (id === 'pending') {
-								copy[id] = '[' + child.length +']';
-							} else if (child.constructor === Array) {
-								copy[id] = [];
-								F5.forEach(child, function (item) {
-									copy[id].push(deepCopy(item));
-								});
-							} else {
-								// break cycles and use paths to indicate references
-								if (F5.isReference(id)) {
-									copy[id] = child.id;
-								} else if (!obj.id || id !== 'view' && id !== 'menu' && id !== 'flowDelegate') {
-									copy[id] = deepCopy(child);
-								}							
-							}
-						}
-					} else {
-						copy[id] = child;
-					}
-				});
-				return copy;
-			}	
-
-			// NOTE: stringify strips out any fields with function objects
-			return JSON.stringify(deepCopy(node || this.root, ''));
+			function replacer(key, value) {
+				if (F5.isReference(key)) {
+					// break cycles by writing reference ids
+					return value && value.id;
+				} else if (!value || 
+					value.constructor === Object || 
+					value.constructor === Array ||
+					value.constructor === Number ||
+					value.constructor === String ||
+					value.constructor === Boolean) {
+						return value;
+				} else if (F5.Cache.isPrototypeOf(value)) {
+					return value.dump();
+				} else {
+					// everything else is filtered out
+					return undefined;
+				}
+			}			
+			return JSON.stringify(node || this.root, replacer);						
 		};		
 	}
 	

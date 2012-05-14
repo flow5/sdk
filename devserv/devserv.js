@@ -367,6 +367,7 @@ function doTalk(query, req, res) {
 	
 	if (channel) {
 		getMessageBody(req, function (body) {	
+//			console.log(body);			
 			// write to all of the open channels
 			forEach(channel, function (clientid, client) {
 				if (clientid !== query.clientid) {

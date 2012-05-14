@@ -148,6 +148,7 @@
 		F5.Analytics.logEvent('NetworkError', {url: url, message: message});
 	};
 		
+	// TODO: refactor
 	F5.execService = function (node, id, parameters, cb) {
 		
 		if (!node.pending) {
@@ -168,7 +169,7 @@
 		var qualifier = components[1];
 								
 		var protocol = 'http', method = 'GET', baseUrl, username, password, 
-			urlParameterKeys, extendedUrl, resourceName, headers, proxy;
+			urlParameterKeys, extendedUrl, resourceName, headers, proxy, parameterSchema, responseSchema;
 						
 		function extendParameters(service) {
 			function get(which) {
@@ -199,6 +200,9 @@
 
 			headers = get('headers') || headers;
 			proxy = get('proxy') || proxy;
+
+			parameterSchema = get('parameterSchema') || parameterSchema;
+			responseSchema = get('responseSchema') || responseSchema;
 
 			F5.extend(parameters, get('parameters'));			
 		}
@@ -238,6 +242,7 @@
 			url += '/' + resourceName;
 		}
 		
+		// DO URL path component replacement
 		F5.forEach(parameters, function (id, value) {
 			var key = '<' + id + '>';
 			if (url.match(key)) {
@@ -245,6 +250,21 @@
 				delete parameters[id];
 			}
 		});		
+		
+		
+		if (F5.isDebug()) {
+			/*global JSV*/
+			if (!F5.JSV) {
+				F5.JSV = {env: JSV.createEnvironment()};
+			}
+			if (parameterSchema) {
+				var report = F5.JSV.env.validate(parameters, parameterSchema);
+				F5.assert(report.errors.length === 0,
+					'Error validating service parameter schema: ' + JSON.stringify(report.errors));
+			}
+		}
+		
+		
 						
 		function formatUrlParameters(parameters, keys) {
 			var urlParameters = [];
@@ -454,6 +474,12 @@
 	F5.assert = function(condition, message) {
 		// TODO: disable in release builds?
 		if (!condition) {
+			// TODO: sloppy. define alert or move down a layer
+			if (typeof window !== 'undefined') {
+				alert(message);				
+			} else {
+				console.log(message);
+			}
 			throw new Error(message);
 		}
 	};
@@ -615,6 +641,27 @@
 				to: true,
 				back: true}[id];		
 	};
+	
+	F5.isMobile = function () {
+		return F5.query.mobile === 'true';
+	};
+	
+	F5.platform = function () {
+		return F5.query.platform;
+	};
+	
+	F5.isDebug = function () {
+		return F5.query.debug === 'true';
+	};
+	
+	F5.isInline = function () {
+		return F5.query.inline === 'true';		
+	};
+	
+	F5.isNative = function () {
+		// F5.query.native confuses the JavaScript compressor
+		return F5.query['native'] === 'true';		
+	};	
 }());
 
 

@@ -84,7 +84,7 @@
 				});																	
 		};
 		
-		this.talk = function (channel, message) {
+		this.talk = function (channel, message, cb) {
 			if (typeof message === 'object') {
 				message = JSON.stringify(message);
 			}
@@ -92,8 +92,10 @@
 			var parameters = '?id=' + this.id + '&clientid=' + this.clientid + '&channel=' + channel;
 			
 			F5.doXHR('POST', baseUrl + 'talk' + parameters, message, 
-				function success(result, status) {					
-
+				function success(result, status) {	
+					if (cb) {
+						cb(result, status);						
+					}				
 				}, 
 				function error(status) {
 					console.log('Pipe: talk error.');				

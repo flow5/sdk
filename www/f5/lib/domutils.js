@@ -398,28 +398,7 @@
 				left: el.offsetLeft,
 				width: el.offsetWidth,
 				height: el.offsetHeight};
-	};
-	
-	F5.isMobile = function () {
-		return F5.query.mobile === 'true';
-	};
-	
-	F5.platform = function () {
-		return F5.query.platform;
-	};
-	
-	F5.isDebug = function () {
-		return F5.query.debug === 'true';
-	};
-	
-	F5.isInline = function () {
-		return F5.query.inline === 'true';		
-	};
-	
-	F5.isNative = function () {
-		// F5.query.native confuses the JavaScript compressor
-		return F5.query['native'] === 'true';		
-	};
+	};	
 	
 	F5.attachWidget = function(el, f5widget, data, pkg) {
 		F5.assert(!el.widget, 'Widget already attached to element');

@@ -73,23 +73,33 @@ function makeTask(command, pipe, channel, options) {
 	}
 		
 	return function (cb) {
+		function listen() {
+			pipe.listen(function (message) {
+				message = JSON.parse(message);		
+				if (command.message.id === message.id) {
+					complete(message, cb);
+				} else if (message.type === 'uncaughtException'){
+					console.log(message);
+					process.exit(1);
+				} else {
+					// otherwise ignore the exit
+					listen();
+				}
+			});			
+		}
+				
 		if (command.preprocess) {
 			command.preprocess();
 		}
 		
 		command.message.id = id();
-		pipe.talk(channel, command.message);
-		function listen() {
-			pipe.listen(function (message) {
-				message = JSON.parse(message);				
-				if (command.message.id === message.id) {
-					complete(message, cb);
-				} else {
-					listen();
-				}
-			});			
-		}
-		listen();
+		pipe.talk(channel, command.message, function () {
+			if (command.message.type === 'exit') {
+				process.exit(0);
+			} else {
+				listen();
+			}
+		});
 	};
 }
 
