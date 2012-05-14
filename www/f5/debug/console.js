@@ -97,12 +97,24 @@ F5.registerModule(function (F5) {
 								break;
 							case 'reset':
 								response.message = 'reloading. . .';
-								if (typeof window !== 'undefined') {
+								if (typeof location !== 'undefined') {
 									postMessage(response);
 									setTimeout(function () {
 										location.reload();										
 									}, 0);
 								}
+								break;
+							case 'frames':
+								if (typeof document !== 'defined') {
+									if (F5.hasClass(document.body, 'f5frames')) {
+										F5.removeClass(document.body, 'f5frames');
+									} else {
+										F5.addClass(document.body, 'f5frames');										
+									}
+								}
+								break;
+							case 'back': 
+								F5.Global.flowController.doBack();
 								break;
 							case 'data': 
 								var node = F5.Global.flow.getNodeFromPath(message.path);

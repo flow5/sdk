@@ -38,6 +38,19 @@ F5.registerModule(function (F5) {
 					that.pipe.talk(F5.query.app + '.app', {type: 'reset'});							
 				}				
 			});
+			this.widgets.refreshbutton.setAction(function () {
+				that.update();
+			});
+			this.widgets.backbutton.setAction(function () {
+				if (that.pipe) {
+					that.pipe.talk(F5.query.app + '.app', {type: 'back'});							
+				}				
+			});
+			this.widgets.framesbutton.setAction(function () {
+				if (that.pipe) {
+					that.pipe.talk(F5.query.app + '.app', {type: 'frames'});							
+				}				
+			});			
 		};
 		
 		this.update = function () {
@@ -124,10 +137,10 @@ F5.registerModule(function (F5) {
 
 	function Graph() {
 		var sequenceNumber = 0;
-
+		
 		this.initialize = function () {
-			this.svgFrame = F5.getElementById(this.el, 'svgframe');
-		};
+			this.svg = F5.getElementById(this.el, 'svg');
+		};	
 
 		this.viewWillBecomeActive = function () {
 			modelListeners[this.node.path] = this;
@@ -176,9 +189,9 @@ F5.registerModule(function (F5) {
 					};
 				}
 
-				that.svgFrame.innerHTML = response;
+				that.svg.innerHTML = response;
 
-				var svg = that.svgFrame.querySelector('svg');
+				var svg = that.svg.querySelector('svg');
 
 				var transform = svg.querySelector('g').getAttribute('transform');
 				transform = transform.replace('scale(1 1)', 'scale(0.4 0.4)');

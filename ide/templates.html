@@ -25,14 +25,12 @@
 
 -->
 
-<div f5widget='ToggleButton' id='viewerbutton' class='viewerbutton'></div>
-
-
-
 <div id='root-header'>
 	<div f5widget='f5.Button' f5id='backbutton' class='backbutton'>&larr;</div>
-	<!--div f5widget='f5.Button' f5id='menubutton' class='menubutton'>HW Menu</div-->	
-	<div f5widget='f5.Button' f5id='resetbutton' class='resetbutton'>Reset</div>				
+	<div f5widget='f5.Button' f5id='refreshbutton'>Refresh</div>				
+	<div f5widget='f5.Button' f5id='resetbutton'>Reset</div>				
+	<div f5widget='f5.Button' f5id='framesbutton'>Frames</div>				
+	<!--div f5widget='f5.Button' f5id='menubutton'>HW Menu</div-->	
 </div>
 
 <div id='root-footer' f5widget='f5.Tabset'></div>
@@ -42,5 +40,5 @@
 </div>
 
 <div id='graph' f5widget='f5.Tracker'>
-	<div f5id='svgframe' class='svgframe'></div>
+	<div f5id='svg' class='svg'></div>
 </div>
