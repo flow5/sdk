@@ -217,16 +217,20 @@ exports.generateScript = function (query) {
 		script += 'F5.popPkg();\n';
 	}
 			
-	script += '// www/f5/lib/f5.js\n';				
-	script += fs.readFileSync('www/f5/lib/f5.js').toString() + '\n';	
-	script += 'F5.query = ' + JSON.stringify(query) + '\n';		
+	if (!query.import) {
+		script += '// www/f5/lib/f5.js\n';				
+		script += fs.readFileSync('www/f5/lib/f5.js').toString() + '\n';	
+		script += 'F5.query = ' + JSON.stringify(query) + '\n';				
+	}		
 				
 	injectManifest(query.pkg);
 
-	script += '// www/f5/lib/register.js\n';				
-	script += fs.readFileSync('www/f5/lib/register.js').toString() + '\n';	
-	script += '// www/f5/lib/headlessstart.js\n';				
-	script += fs.readFileSync('www/f5/lib/headlessstart.js').toString() + '\n';	
+	if (!query.import) {
+		script += '// www/f5/lib/register.js\n';				
+		script += fs.readFileSync('www/f5/lib/register.js').toString() + '\n';	
+		script += '// www/f5/lib/headlessstart.js\n';				
+		script += fs.readFileSync('www/f5/lib/headlessstart.js').toString() + '\n';			
+	}
 	
 	return script;
 };
@@ -468,6 +472,7 @@ exports.generateHtml = function (query) {
 		}
 		if (pkg) {
 			link.setAttribute('f5pkg', pkg);			
+			link.setAttribute('f5applyscope', true);			
 		}
 		document.head.appendChild(link);
 	}
@@ -533,7 +538,7 @@ exports.generateHtml = function (query) {
 		pkgEl.appendChild(scriptsEl);
 		
 		var templatesEl = new Element('div');
-		templatesEl.setAttribute('f5id', 'f5applyscope');
+		templatesEl.setAttribute('f5applyscope', true);
 		templatesEl.setAttribute('f5pkg', pkg);
 		templatesEl.setAttribute('style', 'display:none;');			
 		pkgEl.appendChild(templatesEl);	
@@ -613,6 +618,7 @@ exports.generateHtml = function (query) {
 						var styleDiv = new Element('style');
 						styleDiv.setAttribute('f5id', resolvedPath);
 						styleDiv.setAttribute('f5pkg', pkg);
+						styleDiv.setAttribute('f5applyscope', true);
 						styleDiv.innerHTML = statements.join('');
 						document.head.appendChild(styleDiv);												
 					} else {
@@ -677,55 +683,57 @@ exports.generateHtml = function (query) {
 	/***********************************/
 	/************** BUILD **************/
 	/***********************************/
-	
-	// manifest	
-	var manifestString = 'cache.manifest?' + urlParameters(query);
-	document.setAttribute('manifest', manifestString);	
-	
-		
-	// TODO: create a meta section in manifest for this stuff		
-	// TODO: if manifest.type === 'app' add this stuff. otherwise not
-	
-	// ios webapp stuff
-//	injectMeta({name: 'apple-mobile-web-app-status-bar-style', content: 'black'});
-//	injectMeta({name: 'apple-mobile-web-app-capable', content: 'yes'});
-//	injectLink('apple-touch-icon', 'apps/' + pkgDomain(query.pkg) + '/images/icon.png', null);
-//	injectLink('apple-touch-startup-image', 'apps/' + pkgDomain(query.pkg) + '/images/splash.png', null);
-	
-	// ios
-	injectMeta({'http-equiv': 'Content-Type', content: 'text/html; charset=UTF-8'});
-	injectMeta({name: 'viewport', content: 'width=device-width initial-scale=1.0 maximum-scale=1.0 user-scalable=0'});
+					
+	if (!query.import) {
+		// manifest	
+		var manifestString = 'cache.manifest?' + urlParameters(query);
+		document.setAttribute('manifest', manifestString);	
 
-	// android
-	injectMeta({name: 'viewport', content: 'target-densitydpi=device-dpi'});
-		
-		
-	// setup
-	document.body.appendChild(makeScript('f5/lib/f5.js'));						
-		
-		
-	var queryScript = new Element('script');
-	queryScript.setAttribute('f5id', 'F5.query');
-	queryScript.innerHTML = "F5.query = " + JSON.stringify(query);
-	document.body.appendChild(queryScript);
-	
-	// TODO: don't make facebook id a first class feature
-	var facebook_appid = facebookId();
-	if (facebook_appid) {
-		var facebookScript = new Element('script');
-		facebookScript.innerHTML = "F5.facebook_appid = " + facebook_appid;
-		document.body.appendChild(facebookScript);		
-	}							
+		// TODO: create a meta section in manifest for this stuff		
+		// TODO: if manifest.type === 'app' add this stuff. otherwise not
+
+		// ios webapp stuff
+	//	injectMeta({name: 'apple-mobile-web-app-status-bar-style', content: 'black'});
+	//	injectMeta({name: 'apple-mobile-web-app-capable', content: 'yes'});
+	//	injectLink('apple-touch-icon', 'apps/' + pkgDomain(query.pkg) + '/images/icon.png', null);
+	//	injectLink('apple-touch-startup-image', 'apps/' + pkgDomain(query.pkg) + '/images/splash.png', null);
+
+		// ios
+		injectMeta({'http-equiv': 'Content-Type', content: 'text/html; charset=UTF-8'});
+		injectMeta({name: 'viewport', content: 'width=device-width initial-scale=1.0 maximum-scale=1.0 user-scalable=0'});
+
+		// android
+		injectMeta({name: 'viewport', content: 'target-densitydpi=device-dpi'});
+
+
+		// setup
+		document.body.appendChild(makeScript('f5/lib/f5.js'));						
+
+
+		var queryScript = new Element('script');
+		queryScript.setAttribute('f5id', 'F5.query');
+		queryScript.innerHTML = "F5.query = " + JSON.stringify(query);
+		document.body.appendChild(queryScript);
+
+		// TODO: don't make facebook id a first class feature
+		var facebook_appid = facebookId();
+		if (facebook_appid) {
+			var facebookScript = new Element('script');
+			facebookScript.innerHTML = "F5.facebook_appid = " + facebook_appid;
+			document.body.appendChild(facebookScript);		
+		}									
+	}
 		
 	// inject the app manifest (and recursively insert packages)
 	injectManifest(query.pkg);																							
 																				
 					
-	// finally			
-	document.body.appendChild(makeScript('f5/lib/register.js'));				
-	document.body.appendChild(makeScript('f5/lib/domstart.js'));				
-																
-												
+	// finally		
+	if (!query.import) {
+		document.body.appendChild(makeScript('f5/lib/register.js'));				
+		document.body.appendChild(makeScript('f5/lib/domstart.js'));						
+	}	
+																												
 	var html = document.outerHTML();
 	
 	// TODO: this is quite inefficient since it's happening after image inlining

@@ -681,6 +681,37 @@
 		// F5.query.native confuses the JavaScript compressor
 		return F5.query['native'] === 'true';		
 	};	
+	
+	// NOTE: used in headless mode testing
+	// overridden in domutils for full package import to DOM
+	F5.importPackage = function (pkg, cb) {
+		if (F5.valueFromId(F5.Flows, pkg)) {
+			cb();
+			return;
+		}
+		
+		var query = F5.clone(F5.query);
+		query.pkg = pkg;
+		query.import = true;
+		var parameters = [];
+		F5.forEach(query, function (key, value) {
+			parameters.push(key + '=' + value);
+		});
+		
+		var url = 'http://' + F5.query.devserv + '/generate?' + parameters.join('&');
+		return F5.doXHR('GET', url, null, 
+			function success(result, status) {
+				eval(result);
+				F5.registerPendingModules();
+				
+				if (cb) {
+					cb();
+				}
+			},
+			function error(status) {
+				
+			});
+	};	
 }());
 
 

@@ -36,7 +36,7 @@
 	
 	// TODO: not so happy with this
 	F5.Clients = {};
-
+		
 	function Client(pkg) {
 		this.pkg = pkg;
 
@@ -74,9 +74,13 @@
 	// TODO: probably want to limit this to the needed set of interfaces
 	Client.prototype = F5.Clients.f5;
 
-	F5.pendingModules.forEach(function (module) {
-		F5.Clients[module.pkg] = F5.Clients[module.pkg] || new Client(module.pkg);
-		module.cb(F5.Clients[module.pkg]);
-	});
-	delete F5.pendingModules;	
+	F5.registerPendingModules = function () {
+		F5.pendingModules.forEach(function (module) {
+			F5.Clients[module.pkg] = F5.Clients[module.pkg] || new Client(module.pkg);
+			module.cb(F5.Clients[module.pkg]);
+		});
+		F5.pendingModules = [];		
+	};
+
+	F5.registerPendingModules();
 }());

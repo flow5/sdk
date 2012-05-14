@@ -437,11 +437,12 @@
 	// finds all of the elements marked with f5applyscope and then
 	// scopes the elements with ids using scope
 	F5.scopePackages = function () {
-		F5.forEach(document.querySelectorAll('[f5id=f5applyscope]'), function (scope) {
+		F5.forEach(document.body.querySelectorAll('[f5applyscope]'), function (scope) {
 			var pkg = scope.getAttribute('f5pkg');
 			F5.forEach(scope.querySelectorAll('[id]'), function (template) {
 				template.id = pkg + '.' + template.id;
 			});			
+			scope.removeAttribute('f5applyscope');
 		});	
 		
 		// scope the css rules as well
@@ -454,7 +455,8 @@
 			var owner = styleSheet.ownerNode || styleSheet.ownerElement;
 			if (owner) {
 				var pkg = owner.getAttribute('f5pkg');
-				if (pkg && !pkg.match('f5')) {
+				if (owner.getAttribute('f5applyscope') && pkg && !pkg.match('f5')) {
+					owner.removeAttribute('f5applyscope');
 					var j;
 					var length = styleSheet.cssRules.length;
 					
@@ -631,6 +633,40 @@
 		
 		return mapping[canonicalName];
 	};
+	
+	F5.importPackage = function (pkg, cb) {
+		if (F5.valueFromId(F5.Flows, pkg)) {
+			cb();
+			return;
+		}
+		
+		// imported packages have to be inlined to be evaluated properly
+		var url = location.href.replace(F5.query.pkg, pkg).replace('inline=false', 'inline=true') + '&import=true';
+		return F5.doXHR('GET', url, null, 
+			function success(result, status) {
+				var d = document.implementation.createHTMLDocument('import');
+				d.documentElement.innerHTML = result;
+				var scripts = d.querySelectorAll('script');
+				F5.forEach(d.head.childNodes, function (el) {
+					document.head.appendChild(el);
+				});
+				F5.forEach(d.body.childNodes, function (el) {
+					document.body.appendChild(el);
+				});
+				F5.scopePackages();
+				F5.forEach(scripts, function (script) {
+					eval(script.textContent);
+				});
+				F5.registerPendingModules();
+				
+				if (cb) {
+					cb();
+				}
+			},
+			function error(status) {
+				
+			});
+	};	
 			
 }());
 

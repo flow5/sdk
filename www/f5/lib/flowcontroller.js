@@ -273,6 +273,29 @@
 			waitTasks.push(task);
 		};
 		
+		this.importNode = function (id, flowspec, parent, pkg, cb) {
+			var node = F5.Global.flow.importNode(id, flowspec, parent, pkg);
+			if (node.active) {
+				nodeInitialize(node, function () {
+					nodeWillBecomeActive(node, function () {				
+						nodeDidBecomeActive(node, function () {
+							that.refresh();
+							// flush any tasks that were queued up during lifecycle events
+							flushWaitTasks(function () {
+								flowObservers.forEach(function (observer) {									
+									if (observer.update) {
+										observer.update();
+									}
+								});								
+								cb();
+							});
+						});
+					});																		
+				});								
+				
+			}
+		};
+		
 		// select the child of node with the given id
 		this.doSelection = function (node, id, cb) {	
 			F5.assert(node.type === 'set', 'Can only doSelection on node of type set');
