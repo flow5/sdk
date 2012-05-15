@@ -457,17 +457,16 @@
 				var pkg = owner.getAttribute('f5pkg');
 				if (owner.getAttribute('f5applyscope') && pkg && !pkg.match('f5')) {
 					owner.removeAttribute('f5applyscope');
-					var j;
 					var length = styleSheet.cssRules.length;
 					
 					// WebKit allows CSSRules to be modified in places and maintains
 					// the source line number which is nice for debugging
+					var j, k, selectors;
 					if (navigator.userAgent.match(/WebKit/)) {					
 						for (j = 0; j < length; j += 1) {
 							var rule = styleSheet.cssRules[j];
 							if (rule.selectorText) {
-								var selectors = rule.selectorText.split(',');
-								var k;
+								selectors = rule.selectorText.split(',');
 								for (k = 0; k < selectors.length; k += 1) {
 									selectors[k] = '.' + F5.packageClass(pkg) + ' ' + selectors[k];
 								}	
@@ -475,27 +474,21 @@
 							}
 						}
 					} else {
-						var rules = [];
+						var scopedCSSText = '';
 						for (j = 0; j < length; j += 1) {
-							rules.push({selectorText: styleSheet.cssRules[j].selectorText, 
-												cssText: styleSheet.cssRules[j].cssText});
-						}
-						for (j = 0; j < length; j += 1) {
-							styleSheet.deleteRule(0);
-						}
-						rules.forEach(function (rule) {
-							if (rule.selectorText) {
-								var selectors = rule.selectorText.split(',');
-								var k;
+							var selectorText = styleSheet.cssRules[j].selectorText;
+							var cssText = styleSheet.cssRules[j].cssText;
+							if (selectorText) {
+								selectors = selectorText.split(',');
 								for (k = 0; k < selectors.length; k += 1) {
 									selectors[k] = '.' + F5.packageClass(pkg) + ' ' + selectors[k];
-								}												
-								styleSheet.insertRule(rule.cssText.replace(rule.selectorText, selectors.join(',')), 
-												styleSheet.cssRules.length);							
+								}				
+								scopedCSSText += cssText.replace(selectorText, selectors.join(','));
 							} else {
-								styleSheet.insertRule(rule.cssText, styleSheet.cssRules.length);
-							}					
-						});						
+								scopedCSSText += cssText;
+							}
+						}					
+						owner.innerHTML = scopedCSSText;					
 					}
 				}				
 			}
@@ -644,8 +637,9 @@
 		var url = location.href.replace(F5.query.pkg, pkg).replace('inline=false', 'inline=true') + '&import=true';
 		return F5.doXHR('GET', url, null, 
 			function success(result, status) {
-				var d = document.implementation.createHTMLDocument('import');
+				var d = document.implementation.createHTMLDocument('');
 				d.documentElement.innerHTML = result;
+				
 				var scripts = d.querySelectorAll('script');
 				F5.forEach(d.head.childNodes, function (el) {
 					document.head.appendChild(el);
@@ -653,6 +647,7 @@
 				F5.forEach(d.body.childNodes, function (el) {
 					document.body.appendChild(el);
 				});
+				
 				F5.scopePackages();
 				F5.forEach(scripts, function (script) {
 					eval(script.textContent);
