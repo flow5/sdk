@@ -141,7 +141,8 @@ function Form() {
 		Form.prototype.refresh.call(this);						
 	};
 	
-	this.widgetWillBecomeActive = function () {					
+	this.widgetWillBecomeActive = function () {		
+		Form.prototype.widgetWillBecomeActive.call(this);
 		this.refresh();			
 	};
 	
