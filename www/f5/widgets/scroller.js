@@ -320,6 +320,10 @@ F5.registerModule(function(F5) {
 			}			
 			
 			F5.addTouchStartListener(this.el, function (e) {
+				if (!that.enabled) {
+					return;
+				}
+				
 				startHandler(that, e);
 				// makes the scroller play nice in a desktop browser
 				if (!F5.isMobile()) {
