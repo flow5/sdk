@@ -26,7 +26,7 @@
 ***********************************************************************************************************************/
 /*global commands, F5:true, XMLHttpRequest:true*/
 
-F5 = {query: {devserv:'localhost:8008'}};
+F5 = {query: {devserv:'http://localhost:8008'}};
 
 var http = require('http'),
 	cli = require('cli'),

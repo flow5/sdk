@@ -30,7 +30,7 @@ var http = require('http'),
 	cli = require('cli'),
 	vm = require('vm');
 	
-F5 = {query: {devserv:'localhost:8008', protocol:'http'}};
+F5 = {query: {devserv:'http://localhost:8008'}};
 	
 require('../lib/utils.js');
 require('./pipe.js');
