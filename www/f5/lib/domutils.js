@@ -633,8 +633,12 @@
 			return;
 		}
 		
-		// imported packages have to be inlined to be evaluated properly
-		var url = location.href.replace(F5.query.pkg, pkg).replace('inline=false', 'inline=true') + '&import=true';
+		var url = location.href.replace(F5.query.pkg, pkg);
+		if (url.match('/generate?')) {
+			// imported packages have to be inlined to be evaluated properly
+			url = url.replace('inline=false', 'inline=true') + '&lib=true';			
+		}		
+		
 		return F5.doXHR('GET', url, null, 
 			function success(result, status) {
 				var d = document.implementation.createHTMLDocument('');

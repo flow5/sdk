@@ -692,13 +692,13 @@
 		
 		var query = F5.clone(F5.query);
 		query.pkg = pkg;
-		query.import = true;
+		query.lib = true;
 		var parameters = [];
 		F5.forEach(query, function (key, value) {
 			parameters.push(key + '=' + value);
 		});
 		
-		var url = 'http://' + F5.query.devserv + '/generate?' + parameters.join('&');
+		var url = F5.query.devserv + '/generate?' + parameters.join('&');
 		return F5.doXHR('GET', url, null, 
 			function success(result, status) {
 				eval(result);

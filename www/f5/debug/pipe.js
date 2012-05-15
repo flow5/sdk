@@ -28,7 +28,7 @@
 
 (function () {
 	
-	var baseUrl = 'http://' + F5.query.devserv + '/';
+	var baseUrl = F5.query.devserv + '/';
 	
 	function Pipe() {
 		this.open = function (id, channel, cb) {

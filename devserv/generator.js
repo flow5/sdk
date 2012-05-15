@@ -217,7 +217,7 @@ exports.generateScript = function (query) {
 		script += 'F5.popPkg();\n';
 	}
 			
-	if (!query.import) {
+	if (!query.lib) {
 		script += '// www/f5/lib/f5.js\n';				
 		script += fs.readFileSync('www/f5/lib/f5.js').toString() + '\n';	
 		script += 'F5.query = ' + JSON.stringify(query) + '\n';				
@@ -225,7 +225,7 @@ exports.generateScript = function (query) {
 				
 	injectManifest(query.pkg);
 
-	if (!query.import) {
+	if (!query.lib) {
 		script += '// www/f5/lib/register.js\n';				
 		script += fs.readFileSync('www/f5/lib/register.js').toString() + '\n';	
 		script += '// www/f5/lib/headlessstart.js\n';				
@@ -684,7 +684,7 @@ exports.generateHtml = function (query) {
 	/************** BUILD **************/
 	/***********************************/
 					
-	if (!query.import) {
+	if (!query.lib) {
 		// manifest	
 		var manifestString = 'cache.manifest?' + urlParameters(query);
 		document.setAttribute('manifest', manifestString);	
@@ -729,7 +729,7 @@ exports.generateHtml = function (query) {
 																				
 					
 	// finally		
-	if (!query.import) {
+	if (!query.lib) {
 		document.body.appendChild(makeScript('f5/lib/register.js'));				
 		document.body.appendChild(makeScript('f5/lib/domstart.js'));						
 	}	

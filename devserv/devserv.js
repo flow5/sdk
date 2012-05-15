@@ -198,9 +198,7 @@ function doGenerate(query, req, res) {
 			query.mobile = 'false';
 		}
 	}
-	
-	query.devserv = req.headers.host;
-	
+		
 	try {			
 		verifyQueryParameters(query);
 
@@ -243,7 +241,8 @@ function doIDE(query, req, res) {
 		compress: 'false',
 		mobile: 'false',
 		native: 'false',
-		app: query.app
+		app: query.app,
+		devserv: query.devserv
 	}, req, res);	
 }
 
@@ -452,9 +451,9 @@ cli.main(function (args, options) {
 	
 	options.port = process.env.npm_package_config_port || options.port || 8008;
 	
-	function handleRequest(req, res) {
+	function handleRequest(req, res, protocol) {
 		// prevent directory climbing through passed parameters
-		var parsed = url.parse(req.url.replace('..', ''), true);		
+		var parsed = url.parse(req.url.replace('..', ''), true);	
 		
 		var pathname = url.parse(req.url).pathname;
 		
@@ -463,6 +462,8 @@ cli.main(function (args, options) {
 			console.log(pathname);
 			console.log(parsed);		
 		}
+		
+		parsed.query.devserv = protocol + '://' + req.headers.host;		
 				
 		switch (req.method) {
 			case 'POST':
@@ -545,7 +546,7 @@ cli.main(function (args, options) {
 		if (options.verbose) {
 			showRequest(req, true);			
 		}		
-		handleRequest(req, res);		
+		handleRequest(req, res, 'http');		
 	}).listen(options.port);
 	
 	var httpsOptions = {
@@ -555,8 +556,8 @@ cli.main(function (args, options) {
 	https.createServer(httpsOptions, function (req, res) {
 		if (options.verbose) {
 			showRequest(req, true);			
-		}
-		handleRequest(req, res);										
+		}		
+		handleRequest(req, res, 'https');										
 	}).listen(options.port + 1);
 		
 	console.log('WEBROOT:' + WEBROOT);
