@@ -50,18 +50,19 @@ F5.registerModule(function(F5) {
 
 		if (duration) {
 			var bezier = 'cubic-bezier(' + bezierValues.join(',') + ')';
-			scroller.el.style[F5.styleName('transition')] = '-webkit-transform ' + duration + 's ' + bezier;	
-			
+			scroller.el.style[F5.styleName('transition')] = F5.styleName('transform') + ' ' + duration + 's ' + bezier;	
+
 			if (F5.platform() === 'android') {
 				useAndroidTransformWorkaround = true;
 			}
+			scroller.animating = true;
 		} else {
 			// Android has varous bugs where operations don't "take" during an animation if the operation
 			// isn't also executing in the animation context
 			// in this case, the change to -webkit-transform is ignored (sometimes) unless there
 			// is still a transition in place
 			if (useAndroidTransformWorkaround) {
-				scroller.el.style[F5.styleName('transition')] = '-webkit-transform .0001s linear';				
+				scroller.el.style[F5.styleName('transition')] = F5.styleName('transform') + ' .0001s linear';				
 				useAndroidTransformWorkaround = false;
 			} else {
 				scroller.el.style[F5.styleName('transition')] = '';				

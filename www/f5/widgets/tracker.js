@@ -99,7 +99,7 @@ F5.registerModule(function(F5) {
 		};
 		
 		this.animateTo = function (delta) {
-			this.el.style[F5.styleName('transition')] = '-webkit-transform .25s';
+			this.el.style[F5.styleName('transition')] = F5.styleName('transform') + ' .25s';
 			this.el.style[F5.styleName('transform')] = 'translate3d(' + delta.x + 'px,' + delta.y + 'px, 0px)';			
 		};
 	}

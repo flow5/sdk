@@ -59,7 +59,7 @@
 				F5.addTransitionEndListener(oldEl, complete);	
 			}
 			
-			var transition = '-webkit-transform .25s ease-out';
+			var transition = F5.styleName('transform') + ' .25s ease-out';
 			oldEl.style[F5.styleName('transition')] = transition;
 			newEl.style[F5.styleName('transition')] = transition;
 			
@@ -105,7 +105,7 @@
 				F5.addTransitionEndListener(overEl, complete);	
 			}
 			
-			var transition = '-webkit-transform .25s ease-in ';
+			var transition = F5.styleName('transform') + ' .25s ease-in ';
 			overEl.style[F5.styleName('transition')] = transition;
 			
 			if (distance < 0) {
@@ -137,7 +137,7 @@
 		
 			F5.addTransitionEndListener(overEl, complete);	
 			
-			var transition = '-webkit-transform .25s ease-in ';
+			var transition = F5.styleName('transform') + ' .25s ease-in ';
 			overEl.style[F5.styleName('transition')] = transition;
 			
 			if (distance < 0) {
@@ -178,7 +178,7 @@
 				F5.addTransitionEndListener(el, complete);	
 			}
 			
-			var transition = '-webkit-transform .25s ease-in';
+			var transition = F5.styleName('transform') + ' .25s ease-in';
 			el.style[F5.styleName('transition')] = transition;
 			
 			if (distance < 0) {
