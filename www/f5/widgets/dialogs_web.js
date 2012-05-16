@@ -69,7 +69,7 @@ F5.registerModule(function (F5) {
 			}
 			
 			var that = this;			
-			document.getElementById('f5screen').appendChild(that.el);			
+			document.getElementById('root').querySelector('.root').appendChild(that.el);			
 			setTimeout(function () {
 				that.el.style.opacity = 0.95;							
 			}, 0);			

@@ -34,19 +34,12 @@ F5.registerModule(function(F5) {
 		};
 		
 		this.refresh = function (data) {
-			var id = this.el.getAttribute('f5id');
-			var value = F5.valueFromId(data, id);
-			
-			if (typeof value === 'undefined') {
-				var className = this.el.getAttribute('f5class');
-				if (className) {
-					value = data['.' + className];
-				}								
-			}
-			
-			if (typeof value !== 'undefined') {				
+			if (typeof data !== 'undefined') {	
+				var value;			
 				if (this.formatValue) {
-					value = this.formatValue(value, id, data);
+					value = this.formatValue(data);
+				} else {
+					value = data;
 				}
 				
 				this.el.textContent = value;				
@@ -58,8 +51,8 @@ F5.registerModule(function(F5) {
 	
 	
 	function Telephone() {
-		this.formatValue = function (value) {
-			var tmp = value.replace(/[^0-9]/g, '');
+		this.formatValue = function (data) {
+			var tmp = data.replace(/[^0-9]/g, '');
 			
 			if (tmp.length === 7) {
 				tmp = tmp.substring(0,3) + '-' + tmp.substring(3, 7);
@@ -77,8 +70,8 @@ F5.registerModule(function(F5) {
 	F5.Prototypes.Widgets.Telephone = new Telephone();	
 	
 	function Date() {
-		this.formatValue = function (value) {
-			return value.toDateString();
+		this.formatValue = function (data) {
+			return data.toDateString();
 		};
 	}
 	Date.prototype = new StaticText();
@@ -88,17 +81,8 @@ F5.registerModule(function(F5) {
 	
 	// TODO: quick and dirty. could use fleshing out
 	function TextWithLabel() {
-		this.formatValue = function (value, id, data) {
-			var label = F5.valueFromId(data, 'labels.' + id);
-			
-			if (!label) {
-				var className = this.el.getAttribute('f5class');
-				if (className) {
-					label = F5.valueFromId(data['.' + className], 'labels.' + id);
-				}								
-			}
-			
-			return label + ': ' + value;
+		this.formatValue = function (data) {
+			return data.label + ': ' + data.value;
 		};
 		
 	}	

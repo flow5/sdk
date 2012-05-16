@@ -33,19 +33,8 @@ F5.registerModule(function(F5) {
 			this.refresh(data);				
 		};
 		
-		this.refresh = function (data) {
-			var id = this.el.getAttribute('f5id');
-			// NOTE: valueFromId handles period delimited ids. probably going to get rid of this in favor of scoping
-			var value = F5.valueFromId(data, id);
-
-			if (!value) {
-				var className = this.el.getAttribute('f5class');
-				if (className) {
-					value = data['.' + className];
-				}								
-			}
-			
-			if (value) {
+		this.refresh = function (data) {			
+			if (data) {
 				if (!this.img) {
 					this.img = document.createElement('img');	
 					this.el.appendChild(this.img);	
@@ -65,10 +54,10 @@ F5.registerModule(function(F5) {
 				}
 				
 				this.img.style.visibility = '';					
-				if (F5.ImagePreloader.isImagePreloader(value)) {
-					this.img.src = value.src();					
+				if (F5.ImagePreloader.isImagePreloader(data)) {
+					this.img.src = data.src();					
 				} else {
-					this.img.src = value;
+					this.img.src = data;
 				}
 			}			
 		};

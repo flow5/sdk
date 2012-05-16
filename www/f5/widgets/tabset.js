@@ -59,7 +59,7 @@ F5.registerModule(function(F5) {
 	function Tabset() {
 					
 		this.construct = function (data) {
-			this.data = data;		
+			this.data = data || {};		
 			F5.addClass(this.el, 'f5tabset');
 		};
 		

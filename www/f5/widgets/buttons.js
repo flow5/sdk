@@ -255,35 +255,18 @@ F5.registerModule(function (F5) {
 				}				
 			}
 			
-			this.data = data;
+			if (typeof data === 'object') {
+				this.data = data;				
+			} else {
+				this.data = data ? {label: data} : {};
+			}
 			this.state = false;				
 			F5.addClass(that.el, 'f5button-up');									
 			F5.addClass(this.el, 'f5button');			
 
 			/* label can be defined by putting it in the HTML */
 			var mergedData = {label: this.labelText};
-						
-			// first apply styles from the Button class
-			var className = this.el.getAttribute('f5class');
-			if (className) {
-				var classData = data['.' + className];
-				if (typeof classData === 'string') {
-					mergedData.label = classData;
-				} else {					
-					F5.merge(classData, mergedData);
-				}
-			}
-			
-			var id = this.el.getAttribute('f5id');
-			if (id) {
-				var instanceData = data[id];
-				if (typeof instanceData === 'string') {
-					mergedData.label = instanceData;
-				} else {
-					F5.merge(instanceData, mergedData);				
-				}				
-			}
-
+			F5.merge(this.data, mergedData);						
 			applyResourceData(mergedData);			
 		};
 	}	

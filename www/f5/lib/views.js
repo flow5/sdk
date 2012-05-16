@@ -52,9 +52,9 @@
 				}				
 			}		
 			
-			var pkg = F5.nodePackage(node);			
+			var pkg = F5.getNodePackage(node);			
 																					
-			var nodeEl = F5.loadTemplate(node.id, F5.getNodeData(node), pkg);
+			var nodeEl = F5.loadTemplate(node.id, node);
 			if (!nodeEl) {
 				nodeEl = document.createElement('div');
 				F5.addClass(nodeEl, node.id);					
@@ -62,14 +62,14 @@
 			F5.addClass(nodeEl, 'f5node');	
 																								
 			if (node.children) {								
-				var headerTemplate = F5.loadTemplate(node.id + '-header', F5.getNodeData(node), pkg);
+				var headerTemplate = F5.loadTemplate(node.id + '-header', node);
 				if (headerTemplate) {
 					attachTabset(headerTemplate);
 					nodeEl.appendChild(headerTemplate);
 				}
 								
 				var container = document.createElement('div');
-				var containerTemplate = F5.loadTemplate(node.id + '-container', F5.getNodeData(node), pkg);
+				var containerTemplate = F5.loadTemplate(node.id + '-container', node);
 				if (containerTemplate) {
 					var frame = document.createElement('div');
 					F5.addClass(frame, 'f5frame');
@@ -84,7 +84,7 @@
 				F5.addClass(container, 'f5container');
 				nodeEl.appendChild(container);	
 				
-				var footerTemplate = F5.loadTemplate(node.id + '-footer', F5.getNodeData(node), pkg);
+				var footerTemplate = F5.loadTemplate(node.id + '-footer', node);
 				if (footerTemplate) {
 					attachTabset(footerTemplate);
 					nodeEl.appendChild(footerTemplate, this.container);
@@ -121,7 +121,7 @@
 			this.node = node;
 			node.view = this;						
 			
-			var id = F5.nodePackage(node) + '.' + node.id;
+			var id = F5.getNodePackage(node) + '.' + node.id;
 			var viewDelegatePrototype = this.getViewDelegatePrototype(id);			
 			if (viewDelegatePrototype) {
 				var delegate = F5.objectFromPrototype(viewDelegatePrototype);

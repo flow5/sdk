@@ -26,6 +26,8 @@
 ***********************************************************************************************************************/
 /*global F5*/
 
+// TODO: 
+
 F5.registerModule(function (F5) {	
 	function Loader() {		
 		this.construct = function (data) {			
@@ -33,6 +35,6 @@ F5.registerModule(function (F5) {
 			this.el.appendChild(template);
 		};
 	}
-	
-	F5.Prototypes.Widgets.Loader = new Loader();	
+
+//	F5.Prototypes.Widgets.Loader = new Loader();	
 });

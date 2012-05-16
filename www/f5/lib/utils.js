@@ -208,7 +208,7 @@
 			F5.extend(parameters, get('parameters'));			
 		}
 		
-		var service = F5.valueFromId(F5.Services, F5.nodePackage(node));		
+		var service = F5.valueFromId(F5.Services, F5.getNodePackage(node));		
 		extendParameters(service);						
 		F5.forEach(name.split('.'), function (component) {
 			service = service && service[component];
@@ -437,15 +437,30 @@
 				F5.assert(typeof dst[id] === 'object', 'mismatched data schema');
 				F5.forEach(value, function (valueid, value) {
 					if (dst[id][valueid]) {
-						console.log('WARNING: data field name shadowed: ' + id + '.' + valueid);										
+						if (typeof value === 'object' || typeof dst[id][valueid] !== 'object') {
+							console.log('WARNING: data field name shadowed: ' + id + '.' + valueid);										
+							dst[id][valueid] = value;													
+						} else {
+							// otherwise shove the value into the object
+							// TODO: this needs to be documented clearly. obscure behavior
+							dst[id][valueid].value = value;
+						}
+					} else {
+						dst[id][valueid] = value;						
 					}
-					dst[id][valueid] = value;
 				});
 			} else {
 				if (dst[id]) {
-					console.log('WARNING: data field name shadowed: ' + id);										
+					if (typeof value === 'object' || typeof dst[id] !== 'object') {
+						console.log('WARNING: data field name shadowed: ' + id);
+						dst[id] = value;						
+					} else {
+						dst[id].value = value;
+					}
+				} else {
+					dst[id] = value;					
 				}
-				dst[id] = value;
+				
 			}
 		}
 		if (src && typeof src === 'object') {
@@ -460,14 +475,13 @@
 	F5.getNodeData = function (node, userData) {
 		// if arg2 is provided, copy out its fields
 		var data = {};
-		F5.merge(userData, data);
 		
 		// then add all of the resources associated with this node and ancestors
 		var traverse = node;
 		while (traverse) {
 			var resourceData = {};
 			
-			var pkgResources = F5.valueFromId(F5.Resources, F5.nodePackage(node));	
+			var pkgResources = F5.valueFromId(F5.Resources, F5.getNodePackage(node));	
 			if (pkgResources) {
 				F5.merge(pkgResources[traverse.id], resourceData);				
 			}	
@@ -486,6 +500,8 @@
 		if (node){
 			F5.merge(node.data, data);			
 		}
+		
+		F5.merge(userData, data);		
 		
 		return data;
 	};	
@@ -623,7 +639,7 @@
 		return google.maps.geometry.spherical.computeDistanceBetween(latLng1, latLng2);		
 	};
 	
-	F5.nodePackage = function (node) {
+	F5.getNodePackage = function (node) {
 		var pkg = node.pkg;
 		while (!pkg && node.parent) {
 			node = node.parent;

@@ -56,21 +56,14 @@ function Input() {
 		container.appendChild(this.label);
 		F5.addClass(this.label, 'f5label');	
 
-//		var spacer = document.createElement('div');
-//		container.appendChild(spacer);
-//		F5.addClass(spacer, 'f5spacer');	
-		
-		
 		var id = this.el.getAttribute('f5id');
 		
-		var labelText = F5.valueFromId(data.labels, id);
-		if (labelText) {
-			this.label.textContent = labelText;			
+		if (data && data.label) {
+			this.label.textContent = data.label;			
 		}
 		
-		var placeholderText = F5.valueFromId(data.placeholders, id);
-		if (placeholderText) {
-			this.placeholder.textContent = placeholderText;			
+		if (data && data.placeholder) {
+			this.placeholder.textContent = data.placeholder;			
 		}					
 
 					
@@ -85,9 +78,8 @@ function Input() {
 				}				
 			};
 			
-			var options = F5.valueFromId(data.options, id);
-			if (options) {
-				options.forEach(function (option) {
+			if (data && data.options) {
+				data.options.forEach(function (option) {
 					var optionEl = document.createElement('option');
 					optionEl.textContent = option;
 					that.input.appendChild(optionEl);						
@@ -232,9 +224,8 @@ function Input() {
 	
 	// TODO: might want to be able to make menu options dynamic also
 	this.refresh = function (data) {
-		var valueText = F5.valueFromId(data.values, this.el.getAttribute('f5id'));	
-		if (valueText) {
-			this.setValue(valueText);
+		if (data && data.value) {
+			this.setValue(data.value);
 			this.placeholder.style.display = 'none';
 		} else {
 			this.setValue('');

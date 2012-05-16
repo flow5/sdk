@@ -40,7 +40,7 @@ F5.registerModule(function (F5) {
 			var width = screen.offsetWidth;
 			var that = this;
 			
-			this.data = data[this.el.getAttribute('f5id')];	
+			this.data = data;
 			
 			window.addEventListener('resize', function () {
 				that.refresh();

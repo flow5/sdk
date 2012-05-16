@@ -73,7 +73,7 @@
 			
 			if (event === 'Initialize') {
 				if (!node.flowDelegate) {
-					var id = F5.nodePackage(node) + '.' + node.id;
+					var id = F5.getNodePackage(node) + '.' + node.id;
 					var flowDelegatePrototype = F5.getPrototype('FlowDelegates', id);
 					if (flowDelegatePrototype) {
 						node.flowDelegate = F5.objectFromPrototype(flowDelegatePrototype);

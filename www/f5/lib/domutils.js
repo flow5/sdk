@@ -211,7 +211,7 @@
 			message += '';
 		}		
 		
-		var alert = F5.createWidget('Alert', {title: title, message: message});
+		var alert = F5.createWidget('Alert', {alert: {title: title, message: message}}, 'alert');
 		alert.widget.setAction(action);
 		alert.widget.present();
 		return alert.widget;
@@ -222,7 +222,7 @@
 			message += '';
 		}		
 		
-		var confirm = F5.createWidget('Confirm', {title: title, message: message});
+		var confirm = F5.createWidget('Confirm', {confirm: {title: title, message: message}}, 'confirm');
 		confirm.widget.setAction(action);
 		confirm.widget.present();
 		return confirm.widget;
@@ -400,40 +400,6 @@
 				height: el.offsetHeight};
 	};	
 	
-	F5.attachWidget = function(el, f5widget, data, pkg) {
-		F5.assert(!el.widget, 'Widget already attached to element');
-		
-		// NOTE: this is just for readability in the DOM inspector
-		if (!el.getAttribute('f5widget')) {
-			el.setAttribute('f5widget', f5widget);
-		}
-
-		pkg = pkg || this.pkg;
-
-		// fully qualifed widget name
-		var prototypes, prototype;
-		if (f5widget.split('.').length === 1) {
-			prototypes = F5.valueFromId(F5.Prototypes, pkg);
-			prototype = prototypes.Widgets[f5widget];
-		} else {
-			var components = f5widget.split('.');
-			var widgetName = components.pop();
-			prototypes = F5.valueFromId(F5.Prototypes, components.join('.'));
-			prototype = prototypes.Widgets[widgetName];
-		}					
-		F5.assert(prototype, 'No widget: ' + f5widget);
-		
-		var widget = F5.objectFromPrototype(prototype);
-		widget.el = el;
-		el.widget = widget;
-		
-		var className = el.getAttribute('f5class');
-		if (className) {
-			F5.addClass(el, className);
-		}
-		widget.construct(data);		
-	};
-	
 	// finds all of the elements marked with f5applyscope and then
 	// scopes the elements with ids using scope
 	F5.scopePackages = function () {
@@ -494,18 +460,6 @@
 			}
 		}
 		
-	};
-	
-	F5.createWidget = function(f5widget, data, f5id, f5class) {
-		var el = document.createElement('div');
-		if (f5id) {
-			el.setAttribute('f5id', f5id);			
-		}
-		if (f5class) {
-			el.setAttribute('f5class', f5class);			
-		}		
-		F5.attachWidget(el, f5widget, data, this.pkg);
-		return el;		
 	};
 	
 	F5.getElementById = function (el, f5id) {

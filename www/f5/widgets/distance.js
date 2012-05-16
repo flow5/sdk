@@ -79,13 +79,13 @@ F5.registerModule(function (F5) {
 		};
 		
 		this.construct = function (data) {
-			this.location = data.location;
+			this.location = data;
 			
-			updateLocation(this, data.location);			
+			updateLocation(this, this.location);			
 			// TODO: setup a callback to update location when it changes
 			var that = this;
 			document.addEventListener('locationchanged', function () {
-				updateLocation(that, data.location);
+				updateLocation(that, this.location);
 			});
 		};
 	}
