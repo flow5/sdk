@@ -67,11 +67,11 @@ F5.registerModule(function(F5) {
 		};
 		
 		this.show = function () {
-//			F5.callBridgeSynchronous('com.flow5.webview', 'show');
+
 		};
 		
 		this.hide = function () {
-//			F5.callBridgeSynchronous('com.flow5.webview', 'hide');			
+
 		};	
 		
 		this.openHTML = function (html) {

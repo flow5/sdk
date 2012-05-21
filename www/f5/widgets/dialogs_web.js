@@ -64,10 +64,6 @@ F5.registerModule(function (F5) {
 		};
 		
 		this.present = function (message) {
-			if (typeof PhoneGap !== 'undefined') {
-				F5.callBridgeSynchronous('com.flow5.maskregion', 'disable');
-			}
-			
 			var that = this;			
 			document.getElementById('root').querySelector('.root').appendChild(that.el);			
 			setTimeout(function () {
@@ -76,10 +72,6 @@ F5.registerModule(function (F5) {
 		};
 		
 		this.dismiss = function (cb) {
-			if (typeof PhoneGap !== 'undefined') {
-				F5.callBridgeSynchronous('com.flow5.maskregion', 'enable');
-			}
-			
 			var that = this;
 			
 			function fadeComplete() {
