@@ -245,10 +245,12 @@
 	};
 		
 	// TODO: decompose path to allow references to nested components
-	F5.subflow = function (pkg, path) {
+	F5.nodeFromPathInPackage = function (pkg, path) {
 		var id = pkg;
 		if (path) {
-			id += '.children.' + path;
+			path.split('.').forEach(function (component) {
+				id += '.children.' + component;			
+			});			
 		}
 		return F5.clone(F5.valueFromId(F5.Flows, id));
 	};
@@ -277,6 +279,7 @@
 	// NOTE: overridden by domutils.js
 	// this method is used for headless testing
 	F5.importPackage = function (pkg, cb) {
+		/*jslint evil:true*/
 		if (F5.valueFromId(F5.Flows, pkg)) {
 			cb();
 			return;
