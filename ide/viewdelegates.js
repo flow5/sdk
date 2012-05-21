@@ -289,7 +289,7 @@ F5.registerModule(function (F5) {
 
 			function isCluster(node) {
 				return node.transitions || node.children || node.subflows || 
-									(node.parent && node.parent.type === 'set');
+									(node.parent && node.parent.type === 'tabset');
 			}
 
 			function activeColorAttribute(attr) {
@@ -602,7 +602,7 @@ F5.registerModule(function (F5) {
 						});
 					}										
 
-					if (parent && parent.type === 'set') {
+					if (parent && parent.type === 'tabset') {
 						addSelectionButton(node, parent, node.id);
 					}
 
@@ -663,7 +663,7 @@ F5.registerModule(function (F5) {
 							} 
 							// if the toNode is the child of a set then it's a cluster
 							// because of the selection button. so grab the button
-							else if (toNode.parent.type === 'set') {
+							else if (toNode.parent.type === 'tabset') {
 								toPath = toNode.parent.path + '_' + toNode.id;
 							} 
 							// if the toNode has subflows then it's a cluster, so grab

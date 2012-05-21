@@ -47,7 +47,7 @@
 		return node.activeSubflow;
 	};
 
-	// TODO: use with caution. there may eventually be more than one
+	// NOTE: only works for nodes with selection
 	F5.Flow.getActiveLeafNode = function () {
 		var node = this.root;
 		while (node.selection) {

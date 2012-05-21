@@ -28,6 +28,8 @@
 
 // TODO: use namespacing for Services like Widgets
 (function () {	
+	// TODO: move networkActivityUI stuff out
+	
 //	var networkActivityCount = 0;
 	function networkActivityStarted() {
 //		networkActivityCount += 1;
@@ -64,7 +66,6 @@
 
 //		console.log(url);
 //		console.log(body);
-
 
 		if (headers) {
 			F5.forEach(headers, function (id, value) {
@@ -111,11 +112,7 @@
 
 		// WORKAROUND: it seems that xhr.send can cause pending events to fire with reentrancy
 		// TODO: reference RADAR bug report
-		// some queued events
 		setTimeout(function () {
-			/*global Iuppiter*/
-//			var compressed = Iuppiter.Base64.encode(Iuppiter.compress(body));
-//			xhr.send(compressed);
 			networkActivityStarted();
 			xhr.send(body);
 		}, 0);	
@@ -149,6 +146,7 @@
 			node.pending = [];
 		}
 
+		// check for connection
 		// TODO: connection test for headless mode
 		if (F5.connection && !F5.connection.online()) {
 			// TODO: make this message configurable from client
@@ -158,6 +156,7 @@
 			return;
 		}				
 
+		// get the parameters
 		var components = id.split(':');
 		var name = components[0];
 		var qualifier = components[1];
@@ -228,11 +227,6 @@
 			url += extendedUrl;
 		}
 
-		// TODO: obsolete
-		if (resourceName) {
-			url += '/' + resourceName;
-		}
-
 		function validate(obj, schema) {
 			var report = F5.JSV.env.validate(obj, schema);
 			F5.assert(report.errors.length === 0,
@@ -253,6 +247,11 @@
 			}
 		}		
 
+		// TODO: obsolete. use component replacement below 
+		if (resourceName) {
+			url += '/' + resourceName;
+		}
+
 		// DO URL path component replacement
 		F5.forEach(parameters, function (id, value) {
 			var key = '<' + id + '>';
@@ -261,22 +260,6 @@
 				delete parameters[id];
 			}
 		});		
-
-
-		function formatUrlParameters(parameters, keys) {
-			var urlParameters = [];
-			F5.forEach(parameters, function (id, value) {
-				if (!keys || keys.indexOf(id) !== -1) {
-					urlParameters.push(id + '=' + encodeURIComponent(value));					
-				}
-			});
-			if (urlParameters.length) {
-				return '?' + urlParameters.join('&');				
-			} else {
-				return '';
-			}			
-		}
-
 
 		var pending = {abort: function () {
 //			console.log('aborting pending')
@@ -306,10 +289,24 @@
 				console.log(title + ' ' + message);
 				pending.timeout = setTimeout(timeout, timeoutMS);				
 			}
-		}		
+		}					
 
 		// TODO: might also want to allow cancelling if there's no node (currently only done from tools)
-		pending.timeout = setTimeout(timeout, timeoutMS);			
+		pending.timeout = setTimeout(timeout, timeoutMS);
+		
+		function formatUrlParameters(parameters, keys) {
+			var urlParameters = [];
+			F5.forEach(parameters, function (id, value) {
+				if (!keys || keys.indexOf(id) !== -1) {
+					urlParameters.push(id + '=' + encodeURIComponent(value));					
+				}
+			});
+			if (urlParameters.length) {
+				return '?' + urlParameters.join('&');				
+			} else {
+				return '';
+			}			
+		}					
 
 		if (method === 'GET' || method === 'DELETE') {			
 			url += formatUrlParameters(parameters);

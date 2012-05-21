@@ -93,7 +93,7 @@
 		}		
 	};	
 	
-	F5.parseResources = function () {		
+	F5.parseResources = function (package) {		
 		function isImageResource(resource) {
 			return resource.indexOf('.png') !== -1 || 
 					resource.indexOf('.jpg') !== -1 ||
@@ -117,7 +117,7 @@
 				}
 			});			
 		}
-		preloadImagesRecursive(F5.Resources);		
+		preloadImagesRecursive(F5.Resources);				
 	};		
 	
 	F5.importPackage = function (pkg, cb) {

@@ -99,7 +99,7 @@
 			}
 			
 			var frameEl;
-			if (node.parent && node.parent.type === 'group') {
+			if (node.parent && !node.parent.selection) {
 				frameEl = nodeEl;
 			} else  {
 				frameEl = document.createElement('div');

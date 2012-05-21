@@ -146,7 +146,7 @@ F5.registerModule(function (F5) {
 				}
 				
 				if ((!currentConfigData && configData) || 
-					(currentConfigData && different(currentConfigData[which], configData))) {
+					(currentConfigData && different(currentConfigData, configData))) {
 					if (configData) {
 						buttons[which].inactive.widget.reset();
 						buttons[which].inactive.widget.refresh(configData);

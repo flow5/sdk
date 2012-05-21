@@ -103,7 +103,9 @@
 			flowObservers.forEach(doLifecycleEvent);
 			
 			function recurse(node) {
-				if (node.type === 'group') {
+				if (node.selection) {
+					doLifecycleEventRecursive(event, node.selection, cb);									
+				} else {
 					var tasks = [];
 					F5.forEach(node.children, function (id, child) {
 						tasks.push(function (cb) {
@@ -111,8 +113,6 @@
 						});
 					});
 					F5.parallelizeTasks(tasks, cb);
-				} else {
-					doLifecycleEventRecursive(event, node.selection, cb);									
 				}
 			}	
 
@@ -296,7 +296,7 @@
 		
 		// select the child of node with the given id
 		this.doSelection = function (node, id, cb) {	
-			F5.assert(node.type === 'set', 'Can only doSelection on node of type set');
+			F5.assert(node.type !== 'flow', 'Cannot doSelection on a flow');
 			F5.assert(node.children[id], 'No child with id: ' + id);
 
 			if (lockout) {
@@ -400,8 +400,7 @@
 				node = backNode;
 			}
 						
-			F5.assert(container.type === 'flow' || container.type === 'set', 
-				'Transition container is not a flow or set');
+			F5.assert(container.type !== 'tabset', 'Cannot doTransition on a tabset');
 				
 			if (id !== 'back') {
 				// find the correct back target
@@ -478,7 +477,7 @@
 		// find an active leaf node
 		// then climb up the stack for the first node with 'back'
 		
-		// NOTE: global navigation does not work within 'group' nodes because group doesn't have selection		
+		// NOTE: global navigation does not work unless the node has a selection	
 		this.getBackNode = function (leaf) {
 			leaf = leaf || flow.root;
 			while (leaf.selection) {
@@ -609,7 +608,7 @@
 								
 								// TODO: might want to call willBecomeInactive on the previous active node. . .
 								
-								if (node.parent && node.parent.type !== 'group') {
+								if (node.parent && node.parent.selection) {
 									node.selection = node.children[nextAction];
 									F5.forEach(node.children, function (id, child) {
 										child.active = false;
@@ -633,7 +632,7 @@
 								// for a flow, the string indicates a node to transition to
 								completionCb();							
 								that.doTransition(node, nextAction);																			
-							} else if (node.type === 'set') {
+							} else if (node.type === 'tabset') {
 								// for a set, the string indicates a node to select
 								completionCb();							
 								that.doSelection(node, nextAction);

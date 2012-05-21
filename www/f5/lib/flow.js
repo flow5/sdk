@@ -45,10 +45,10 @@
 
 			function injectNodeRecursive(id, nodeSpec, parent) {
 				var node = {id: id, 
-							type: nodeSpec.type || 'node', 
+							type: nodeSpec.type, 
 							parent: parent,
-							spec: nodeSpec, 
-							active: parent && parent.type === 'group'}; // redundant?
+							spec: nodeSpec,
+							active: nodeSpec.active};
 							
 				node.data = F5.createModel(node).initialize(nodeSpec.schema);
 				
@@ -59,14 +59,15 @@
 
 				if (nodeSpec.children) {
 					node.children = {};
-					F5.assert(nodeSpec.type === 'group' || nodeSpec.selection, 
-								'Parent node must declare child selection: ' + id);
+					F5.assert(!nodeSpec.type || nodeSpec.selection, 'Node must declare selection: ' + id);
 					F5.forEach(nodeSpec.children, function (id, childSpec) {
 						var child = injectNodeRecursive(id, childSpec, node);
-						if (nodeSpec.type === 'group') {
-							child.active = true;							
-						} else if (id === nodeSpec.selection) {
-							node.selection = child;
+						if (nodeSpec.selection) {
+							if (id === nodeSpec.selection) {
+								node.selection = child;
+								child.active = true;															
+							}
+						} else {
 							child.active = true;
 						}
 					});					
@@ -97,7 +98,6 @@
 					// allows import into a vanilla node
 					if (!parent.children) {
 						parent.children = {};
-						parent.type = 'group';
 					}
 					parent.children[id] = node;
 				}
