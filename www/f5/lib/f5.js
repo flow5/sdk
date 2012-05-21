@@ -35,6 +35,7 @@
 	F5.Flows = {};
 	F5.Resources = {};
 	F5.Global = {};
+	F5.Services = {};
 		
 	F5.pendingModules = [];
 	var packageStack = [];

@@ -409,19 +409,5 @@
 		}	
 
 		node.pending.push(pending);			
-	};	
-	
-	
-	// TODO: move to facebook module
-	F5.Services = {
-		facebook: {
-			protocol: 'https',
-			method: 'GET',
-			baseUrl: 'graph.facebook.com/',
-			me: {
-				extendedUrl: 'me'
-			}
-		}
-	};		
-	
+	};			
 }());

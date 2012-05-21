@@ -26,10 +26,10 @@
 ***********************************************************************************************************************/
 /*global F5*/
 
+// TODO: move to a separate package
 F5.registerModule(function (F5) {		
 	// TODO: make the apis available configurable from client
-	
-	
+		
 	function loadGoogleApi() {
 		var script = document.createElement("script");
 		script.type = "text/javascript";

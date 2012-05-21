@@ -26,11 +26,22 @@
 ***********************************************************************************************************************/
 /*global F5*/
 
+// TODO: move to a separate package
 F5.registerModule(function (F5) {
 	
 	F5.Global.flowController.addWaitTask(function (cb) {
 		if (F5.facebook_appid) {
-			F5.facebook.initialize(cb);
+			F5.facebook.initialize(function () {
+				F5.Services.facebook = {
+					protocol: 'https',
+					method: 'GET',
+					baseUrl: 'graph.facebook.com/',
+					me: {
+						extendedUrl: 'me'
+					}
+				};		
+				cb();
+			});
 		} else {
 			cb();
 		}		
