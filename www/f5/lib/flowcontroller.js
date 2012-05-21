@@ -32,8 +32,6 @@
 
 		var that = this;
 
-		flow.controller = this;
-		
 		// lockout is set to true during async operations on the flow
 		var lockout = false;
 

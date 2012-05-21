@@ -69,22 +69,23 @@ F5.registerModule(function (F5) {
 				that.pipe = pipe;
 
 				function listen() {		
-					pipe.listen(function (result) {
-						try {
-							result = JSON.parse(result);
-							if (result && result.model) {
-								var model = JSON.parse(result.model);
-								F5.forEach(modelListeners, function (id, listener) {
-									listener.update(model);
-								});			
-							} else {
-//								console.log(result && result.message && JSON.stringify(result.message));
-							}							
-						} catch (e) {
-							console.log(e.message);
+					pipe.listen(function (result, status) {
+						if (status === 200) {
+							try {
+								result = JSON.parse(result);
+								if (result && result.model) {
+									var model = JSON.parse(result.model);
+									F5.forEach(modelListeners, function (id, listener) {
+										listener.update(model);
+									});			
+								} else {
+	//								console.log(result && result.message && JSON.stringify(result.message));
+								}							
+							} catch (e) {
+								console.log(e.message);
+							}
+							listen();																
 						}
-						listen();									
-
 					});
 				}																									
 				listen();	
@@ -159,7 +160,7 @@ F5.registerModule(function (F5) {
 
 			sequenceNumber += 1;					
 
-			F5.upload('POST', 'dot2svg', dot, function (response, status, headers) {
+			F5.doXHR('POST', 'dot2svg', dot, function (response, status, headers) {
 
 				if (parseInt(headers['sequence-number'], 10) !== sequenceNumber) {
 					return;
@@ -208,13 +209,13 @@ F5.registerModule(function (F5) {
 				});
 
 				// determine the offset of the current node
-				var activeLeafNode = F5.Global.flow.getActiveLeafNode();
+//				var activeLeafNode = F5.Global.flow.getActiveLeafNode();
 
-				var svgElementBBox = document.getElementById('svg-' + activeLeafNode.path).getBBox();
-				var svgRootBBox = svg.getBBox();
+//				var svgElementBBox = document.getElementById('svg-' + activeLeafNode.path).getBBox();
+//				var svgRootBBox = svg.getBBox();
 
-				var offset = {x: svgElementBBox.x - svgRootBBox.width * 0.4, 
-								y: svgRootBBox.height + svgElementBBox.y + svgRootBBox.height * 0.4};
+//				var offset = {x: svgElementBBox.x - svgRootBBox.width * 0.4, 
+//								y: svgRootBBox.height + svgElementBBox.y + svgRootBBox.height * 0.4};
 
 //				that.svgFrame.style['-webkit-transform'] = 
 //								'translate3d(' + -offset.x * 0.4 + 'px,' + -offset.y * 0.4 + 'px, 0px)';

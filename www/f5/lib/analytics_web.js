@@ -29,6 +29,7 @@
 (function () {	
 	F5.Analytics = {
 		logEvent: function (name, data) {
+			// TODO: integrate web analytics package
 			console.log(name + ': ' + JSON.stringify(data));
 		}
 	};

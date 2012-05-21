@@ -26,8 +26,7 @@
 ***********************************************************************************************************************/
 /*global F5, PhoneGap*/
 
-(function () {
-	
+(function () {	
 	F5.Analytics = {
 		logEvent: function (name, data) {
 			PhoneGap.exec(F5.noop, F5.noop, "com.flow5.analytics", "logEvent",					

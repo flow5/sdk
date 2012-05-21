@@ -35,6 +35,7 @@ var http = require('http'),
 XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 	
 require('../lib/utils.js');
+require('../lib/network.js');
 require('./pipe.js');
 		
 cli.setUsage("node script.js [OPTIONS]");

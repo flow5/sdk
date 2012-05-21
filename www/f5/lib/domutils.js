@@ -228,9 +228,26 @@
 		return confirm.widget;
 	};
 	
+	F5.assert = function(condition, message) {
+		if (!condition) {
+			alert(message);				
+			throw new Error(message);
+		}
+	};
+	
+	
 	F5.screen = function () {
 		return document.getElementById('f5screen');
 	};
+	
+	F5.reset = function () {
+		document.body.innerHTML = '';
+		document.body.style['background-color'] = 'black';
+		localStorage.clear();
+		setTimeout(function () {
+			location.reload();					
+		}, 0);
+	};	
 	
 	F5.eventLocation = function(event) {
 		var x, y;
@@ -580,6 +597,11 @@
 		
 		return mapping[canonicalName];
 	};
+	
+	F5.packageClass = function (pkg) {
+		pkg = pkg || F5.query.pkg;
+		return pkg.split('.').join('-');
+	};		
 	
 	F5.importPackage = function (pkg, cb) {
 		if (F5.valueFromId(F5.Flows, pkg)) {

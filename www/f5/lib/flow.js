@@ -204,16 +204,7 @@
 			
 			return node;
 		};
-		
-		this.isNodePathActive = function (node) {
-			var active = node.active;
-			while (active && node.parent) {
-				node = node.parent;
-				active = node.active;
-			}
-			return active;
-		};		
-				
+						
 		this.initialize = function (pkg, rootSpec) {
 			this.root = this.importNode('root', rootSpec, null, pkg);
 			this.root.active = true;		
@@ -221,8 +212,16 @@
 		
 		// serialize to JSON
 		this.toJSON = function (node) {
+			function isReference(id) {
+				return {parent: true,
+						selection: true,
+						node: true,
+						to: true,
+						back: true}[id];		
+			}
+						
 			function replacer(key, value) {
-				if (F5.isReference(key)) {
+				if (isReference(key)) {
 					// break cycles by writing reference ids
 					return value && value.id;
 				} else if (!value || 
@@ -240,7 +239,18 @@
 				}
 			}			
 			return JSON.stringify(node || this.root, replacer);						
+		};	
+		
+		// TODO: move to diags
+		this.isNodePathActive = function (node) {
+			var active = node.active;
+			while (active && node.parent) {
+				node = node.parent;
+				active = node.active;
+			}
+			return active;
 		};		
+			
 	}
 	
 	F5.Flow = new Flow();			

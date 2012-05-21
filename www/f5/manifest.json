@@ -41,7 +41,7 @@
             "lib/utils.js", 
             "lib/flow.js", 
             "lib/flowcontroller.js", 
-            "lib/services.js", 
+            "lib/network.js", 
 			"lib/cache.js",
 			"lib/model.js"
         ],

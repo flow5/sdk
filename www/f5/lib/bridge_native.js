@@ -48,6 +48,7 @@
 		var xhr = new XMLHttpRequest();
 		xhr.open('GET', url, false);
 		
+	// NOTE: xhr.send() can cause UI events to be processed on iOS
 	F5.synchronousXHRReentryWorkaround = true;
 		xhr.send(null);	
 	F5.synchronousXHRReentryWorkaround = false;

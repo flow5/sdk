@@ -33,6 +33,7 @@ var http = require('http'),
 F5 = {query: {devserv:'http://localhost:8008'}};
 	
 require('../lib/utils.js');
+require('../lib/network.js');
 require('./pipe.js');
 	
 		
