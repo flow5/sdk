@@ -29,7 +29,7 @@
 F5.registerModule(function(F5) {
 	
 	function Tracker() {
-		this.construct = function () {
+		this.initialize = function () {
 			
 			var that = this;
 

@@ -30,7 +30,7 @@ F5.registerModule(function(F5) {
 	
 	function StreetView() {
 		
-		this.construct = function (data) {
+		this.initialize = function (data) {
 			try {
 				this.streetView = new google.maps.StreetViewPanorama(this.el, {pano:data.pano});
 			} catch (e) {

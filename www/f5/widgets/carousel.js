@@ -30,8 +30,8 @@ F5.registerModule(function (F5) {
 	
 	function Carousel() {
 		
-		this.construct = function (data) {		
-			Carousel.prototype.construct.call(this);														
+		this.initialize = function (data) {		
+			Carousel.prototype.initialize.call(this);														
 			F5.addClass(this.el, 'f5carousel');				
 			this.horizontal = true;	
 			

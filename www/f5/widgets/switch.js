@@ -29,7 +29,7 @@
 F5.registerModule(function(F5) {
 	
 	function Switch() {
-		this.construct = function () {
+		this.initialize = function () {
 			F5.addClass(this.el, 'f5switch');
 			
 			this.slider = document.createElement('div');

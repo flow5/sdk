@@ -31,10 +31,10 @@ F5.registerModule(function (F5) {
 		
 function Form() {
 		
-	this.construct = function () {
+	this.initialize = function () {
 		var that = this;	
 		
-		Form.prototype.construct.call(this);				
+		Form.prototype.initialize.call(this);				
 		F5.addClass(this.el, 'f5form');
 		
 		this.el.onsubmit = function () {

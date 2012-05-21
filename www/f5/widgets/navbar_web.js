@@ -35,7 +35,7 @@ F5.registerModule(function (F5) {
 		var buttons = {};
 		var containers = {};
 			
-		this.construct = function (data) {
+		this.initialize = function (data) {
 			
 			var that = this;
 			

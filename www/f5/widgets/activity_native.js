@@ -31,7 +31,7 @@ F5.registerModule(function (F5) {
 	
 	function Activity() {
 		
-		this.construct = function () {			
+		this.initialize = function () {			
 			F5.addClass(this.el, 'f5activityspritecontainer');
 		};
 						

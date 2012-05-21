@@ -32,7 +32,7 @@ F5.registerModule(function (F5) {
 		
 		/*global google*/
 		
-		this.construct = function () {	
+		this.initialize = function () {	
 								
 		};	
 		

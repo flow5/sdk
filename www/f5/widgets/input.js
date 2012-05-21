@@ -30,7 +30,7 @@ F5.registerModule(function (F5) {
 
 function Input() {
 	
-	this.construct = function (data) {
+	this.initialize = function (data) {
 		var that = this;
 		
 		F5.addClass(this.el, 'f5input');

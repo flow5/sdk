@@ -78,7 +78,7 @@ F5.registerModule(function (F5) {
 			}
 		};
 		
-		this.construct = function (data) {
+		this.initialize = function (data) {
 			this.location = data;
 			
 			updateLocation(this, this.location);			

@@ -93,7 +93,7 @@
 		if (className) {
 			F5.addClass(el, className);
 		}
-		widget.construct(widgetData(data, el.getAttribute('f5id'), el.getAttribute('f5class')));		
+		widget.initialize(widgetData(data, el.getAttribute('f5id'), el.getAttribute('f5class')));		
 	};
 	
 	

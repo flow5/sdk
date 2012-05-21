@@ -141,7 +141,7 @@ F5.registerModule(function (F5) {
 			delete this.label;			
 		};
 					
-		this.construct = function (data) {	
+		this.initialize = function (data) {	
 			this.labelText = this.el.textContent;
 			this.el.innerHTML = '';
 											
@@ -277,8 +277,8 @@ F5.registerModule(function (F5) {
 	function ToggleButton() {		
 		this.state = false;
 		
-		this.construct = function (data) {
-			ToggleButton.prototype.construct.call(this, data);
+		this.initialize = function (data) {
+			ToggleButton.prototype.initialize.call(this, data);
 			F5.addClass(this.el, 'f5togglebutton');
 		};
 				

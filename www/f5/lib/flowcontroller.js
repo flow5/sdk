@@ -296,7 +296,7 @@
 		
 		// select the child of node with the given id
 		this.doSelection = function (node, id, cb) {	
-			F5.assert(node.type !== 'flow', 'Cannot doSelection on a flow');
+			F5.assert(node.type === 'tabset', 'Can only doSelection on a tabset');
 			F5.assert(node.children[id], 'No child with id: ' + id);
 
 			if (lockout) {
@@ -400,7 +400,7 @@
 				node = backNode;
 			}
 						
-			F5.assert(container.type !== 'tabset', 'Cannot doTransition on a tabset');
+			F5.assert(container.type === 'flow', 'Can only doTransition on a flow');
 				
 			if (id !== 'back') {
 				// find the correct back target
@@ -604,7 +604,7 @@
 					
 					if (nextAction) {
 						if (F5.lifecycleEvent === 'WillBecomeActive') {
-							if (node.selection.id !== nextAction) {
+							if (!node.selection || node.selection.id !== nextAction) {
 								
 								// TODO: might want to call willBecomeInactive on the previous active node. . .
 								

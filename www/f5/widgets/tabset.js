@@ -58,7 +58,7 @@ F5.registerModule(function(F5) {
 	// TODO: customize with images or alternate text
 	function Tabset() {
 					
-		this.construct = function (data) {
+		this.initialize = function (data) {
 			this.data = data || {};		
 			F5.addClass(this.el, 'f5tabset');
 		};

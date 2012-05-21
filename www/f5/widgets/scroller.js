@@ -279,7 +279,7 @@ F5.registerModule(function(F5) {
 		this.bounceDistance = 40;	
 		this.flickVelocityThreshold = 0.05;							
 		
-		this.construct = function () {
+		this.initialize = function () {
 			var that = this;
 						
 			F5.addClass(this.el, 'f5scroller');
@@ -561,7 +561,7 @@ F5.registerModule(function(F5) {
 	// TODO: refactor. don't like having the non-generic methods (commented out below) in the TouchScroller
 	function DesktopScroller() {
 						
-			this.construct = function () {
+			this.initialize = function () {
 				
 			};
 

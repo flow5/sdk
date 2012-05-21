@@ -30,7 +30,7 @@ F5.registerModule(function(F5) {
 		
 	function WebFrame() {
 				
-		this.construct = function (data) {
+		this.initialize = function (data) {
 			F5.addClass(this.el, 'f5webframe');
 			this.el.style.display = 'none';	
 			this.el.style.opacity = 0;

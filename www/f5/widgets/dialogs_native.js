@@ -71,7 +71,7 @@ F5.registerModule(function (F5) {
 	}	
 	
 	function Alert() {
-		this.construct = function (data) {				
+		this.initialize = function (data) {				
 			this.constructDialog(data);		
 			this.method = 'alert';	
 		};		
@@ -79,7 +79,7 @@ F5.registerModule(function (F5) {
 	Alert.prototype = new Dialog();
 	
 	function Confirm() {
-		this.construct = function (data) {				
+		this.initialize = function (data) {				
 			this.constructDialog(data);
 			this.method = 'confirm';
 		};			

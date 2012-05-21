@@ -126,7 +126,7 @@ F5.Global.flowController.addWaitTask(function (cb) {
 	
 	
 	function AndroidSettingsMenu() {
-		this.construct = function (data) {	
+		this.initialize = function (data) {	
 
 			var that = this;
 

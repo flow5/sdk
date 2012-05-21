@@ -31,7 +31,7 @@
 F5.registerModule(function (F5) {
 	function NavBar() {
 				
-		this.construct = function () {
+		this.initialize = function () {
 			var navbarEl = document.createElement('div');
 			F5.addClass(navbarEl, 'navbar');
 			// FIX: should just be visibility: hidden to let underlying layer come throug

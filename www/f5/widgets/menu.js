@@ -29,7 +29,7 @@
 F5.registerModule(function (F5) {
 	
 	function Menu() {
-		this.construct = function (data) {	
+		this.initialize = function (data) {	
 			
 			var that = this;
 			

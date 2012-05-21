@@ -93,7 +93,7 @@
 		}		
 	};	
 	
-	F5.parseResources = function (package) {		
+	F5.parseResources = function (pkg) {		
 		function isImageResource(resource) {
 			return resource.indexOf('.png') !== -1 || 
 					resource.indexOf('.jpg') !== -1 ||
@@ -117,7 +117,7 @@
 				}
 			});			
 		}
-		preloadImagesRecursive(F5.Resources);				
+		preloadImagesRecursive(F5.valueFromId(F5.Resources, pkg));				
 	};		
 	
 	F5.importPackage = function (pkg, cb) {
@@ -153,6 +153,7 @@
 					eval(script.textContent);
 				});
 				F5.registerPendingModules();
+				F5.parseResources(pkg);
 				
 				if (cb) {
 					cb();

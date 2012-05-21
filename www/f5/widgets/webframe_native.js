@@ -30,7 +30,7 @@ F5.registerModule(function(F5) {
 	
 	function WebFrame() {
 		
-		this.construct = function (data) {
+		this.initialize = function (data) {
 			this.el.style.position = 'relative';	
 			this.el.style.display = 'none';						
 		};
