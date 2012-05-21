@@ -46,7 +46,9 @@
 			"lib/model.js"
         ],
 		"domscripts": [
+        	"lib/events.js", 
 	        "lib/domutils.js", 
+			"lib/packages.js",
 	        "lib/views.js", 
 	        "lib/viewcontroller.js", 
 			"lib/phone.js",	

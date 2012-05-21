@@ -35,6 +35,13 @@ F5.registerModule(function (F5) {
 		script.type = "text/javascript";
 		script.src = 'http://maps.googleapis.com/maps/api/js?libraries=geometry,geocode&sensor=true&callback=F5.noop';
 		document.body.appendChild(script);
+		
+		F5.distanceInMeters = function (loc1, loc2) {
+			/*global google*/
+			var latLng1 = new google.maps.LatLng(loc1.lat, loc1.lng);
+			var latLng2 = new google.maps.LatLng(loc2.lat, loc2.lng);
+			return google.maps.geometry.spherical.computeDistanceBetween(latLng1, latLng2);		
+		};			
 	}
 	
 	F5.Global.flowController.addWaitTask(function (cb) {

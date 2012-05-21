@@ -70,6 +70,65 @@
 			window.scrollTo(0, 0);
 		}, 0);
 	}
+	
+	function setupScreenGeometry(isMobile, isNative) {
+//		if (F5.isDebug()) {
+//			F5.addClass(document.body, 'f5debug');
+//		}
+
+		var width, height;
+		// in mobile browser, to get the full height of the device, have to size content so that it overflows
+		// the window by the same amount as the top toolbar. then scrolling to 0 will move the toolbar up
+		if (isMobile && !isNative && navigator.userAgent.match(/iphone/i)) {
+			if (window.innerWidth > window.innerHeight) {
+				width = window.innerHeight;
+				height = window.innerWidth;
+			} else {
+				width = window.innerWidth;
+				height = window.innerHeight;
+			}
+			var statusbar;
+			if (screen.width > screen.height) {
+				statusbar = screen.width - screen.availWidth;
+			} else {
+				statusbar = screen.height - screen.availHeight;
+			}
+
+			// on iOS the window can be scrolled so that the location bar is clipped
+			// TODO: would love to be able to determine these sizes programtically but so far no luck
+			var portraitToolbar = 0;
+			var landscapeToolbar = 0;
+
+			// NOTE: this handles the ios webapp case. android still needs wo
+			if (window.innerHeight !== screen.availHeight) {
+				portraitToolbar = 44;
+				landscapeToolbar = 30;			
+			}
+
+			var style = document.createElement('style');			
+			style.innerHTML = '@media screen and (orientation: portrait)\n\
+								{\n\
+									.f5mobile #f5screen {\n\
+										width:' + screen.width + 'px;\n\
+										height:' + (screen.height - (statusbar + portraitToolbar)) + 'px;\n\
+									}\n\
+								}\n\
+								@media screen and (orientation: landscape)\n\
+								{\n\
+									.f5mobile #f5screen {\n\
+										width:' + screen.height + 'px;\n\
+										height:' + (screen.width - (statusbar + landscapeToolbar)) + 'px;\n\
+									}\n\
+								}';
+			document.body.appendChild(style);						
+
+			document.addEventListener('orientationchange', function () {
+				setTimeout(function () {
+					window.scrollTo(0, 0);
+				}, 0);			
+			});		
+		}	
+	}	
 
 	window.addEventListener('load', hideAddressBar, false);
 	window.addEventListener('touchstart', hideAddressBar, false);
@@ -110,7 +169,7 @@
 			appframeEl.appendChild(screenframeEl);
 			document.body.appendChild(appframeEl);
 
-			F5.setupScreenGeometry(F5.isMobile(), F5.isNative());	
+			setupScreenGeometry(F5.isMobile(), F5.isNative());	
 										
 			try {
 				F5.Global.flowController.start(function () {
@@ -123,7 +182,7 @@
 							console.log('hiding splash: ' + F5.platform());
 							if (F5.platform() === 'android') {
 								setTimeout(function () {
-								    PhoneGap.exec(F5.noop, F5.noop, "App", "hideSplashScreen", [false]);																		
+								    PhoneGap.exec(F5.noop, F5.noop, "App", "hideSplashScreen", [false]);
 								}, 500);
 							} else {
 								PhoneGap.exec(

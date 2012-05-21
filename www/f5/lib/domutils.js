@@ -27,185 +27,7 @@
 /*global F5, RegExp*/
 
 (function () {
-		
-	function startEventName() {
-		if (F5.isMobile()) {
-			return 'touchstart';		
-		}
-		else {
-			return 'mousedown';				
-		}
-	}
-
-	function stopEventName() {
-		if (F5.isMobile()) {
-			return 'touchend';		
-		}
-		else {
-			return 'mouseup';				
-		}
-	}
-
-	function moveEventName() {
-		if (F5.isMobile()) {
-			return 'touchmove';		
-		}
-		else {
-			return 'mousemove';		
-		}
-	}	
-	
-	// OPTION: retain references to the DOM elements to help track down dangling listeners
-	var eventListenerCount = 0;
-		
-	function addEventListener(el, eventType, cb, eventName) {
-		if (!el.F5) {
-			el.F5 = {};
-		}
-		if (!el.F5.listeners) {
-			el.F5.listeners = {};
-		}
-		eventName = eventName || eventType;
-		
-		// triggers a very expensive outerHTML call!
-//		F5.assert(!el.F5.listeners[eventName], 'Already listening for: ' + eventName + ' on: ' + el.outerHTML);
-		F5.assert(!el.F5.listeners[eventName], 'Already listening for: ' + eventName + ' on element with id: ' + el.id);
-		
-		el.F5.listeners[eventName] = function f5eventListenerWrapper(e) {
-			// TODO: check for transitioning for all event callbacks?
-			if (!F5.synchronousXHRReentryWorkaround) {
-				F5.callback(cb, e);				
-			} else {
-				console.log('Ignoring event dispatched during synchronous xhr.send: ' + eventName);
-			}			
-		};
-		el.addEventListener(eventType, el.F5.listeners[eventName], false);	
-		eventListenerCount += 1;
-	}
-	
-	function removeEventListener(el, eventType, eventName) {
-		eventName = eventName || eventType;
-		if (el.F5 && el.F5.listeners && el.F5.listeners[eventName]) {
-			el.removeEventListener(eventType, el.F5.listeners[eventName]);
-			delete el.F5.listeners[eventName];
-			eventListenerCount -= 1;
-		}
-	}
-	
-	// TODO: move this to diags layer
-	F5.logEventListenerCount = function () {
-		console.log('event listeners: ' + eventListenerCount);
-	};
-	
-	// NOTE: used by the view controller as a workaround for an iOS 4.x memory leak
-	// when an element is removed from the DOM when there is a touch event listener attached
-	F5.removeTouchEventListenersRecursive = function (el) {
-		function removeTouchEventListeners(el) {
-			F5.removeTouchStartListener(el);
-			F5.removeTouchStopListener(el);
-			F5.removeTouchMoveListener(el);
-			F5.removeTapListener(el);			
-		}
-		
-		removeTouchEventListeners(el);
-		F5.forEach(el.querySelectorAll('*'), function (el) {
-			removeTouchEventListeners(el);
-		});		
-	};
-	
-				
-	F5.addTouchStartListener = function (el, cb) {
-		addEventListener(el, startEventName(), cb);
-	};
-	
-	F5.removeTouchStartListener = function (el) {
-		removeEventListener(el, startEventName());		
-	};
-	
-	F5.addTouchStopListener = function (el, cb) {
-		addEventListener(el, stopEventName(), cb);
-	};
-	
-	F5.removeTouchStopListener = function (el) {
-		removeEventListener(el, stopEventName());		
-	};
-	
-	F5.addTouchMoveListener = function (el, cb) {
-		addEventListener(el, moveEventName(), function (e) {
-			e.preventDefault();
-			cb(e);
-		});
-	};
-	
-	F5.removeTouchMoveListener = function (el) {
-		removeEventListener(el, moveEventName());		
-	};	
-	
-	F5.maxClickDistance = 30;
-	F5.maxClickTime = 1000;
-	
-	F5.addTapListener = function (el, cb, pressTime) {		
-		addEventListener(el, startEventName(), function (startEvent) {	
-			var cancel = false;
-								
-			startEvent.preventDefault();
 			
-			var startLoc = F5.eventLocation(startEvent);
-			removeEventListener(el, startEventName(), 'tap');
-			
-			addEventListener(el, moveEventName(), function (moveEvent) {
-				var moveLoc = F5.eventLocation(moveEvent);				
-				var moveDistance = F5.eventDistance(startLoc, moveLoc);
-				if (moveDistance > F5.maxClickDistance) {
-					cancel = true;
-				}
-			}, 'tapMove');
-			
-			addEventListener(el, stopEventName(), function (stopEvent) {
-				stopEvent.preventDefault();
-				
-				var stopLoc = F5.eventLocation(stopEvent);
-				removeEventListener(el, stopEventName(), 'tap');
-				removeEventListener(el, moveEventName(), 'tapMove');
-				
-				var clickTime = stopEvent.timeStamp - startEvent.timeStamp;
-				var clickMove = F5.eventDistance(startLoc, stopLoc);
-				
-				if (pressTime) {
-					if (clickTime >= pressTime && clickMove <= F5.maxClickDistance) {
-						F5.callback(cb, stopEvent);
-					}										
-				} else {
-					if (clickTime <= F5.maxClickTime && clickMove <= F5.maxClickDistance && !cancel) {
-						F5.callback(cb, stopEvent);
-					}					
-				}				
-				
-				F5.addTapListener(el, cb, pressTime);
-				
-			}, 'tap');
-		}, 'tap');
-	};
-	
-	F5.removeTapListener = function (el) {
-		removeEventListener(el, startEventName(), 'tap');
-		removeEventListener(el, moveEventName(), 'tapMove');
-		removeEventListener(el, stopEventName(), 'tap');
-	};
-	
-	F5.addTransitionEndListener = function (el, cb) {
-		addEventListener(el, F5.eventName('transitionEnd'), function (e) {
-			// TODO: originalTarget is for Firefox. srcElement is for webkit and IE. break these out?
-			if (e.originalTarget === el || e.srcElement === el) {
-				cb(e);				
-			}
-		});
-	};
-	
-	F5.removeTransitionEndListener = function (el) {
-		removeEventListener(el, F5.eventName('transitionEnd'));		
-	};
-	
 	F5.alert = function (title, message, action) {
 		if (message) {
 			message += '';
@@ -234,8 +56,7 @@
 			throw new Error(message);
 		}
 	};
-	
-	
+		
 	F5.screen = function () {
 		return document.getElementById('f5screen');
 	};
@@ -247,72 +68,7 @@
 		setTimeout(function () {
 			location.reload();					
 		}, 0);
-	};	
-	
-	F5.eventLocation = function(event) {
-		var x, y;
-		if (F5.isMobile()) {
-			if (event.touches[0]) {
-				x = event.touches[0].screenX;
-				y = event.touches[0].screenY;					
-			} else {
-				x = event.changedTouches[0].screenX;
-				y = event.changedTouches[0].screenY;			
-			}	
-		}		
-		else {
-			// in browser, there may be a zoom on the screen element
-			// TODO: cache this value
-			var zoom = window.getComputedStyle(document.getElementById('f5screen')).zoom || 1;
-			x = event.clientX / zoom;
-			y = event.clientY / zoom; 
-		}	
-
-		return {x: x, y: y};
-	};	
-	
-	F5.eventDistance = function(loc1, loc2) {		
-		var deltaX = loc2.x - loc1.x;
-		var deltaY = loc2.y - loc1.y;
-
-		return Math.sqrt(deltaX*deltaX+deltaY*deltaY);
-	};
-	
-	// TODO: unused?
-	F5.modifyCSSRule = function (selectorText, properties) {	
-		var styleSheets = document.styleSheets;
-		var i;
-		for (i = 0; i < styleSheets.length; i += 1) {
-			var cssRules = styleSheets.item(i).cssRules;
-			if (cssRules) {
-				var j;
-				for (j = 0; j < cssRules.length; j += 1) {
-					var rule = cssRules.item(j);
-					if (rule && rule.selectorText) {
-						if (rule.selectorText === selectorText){
-							var id;
-							for (id in properties) {
-								if (properties.hasOwnProperty(id)) {
-									rule.style[id] = properties[id];									
-								}
-							}
-						}										
-					}
-				}				
-			}
-		}
-	};
-	
-	F5.elementAbsolutePosition = function(el) {
-		var x = 0, y = 0;
-		while (el && !isNaN( el.offsetLeft ) && !isNaN( el.offsetTop )) {
-			x += el.offsetLeft;
-			y += el.offsetTop;
-
-			el = el.parentNode;			
-		}
-		return {x: x, y: y};
-	};
+	};			
 	
 	F5.hasClass = function (el, className) {
 		F5.assert(!className.match(' '), 'className should not have a space: ' + className);
@@ -349,135 +105,25 @@
 				el.className = className;
 			}
 		}
-	};
-		
-	F5.setupScreenGeometry = function (isMobile, isNative) {
-		if (F5.isDebug()) {
-//			F5.addClass(document.body, 'f5debug');
-		}
-		
-		var width, height;
-		// in mobile browser, to get the full height of the device, have to size content so that it overflows
-		// the window by the same amount as the top toolbar. then scrolling to 0 will move the toolbar up
-		if (isMobile && !isNative && navigator.userAgent.match(/iphone/i)) {
-			if (window.innerWidth > window.innerHeight) {
-				width = window.innerHeight;
-				height = window.innerWidth;
-			} else {
-				width = window.innerWidth;
-				height = window.innerHeight;
-			}
-			var statusbar;
-			if (screen.width > screen.height) {
-				statusbar = screen.width - screen.availWidth;
-			} else {
-				statusbar = screen.height - screen.availHeight;
-			}
-			
-			// on iOS the window can be scrolled so that the location bar is clipped
-			// TODO: would love to be able to determine these sizes programtically but so far no luck
-			var portraitToolbar = 0;
-			var landscapeToolbar = 0;
-			
-			// NOTE: this handles the ios webapp case. android still needs wo
-			if (window.innerHeight !== screen.availHeight) {
-				portraitToolbar = 44;
-				landscapeToolbar = 30;			
-			}
-			
-			var style = document.createElement('style');			
-			style.innerHTML = '@media screen and (orientation: portrait)\n\
-								{\n\
-									.f5mobile #f5screen {\n\
-										width:' + screen.width + 'px;\n\
-										height:' + (screen.height - (statusbar + portraitToolbar)) + 'px;\n\
-									}\n\
-								}\n\
-								@media screen and (orientation: landscape)\n\
-								{\n\
-									.f5mobile #f5screen {\n\
-										width:' + screen.height + 'px;\n\
-										height:' + (screen.width - (statusbar + landscapeToolbar)) + 'px;\n\
-									}\n\
-								}';
-			document.body.appendChild(style);						
+	};		
 
-			document.addEventListener('orientationchange', function () {
-				setTimeout(function () {
-					window.scrollTo(0, 0);
-				}, 0);			
-			});		
-		}	
-	};	
-		
+	F5.elementAbsolutePosition = function(el) {
+		var x = 0, y = 0;
+		while (el && !isNaN( el.offsetLeft ) && !isNaN( el.offsetTop )) {
+			x += el.offsetLeft;
+			y += el.offsetTop;
+
+			el = el.parentNode;			
+		}
+		return {x: x, y: y};
+	};
+			
 	F5.elementOffsetGeometry = function (el) {
 		return {top: el.offsetTop,
 				left: el.offsetLeft,
 				width: el.offsetWidth,
 				height: el.offsetHeight};
-	};	
-	
-	// finds all of the elements marked with f5applyscope and then
-	// scopes the elements with ids using scope
-	F5.scopePackages = function () {
-		F5.forEach(document.body.querySelectorAll('[f5applyscope]'), function (scope) {
-			var pkg = scope.getAttribute('f5pkg');
-			F5.forEach(scope.querySelectorAll('[id]'), function (template) {
-				template.id = pkg + '.' + template.id;
-			});			
-			scope.removeAttribute('f5applyscope');
-		});	
-		
-		// scope the css rules as well
-		// see corresponding logic in views.js to apply the package name as a class to div at the root
-		// of the div where the package is imported
-		var i;
-		for (i=0; i < document.styleSheets.length; i += 1) {
-			var styleSheet = document.styleSheets[i];	
-			
-			var owner = styleSheet.ownerNode || styleSheet.ownerElement;
-			if (owner) {
-				var pkg = owner.getAttribute('f5pkg');
-				if (owner.getAttribute('f5applyscope') && pkg && !pkg.match('f5')) {
-					owner.removeAttribute('f5applyscope');
-					var length = styleSheet.cssRules.length;
-					
-					// WebKit allows CSSRules to be modified in places and maintains
-					// the source line number which is nice for debugging
-					var j, k, selectors;
-					if (navigator.userAgent.match(/WebKit/)) {					
-						for (j = 0; j < length; j += 1) {
-							var rule = styleSheet.cssRules[j];
-							if (rule.selectorText) {
-								selectors = rule.selectorText.split(',');
-								for (k = 0; k < selectors.length; k += 1) {
-									selectors[k] = '.' + F5.packageClass(pkg) + ' ' + selectors[k];
-								}	
-								rule.selectorText = selectors.join(',');								
-							}
-						}
-					} else {
-						var scopedCSSText = '';
-						for (j = 0; j < length; j += 1) {
-							var selectorText = styleSheet.cssRules[j].selectorText;
-							var cssText = styleSheet.cssRules[j].cssText;
-							if (selectorText) {
-								selectors = selectorText.split(',');
-								for (k = 0; k < selectors.length; k += 1) {
-									selectors[k] = '.' + F5.packageClass(pkg) + ' ' + selectors[k];
-								}				
-								scopedCSSText += cssText.replace(selectorText, selectors.join(','));
-							} else {
-								scopedCSSText += cssText;
-							}
-						}					
-						owner.innerHTML = scopedCSSText;					
-					}
-				}				
-			}
-		}
-		
-	};
+	};		
 	
 	F5.getElementById = function (el, f5id) {
 		var result = el.querySelector('[f5id="' + f5id + '"]');
@@ -486,35 +132,7 @@
 		}
 		return result;
 	};
-		
-	F5.parseResources = function () {
-		
-		function isImageResource(resource) {
-			return resource.indexOf('.png') !== -1 || 
-					resource.indexOf('.jpg') !== -1 ||
-					resource.indexOf('.svg') !== -1 ||
-					resource.indexOf('data:image') !== -1;
-		}
-		
-		function isHTMLResource(resource) {
-			return resource.indexOf('.html') !== -1;
-		}
-		
-		function preloadImagesRecursive(resources) {
-			F5.forEach(resources, function (id, resource) {
-				if (typeof resource === 'object' && resource.constructor !== Array) {
-					preloadImagesRecursive(resource);
-				} else if (isImageResource(resource)){
-					resources[id] = F5.objectFromPrototype(F5.ImagePreloader);
-					resources[id].load(resource);
-				} else if (isHTMLResource(resource)) {
-					resources[id] = 'apps/' + F5.query.pkg.split('.')[0] + '/' + resource;
-				}
-			});			
-		}
-		preloadImagesRecursive(F5.Resources);		
-	};
-	
+			
 	var activityEl;
 	F5.startActivity = function (el) {
 		if (!activityEl) {
@@ -545,9 +163,7 @@
 		// workaround for pre-ios 5 touch listener memory leak
 		F5.removeTouchEventListenersRecursive(el);
 		el.innerHTML = '';
-	};	
-	
-	
+	};			
 	
 	// TODO; move mapping to manifest user agent targets	
 	F5.eventName = function (canonicalName) {
@@ -594,58 +210,11 @@
 				transition: '-webkit-transition',
 				'transition-property': '-webkit-transition-property',
 				'transition-duration': '-webkit-transition-duration'
-			};						
-			
+			};									
 		}
 		
 		return mapping[canonicalName];
-	};
-	
-	F5.packageClass = function (pkg) {
-		pkg = pkg || F5.query.pkg;
-		return pkg.split('.').join('-');
-	};		
-	
-	F5.importPackage = function (pkg, cb) {
-		if (F5.valueFromId(F5.Flows, pkg)) {
-			cb();
-			return;
-		}
-		
-		var url = location.href.replace(F5.query.pkg, pkg);
-		if (url.match('/generate?')) {
-			// imported packages have to be inlined to be evaluated properly
-			url = url.replace('inline=false', 'inline=true') + '&lib=true';			
-		}		
-		
-		return F5.doXHR('GET', url, null, 
-			function success(result, status) {
-				var d = document.implementation.createHTMLDocument('');
-				d.documentElement.innerHTML = result;
-				
-				var scripts = d.querySelectorAll('script');
-				F5.forEach(d.head.childNodes, function (el) {
-					document.head.appendChild(el);
-				});
-				F5.forEach(d.body.childNodes, function (el) {
-					document.body.appendChild(el);
-				});
-				
-				F5.scopePackages();
-				F5.forEach(scripts, function (script) {
-					eval(script.textContent);
-				});
-				F5.registerPendingModules();
-				
-				if (cb) {
-					cb();
-				}
-			},
-			function error(status) {
-				
-			});
-	};	
-			
+	};				
 }());
 
 

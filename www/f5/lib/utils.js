@@ -306,15 +306,7 @@
 			function error(status) {
 				
 			});
-	};	
-	
-	// TODO: move to google module
-	F5.distanceInMeters = function (loc1, loc2) {
-		/*global google*/
-		var latLng1 = new google.maps.LatLng(loc1.lat, loc1.lng);
-		var latLng2 = new google.maps.LatLng(loc2.lat, loc2.lng);
-		return google.maps.geometry.spherical.computeDistanceBetween(latLng1, latLng2);		
-	};	
+	};		
 }());
 
 
