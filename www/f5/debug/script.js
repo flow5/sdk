@@ -77,12 +77,12 @@ function makeTask(command, pipe, channel, options) {
 		function listen() {
 			pipe.listen(function (message) {
 				message = JSON.parse(message);		
-				if (command.message.id === message.id) {
-					complete(message, cb);
-				} else if (message.type === 'uncaughtException'){
+				if (message.type === 'uncaughtException'){
 					console.log(message);
 					process.exit(1);
-				} else {
+				} else if (command.message.id === message.id) {
+					complete(message, cb);
+				} else{
 					// otherwise ignore the exit
 					listen();
 				}

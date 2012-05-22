@@ -64,6 +64,7 @@ F5.registerModule(function (F5) {
 						try {
 							switch (message.type) {
 							case 'exec':
+								/*jslint evil:true*/
 								response.value = eval(message.value);
 								break;
 							case 'update':
@@ -123,18 +124,26 @@ F5.registerModule(function (F5) {
 							default:
 								response.value = 'unknown message type: ' + message.type;
 							}
-						} catch (e) {
-							response.type = 'error';
-							response.value = e.message;
-							console.log(e);
+						} catch (e1) {
+							response.type = 'uncaughtException';
+							response.value = e1.message;
+							console.log(e1);
 						}
 						
 						if (action) {
-							action(function (result) {
-								response.value = result;
+							try {
+								action(function (result) {
+									response.value = result;
+									postMessage(response);								
+									listen();																		
+								});								
+							} catch (e2) {
+								response.type = 'uncaughtException';
+								response.value = e2.message;
+								console.log(e2);	
 								postMessage(response);								
-								listen();																		
-							});
+								listen();																																	
+							}
 						} else {
 							postMessage(response);
 							listen();																		
