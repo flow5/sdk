@@ -36,20 +36,7 @@
 	F5.Resources = {};
 	F5.Global = {};
 	F5.Services = {};
-		
-	F5.pendingModules = [];
-	var packageStack = [];
-	F5.registerModule = function (cb) {
-		F5.pendingModules.push({pkg: packageStack[0], cb: cb});
-	};
-	
-	F5.pushPkg = function (pkg) {
-		packageStack.push(pkg);
-	};
-	
-	F5.popPkg = function () {
-		packageStack.pop();
-	};	
+	F5.Meta = {};
 	
 	function add(obj, path, data) {
 		var elements = path.split('.');
@@ -62,7 +49,24 @@
 		}
 		F5.extend(obj, data);
 	}
+			
+	F5.pendingModules = [];
+	var packageStack = [];
+	F5.registerModule = function (cb) {
+		F5.pendingModules.push({pkg: packageStack[0], cb: cb});
+	};
 	
+	F5.pushPkg = function (pkg, meta) {
+		packageStack.push(pkg);
+		if (F5.extend) {
+			add(F5.Meta, pkg, meta);					
+		}
+	};
+	
+	F5.popPkg = function () {
+		packageStack.pop();
+	};	
+		
 	F5.addFlows = function (pkg, flows) {
 		add(F5.Flows, pkg, flows);
 	};

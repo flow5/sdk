@@ -664,12 +664,12 @@ exports.generateHtml = function (query) {
 		flowsEl.innerHTML = 'F5.addFlows("' + pkg + '", ' + JSON.stringify(flows) + ');';									
 											
 		processManifest(manifest, query, 'resources', injectResources);	
-		resourcesEl.innerHTML = 'F5.addResources("' + pkg + '", ' + JSON.stringify(resources) + ');';						
+		resourcesEl.innerHTML = 'F5.addResources("' + pkg + '", ' + JSON.stringify(resources) + ');';										
 
 		processManifest(manifest, query, 'elements', injectElements);	
 												
 		var pushPkg = new Element('script');
-		pushPkg.innerHTML = 'F5.pushPkg("' + pkg + '");';
+		pushPkg.innerHTML = 'F5.pushPkg("' + pkg + '", ' + (manifest.meta ? JSON.stringify(manifest.meta) : '{}') + ');';
 		scriptsEl.appendChild(pushPkg);
 		
 		processManifest(manifest, query, 'scripts', injectScripts);									
