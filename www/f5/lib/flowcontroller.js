@@ -400,7 +400,7 @@
 				node = backNode;
 			}
 						
-			F5.assert(container.type === 'flow', 'Can only doTransition on a flow');
+			F5.assert(container.type === 'flow', 'Can only doTransition within a container which is a flow');
 				
 			if (id !== 'back') {
 				// find the correct back target

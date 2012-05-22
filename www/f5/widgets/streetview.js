@@ -30,23 +30,14 @@ F5.registerModule(function(F5) {
 	
 	function StreetView() {
 		
-		this.initialize = function (data) {
+		this.initialize = function (pano) {
 			try {
-				this.streetView = new google.maps.StreetViewPanorama(this.el, {pano:data.pano});
+				this.streetView = new google.maps.StreetViewPanorama(this.el, {pano:pano});
 			} catch (e) {
 				console.log(e.message);
 			}
-			this.closeButton = F5.createWidget('Button', data, 'closeButton', 'closeButton');
-			F5.addClass(this.closeButton, 'f5closebutton');
-			this.el.appendChild(this.closeButton);																						
 		};	
-		
-		this.setCloseAction = function (action) {
-			this.closeButton.widget.setAction(function() {
-				action();
-			});						
-		};
-		
+				
 		this.widgetWillBecomeActive = function () {
 			try {
 				google.maps.event.trigger(this.streetView, 'resize');				

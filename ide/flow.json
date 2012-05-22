@@ -1,5 +1,5 @@
 {
-	"type": "set",
+	"type": "tabset",
 	"selection": "graph",
 	"children": {
 		"model": {
