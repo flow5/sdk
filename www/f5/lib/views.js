@@ -144,8 +144,8 @@
 			// TODO: enable this with an additional URL parameter?
 			// Would require an additional build target for device
 			// TODO: Don't like to have to create a stub initialize method to make these go away
-			if (!this.delegate || !this.delegate.initialize) {				
-//				this.addDevOverlay(node);
+			if (!this.delegate && F5.query.devoverlay) {				
+				this.addDevOverlay(node);
 			}			
 			
 			if (node.parent) {
@@ -242,7 +242,8 @@
 			
 			if (node.subflows || node.transitions) {
 				var div = document.createElement('div');
-				div.style.position = 'relative';
+				div.style.position = 'absolute';
+				div.style.width = '100%';
 				div.style['z-index'] = 1;
 				this.el.insertBefore(div, this.el.firstChild);
 			

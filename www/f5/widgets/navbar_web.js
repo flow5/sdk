@@ -119,6 +119,15 @@ F5.registerModule(function (F5) {
 								}
 							}
 						});						
+						F5.forEach(b, function (id, value) {
+							if (same && id !== 'action') {
+								if (id === 'node') {
+									same = b.node === a.node;
+								} else {
+									same = !different(value, a[id]);								
+								}
+							}
+						});
 						return !same;
 					}
 				} else {
