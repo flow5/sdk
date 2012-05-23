@@ -486,7 +486,8 @@ exports.generateHtml = function (query) {
 			// inline scripts
 			// devserv layer will compress and minify	
 			script.id = src;			
-			script.innerHTML = '//<!--\n' + fs.readFileSync('www/' + src).toString() + '\n//-->';
+			script.innerHTML = '//<!--\n//@ sourceURL=www/' + src + '\n'
+					 + fs.readFileSync('www/' + src).toString() + '\n//-->';
 		}
 		return script;
 	}		
