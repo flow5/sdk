@@ -62,12 +62,13 @@
 	function Cache() {
 		
 		this.initialize = function (fields) {
-			this.fields = fields || {};
-			this.values = {};
-
+			this.internal = {
+				fields: fields || {},
+				values: {}
+			};
 
 			var that = this;
-			F5.forEach(this.fields, function (id, field) {
+			F5.forEach(this.internal.fields, function (id, field) {
 				if (field.persist) {
 					
 					if (typeof field.value !== 'undefined' && !localStorage.getItem(id)) {
@@ -96,15 +97,15 @@
 				    });					    
 				} else {
 					if (typeof field.value !== 'undefined') {
-						that.values[id] = F5.clone(field.value);					
+						that.internal.values[id] = F5.clone(field.value);					
 					}
 
 					that.__defineGetter__(id, function(){
-				        return that.values[id];
+				        return that.internal.values[id];
 				    });
 
 				    that.__defineSetter__(id, function(value){
-				        that.values[id] = value;
+				        that.internal.values[id] = value;
 						if (that.objectChanged) {
 							that.objectChanged(id);
 						}				
@@ -117,14 +118,14 @@
 				
 		this.reset = function () {
 			var that = this;			
-			F5.forEach(this.fields, function (id, field) {
+			F5.forEach(this.internal.fields, function (id, field) {
 				if (typeof field.value !== 'undefined') {
 					that[id] = F5.clone(field.value);
 				} else {
 					if (field.persist) {
 						localStorage.removeItem(id);
 					} else {
-						delete that.values[id];
+						delete that.internal.values[id];
 					}					
 				}
 			});
@@ -132,10 +133,12 @@
 		
 		this.dump = function () {
 			var dump = {};
-			var that = this;
-			F5.forEach(this.fields, function (id, field) {
-				dump[id] = that[id];
-			});			
+			var id;
+			for (id in this) {
+				if (this.hasOwnProperty(id)) {
+					dump[id] = this[id];
+				}
+			}
 			return dump;
 		};
 	}	

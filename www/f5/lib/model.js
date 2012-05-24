@@ -38,7 +38,7 @@
 				return;
 			}
 			
-			notifications[this.node.path] = this.node;
+			notifications[this.internal.node.path] = this.internal.node;
 			if (!pendingTimeout) {
 				pendingTimeout = setTimeout(function () {
 					F5.forEach(notifications, function (path, node) {
@@ -88,11 +88,19 @@
 					break;
 				default:
 					if (typeof that.fields[id] === 'undefined') {
-						throw new Error('Model validation for node: ' + that.node.path + ' failed with field: ' + id);
+						throw new Error('Model validation for node: ' + that.internal.node.path + ' failed with field: ' + id);
 					}
 				}
 			});			
 		};
+		
+		this.initialize = function (node, fields) {
+			Model.prototype.initialize.call(this, fields);
+			this.internal.node = node;
+			
+			return this;
+		};
+		
 	}
 	Model.prototype = F5.Cache;
 	

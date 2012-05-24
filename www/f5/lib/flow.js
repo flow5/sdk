@@ -50,7 +50,7 @@
 							spec: nodeSpec,
 							active: nodeSpec.active};
 							
-				node.data = F5.createModel(node).initialize(nodeSpec.schema);
+				node.data = F5.createModel().initialize(node, nodeSpec.schema);
 				
 				// can initialize node model from spec. used with mock data
 				F5.forEach(nodeSpec.data || {}, function (id, value) {

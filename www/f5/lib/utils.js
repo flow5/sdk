@@ -108,7 +108,7 @@
 		}
 		
 		if (node){
-			F5.merge(node.data.dump(), data);			
+			F5.merge(node.data, data);			
 		}
 		
 		F5.merge(userData, data);		
@@ -136,7 +136,6 @@
 	
 	F5.createModel = function (node) {
 		var model = F5.objectFromPrototype(F5.Model);
-		model.node = node;
 		return model;
 	};
 	
@@ -197,7 +196,9 @@
 	F5.forEach = function (obj, fn) {
 		if (obj) {
 			/*global NodeList*/
-			if (typeof NodeList !== 'undefined' && obj.constructor === NodeList) {
+			if (obj instanceof F5.Cache.constructor) {
+				F5.forEach(obj.dump(), fn);
+			} else if (typeof NodeList !== 'undefined' && obj.constructor === NodeList) {
 				var list = [];
 				var i;
 				for (i = 0; i < obj.length; i += 1) {
