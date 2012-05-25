@@ -74,29 +74,34 @@ F5.registerModule(function(F5) {
 			this.slider.style['margin-left'] = -(this.el.offsetWidth - this.el.offsetHeight);
 		};
 		
-		this.moveHandler = function (delta, start) {
+		this.moveHandler = function (delta, start) {			
+			var movingRight = delta.x > start.x;
+			var startingLeft = start.x === 0;
+			var startingRight = !startingLeft;
 			
-			if (delta.x > start.x || (delta.x === 0 && start.x === 0) || delta.x < 0) {
-				if (delta.x < this.deadZone) {
-					delta.x = 0;
-				} else {
-					delta.x -= this.deadZone;
-
-					if (delta.x > this.maxThrow) {
-						delta.x = this.maxThrow;
+			if (movingRight) {
+				if (startingLeft) {
+					if (delta.x < this.deadZone) {
+						delta.x = 0;
+					} else {
+						delta.x -= this.deadZone;
 					}
+				}
+				if (delta.x > this.maxThrow) {
+					delta.x = this.maxThrow;
 				}				
 			} else {
-				if (delta.x > this.maxThrow - this.deadZone) {
-					delta.x = this.maxThrow;
-				} else {
-					delta.x += this.deadZone;
-
-					if (delta.x > this.maxThrow) {
+				if (startingRight) {
+					if (delta.x > this.maxThrow - this.deadZone) {
 						delta.x = this.maxThrow;
+					} else {
+						delta.x += this.deadZone;
 					}
-				}				
-			}
+				}
+				if (delta.x < 0) {
+					delta.x = 0;
+				}
+			}			
 		};
 		
 		this.stopHandler = function (delta, start) {						
