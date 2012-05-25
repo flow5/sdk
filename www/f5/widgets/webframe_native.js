@@ -52,16 +52,20 @@ F5.registerModule(function(F5) {
 		};
 		
 		this.show = function () {
-			F5.callBridgeSynchronous('com.flow5.webview', 'show');
+			if (this.webViewCreated) {
+				F5.callBridgeSynchronous('com.flow5.webview', 'show');
+			}
 		};
 		
 		this.hide = function () {
-			F5.callBridgeSynchronous('com.flow5.webview', 'hide');			
+			if (this.webViewCreated) {
+				F5.callBridgeSynchronous('com.flow5.webview', 'hide');							
+			}
 		};
 		
 		this.openHTML = function (html) {
 			this.el.style.display = '';
-			
+						
 			var bounds = F5.elementOffsetGeometry(this.el);			
 			var position = F5.elementAbsolutePosition(this.el);
 			
@@ -76,6 +80,7 @@ F5.registerModule(function(F5) {
 			var that = this;
 			PhoneGap.exec(
 				function (message) { // messages from frame
+					that.webViewCreated = true;
 					if (message.type === 'onload') {
 						if (that.onLoadAction) {
 							that.onLoadAction();
@@ -144,22 +149,23 @@ F5.registerModule(function(F5) {
 		};
 		
 		this.close = function () {
-			PhoneGap.exec(
-				function (result) { // success
-					console.log(result);
-				}, 
-				function (result) { // failure
-					console.log(result);
-				}, 
-				'com.flow5.webview', // the plugin name
-				'close', // the method
-				[]
-			);	
+			if (this.webViewCreated) {
+				PhoneGap.exec(
+					function (result) { // success
+						console.log(result);
+					}, 
+					function (result) { // failure
+						console.log(result);
+					}, 
+					'com.flow5.webview', // the plugin name
+					'close', // the method
+					[]
+				);	
+			}
 			this.el.style.display = 'none';
 			if (this.closeAction) {
 				this.closeAction();
 			}										
-			
 		};
 				
 		this.postMessage = function (data) {
