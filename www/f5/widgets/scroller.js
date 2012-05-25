@@ -573,6 +573,8 @@ F5.registerModule(function(F5) {
 				this.el.parentElement.style.overflow = 'scroll';												
 			};
 			
+			this.staticOffset = 0;
+			
 			// used by mobile forms (to keep scroller from moving when an input is focused)
 			// but also by application layer (which it should not be)
 			this.enable = F5.noop;				
