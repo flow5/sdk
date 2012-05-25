@@ -52,7 +52,9 @@
 	
 	F5.assert = function(condition, message) {
 		if (!condition) {
-			alert(message);				
+			if (F5.isDebug()) {
+				alert(message);				
+			}
 			throw new Error(message);
 		}
 	};

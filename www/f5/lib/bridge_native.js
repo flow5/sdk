@@ -49,9 +49,13 @@
 		xhr.open('GET', url, false);
 		
 	// NOTE: xhr.send() can cause UI events to be processed on iOS
-	F5.synchronousXHRReentryWorkaround = true;
+	// for async sends, the xhr.send() is put in a setTimeout to ensure that the caller is not reentrant
+	// for synchronous sends, the only solution is to wrap the start event callback to prevent queued user
+	// actions from occuring. this will cause some events to be dropped. see events.js
+	// TODO: reference RADAR bug report	
+	F5.xhrSendBlocking = true;
 		xhr.send(null);	
-	F5.synchronousXHRReentryWorkaround = false;
+	F5.xhrSendBlocking = false;
 		
 		var result;
 		try {

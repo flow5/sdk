@@ -101,10 +101,16 @@
 
 		el.F5.listeners[eventName] = function f5eventListenerWrapper(e) {
 			// TODO: check for transitioning for all event callbacks?
-			if (!F5.synchronousXHRReentryWorkaround) {
+			if (!F5.xhrSendBlocking) {
 				F5.callback(cb, e);				
 			} else {
-				console.log('Ignoring event dispatched during synchronous xhr.send: ' + eventName);
+				console.log('Deferring event dispatched during synchronous xhr.send: ' + eventName);
+				// This will cause input.focus() to fail because it will only work in the context of a touch event
+				// Might also cause out of order events to occur under some circumstances
+				// TODO: revisit. this might preclude the use of sync XHR (and sync bridge!)
+				setTimeout(function () {
+					F5.callback(cb, e);									
+				}, 0);
 			}			
 		};
 		el.addEventListener(eventType, el.F5.listeners[eventName], false);	
