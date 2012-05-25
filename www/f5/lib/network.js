@@ -88,7 +88,6 @@
 //				console.log('XMLHttpRequest.LOADING');					
 				break;
 			case xhr.DONE:	
-				networkActivityCompleted();
 				if (xhr.status !== 0) {
 					if (success) {
 						var responseHeaders = {};
@@ -113,7 +112,6 @@
 		// WORKAROUND: it seems that xhr.send can cause pending events to fire with reentrancy
 		// TODO: reference RADAR bug report
 		setTimeout(function () {
-			networkActivityStarted();
 			xhr.send(body);
 		}, 0);	
 
@@ -308,6 +306,7 @@
 			}			
 		}					
 
+		networkActivityStarted();
 		if (method === 'GET' || method === 'DELETE') {			
 			url += formatUrlParameters(parameters);
 
@@ -320,6 +319,8 @@
 
 			pending.xhr = F5.doXHR(method, url, null,
 				function success(response, status) {
+					networkActivityCompleted();
+					
 					pendingComplete(node, pending);
 
 					if (F5.isDebug() && responseSchema) {
@@ -343,6 +344,8 @@
 						F5.networkErrorHandler(cb, url, e2.message);						
 					}
 				}, function error(response, status) {
+					networkActivityCompleted();
+					
 					pendingComplete(node, pending);						
 					if (pending.aborted) {
 						cb(); 
@@ -368,6 +371,8 @@
 
 			pending.xhr = F5.doXHR(method, url, JSON.stringify(bodyParameters),
 				function success(response, status) {
+					networkActivityCompleted();
+					
 					pendingComplete(node, pending);		
 
 					if (F5.isDebug() && responseSchema) {
@@ -396,6 +401,8 @@
 						F5.networkErrorHandler(cb, url, e2.message);						
 					}
 				}, function error(response, status) {
+					networkActivityCompleted();
+					
 					pendingComplete(node, pending);	
 					if (pending.aborted) {
 						cb();
