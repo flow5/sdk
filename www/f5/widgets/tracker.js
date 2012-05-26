@@ -69,6 +69,10 @@ F5.registerModule(function(F5) {
 					x: constrain === 'vertical' ? 0 : currentLocation.x - startLocation.x,
 					y: constrain === 'horizontal' ? 0 : currentLocation.y - startLocation.y						
 				};				
+
+				delta.x += startTransform.x;
+				delta.y += startTransform.y;
+								
 				tracking = false;
 				
 				F5.removeTouchMoveListener(document.body, moveHandler);			
