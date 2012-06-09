@@ -78,31 +78,6 @@ function forEach(obj, fn) {
 	}
 }
 
-function compress(html, res) {
-		
-	// CSS compression is done in generate() pre-image inlining. this is both for efficiency and
-	// because the inline images break the yuicompressor
-	var options = ['-jar', __dirname + '/htmlcompressor-1.5.2.jar', '--compress-js'];
-//	var options = ['-jar', __dirname + '/htmlcompressor-1.5.2.jar', '--compress-css', '--compress-js'];
-	var child = spawn('java', options);
-	
-	child.stdout.on('data', function (data) {
-//		console.log(data.toString());
-		res.write(data);
-	});
-	child.on('exit', function (code) {
-		res.end();
-	});		
-	child.stderr.on('data', function (data) {
-		sys.puts(data);
-	});	
-
-	res.writeHead(200, {'Content-Type': 'text/html'});
-	
-	child.stdin.write(html);
-	child.stdin.end();		
-}
-
 function getMessageBody(req, cb) {
 	var body = '';
 	
@@ -221,13 +196,9 @@ function doGenerate(query, req, res) {
 					res.write(err.stack);
 					res.end();
 				} else {
-					if (query.compress === 'true') {
-						compress(html, res);					
-					} else {
-						res.writeHead(200, {'Content-Type': 'text/html'});
-						res.write(html);
-						res.end();					
-					}					
+					res.writeHead(200, {'Content-Type': 'text/html'});
+					res.write(html);
+					res.end();					
 				}
 			});
 

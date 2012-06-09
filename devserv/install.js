@@ -25,23 +25,3 @@
 
 ***********************************************************************************************************************/
 
-var http = require('http'),
-	fs = require('fs'),
-	spawn = require('child_process').spawn;
-
-var host = 'htmlcompressor.googlecode.com';
-var compressor = 'htmlcompressor-1.5.2';
-var archive = compressor + '.zip';
-
-var request = http.get({ host: host, path: '/files/' + archive, port: 80});
-request.on('response', function(res) {
-	res.pipe(fs.createWriteStream(archive));
-	res.on('end', function () {
-		var child = spawn('unzip', [archive]);
-		child.on('exit', function (code) {
-			fs.renameSync(compressor + '/bin/' + compressor + '.jar', compressor + '.jar');
-			fs.renameSync(compressor + '/lib/compiler.jar', 'compiler.jar');
-			fs.renameSync(compressor + '/lib/yuicompressor-2.4.6.jar', 'yuicompressor-2.4.6.jar');
-		});	
-	});
-});

@@ -34,9 +34,6 @@ var fs = require('fs'),
 
 require('./JSONparseClean.js');	
 
-//	FFI = require("node-ffi"),
-//	libc = new FFI.Library(null, {"system": ["int32", ["string"]]}),
-
 function boolValue(string) {
 	if (string && string !== 'true' && string !== 'false') {
 		throw new Error('Bad bool value');
@@ -118,36 +115,26 @@ function handleDataResourcesRecursive(obj, handler) {
 	});
 }
 
-		function inlineData(path) {			
-			try {
-				var ext = require('path').extname(path).substring(1);
+function inlineData(path) {			
+	try {
+		var ext = require('path').extname(path).substring(1);
 
-				var data;
-				if (ext === 'ttf') {
-					data = 'data:font/truetype;base64,' + fs.readFileSync('www/' + path, 'base64');
-				} else if (ext === 'svg') {
-					data = 'data:image/svg+xml;utf8,' + fs.readFileSync('www/' + path).toString().replace(/(\r\n|\n|\r)/gm, '');	
-				} else if (ext === 'html' || ext === 'css') {
-					data = 'base64,' + fs.readFileSync('www/' + path, 'base64');
-				} else {
-/*					
-					if (boolValue(query.crush)) {
-						var tmpPath = '/tmp/' + process.pid + Date.now() + '.png';
-						var cmd = 'optipng -o2 -out ' + tmpPath + ' ' + path;
-//						var cmd = 'convert -quality 05 ' + path + ' ' + tmpPath;
-//						console.log('cmd:' + cmd)
-						libc.system(cmd);					
-						path = tmpPath;
-					}
-*/					
-					data = 'data:image/' + ext + ';base64,' + fs.readFileSync('www/' + path, 'base64');				
-				}
-
-				return data;
-			} catch (e) {
-				console.log('error:' + e.stack);
-			}
+		var data;
+		if (ext === 'ttf') {
+			data = 'data:font/truetype;base64,' + fs.readFileSync('www/' + path, 'base64');
+		} else if (ext === 'svg') {
+			data = 'data:image/svg+xml;utf8,' + fs.readFileSync('www/' + path).toString().replace(/(\r\n|\n|\r)/gm, '');	
+		} else if (ext === 'html' || ext === 'css') {
+			data = 'base64,' + fs.readFileSync('www/' + path, 'base64');
+		} else {
+			data = 'data:image/' + ext + ';base64,' + fs.readFileSync('www/' + path, 'base64');				
 		}
+
+		return data;
+	} catch (e) {
+		console.log('error:' + e.stack);
+	}
+}
 
 // Minimalist DOM construction
 function Element(tag) {
@@ -340,8 +327,15 @@ exports.generateHtml = function (query, cb) {
 				if (err) {
 					cb(err);
 				} else {
-					script.innerHTML = code + '\n//@ sourceURL=www/' + src + '\n';
-					cb(null, script);					
+					if (boolValue(query.compress)) {
+						minify(code, {engine: 'uglify'}, function (err, code) {
+							script.innerHTML = code;
+							cb(err, script);
+						});
+					} else {
+						script.innerHTML = code + '\n//@ sourceURL=www/' + src + '\n';
+						cb(null, script);											
+					}
 				}
 			});
 		}
@@ -706,3 +700,18 @@ exports.generateHtml = function (query, cb) {
 };
 
 }());
+
+
+/*
+// experiment with integrated png crush
+	FFI = require("node-ffi"),
+	libc = new FFI.Library(null, {"system": ["int32", ["string"]]}),
+	if (boolValue(query.crush)) {
+		var tmpPath = '/tmp/' + process.pid + Date.now() + '.png';
+		var cmd = 'optipng -o2 -out ' + tmpPath + ' ' + path;
+//		var cmd = 'convert -quality 05 ' + path + ' ' + tmpPath;
+//		console.log('cmd:' + cmd)
+		libc.system(cmd);					
+		path = tmpPath;
+	}
+*/
