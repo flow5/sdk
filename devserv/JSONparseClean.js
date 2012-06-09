@@ -5,7 +5,7 @@
 	Paul Greyson: modified for nodejs
 */
 
-exports.minify = function(json) {
+JSON.parseClean = function(json) {
 	
 	var tokenizer = /"|(\/\*)|(\*\/)|(\/\/)|\n|\r/g,
 		in_string = false,
@@ -53,6 +53,5 @@ exports.minify = function(json) {
 		}
 	}
 	new_str[ns++] = rc;
-	return new_str.join("");
-	
+	return JSON.parse(new_str.join(""));	
 };

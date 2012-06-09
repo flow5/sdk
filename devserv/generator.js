@@ -29,8 +29,9 @@
 				
 var fs = require('fs'),
 	async = require('async'),
-	cssmin = require('css-compressor').cssmin,
-	minify = require('./minify.js').minify;	
+	cssmin = require('css-compressor').cssmin;
+
+require('./JSONparseClean.js');	
 
 //	FFI = require("node-ffi"),
 //	libc = new FFI.Library(null, {"system": ["int32", ["string"]]}),
@@ -89,15 +90,18 @@ function pkgName(pkg) {
 	}
 }
 
-function parseJSON(path) {	
-	try {
-		// strip out commments		
-		var json = minify(fs.readFileSync('www/' + path).toString());
-		return JSON.parse(json);
-	} catch (e) {
-		console.log('error parsing: ' + path + ' : ' + e.stack);
-		throw e;
-	}										
+function parseJSON(path, cb) {	
+	fs.readFile('www/' + path, 'utf8', function (readErr, json) {
+		if (readErr) {
+			cb(readErr);
+		} else {
+			try {
+				cb(null, JSON.parseClean(json));
+			} catch (minifyErr) {
+				cb(minifyErr);
+			}
+		}
+	});	
 }
 
 // the image references are at the leaf nodes
@@ -431,24 +435,43 @@ exports.generateHtml = function (query, cb) {
 		// resource files
 		var resources = {};
 		function injectResources(resourceFiles, type, cb) {
+			var tasks = [];
 			resourceFiles.forEach(function (file) {
-				var r = parseJSON(base + file);	
-				if (boolValue(query.inline)) {
-					handleDataResourcesRecursive(r, function (obj, id, src) {						
-						obj[id] = inlineData(base + src);										
-					});
-				}
-				extend(resources, r);		
+				tasks.push(function (cb) {
+					parseJSON(base + file, function (err, r) {
+						if (err) {
+							cb(err);
+						} else {
+							if (boolValue(query.inline)) {
+								handleDataResourcesRecursive(r, function (obj, id, src) {						
+									obj[id] = inlineData(base + src);										
+								});
+							}
+							extend(resources, r);		
+							cb();							
+						}
+					});						
+				});				
 			});	
-			cb();
+			async.series(tasks, cb);
 		}
 
 		var flows = {};
 		function injectFlows(flowFiles, type, cb) {
+			var tasks = [];			
 			flowFiles.forEach(function (file) {
-				extend(flows, parseJSON(base + file));
+				tasks.push(function (cb) {
+					parseJSON(base + file, function (err, flow) {
+						if (err) {
+							cb(err);
+						} else {
+							extend(flows, flow);											
+							cb();							
+						}
+					});
+				});
 			});	
-			cb();		
+			async.series(tasks, cb);
 		}
 
 
@@ -528,26 +551,30 @@ exports.generateHtml = function (query, cb) {
 			manifestName = 'manifest.json';
 		}
 		
-		var manifest = parseJSON(base + manifestName);
-				
-				
-		// recurse
-		function injectPackages(packages, type, cb) {
-			var tasks = [];			
-			packages.forEach(function (pkg) {
-				tasks.push(function (cb) {
-					injectManifest(pkg, cb);					
+		parseJSON(base + manifestName, function (err, manifest) {
+			function injectPackages(packages, type, cb) {
+				var tasks = [];			
+				packages.forEach(function (pkg) {
+					tasks.push(function (cb) {
+						injectManifest(pkg, cb);					
+					});
 				});
-			});
-			async.series(tasks, cb);			
-		}
-		processManifest(manifest, query, 'packages', injectPackages, function (err, result) {
+				async.series(tasks, cb);			
+			}
+						
 			if (err) {
 				cb(err);
 			} else {
-				injectPackage(pkg, manifest, base, cb);				
-			}
-		});		
+				// recurse
+				processManifest(manifest, query, 'packages', injectPackages, function (err, result) {
+					if (err) {
+						cb(err);
+					} else {
+						injectPackage(pkg, manifest, base, cb);				
+					}
+				});				
+			}		
+		});									
 	}	
 	
 	function injectHeader(cb) {

@@ -218,7 +218,7 @@ function doGenerate(query, req, res) {
 				if (err) {
 					console.log(err);
 					res.writeHead(500);
-					res.write(err);
+					res.write(err.stack);
 					res.end();
 				} else {
 					if (query.compress === 'true') {
