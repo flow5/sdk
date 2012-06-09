@@ -81,6 +81,7 @@
 			var components = f5widget.split('.');
 			var widgetName = components.pop();
 			prototypes = F5.valueFromId(F5.Prototypes, components.join('.'));
+			F5.assert(prototypes, 'No prototypes for package: ' + components.join('.'));
 			prototype = prototypes.Widgets[widgetName];
 		}					
 		F5.assert(prototype, 'No widget: ' + f5widget);
