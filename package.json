@@ -1,13 +1,14 @@
 {
-    "name": "devserv",
-    "version": "1.0.1",
+    "name": "flow5",
+    "version": "1.1.1",
 	"config": {
-		"port": 8008,
-		"root": "../../flow5"
+		"port": 8008
 	},	
+	"bin": {
+		"f5link": "./link.js"
+	},
 	"scripts": {
-		"start": "node devserv.js",
-		"install": "node install.js"
+		"start": "node ./devserv/devserv.js"
 	},
 	
     "dependencies": {
@@ -15,7 +16,8 @@
 		"css-compressor": "1.0.0",
 		"node-ffi": "0.5.0",
 		"paperboy": "0.0.3",
-		"async": "0.1.22"
+		"async": "0.1.22",
+		"minifyjs": "0.1.0"		
     },
     "engines" : { "node" : ">=0.6.0" }
 }

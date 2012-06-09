@@ -25,9 +25,7 @@
 
 ***********************************************************************************************************************/
 
-if (process.env.npm_package_config_root) {
-	process.chdir(process.env.npm_package_config_root);
-}
+console.log(process.env.npm_package_config_apps);
 
 var WEBROOT = process.cwd() + '/www';
 
@@ -540,7 +538,7 @@ cli.main(function (args, options) {
 	}).listen(options.port + 1);
 		
 	console.log('WEBROOT:' + WEBROOT);
-	console.log('HTTPS server listening on port ' + (options.port + 1));
+	console.log('HTTPS server listening on port ' + (parseInt(options.port) + 1));
 	console.log('HTTP server listening on port ' + options.port);	
 });
 
