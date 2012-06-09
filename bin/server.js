@@ -418,7 +418,7 @@ function doDefault(query, req, res) {
 	
 	var root = WEBROOT;
 	if (query.pkg) {
-		root = packageBase(query.pkg);
+		root = packageBase(query.pkg) + 'www/';
 	}
 	
 	paperboy

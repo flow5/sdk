@@ -95,7 +95,7 @@ function packageBase(pkg) {
 	if (!value) {
 		return null;
 	} else {
-		return value + '/';		
+		return value + '/www/';		
 	}
 }
 
