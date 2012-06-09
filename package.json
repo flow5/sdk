@@ -5,12 +5,16 @@
 		"port": 8008
 	},	
 	"bin": {
-		"f5link": "./link.js"
+		"f5server": "./bin/server.js",
+		"f5link": "./bin/link.js",
+		"f5run": "./bin/run.js",
+		"f5script": "./bin/script.js",
+		"f5install": "./bin/install.js"
 	},
 	"scripts": {
-		"start": "node ./devserv/devserv.js"
-	},
-	
+		"install": "./bin/install.js",
+		"start": "./bin/server.js"
+	},	
     "dependencies": {
 		"cli": "0.4.0",
 		"css-compressor": "1.0.0",

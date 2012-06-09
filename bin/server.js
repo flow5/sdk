@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /***********************************************************************************************************************
 
 	Copyright (c) 2011 Paul Greyson
@@ -25,13 +26,10 @@
 
 ***********************************************************************************************************************/
 
-console.log(process.env.npm_package_config_apps);
-
-var WEBROOT = process.cwd() + '/www';
-
 // nodelibs
 var http = require('http'),
 	https = require('https'),
+	npm = require('npm'),
 	fs = require('fs'),
 	cli = require('cli'),
 	path = require('path'),
@@ -40,28 +38,34 @@ var http = require('http'),
 	spawn = require('child_process').spawn,	
 	url = require('url'),
 	sys = require('sys');
+	
+	var WEBROOT = path.resolve(__dirname, '..', 'site');
 		
 // flow5 libs
-var generator = require('./generator.js');	
+var generator = require('./lib/generator.js');	
 
-cli.setUsage("node devserv.js [OPTIONS]");
+cli.setUsage("node server.js [OPTIONS]");
 
 cli.parse({
 	port: ['p', 'port', 'number'],
 	verbose: ['v', 'verbose logging'],
 });
 
-function pkgDomain(pkg) {
+// TODO: move to utility package
+function packageDomain(pkg) {
 	return pkg && pkg.split('.')[0];
 }
 
-function pkgName(pkg) {
-	if (pkg && pkg.split('.')[1]) {
-		return pkg.split('.')[1] + '.manifest';
+function packageBase(pkg) {
+	var key = 'flow5:link_' + packageDomain(pkg);
+	var value = npm.config.get(key);
+	if (!value) {
+		return null;
 	} else {
-		return 'manifest';
+		return value + '/';
 	}
 }
+
 
 function forEach(obj, fn) {
 	if (obj.constructor === Array) {
@@ -275,7 +279,7 @@ function doManifest(query, req, res) {
 
 function doService(query, req, res) {
 	
-	var service = require('../www/services/' + pkgDomain(query.pkg) + '/' + query.name + '.js');
+	var service = require('../www/services/' + packageDomain(query.pkg) + '/' + query.name + '.js');
 	
 	function execService(body) {
 		try {
@@ -411,8 +415,14 @@ function doWaitForConnection(query, req, res) {
 
 function doDefault(query, req, res) {
 	// TODO: allow-origin shouldn't be required here since the page is loaded from same domain?	
+	
+	var root = WEBROOT;
+	if (query.pkg) {
+		root = packageBase(query.pkg);
+	}
+	
 	paperboy
-		.deliver(WEBROOT, req, res)
+		.deliver(root, req, res)
 		.addHeader('Access-Control-Allow-Origin', '*')
 		.error(function () {
 			sys.puts('Error delivering: ' + req.url);
@@ -426,119 +436,128 @@ function doDefault(query, req, res) {
 // http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
 cli.main(function (args, options) {
 	
-	options.port = process.env.npm_package_config_port || options.port || 8008;
-	
-	function handleRequest(req, res, protocol) {
-		// prevent directory climbing through passed parameters
-		var parsed = url.parse(req.url.replace('..', ''), true);	
-		
-		var pathname = url.parse(req.url).pathname;
-		
-		if (options.verbose) {
-			console.log(req.method);
-			console.log(pathname);
-			console.log(parsed);		
-		}
-		
-		parsed.query.devserv = protocol + '://' + req.headers.host;		
-				
-		switch (req.method) {
-			case 'POST':
-				switch(pathname) {
-					case '/generate':
-						getMessageBody(req, function (body) {
-							// assume that the body is a facebook signed request
-							parsed.query.body = body;
-							doGenerate(parsed.query, req, res);					
-						});
-						break;
-					case '/dot2svg':
-						doDot2Svg(req, res);	
-						break;
-					case '/proxy':
-						doProxy(parsed.query, req, res);
-						break;
-					case '/service':
-						doService(parsed.query, req, res);
-						break;
-					case '/talk': 
-						doTalk(parsed.query, req, res);
-						break;
-					default:
-						res.writeHead(404);
-						res.end();				
-				}
-				break;		
-			case 'GET':
-				switch (pathname) {
-					case '/generate':
-						doGenerate(parsed.query, req, res);
-						break;
-					case '/ide':
-						doIDE(parsed.query, req, res);
-						break;
-					case '/proxy':
-						doProxy(parsed.query, req, res);				
-						break;
-					case '/cache.manifest':
-						doManifest(parsed.query, req, res);
-						break;	
-					case '/service':
-						doService(parsed.query, req, res);
-						break;
-					case '/listen': 
-						doListen(parsed.query, req, res);
-						break;						
-					case '/clientid': 
-						doClientId(parsed.query, req, res);
-						break;						
-					case '/connectListener': 
-						doConnectListener(parsed.query, req, res);
-						break;						
-					case '/waitForConnection': 
-						doWaitForConnection(parsed.query, req, res);
-						break;						
-					default:
-						doDefault(parsed.query, req, res);					
-				}
-				break;
-			case 'OPTIONS':
-				// allow everything
-				var responseHeaders = {
-					'Access-Control-Allow-Origin': '*',
-					'Access-Control-Allow-Methods': req.headers['access-control-request-method'],
-					'Access-Control-Allow-Headers': req.headers['access-control-request-headers']
-				};
-				res.writeHead(200, responseHeaders);
-				res.end();
-				break;
-			default:
-				res.writeHead(405);
-				res.end();
-				break;
-		}		
-	}
+	npm.load({}, function () {
+		options.port = process.env.npm_package_config_port || options.port || 8008;
+
+		function handleRequest(req, res, protocol) {
+			// prevent directory climbing through passed parameters
+			var parsed = url.parse(req.url.replace('..', ''), true);	
+
+			var pathname = url.parse(req.url).pathname;
+
+			if (options.verbose) {
+				console.log(req.method);
+				console.log(pathname);
+				console.log(parsed);		
+			}
+
+			parsed.query.devserv = protocol + '://' + req.headers.host;	
 			
-	http.createServer(function (req, res) {					
-		if (options.verbose) {
-			showRequest(req, true);			
-		}		
-		handleRequest(req, res, 'http');		
-	}).listen(options.port);
-	
-	var httpsOptions = {
-	  key: fs.readFileSync('./devserv/https/privatekey.pem'),
-	  cert: fs.readFileSync('./devserv/https/certificate.pem')
-	};	
-	https.createServer(httpsOptions, function (req, res) {
-		if (options.verbose) {
-			showRequest(req, true);			
-		}		
-		handleRequest(req, res, 'https');										
-	}).listen(options.port + 1);
-		
-	console.log('WEBROOT:' + WEBROOT);
-	console.log('HTTPS server listening on port ' + (parseInt(options.port) + 1));
-	console.log('HTTP server listening on port ' + options.port);	
+			if (parsed.query.pkg && !packageBase(parsed.query.pkg)) {
+				res.writeHead(500);
+				res.write('Unknown package: ' + parsed.query.pkg + '. Did you f5link?');
+				res.end();				
+				return;
+			}
+			
+			switch (req.method) {
+				case 'POST':
+					switch(pathname) {
+						case '/generate':
+							getMessageBody(req, function (body) {
+								// assume that the body is a facebook signed request
+								parsed.query.body = body;
+								doGenerate(parsed.query, req, res);					
+							});
+							break;
+						case '/dot2svg':
+							doDot2Svg(req, res);	
+							break;
+						case '/proxy':
+							doProxy(parsed.query, req, res);
+							break;
+						case '/service':
+							doService(parsed.query, req, res);
+							break;
+						case '/talk': 
+							doTalk(parsed.query, req, res);
+							break;
+						default:
+							res.writeHead(404);
+							res.end();				
+					}
+					break;		
+				case 'GET':
+					switch (pathname) {
+						case '/generate':
+							doGenerate(parsed.query, req, res);
+							break;
+						case '/ide':
+							doIDE(parsed.query, req, res);
+							break;
+						case '/proxy':
+							doProxy(parsed.query, req, res);				
+							break;
+						case '/cache.manifest':
+							doManifest(parsed.query, req, res);
+							break;	
+						case '/service':
+							doService(parsed.query, req, res);
+							break;
+						case '/listen': 
+							doListen(parsed.query, req, res);
+							break;						
+						case '/clientid': 
+							doClientId(parsed.query, req, res);
+							break;						
+						case '/connectListener': 
+							doConnectListener(parsed.query, req, res);
+							break;						
+						case '/waitForConnection': 
+							doWaitForConnection(parsed.query, req, res);
+							break;						
+						default:
+							doDefault(parsed.query, req, res);					
+					}
+					break;
+				case 'OPTIONS':
+					// allow everything
+					var responseHeaders = {
+						'Access-Control-Allow-Origin': '*',
+						'Access-Control-Allow-Methods': req.headers['access-control-request-method'],
+						'Access-Control-Allow-Headers': req.headers['access-control-request-headers']
+					};
+					res.writeHead(200, responseHeaders);
+					res.end();
+					break;
+				default:
+					res.writeHead(405);
+					res.end();
+					break;
+			}		
+		}
+
+		http.createServer(function (req, res) {					
+			if (options.verbose) {
+				showRequest(req, true);			
+			}		
+			handleRequest(req, res, 'http');		
+		}).listen(options.port);
+
+		var httpsOptions = {
+		  key: fs.readFileSync(__dirname + '/https/privatekey.pem'),
+		  cert: fs.readFileSync(__dirname + '/https/certificate.pem')
+		};	
+		https.createServer(httpsOptions, function (req, res) {
+			if (options.verbose) {
+				showRequest(req, true);			
+			}		
+			handleRequest(req, res, 'https');										
+		}).listen(options.port + 1);
+
+		console.log('WEBROOT:' + WEBROOT);
+		console.log('HTTPS server listening on port ' + (parseInt(options.port, 10) + 1));
+		console.log('HTTP server listening on port ' + options.port);		
+	});			
 });
 

@@ -28,6 +28,7 @@
 (function () {
 				
 var fs = require('fs'),
+	npm = require('npm'),
 	async = require('async'),
 	cssmin = require('css-compressor').cssmin,
 	minify = require('minifyjs').minify;
@@ -76,20 +77,31 @@ function urlParameters(query) {
 }
 
 // TODO: this is duplicated in devserv. why?
-function pkgDomain(pkg) {
+function packageDomain(pkg) {
 	return pkg && pkg.split('.')[0];
 }
 
-function pkgName(pkg) {
+function packageManifestName(pkg) {
 	if (pkg && pkg.split('.')[1]) {
-		return pkg.split('.')[1] + '.manifest';
+		return pkg.split('.')[1] + '.manifest.json';
 	} else {
-		return 'manifest';
+		return 'manifest.json';
 	}
 }
 
+function packageBase(pkg) {
+	var key = 'flow5:link_' + packageDomain(pkg);
+	var value = npm.config.get(key);
+	if (!value) {
+		return null;
+	} else {
+		return value + '/';		
+	}
+}
+
+
 function parseJSON(path, cb) {	
-	fs.readFile('www/' + path, 'utf8', function (readErr, json) {
+	fs.readFile(path, 'utf8', function (readErr, json) {
 		if (readErr) {
 			cb(readErr);
 		} else {
@@ -121,13 +133,13 @@ function inlineData(path) {
 
 		var data;
 		if (ext === 'ttf') {
-			data = 'data:font/truetype;base64,' + fs.readFileSync('www/' + path, 'base64');
+			data = 'data:font/truetype;base64,' + fs.readFileSync(path, 'base64');
 		} else if (ext === 'svg') {
-			data = 'data:image/svg+xml;utf8,' + fs.readFileSync('www/' + path).toString().replace(/(\r\n|\n|\r)/gm, '');	
+			data = 'data:image/svg+xml;utf8,' + fs.readFileSync(path).toString().replace(/(\r\n|\n|\r)/gm, '');	
 		} else if (ext === 'html' || ext === 'css') {
-			data = 'base64,' + fs.readFileSync('www/' + path, 'base64');
+			data = 'base64,' + fs.readFileSync(path, 'base64');
 		} else {
-			data = 'data:image/' + ext + ';base64,' + fs.readFileSync('www/' + path, 'base64');				
+			data = 'data:image/' + ext + ';base64,' + fs.readFileSync(path, 'base64');				
 		}
 
 		return data;
@@ -277,9 +289,8 @@ function processManifest(manifest, query, type, process, cb) {
 
 exports.generateHtml = function (query, cb) {
 	
-//	debugger;
-	
-	console.log(query.pkg + ' generating');
+//	debugger;	
+//	console.log(query.pkg + ' generating');
 	
 	var document = new Element('html');
 	document.head = new Element('head');
@@ -302,7 +313,11 @@ exports.generateHtml = function (query, cb) {
 	function injectLink(rel, href, type, pkg) {
 		var link = new Element('link');
 		link.setAttribute('rel', rel);
-		link.setAttribute('href', href);
+		if (pkg) {
+			link.setAttribute('href', href + '?pkg=' + pkg);			
+		} else {
+			link.setAttribute('href', href);			
+		}
 		if (type) {
 			link.setAttribute('type', type);
 		}
@@ -313,17 +328,18 @@ exports.generateHtml = function (query, cb) {
 		document.head.appendChild(link);
 	}
 		
-	function makeScript(src, cb) {
+	function makeScript(pkg, file, cb) {
 		var script = new Element('script');		
 		if (!boolValue(query.inline)) {
 			// reference scripts
-			script.setAttribute('src', src);
+			script.setAttribute('src', file + '?pkg=' + pkg);
 			cb(null, script);
 		} else {
+			var src = packageBase(pkg) + file;
 			// inline scripts
 			// devserv layer will compress and minify	
 			script.id = src;			
-			fs.readFile('www/' + src, 'utf8', function (err, code) {
+			fs.readFile(src, 'utf8', function (err, code) {
 				if (err) {
 					cb(err);
 				} else {
@@ -333,7 +349,7 @@ exports.generateHtml = function (query, cb) {
 							cb(err, script);
 						});
 					} else {
-						script.innerHTML = code + '\n//@ sourceURL=www/' + src + '\n';
+						script.innerHTML = code + '\n//@ sourceURL=' + src + '\n';
 						cb(null, script);											
 					}
 				}
@@ -343,7 +359,7 @@ exports.generateHtml = function (query, cb) {
 	
 	function facebookId() {
 		try {
-			var path = 'www/apps/' + pkgDomain(query.pkg) + '/facebook_appid.txt';
+			var path = packageBase(query.pkg) + 'facebook_appid.txt';
 			return fs.readFileSync(path).toString();
 		} catch (e) {
 //			console.log('Could not find facebook_appid.txt');
@@ -379,7 +395,7 @@ exports.generateHtml = function (query, cb) {
 			var tasks = [];			
 			scripts.forEach(function (file) {
 				tasks.push(function (cb) {
-					makeScript(base+file, function (err, script) {
+					makeScript(pkg, file, function (err, script) {
 						if (err) {
 							cb(err);
 						} else {
@@ -398,7 +414,7 @@ exports.generateHtml = function (query, cb) {
 				if (file.match('.css')) {
 					if (boolValue(query.inline)) {
 						var resolvedPath = base + file;
-						var style = fs.readFileSync('www/' + resolvedPath).toString();
+						var style = fs.readFileSync(resolvedPath).toString();
 
 						if (boolValue(query.compress)) {
 							style = cssmin(style);
@@ -427,12 +443,12 @@ exports.generateHtml = function (query, cb) {
 						styleDiv.innerHTML = statements.join('');
 						document.head.appendChild(styleDiv);												
 					} else {
-						injectLink('stylesheet', base + file, 'text/css', pkg);
+						injectLink('stylesheet', file, 'text/css', pkg);
 					}
 				} else {
 					var elementsDiv = new Element('div');
 					try {
-						elementsDiv.innerHTML = fs.readFileSync('www/' + base + file).toString();						
+						elementsDiv.innerHTML = fs.readFileSync(base + file).toString();						
 					} catch (e) {
 						console.log(e.stack);
 					}
@@ -546,24 +562,16 @@ exports.generateHtml = function (query, cb) {
 		
 		// TODO: move to function packageInfo()
 		
-		var pkgDomain = pkg.split('.')[0];
-		var pkgName = pkg.split('.')[1];
-
-		var base;
-		if (pkgDomain === 'f5') {
-			base = 'f5/';
-		} else {
-			base = 'apps/' + pkgDomain + '/';
-		}
-
-		var manifestName;
-		if (pkgName) {
-			manifestName = pkgName + '.manifest.json';
-		} else {
-			manifestName = 'manifest.json';
+		var pkgDomain = packageDomain(pkg);
+		var manifestName = packageManifestName(pkg);
+		var pkgBase = packageBase(pkg);
+		
+		if (!pkgBase) {
+			cb(new Error('Unknown package: ' + pkg + '. Did you f5link?'));
+			return;
 		}
 		
-		parseJSON(base + manifestName, function (err, manifest) {
+		parseJSON(pkgBase + manifestName, function (err, manifest) {
 			function injectPackages(packages, type, cb) {
 				var tasks = [];			
 				packages.forEach(function (pkg) {
@@ -582,7 +590,7 @@ exports.generateHtml = function (query, cb) {
 					if (err) {
 						cb(err);
 					} else {
-						injectPackage(pkg, manifest, base, cb);				
+						injectPackage(pkg, manifest, pkgBase, cb);				
 					}
 				});				
 			}		
@@ -600,8 +608,8 @@ exports.generateHtml = function (query, cb) {
 		// ios webapp stuff
 	//	injectMeta({name: 'apple-mobile-web-app-status-bar-style', content: 'black'});
 	//	injectMeta({name: 'apple-mobile-web-app-capable', content: 'yes'});
-	//	injectLink('apple-touch-icon', 'apps/' + pkgDomain(query.pkg) + '/images/icon.png', null);
-	//	injectLink('apple-touch-startup-image', 'apps/' + pkgDomain(query.pkg) + '/images/splash.png', null);
+	//	injectLink('apple-touch-icon', 'apps/' + packageDomain(query.pkg) + '/images/icon.png', null);
+	//	injectLink('apple-touch-startup-image', 'apps/' + packageDomain(query.pkg) + '/images/splash.png', null);
 
 		// ios
 		injectMeta({'http-equiv': 'Content-Type', content: 'text/html; charset=UTF-8'});
@@ -611,7 +619,7 @@ exports.generateHtml = function (query, cb) {
 		injectMeta({name: 'viewport', content: 'target-densitydpi=device-dpi'});
 
 		// setup
-		makeScript('f5/lib/f5.js', function (err, script) {
+		makeScript('f5', 'lib/f5.js', function (err, script) {
 			if (err) {
 				cb(err);
 			} else {
@@ -638,7 +646,7 @@ exports.generateHtml = function (query, cb) {
 	function injectFooter(cb) {
 		var tasks = [];
 		tasks.push(function (cb) {
-			makeScript('f5/lib/register.js', function (err, script) {
+			makeScript('f5', 'lib/register.js', function (err, script) {
 				if (err) {
 					cb(err);
 				} else {
@@ -648,7 +656,7 @@ exports.generateHtml = function (query, cb) {
 			});
 		});
 		tasks.push(function (cb) {
-			makeScript('f5/lib/domstart.js', function (err, script) {
+			makeScript('f5', 'lib/domstart.js', function (err, script) {
 				if (err) {
 					cb(err);
 				} else {

@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /***********************************************************************************************************************
 
 	Copyright (c) 2012 Paul Greyson
@@ -25,5 +26,11 @@
 
 ***********************************************************************************************************************/
 
-console.log('ohai!')
-console.log(process.argv)
+var npm = require('npm'),
+	path = require('path');
+
+npm.load({}, function () {	
+	var key = 'flow5:link_f5';
+	var value = path.resolve(__dirname, '..', 'www', 'f5');			
+	npm.commands.config(['set', key, value]);
+});
