@@ -29,9 +29,11 @@
 				
 var fs = require('fs'),
 	cssmin = require('css-compressor').cssmin,
-	FFI = require("node-ffi"),
-	libc = new FFI.Library(null, {"system": ["int32", ["string"]]}),
 	minify = require('./minify.js').minify;	
+
+//	FFI = require("node-ffi"),
+//	libc = new FFI.Library(null, {"system": ["int32", ["string"]]}),
+
 
 function forEach(obj, fn) {
 	if (obj.constructor === Array) {
@@ -563,6 +565,7 @@ exports.generateHtml = function (query) {
 				} else if (ext === 'html' || ext === 'css') {
 					data = 'base64,' + fs.readFileSync('www/' + path, 'base64');
 				} else {
+/*					
 					if (boolValue(query.crush)) {
 						var tmpPath = '/tmp/' + process.pid + Date.now() + '.png';
 						var cmd = 'optipng -o2 -out ' + tmpPath + ' ' + path;
@@ -571,6 +574,7 @@ exports.generateHtml = function (query) {
 						libc.system(cmd);					
 						path = tmpPath;
 					}
+*/					
 					data = 'data:image/' + ext + ';base64,' + fs.readFileSync('www/' + path, 'base64');				
 				}
 			
@@ -686,8 +690,8 @@ exports.generateHtml = function (query) {
 					
 	if (!query.lib) {
 		// manifest	
-		var manifestString = 'cache.manifest?' + urlParameters(query);
-		document.setAttribute('manifest', manifestString);	
+//		var manifestString = 'cache.manifest?' + urlParameters(query);
+//		document.setAttribute('manifest', manifestString);	
 
 		// TODO: create a meta section in manifest for this stuff		
 		// TODO: if manifest.type === 'app' add this stuff. otherwise not
