@@ -29,7 +29,8 @@
 				
 var fs = require('fs'),
 	async = require('async'),
-	cssmin = require('css-compressor').cssmin;
+	cssmin = require('css-compressor').cssmin,
+	minify = require('minifyjs').minify;
 
 require('./JSONparseClean.js');	
 
@@ -116,6 +117,37 @@ function handleDataResourcesRecursive(obj, handler) {
 		}
 	});
 }
+
+		function inlineData(path) {			
+			try {
+				var ext = require('path').extname(path).substring(1);
+
+				var data;
+				if (ext === 'ttf') {
+					data = 'data:font/truetype;base64,' + fs.readFileSync('www/' + path, 'base64');
+				} else if (ext === 'svg') {
+					data = 'data:image/svg+xml;utf8,' + fs.readFileSync('www/' + path).toString().replace(/(\r\n|\n|\r)/gm, '');	
+				} else if (ext === 'html' || ext === 'css') {
+					data = 'base64,' + fs.readFileSync('www/' + path, 'base64');
+				} else {
+/*					
+					if (boolValue(query.crush)) {
+						var tmpPath = '/tmp/' + process.pid + Date.now() + '.png';
+						var cmd = 'optipng -o2 -out ' + tmpPath + ' ' + path;
+//						var cmd = 'convert -quality 05 ' + path + ' ' + tmpPath;
+//						console.log('cmd:' + cmd)
+						libc.system(cmd);					
+						path = tmpPath;
+					}
+*/					
+					data = 'data:image/' + ext + ';base64,' + fs.readFileSync('www/' + path, 'base64');				
+				}
+
+				return data;
+			} catch (e) {
+				console.log('error:' + e.stack);
+			}
+		}
 
 // Minimalist DOM construction
 function Element(tag) {
@@ -258,7 +290,7 @@ function processManifest(manifest, query, type, process, cb) {
 
 exports.generateHtml = function (query, cb) {
 	
-	debugger;
+//	debugger;
 	
 	console.log(query.pkg + ' generating');
 	
@@ -294,18 +326,25 @@ exports.generateHtml = function (query, cb) {
 		document.head.appendChild(link);
 	}
 		
-	function makeScript(src) {
+	function makeScript(src, cb) {
 		var script = new Element('script');		
 		if (!boolValue(query.inline)) {
 			// reference scripts
 			script.setAttribute('src', src);
+			cb(null, script);
 		} else {
 			// inline scripts
 			// devserv layer will compress and minify	
 			script.id = src;			
-			script.innerHTML = fs.readFileSync('www/' + src).toString() + '\n//@ sourceURL=www/' + src + '\n';
+			fs.readFile('www/' + src, 'utf8', function (err, code) {
+				if (err) {
+					cb(err);
+				} else {
+					script.innerHTML = code + '\n//@ sourceURL=www/' + src + '\n';
+					cb(null, script);					
+				}
+			});
 		}
-		return script;
 	}		
 	
 	function facebookId() {
@@ -340,44 +379,23 @@ exports.generateHtml = function (query, cb) {
 		var resourcesEl = new Element('script');
 		resourcesEl.setAttribute('f5id', pkg + '.resources');
 		pkgEl.appendChild(resourcesEl);				
-
-		function inlineData(path) {			
-			try {
-				var ext = require('path').extname(path).substring(1);
-
-				var data;
-				if (ext === 'ttf') {
-					data = 'data:font/truetype;base64,' + fs.readFileSync('www/' + path, 'base64');
-				} else if (ext === 'svg') {
-					data = 'data:image/svg+xml;utf8,' + fs.readFileSync('www/' + path).toString().replace(/(\r\n|\n|\r)/gm, '');	
-				} else if (ext === 'html' || ext === 'css') {
-					data = 'base64,' + fs.readFileSync('www/' + path, 'base64');
-				} else {
-/*					
-					if (boolValue(query.crush)) {
-						var tmpPath = '/tmp/' + process.pid + Date.now() + '.png';
-						var cmd = 'optipng -o2 -out ' + tmpPath + ' ' + path;
-//						var cmd = 'convert -quality 05 ' + path + ' ' + tmpPath;
-//						console.log('cmd:' + cmd)
-						libc.system(cmd);					
-						path = tmpPath;
-					}
-*/					
-					data = 'data:image/' + ext + ';base64,' + fs.readFileSync('www/' + path, 'base64');				
-				}
-
-				return data;
-			} catch (e) {
-				console.log('error:' + e.stack);
-			}
-		}		
-
+	
 		// javascript
 		function injectScripts(scripts, type, cb) {
+			var tasks = [];			
 			scripts.forEach(function (file) {
-				scriptsEl.appendChild(makeScript(base + file));				
-			});				
-			cb();
+				tasks.push(function (cb) {
+					makeScript(base+file, function (err, script) {
+						if (err) {
+							cb(err);
+						} else {
+							scriptsEl.appendChild(script);
+							cb();
+						}
+					});
+				});
+			});			
+			async.series(tasks, cb);	
 		}
 
 		// html and css
@@ -483,7 +501,7 @@ exports.generateHtml = function (query, cb) {
 				if (err) {
 					cb(err);
 				} else {
-					flowsEl.innerHTML = 'F5.addFlows("' + pkg + '", ' + JSON.stringify(flows) + ');';																	
+					flowsEl.innerHTML = 'F5.addFlows("' + pkg + '", ' + JSON.stringify(flows) + ');';
 					cb();
 				}
 			});	
@@ -494,7 +512,7 @@ exports.generateHtml = function (query, cb) {
 				if (err) {
 					cb(err);
 				} else {
-					resourcesEl.innerHTML = 'F5.addResources("' + pkg + '", ' + JSON.stringify(resources) + ');';													
+					resourcesEl.innerHTML = 'F5.addResources("' + pkg + '", ' + JSON.stringify(resources) + ');';
 					cb();
 				}
 			});	
@@ -598,32 +616,54 @@ exports.generateHtml = function (query, cb) {
 		// android
 		injectMeta({name: 'viewport', content: 'target-densitydpi=device-dpi'});
 
-
 		// setup
-		document.body.appendChild(makeScript('f5/lib/f5.js'));						
+		makeScript('f5/lib/f5.js', function (err, script) {
+			if (err) {
+				cb(err);
+			} else {
+				document.body.appendChild(script);						
 
+				var queryScript = new Element('script');
+				queryScript.setAttribute('f5id', 'F5.query');
+				queryScript.innerHTML = "F5.query = " + JSON.stringify(query);
+				document.body.appendChild(queryScript);
 
-		var queryScript = new Element('script');
-		queryScript.setAttribute('f5id', 'F5.query');
-		queryScript.innerHTML = "F5.query = " + JSON.stringify(query);
-		document.body.appendChild(queryScript);
+				// TODO: don't make facebook id a first class feature
+				var facebook_appid = facebookId();
+				if (facebook_appid) {
+					var facebookScript = new Element('script');
+					facebookScript.innerHTML = "F5.facebook_appid = " + facebook_appid;
+					document.body.appendChild(facebookScript);		
+				}	
 
-		// TODO: don't make facebook id a first class feature
-		var facebook_appid = facebookId();
-		if (facebook_appid) {
-			var facebookScript = new Element('script');
-			facebookScript.innerHTML = "F5.facebook_appid = " + facebook_appid;
-			document.body.appendChild(facebookScript);		
-		}	
-		
-		cb(null, null);	
+				cb();				
+			}			
+		});
 	}	
 	
 	function injectFooter(cb) {
-		document.body.appendChild(makeScript('f5/lib/register.js'));				
-		document.body.appendChild(makeScript('f5/lib/domstart.js'));								
-		
-		cb(null, null);
+		var tasks = [];
+		tasks.push(function (cb) {
+			makeScript('f5/lib/register.js', function (err, script) {
+				if (err) {
+					cb(err);
+				} else {
+					document.body.appendChild(script);
+					cb();
+				}
+			});
+		});
+		tasks.push(function (cb) {
+			makeScript('f5/lib/domstart.js', function (err, script) {
+				if (err) {
+					cb(err);
+				} else {
+					document.body.appendChild(script);
+					cb();
+				}
+			});
+		});		
+		async.series(tasks, cb);
 	}	
 	
 	/***********************************/
