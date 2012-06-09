@@ -30,7 +30,6 @@ var npm = require('npm'),
 	path = require('path');
 
 npm.load({}, function () {	
-	var key = 'flow5:link_f5';
-	var value = path.resolve(__dirname, '..', 'www', 'f5');			
-	npm.commands.config(['set', key, value]);
+	npm.commands.config(['set', 'flow5:link_f5', path.resolve(__dirname, '..')]);
+	npm.commands.config(['set', 'flow5:link_ide', path.resolve(__dirname, '..', 'ide')]);
 });
