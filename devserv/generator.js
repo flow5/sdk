@@ -443,7 +443,7 @@ exports.generateFrame = function (query) {
 	return document.outerHTML();
 };
 
-exports.generateHtml = function (query) {
+exports.generateHtml = function (query, cb) {
 	
 	console.log(query.pkg + ' generating');
 	
@@ -750,7 +750,7 @@ exports.generateHtml = function (query) {
 		html = html.replace(/-webkit/g, '-moz');		
 	}
 	
-	return html;
+	cb(null, html);
 };
 
 }());

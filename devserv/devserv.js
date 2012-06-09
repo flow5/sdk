@@ -214,15 +214,23 @@ function doGenerate(query, req, res) {
 			res.write(html);
 			res.end();								
 		} else {
-			html = generator.generateHtml(query);
+			generator.generateHtml(query, function (err, html) {
+				if (err) {
+					console.log(err);
+					res.writeHead(500);
+					res.write(err);
+					res.end();
+				} else {
+					if (query.compress === 'true') {
+						compress(html, res);					
+					} else {
+						res.writeHead(200, {'Content-Type': 'text/html'});
+						res.write(html);
+						res.end();					
+					}					
+				}
+			});
 
-			if (query.compress === 'false') {
-				res.writeHead(200, {'Content-Type': 'text/html'});
-				res.write(html);
-				res.end();					
-			} else {
-				compress(html, res);					
-			}							
 		}
 	} catch (e2) {
 		console.log('error:' + e2.message);
