@@ -1,12 +1,9 @@
 {
 	"type": "tabset",
-	"selection": "graph",
+	"selection": "config",
 	"children": {
-		"model": {
-		
-		},
-		"graph": {
-		
-		}
+		"model": {},
+		"graph": {},
+		"config": {}
 	}
 }

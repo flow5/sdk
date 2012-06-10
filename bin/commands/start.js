@@ -33,29 +33,11 @@ exports.options = {
 
 exports.usage = 'start [OPTIONS]';
 
-exports.exec = function (args, options) {
-	
-	var spawn = require('child_process').spawn,
-		path = require('path'),
-		npm = require('npm');
-		
-	npm.load({}, function () {		
-		var serverInfo = require(path.resolve(__dirname, '..', 'server', 'server.js')).start(args, options, function (info) {
-			console.log(info);
-			var url;
-			if (options.https) {
-				url = 'https://localhost:' + info.https;
-			} else {
-				url = 'http://localhost:' + info.http;
-			}
-			var args = [url];
-			var browserArgs = npm.config.get('flow5:browserArgs');
-			if (browserArgs) {
-				args = browserArgs.split(':').concat(args);
-			}
-			console.log(args)
-			spawn(npm.config.get('flow5:browser'), args);		
-		});
+exports.exec = function (args, options) {	
+	require(require('path').resolve(__dirname, '..', 'server', 'server.js')).start(args, options, function (info) {
+		console.log('flow5 is running at:');
+		console.log('  http://localhost:' + info.http);
+		console.log('  https://localhost:' + info.https);
 	});
 };
 

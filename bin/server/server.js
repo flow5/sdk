@@ -36,7 +36,7 @@ var http = require('http'),
 	exec = require('child_process').exec,	 
 	spawn = require('child_process').spawn,	
 	url = require('url'),
-	sys = require('sys');
+	util = require('util');
 	
 var WEBROOT = path.resolve(__dirname, '../..', 'site');
 		
@@ -108,20 +108,20 @@ function doDot2Svg(req, res) {
 		res.end();
 	});		
 	child.stderr.on('data', function (data) {
-		sys.puts(data);
+		util.puts(data);
 	});	
 	
 	res.writeHead(200, {'Content-Type': 'image/svg+xml', 'sequence-number': req.headers['sequence-number']});		
 }
 
 function showRequest(req, printHeaders) {
-	sys.puts('------------------------------------');
-	sys.puts(req.url);
+	util.puts('------------------------------------');
+	util.puts(req.url);
 	if (printHeaders) {
 		var name;
 		for (name in req.headers) {
 			if (req.headers.hasOwnProperty(name)) {
-				sys.puts(name + ' : ' + req.headers[name]);				
+				util.puts(name + ' : ' + req.headers[name]);				
 			}
 		}			
 	}
@@ -417,7 +417,7 @@ function doDefault(query, req, res) {
 		.deliver(root, req, res)
 		.addHeader('Access-Control-Allow-Origin', '*')
 		.error(function () {
-			sys.puts('Error delivering: ' + req.url);
+			util.puts('Error delivering: ' + req.url);
 		})
 		.otherwise(function () {
 			res.writeHead(404, {'Content-Type': 'text/plain'});
