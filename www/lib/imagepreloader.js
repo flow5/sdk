@@ -36,12 +36,8 @@
 		
 		this.load = function (url) {
 			var that = this;
-			
-			if (url.match('data:image/') || url.match('http://')) {
-				this.url = url;
-			} else {
-				this.url = 'apps/' + F5.query.pkg.split('.')[0] + '/' + url;
-			}			
+					
+			this.url = url;
 
 			var completed, error, completionCb;
 			

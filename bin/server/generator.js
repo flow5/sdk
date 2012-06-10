@@ -101,19 +101,18 @@ function packageBase(pkg) {
 
 
 function parseJSON(path, cb) {	
-	console.log('parseJson: ' + path)
 	fs.readFile(path, 'utf8', function (readErr, json) {
 		if (readErr) {
 			cb(readErr);
 		} else {
-			var json;
+			var parsedJSON;
 			try {
-				var json = JSON.parseClean(json);				
+				parsedJSON = JSON.parseClean(json);				
 			} catch (parseErr) {
 				cb(parseErr);
 			}
 			try {
-				cb(null, json);
+				cb(null, parsedJSON);
 			} catch (cbErr) {
 				console.log(cbErr);
 			}
@@ -589,6 +588,10 @@ exports.generateHtml = function (query, cb) {
 								handleDataResourcesRecursive(r, function (obj, id, src) {						
 									obj[id] = inlineData(base + src);										
 								});
+							} else {
+								handleDataResourcesRecursive(r, function (obj, id, src) {
+									obj[id] += '?pkg=' + pkg;										
+								});								
 							}
 							extend(resources, r);		
 							cb();							
@@ -895,6 +898,9 @@ exports.generateCacheManifest = function(query, cb) {
 		}
 		
 		function checkManifest(pkg, cb) {
+			var manifestName = packageManifestName(pkg);
+			var pkgBase = packageBase(pkg);				
+			
 			function checkDates(files, type, cb) {
 				var tasks = [];
 				files.forEach(function (file) {
@@ -933,10 +939,7 @@ exports.generateCacheManifest = function(query, cb) {
 				});
 				async.series(tasks, cb);
 			}		
-			
-			var manifestName = packageManifestName(pkg);
-			var pkgBase = packageBase(pkg);				
-			
+						
 			parseJSON(pkgBase + manifestName, function (err, manifest) {
 				if (err) {
 					cb(err);

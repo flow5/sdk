@@ -113,7 +113,8 @@
 					resources[id] = F5.objectFromPrototype(F5.ImagePreloader);
 					resources[id].load(resource);
 				} else if (isHTMLResource(resource)) {
-					resources[id] = 'apps/' + F5.query.pkg.split('.')[0] + '/' + resource;
+					// I think nothing is required?
+//					resources[id] = 'apps/' + F5.query.pkg.split('.')[0] + '/' + resource;
 				}
 			});			
 		}
