@@ -267,14 +267,22 @@ function doProxy(query, req, res) {
 
 function doManifest(query, req, res) {
 //	res.writeHead(404);
-	res.writeHead(200, {'Content-Type': 'text/cache-manifest'});
 	try {
-		verifyQueryParameters(query);					
-		res.write(generator.generateCacheManifest(query));					
+		verifyQueryParameters(query);			
+		generator.generateCacheManifest(query, function (err, manifest) {
+			if (err) {
+				console.log(err);
+				res.writeHead(500);
+				res.write(err.stack);
+			} else {
+				res.writeHead(200, {'Content-Type': 'text/cache-manifest'});
+				res.write(manifest);									
+			}
+			res.end();	
+		});
 	} catch (e) {
 		console.log('error:' + e.stack);
 	}
-	res.end();	
 }
 
 function doService(query, req, res) {
@@ -435,6 +443,8 @@ function doDefault(query, req, res) {
 
 // http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
 exports.start = function (args, options, cb) {
+	
+	debugger;
 		
 	npm.load({}, function () {
 		function handleRequest(req, res, protocol) {

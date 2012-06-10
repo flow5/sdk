@@ -101,14 +101,21 @@ function packageBase(pkg) {
 
 
 function parseJSON(path, cb) {	
+	console.log('parseJson: ' + path)
 	fs.readFile(path, 'utf8', function (readErr, json) {
 		if (readErr) {
 			cb(readErr);
 		} else {
+			var json;
 			try {
-				cb(null, JSON.parseClean(json));
-			} catch (minifyErr) {
-				cb(minifyErr);
+				var json = JSON.parseClean(json);				
+			} catch (parseErr) {
+				cb(parseErr);
+			}
+			try {
+				cb(null, json);
+			} catch (cbErr) {
+				console.log(cbErr);
 			}
 		}
 	});	
@@ -279,15 +286,11 @@ function processManifest(manifest, query, type, process, cb) {
 	// TODO: can get more specific here e.g. locale
 }
 
-
-
-
 exports.generateScript = function (query, cb) {
 	
 	var script = '';
 			
 	function injectManifest(pkg, cb) {			
-		var pkgDomain = packageDomain(pkg);
 		var manifestName = packageManifestName(pkg);
 		var pkgBase = packageBase(pkg);
 				
@@ -398,9 +401,6 @@ exports.generateScript = function (query, cb) {
 		cb(err, script);
 	});
 };
-
-
-
 
 exports.generateHtml = function (query, cb) {
 	
@@ -675,9 +675,7 @@ exports.generateHtml = function (query, cb) {
 		
 	function injectManifest(pkg, cb) {		
 		
-		// TODO: move to function packageInfo()
-		
-		var pkgDomain = packageDomain(pkg);
+		// TODO: move to function packageInfo()		
 		var manifestName = packageManifestName(pkg);
 		var pkgBase = packageBase(pkg);
 		
@@ -714,8 +712,8 @@ exports.generateHtml = function (query, cb) {
 	
 	function injectHeader(cb) {
 		// manifest	
-//		var manifestString = 'cache.manifest?' + urlParameters(query);
-//		document.setAttribute('manifest', manifestString);	
+		var manifestString = 'cache.manifest?' + urlParameters(query);
+		document.setAttribute('manifest', manifestString);	
 
 		// TODO: create a meta section in manifest for this stuff		
 		// TODO: if manifest.type === 'app' add this stuff. otherwise not
@@ -820,6 +818,201 @@ exports.generateHtml = function (query, cb) {
 		}
 		cb(err, html);
 	});
+};
+
+exports.generateFrame = function (query) {
+	var document = new Element('html');
+	
+	document.head = new Element('head');
+	document.appendChild(document.head);
+
+	document.body = new Element('body');
+	document.body.setAttribute('style', 
+								'width:100%;' +
+								'height:100%;' +
+								'display:-webkit-box;' +
+								'-webkit-box-align:center;' + 
+								'-webkit-box-pack:center;' + 
+								'background-color:darkslategrey;');	
+	document.appendChild(document.body);	
+			
+	var width, height;
+	switch (query.geometry) {
+	case 'iphone-portrait':
+		width = 320;
+		height = 460;
+		break;
+	case 'iphone-landscape':
+		width = 480;
+		height = 300;
+		break;
+	case 'ipad-portrait':
+		height = 1004;
+		width = 768;
+		break;
+	case 'ipad-landscape':
+		height = 748;
+		width = 1024;
+		break;
+	default:			
+		var size = query.geometry.split('x');
+		width = size[0];
+		height = size[1];
+		break;
+	}			
+	delete query.geometry;
+	
+	var frame = new Element('iframe');
+	frame.id = 'frame';
+	frame.setAttribute('width', width);
+	frame.setAttribute('height', height);
+	frame.setAttribute('src', '/generate?' + urlParameters(query));
+	frame.setAttribute('frameborder', '0');
+	document.body.appendChild(frame);
+	
+	var script = new Element('script');
+	script.innerHTML = 'var frame = document.getElementById("frame");' + 
+					   'frame.onload = function () {F5 = frame.contentWindow.F5;};';
+	document.body.appendChild(script);
+	
+	return document.outerHTML();
+};
+
+exports.generateCacheManifest = function(query, cb) { 
+		
+	function getModDate(cb) {
+		var latestDate;
+		function checkDate(path, cb) {
+			try {
+				var modDate = new Date(fs.statSync(path).mtime);
+				if (!latestDate || modDate > latestDate) {
+					latestDate = modDate;
+				}	
+				cb();			
+			} catch (e) {
+				cb(e);
+			}
+		}
+		
+		function checkManifest(pkg, cb) {
+			function checkDates(files, type, cb) {
+				var tasks = [];
+				files.forEach(function (file) {
+					tasks.push(function (cb) {
+						checkDate(pkgBase + file, cb);						
+					});
+					if (type === 'resources') {
+						tasks.push(function (cb) {
+							parseJSON(pkgBase + file, function (err, resources) {
+								if (err) {
+									console.log(pkgBase + file)
+									console.log('the new one: ' + err)
+									cb(err);
+								} else {
+									var tasks = [];
+									handleDataResourcesRecursive(resources, function (obj, id, src) {
+										tasks.push(function (cb) {
+											checkDate(pkgBase + src, cb);								
+										});
+									});			
+									async.parallel(tasks, cb);									
+								}
+							});							
+						});
+					}
+				});			
+				async.parallel(tasks, cb);	
+			}			
+			
+			function checkPackages(packages, type, cb) {
+				var tasks = [];
+				packages.forEach(function (pkg) {
+					tasks.push(function (cb) {
+						checkManifest(pkg, cb);
+					});
+				});
+				async.series(tasks, cb);
+			}		
+			
+			var manifestName = packageManifestName(pkg);
+			var pkgBase = packageBase(pkg);				
+			
+			parseJSON(pkgBase + manifestName, function (err, manifest) {
+				if (err) {
+					cb(err);
+				} else {
+					var tasks = [];
+					tasks.push(function (cb) {
+						checkDate(pkgBase + manifestName, cb);						
+					});
+					tasks.push(function (cb) {
+						processManifest(manifest, query, 'packages', checkPackages, cb);																
+					});
+					tasks.push(function (cb) {
+						processManifest(manifest, query, 'flows', checkDates, cb);																
+					});
+					tasks.push(function (cb) {
+						processManifest(manifest, query, 'scripts', checkDates, cb);														
+					});
+					tasks.push(function (cb) {
+						processManifest(manifest, query, 'domscripts', checkDates, cb);														
+					});
+					tasks.push(function (cb) {
+						processManifest(manifest, query, 'elements', checkDates, cb);														
+					});
+					tasks.push(function (cb) {
+						processManifest(manifest, query, 'resources', checkDates, cb);																				
+					});
+					async.parallel(tasks, cb);
+				}
+			});
+		}
+		
+		var f5base = packageBase('f5');
+		
+		var tasks = [];
+		tasks.push(function (cb) {
+			checkDate(f5base + 'lib/f5.js', cb);					
+		});
+		tasks.push(function (cb) {
+			checkDate(f5base + 'lib/register.js', cb);					
+		});
+		tasks.push(function (cb) {
+			checkDate(f5base + 'lib/domstart.js', cb);					
+		});
+		tasks.push(function (cb) {
+			checkDate(__filename, cb);					
+		});
+		tasks.push(function (cb) {
+			checkDate(__dirname + '/server.js', cb);					
+		});
+
+		tasks.push(function (cb) {
+			checkManifest(query.pkg, function (err) {
+				cb(err);
+			});					
+		});
+		
+		async.parallel(tasks, function (err) {
+			if (!err) {
+				console.log(query.pkg + ' last modified ' + latestDate);						
+			}
+			cb(err, latestDate);
+		});
+	}
+
+
+	var cacheManifest = 'CACHE MANIFEST\n';
+	cacheManifest += 'CACHE:\n';
+			
+	cacheManifest += 'NETWORK:\n';
+	cacheManifest += '*\n';
+						
+	getModDate(function (err, latestDate) {
+		cacheManifest += '#' + latestDate + '\n';
+	//	console.log(cacheManifest)
+		cb(err, cacheManifest);		
+	});						
 };
 
 }());
