@@ -32,14 +32,13 @@ exports.options = {
 
 exports.usage = 'link pkg_domain path_or_url [OPTIONS]';
 
-exports.exec = function (args, options) {
+exports.exec = function (args, options, cli) {
 	var path = require('path'),
 		npm = require('npm');
 		
 	npm.load({}, function () {
 		if (!args[0] || (!options.unlink && !args[1])) {
-			console.log(exports.usage);
-			return;
+			cli.getUsage();
 		}		
 		
 		var pkgDomain = args[0];

@@ -1,9 +1,8 @@
 {
     "name": "flow5",
-    "version": "1.1.1",
+    "version": "0.1.1",
 	"description": "powerful but lightweight hybrid web/native framework and toolset for building apps and webapps",
 	"keywords": ["ios", "iphone", "android", "html5", "fat client", "templating", "ajax", "hybrid", "mobile app", "webapp"],
-	"homepage": "www.flow5.com",
 	"bugs": "",
 	"os": ["darwin"],
 	"repository": { 

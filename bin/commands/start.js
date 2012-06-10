@@ -27,8 +27,7 @@
 ***********************************************************************************************************************/
 exports.options = {
 	port: ['p', 'port', 'number'],
-	verbose: ['v', 'verbose logging'],
-	https: ['https', 'connect with https']
+	verbose: ['v', 'verbose logging']
 };
 
 exports.usage = 'start [OPTIONS]';
