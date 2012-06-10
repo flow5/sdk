@@ -38,17 +38,10 @@ var http = require('http'),
 	url = require('url'),
 	sys = require('sys');
 	
-var WEBROOT = path.resolve(__dirname, '..', 'site');
+var WEBROOT = path.resolve(__dirname, '../..', 'site');
 		
 // flow5 libs
-var generator = require('./lib/generator.js');	
-
-cli.setUsage("node server.js [OPTIONS]");
-
-cli.parse({
-	port: ['p', 'port', 'number'],
-	verbose: ['v', 'verbose logging'],
-});
+var generator = require('./generator.js');	
 
 // TODO: move to utility package
 function packageDomain(pkg) {
@@ -433,8 +426,8 @@ function doDefault(query, req, res) {
 }
 
 // http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
-cli.main(function (args, options) {
-	
+exports.start = function (args, options, cb) {
+		
 	npm.load({}, function () {
 		options.port = process.env.npm_package_config_port || options.port || 8008;
 
@@ -454,7 +447,7 @@ cli.main(function (args, options) {
 			
 			if (parsed.query.pkg && !packageBase(parsed.query.pkg)) {
 				res.writeHead(500);
-				res.write('Unknown package: ' + parsed.query.pkg + '. Did you f5link?');
+				res.write('Unknown package: ' + parsed.query.pkg + '. Did you flow5 link?');
 				res.end();				
 				return;
 			}
@@ -553,10 +546,12 @@ cli.main(function (args, options) {
 			}		
 			handleRequest(req, res, 'https');										
 		}).listen(options.port + 1);
-
-		console.log('WEBROOT:' + WEBROOT);
-		console.log('HTTPS server listening on port ' + (parseInt(options.port, 10) + 1));
-		console.log('HTTP server listening on port ' + options.port);		
+		
+		cb({
+			webroot: WEBROOT,
+			http: options.port,
+			https: parseInt(options.port, 10) + 1
+		});
 	});			
-});
+};
 

@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 /***********************************************************************************************************************
 
 	Copyright (c) 2012 Paul Greyson
@@ -32,4 +31,7 @@ var npm = require('npm'),
 npm.load({}, function () {	
 	npm.commands.config(['set', 'flow5:link_f5', path.resolve(__dirname, '..')]);
 	npm.commands.config(['set', 'flow5:link_ide', path.resolve(__dirname, '..', 'ide')]);
+	npm.commands.config(['set', 'flow5:port', '8008']);
+	npm.commands.config(['set', 'flow5:browser', '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome']);
+	npm.commands.config(['set', 'flow5:browserArgs', "--user-data-dir=/tmp"]);
 });

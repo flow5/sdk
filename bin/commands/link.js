@@ -26,16 +26,32 @@
 
 ***********************************************************************************************************************/
 
-var spawn = require('child_process').spawn,
-	path = require('path');
+exports.options = {
+	unlink: ['u', 'unlink']	
+};
 
-var server = spawn('f5server');
-server.stdout.pipe(process.stdout);
+exports.usage = 'link pkg_domain path_or_url [OPTIONS]';
 
-var exec = require('child_process').exec;
+exports.exec = function (args, options) {
+	var path = require('path'),
+		npm = require('npm');
+		
+	npm.load({}, function () {
+		if (!args[0] || (!options.unlink && !args[1])) {
+			console.log(exports.usage);
+			return;
+		}		
+		
+		var pkgDomain = args[0];
+		var uri = path.resolve(args[1]);
 
-exec('mdfind "kMDItemCFBundleIdentifier == \'com.google.Chrome\'"',
-	function (error, stdout, stderr) {
-		var location = stdout.split('\n')[0] + "/Contents/MacOS/Google Chrome";
-		spawn(location, ['localhost:8008']);		
+		var key = 'flow5:link_' + pkgDomain;
+		var value = uri;
+
+		if (options.unlink) {
+			npm.commands.config(['delete', key, value]);			
+		} else {
+			npm.commands.config(['set', key, value]);			
+		}
 	});
+};

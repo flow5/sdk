@@ -10,16 +10,11 @@
 		"type" : "git",
 	  	"url" : "http://github.com/pgreyson/flow5"
 	},
-	"config": {
-		"port": 8008,
-		"defaultBrowser": "Google Chrome"
-	},	
 	"bin": {
-		"flow5": "./flow5.js"
+		"flow5": "./bin/flow5.js"
 	},
 	"scripts": {
-		"install": "./bin/install.js",
-		"start": "flow5 start"
+		"install": "node ./bin/install.js"
 	},	
     "dependencies": {
 		"cli": "0.4.0",

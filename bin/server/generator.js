@@ -567,7 +567,7 @@ exports.generateHtml = function (query, cb) {
 		var pkgBase = packageBase(pkg);
 		
 		if (!pkgBase) {
-			cb(new Error('Unknown package: ' + pkg + '. Did you f5link?'));
+			cb(new Error('Unknown package: ' + pkg + '. Did you flow5 link?'));
 			return;
 		}
 		

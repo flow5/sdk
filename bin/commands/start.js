@@ -25,32 +25,37 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
+exports.options = {
+	port: ['p', 'port', 'number'],
+	verbose: ['v', 'verbose logging'],
+	https: ['https', 'connect with https']
+};
 
-var cli = require('cli'),
-	path = require('path'),
-	npm = require('npm');
+exports.usage = 'start [OPTIONS]';
 
-cli.setUsage("f5link pkg_domain path_or_url [OPTIONS]");
-
-
-cli.parse({
-	unlink: ['u', 'unlink']
-});
-
-
-cli.main(function (args, options) {	
-	npm.load({}, function () {
-		var pkgDomain = args[0];
-		var uri = path.resolve(args[1]);
+exports.exec = function (args, options) {
+	
+	var spawn = require('child_process').spawn,
+		path = require('path'),
+		npm = require('npm');
 		
-		var key = 'flow5:link_' + pkgDomain;
-		var value = uri;
-				
-		if (options.unlink) {
-			npm.commands.config(['delete', key, value]);			
-		} else {
-			npm.commands.config(['set', key, value]);			
-		}
-				
+	npm.load({}, function () {		
+		var serverInfo = require(path.resolve(__dirname, '..', 'server', 'server.js')).start(args, options, function (info) {
+			console.log(info);
+			var url;
+			if (options.https) {
+				url = 'https://localhost:' + info.https;
+			} else {
+				url = 'http://localhost:' + info.http;
+			}
+			var args = [url];
+			var browserArgs = npm.config.get('flow5:browserArgs');
+			if (browserArgs) {
+				args = browserArgs.split(':').concat(args);
+			}
+			console.log(args)
+			spawn(npm.config.get('flow5:browser'), args);		
+		});
 	});
-});
+};
+

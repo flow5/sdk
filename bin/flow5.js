@@ -26,4 +26,34 @@
 
 ***********************************************************************************************************************/
 
-console.log('hi');
+var cli = require('cli'),
+	fork = require('child_process').fork,
+	path = require('path');
+
+var command;
+try {
+	command = require(path.resolve(__dirname, 'commands', process.argv[2] + '.js'));		
+	cli.setUsage(command.usage);
+	cli.parse(command.options);	
+} catch (e) {
+	if (process.argv[2]) {
+		console.log('Invalid command: ' + process.argv[2]);
+	} else {
+		cli.setUsage('flow5 command [OPTIONS]');
+		cli.parse({}, ['start', 'link']);			
+	}
+}
+
+cli.main(function (args, options) {
+	if (command) {
+		try {
+			command.exec(args.slice(1), options);
+		} catch (e) {
+			console.log(e);
+		}		
+	}
+});		
+
+
+
+
