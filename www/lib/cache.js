@@ -135,7 +135,7 @@
 			var dump = {};
 			var id;
 			for (id in this) {
-				if (this.hasOwnProperty(id)) {
+				if (id !== 'internal' && this.hasOwnProperty(id)) {
 					dump[id] = this[id];
 				}
 			}

@@ -73,7 +73,7 @@
 		this.listen = function (cb) {
 			var that = this;
 			this.listenXHR = F5.doXHR('GET', baseUrl + 'listen' + this.parameters, null, 
-				function success(result, status) {					
+				function success(result, status) {		
 					cb(result, status);
 				}, 
 				function error(status) {

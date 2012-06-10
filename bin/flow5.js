@@ -29,7 +29,7 @@
 var cli = require('cli'),
 	path = require('path');
 	
-var commands = ['start', 'link'];
+var commands = ['start', 'link', 'script', 'headless'];
 var command = process.argv[2];
 
 var module;
@@ -38,6 +38,7 @@ try {
 	cli.setUsage(module.usage);
 	cli.parse(module.options);	
 } catch (e) {
+	console.log(e)
 	cli.setUsage('flow5 command [OPTIONS]');
 	cli.parse({}, commands);	
 	cli.getUsage();	

@@ -27,26 +27,29 @@
 /*global F5:true, XMLHttpRequest:true*/
 
 var http = require('http'),
-	cli = require('cli'),
 	vm = require('vm');
 	
 F5 = {query: {devserv:'http://localhost:8008'}};
 	
-require('../lib/utils.js');
-require('../lib/network.js');
-require('./pipe.js');
-	
+require('../../www/lib/utils.js');
+require('../../www/lib/network.js');
+require('../../www/debug/pipe.js');	
 		
 XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
-cli.setUsage("node run.js [OPTIONS]");
+exports.usage = "headless package";
 
-cli.parse({
-	pkg: ['p', 'pkg', 'string']
-});
+exports.options = {
+};
 
-cli.main(function (args, options) {
-	F5.openPipe('run.js', options.pkg + '.app', function (pipe) {
+
+exports.exec = function (args, options, cli) {
+	if (!args[0]) {
+		cli.getUsage();
+	}
+	var pkg = args[0];
+	
+	F5.openPipe('run.js', pkg + '.app', function (pipe) {
 		
 		function listen() {
 			pipe.listen(function (message) {
@@ -61,13 +64,13 @@ cli.main(function (args, options) {
 		listen();
 	
 		process.on('uncaughtException', function (e) {
-			pipe.talk(options.pkg + '.listener', {type:'uncaughtException', message: e.message}, function () {
+			pipe.talk(pkg + '.listener', {type:'uncaughtException', message: e.message}, function () {
 				process.exit(1);
 			});			
 		});	
 				
 		var path = '/generate?' +
-					'pkg=' + options.pkg + 
+					'pkg=' + pkg + 
 					'&debug=true' +
 					'&platform=ios' + 
 					'&native=false' + 
@@ -91,6 +94,6 @@ cli.main(function (args, options) {
 			});	
 		});			
 	});	
-});
+};
 
 

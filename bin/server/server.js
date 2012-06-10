@@ -173,10 +173,18 @@ function doGenerate(query, req, res) {
 
 		var html;
 		if (query.headless) {
-			var script = generator.generateScript(query);
-			res.writeHead(200, {'Content-Type': 'application/javascript'});
-			res.write(script);
-			res.end();								
+			generator.generateScript(query, function (err, script) {
+				if (err) {
+					console.log(err);
+					res.writeHead(500);
+					res.write(err.stack);
+					res.end();
+				} else {
+					res.writeHead(200, {'Content-Type': 'application/javascript'});
+					res.write(script);
+					res.end();												
+				}
+			});
 		} else if (query.geometry) {
 			html = generator.generateFrame(query);
 			res.writeHead(200, {'Content-Type': 'text/html'});
@@ -429,8 +437,6 @@ function doDefault(query, req, res) {
 exports.start = function (args, options, cb) {
 		
 	npm.load({}, function () {
-		options.port = process.env.npm_package_config_port || options.port || 8008;
-
 		function handleRequest(req, res, protocol) {
 			// prevent directory climbing through passed parameters
 			var parsed = url.parse(req.url.replace('..', ''), true);	

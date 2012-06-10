@@ -29,22 +29,21 @@
 F5 = {query: {devserv:'http://localhost:8008'}};
 
 var http = require('http'),
-	cli = require('cli'),
-	vm = require('vm');
+	vm = require('vm'),
+	npm = require('npm'),
+	fs = require('fs');
 	
 XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 	
-require('../lib/utils.js');
-require('../lib/network.js');
-require('./pipe.js');
+require('../../www/lib/utils.js');
+require('../../www/lib/network.js');
+require('../../www/debug/pipe.js');
 		
-cli.setUsage("node script.js [OPTIONS]");
+exports.usage = "script package script_name [OPTIONS]";
 
-cli.parse({
-	pkg: ['p', 'pkg', 'string'],
-	script: ['s', 'script', 'string'],
-	steptime: ['t', 'steptime', 'number']
-});
+exports.options = {
+	steptime: ['t', 'steptime', 'number', 0]
+};
 
 var count = 0;
 function id() {
@@ -52,13 +51,9 @@ function id() {
 	return count;
 }
 
-function domain(pkg) {
-	return pkg.split('.')[0];
-}
-
 var executeScript;
 
-function makeTask(command, pipe, channel, options) {
+function makeTask(pkg, command, pipe, channel, options) {
 	function complete(message, cb) {
 		var script;
 		if (command.postprocess) {
@@ -66,7 +61,7 @@ function makeTask(command, pipe, channel, options) {
 		}
 		if (script) {
 			setTimeout(function () {
-				executeScript(script, options, pipe, cb);	
+				executeScript(pkg, script, options, pipe, cb);	
 			}, options.steptime);
 		} else {
 			setTimeout(cb, options.steptime);				
@@ -104,44 +99,74 @@ function makeTask(command, pipe, channel, options) {
 	};
 }
 
-executeScript = function (script, options, pipe, cb) {
+executeScript = function (pkg, script, options, pipe, cb) {
 	
-	var channel = options.pkg + '.app';
+	var channel = pkg + '.app';
 	
 	var tasks = [];
 	script.forEach(function (command) {
-		tasks.push(makeTask(command, pipe, channel, options));		
+		tasks.push(makeTask(pkg, command, pipe, channel, options));		
 	});	
 	
 	F5.chainTasks(tasks, cb);
 };
 
 
-cli.main(function (args, options) {
+exports.exec = function (args, options, cli) {
 	
-	options.steptime = options.steptime || 0;
+	if (!args[0] || !args[1]) {
+		cli.getUsage();
+	}			
 	
-	F5.openPipe('script.js', options.pkg + '.listener', function (pipe) {					
-		var scriptName = options.script + '.js';
-		var path = '/scripts/' + domain(options.pkg) + '/' + scriptName;
+	npm.load({}, function () {
+		if (!args[0] || (!options.unlink && !args[1])) {
+			cli.getUsage();
+		}		
+		
+		var pkg = args[0];
+		var scriptName = args[1];
+		
+		var uri = npm.config.get('flow5:link_' + pkg.split('.')[0]);
+		
+		F5.openPipe('script.js', pkg + '.listener', function (pipe) {	
+			var scriptName = args[1];
 
-		http.get({host: 'localhost', port: 8008, path: path}, function(res) {
-			res.setEncoding('utf8');
-
-			var script = '';
-			res.on('data', function(chunk){
-				script += chunk;
-			});
-
-			res.on('end', function(chunk){
+			function runScript(script) {
 				vm.runInThisContext(script, scriptName);				
-				executeScript(commands, options, pipe, function () {
+				executeScript(pkg, commands, options, pipe, function () {
 					pipe.close();
 				});
+			}
+						
+			var path = uri + '/scripts/' + scriptName + '.js';			
+			fs.readFile(path, 'utf8', function (err, script) {
+				if (err) {
+					console.log(err);
+					cli.exit();
+				} else {
+					runScript(script);
+				}
+			});
+			
+			// if uri is a url do this
+
+/*			http.get({host: 'localhost', port: 8008, path: path}, function(res) {
+				res.setEncoding('utf8');
+
+				var script = '';
+				res.on('data', function(chunk){
+					script += chunk;
+				});
+
+				res.on('end', function(chunk){
+					runScript(script);
+				});	
 			});	
-		});	
-	});
-});
+*/		
+		});
+
+	});	
+};
 
 
 

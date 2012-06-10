@@ -76,7 +76,7 @@ function urlParameters(query) {
 	return result.join('&');
 }
 
-// TODO: this is duplicated in devserv. why?
+// TODO: move to a utils package
 function packageDomain(pkg) {
 	return pkg && pkg.split('.')[0];
 }
@@ -282,7 +282,122 @@ function processManifest(manifest, query, type, process, cb) {
 
 
 
+exports.generateScript = function (query, cb) {
+	
+	var script = '';
+			
+	function injectManifest(pkg, cb) {			
+		var pkgDomain = packageDomain(pkg);
+		var manifestName = packageManifestName(pkg);
+		var pkgBase = packageBase(pkg);
+				
+		parseJSON(pkgBase + manifestName, function (err, manifest) {
+			if (err) {
+				cb(err);
+			} else {
+				var tasks = [];
 
+				tasks.push(function (cb) {
+					// recurse
+					function injectPackages(packages, type, cb) {
+						var tasks = [];
+						packages.forEach(function (pkg) {
+							tasks.push(function (cb) {
+								injectManifest(pkg, cb);						
+							});
+						});
+						async.series(tasks, cb);
+					}
+					processManifest(manifest, query, 'packages', injectPackages, cb);				
+				});
+
+				tasks.push(function (cb) {
+					script += 'F5.pushPkg("' + pkg + '");\n';
+
+					function injectScripts(scripts, type, cb) {
+						var tasks = [];
+						scripts.forEach(function (file) {
+							tasks.push(function (cb) {
+								script += '// ' + pkgBase + file + '\n';
+								script += fs.readFileSync(pkgBase + file).toString() + '\n';
+								cb();
+							});
+						});	
+						async.series(tasks, cb);
+					}
+					processManifest(manifest, query, 'scripts', injectScripts, cb);					
+				});
+
+				tasks.push(function (cb) {
+					var flows = {};
+					function injectFlows(flowFiles, type, cb) {
+						var tasks = [];					
+						flowFiles.forEach(function (file) {
+							tasks.push(function (cb) {
+								parseJSON(pkgBase + file, function (err, json) {
+									if (err) {
+										cb(err);
+									} else {
+										extend(flows, json);
+										cb();										
+									}
+								});
+							});
+						});			
+						async.series(tasks, cb);
+					}		
+					processManifest(manifest, query, 'flows', injectFlows, function (err) {
+						if (err) {
+							cb(err);
+						} else {
+							script += 'F5.addFlows("' + pkg + '", ' + JSON.stringify(flows) + ');\n';										
+							script += 'F5.popPkg();\n';
+							cb();						
+						}
+					});					
+				});
+
+				async.series(tasks, cb);				
+			}			
+		});
+	}
+	
+	
+	var f5Base = packageBase('f5');
+
+	var tasks = [];
+	
+	tasks.push(function (cb) {
+		var path = f5Base + 'lib/f5.js';
+		if (!query.lib) {
+			script += '// ' + path + '\n';				
+			script += fs.readFileSync(path).toString() + '\n';	
+			script += 'F5.query = ' + JSON.stringify(query) + '\n';				
+		}
+		cb();				
+	});
+	
+	tasks.push(function (cb) {
+		injectManifest(query.pkg, cb);		
+	});
+			
+	tasks.push(function (cb) {
+		if (!query.lib) {
+			var registerPath = f5Base + 'lib/register.js';
+			script += '// ' + registerPath + '\n';				
+			script += fs.readFileSync(registerPath).toString() + '\n';	
+
+			var headlessstartPath = f5Base + 'lib/headlessstart.js';
+			script += '// ' + headlessstartPath + '\n';				
+			script += fs.readFileSync(headlessstartPath).toString() + '\n';			
+		}
+		cb();		
+	});		
+
+	async.series(tasks, function (err) {
+		cb(err, script);
+	});
+};
 
 
 
