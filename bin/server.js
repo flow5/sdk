@@ -26,7 +26,6 @@
 
 ***********************************************************************************************************************/
 
-// nodelibs
 var http = require('http'),
 	https = require('https'),
 	npm = require('npm'),
@@ -39,7 +38,7 @@ var http = require('http'),
 	url = require('url'),
 	sys = require('sys');
 	
-	var WEBROOT = path.resolve(__dirname, '..', 'site');
+var WEBROOT = path.resolve(__dirname, '..', 'site');
 		
 // flow5 libs
 var generator = require('./lib/generator.js');	

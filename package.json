@@ -1,19 +1,25 @@
 {
     "name": "flow5",
     "version": "1.1.1",
+	"description": "powerful but lightweight hybrid web/native framework and toolset for building apps and webapps",
+	"keywords": ["ios", "iphone", "android", "html5", "fat client", "templating", "ajax", "hybrid", "mobile app", "webapp"],
+	"homepage": "www.flow5.com",
+	"bugs": "",
+	"os": ["darwin"],
+	"repository": { 
+		"type" : "git",
+	  	"url" : "http://github.com/pgreyson/flow5"
+	},
 	"config": {
-		"port": 8008
+		"port": 8008,
+		"defaultBrowser": "Google Chrome"
 	},	
 	"bin": {
-		"f5server": "./bin/server.js",
-		"f5link": "./bin/link.js",
-		"f5run": "./bin/run.js",
-		"f5script": "./bin/script.js",
-		"f5install": "./bin/install.js"
+		"flow5": "./flow5.js"
 	},
 	"scripts": {
 		"install": "./bin/install.js",
-		"start": "./bin/server.js"
+		"start": "flow5 start"
 	},	
     "dependencies": {
 		"cli": "0.4.0",
@@ -21,7 +27,8 @@
 		"node-ffi": "0.5.0",
 		"paperboy": "0.0.3",
 		"async": "0.1.22",
-		"minifyjs": "0.1.0"		
+		"minifyjs": "0.1.0",
+		"npm": "1.1.24"
     },
     "engines" : { "node" : ">=0.6.0" }
 }

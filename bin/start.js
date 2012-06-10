@@ -26,10 +26,16 @@
 
 ***********************************************************************************************************************/
 
-var npm = require('npm'),
+var spawn = require('child_process').spawn,
 	path = require('path');
 
-npm.load({}, function () {	
-	npm.commands.config(['set', 'flow5:link_f5', path.resolve(__dirname, '..')]);
-	npm.commands.config(['set', 'flow5:link_ide', path.resolve(__dirname, '..', 'ide')]);
-});
+var server = spawn('f5server');
+server.stdout.pipe(process.stdout);
+
+var exec = require('child_process').exec;
+
+exec('mdfind "kMDItemCFBundleIdentifier == \'com.google.Chrome\'"',
+	function (error, stdout, stderr) {
+		var location = stdout.split('\n')[0] + "/Contents/MacOS/Google Chrome";
+		spawn(location, ['localhost:8008']);		
+	});

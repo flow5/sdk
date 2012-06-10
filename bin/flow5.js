@@ -26,10 +26,4 @@
 
 ***********************************************************************************************************************/
 
-var npm = require('npm'),
-	path = require('path');
-
-npm.load({}, function () {	
-	npm.commands.config(['set', 'flow5:link_f5', path.resolve(__dirname, '..')]);
-	npm.commands.config(['set', 'flow5:link_ide', path.resolve(__dirname, '..', 'ide')]);
-});
+console.log('hi');
