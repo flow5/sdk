@@ -27,6 +27,9 @@
 /*global F5*/
 
 (function () {
+	
+	var cssUrlRegEx = new RegExp(/(url\(['"]?)([^'"\)]*)(['"]?\))/);
+	
 	F5.packageClass = function (pkg) {
 		pkg = pkg || F5.query.pkg;
 		return pkg.split('.').join('-');
@@ -70,6 +73,9 @@
 								}	
 								rule.selectorText = selectors.join(',');								
 							}
+							if (rule.style) {
+								rule.style.cssText = rule.style.cssText.replace(cssUrlRegEx, '$1$2?pkg=' + pkg +'$3');								
+							}
 						}
 					} else {
 						var scopedCSSText = '';
@@ -86,7 +92,7 @@
 								scopedCSSText += cssText;
 							}
 						}					
-						owner.innerHTML = scopedCSSText;					
+						owner.innerHTML = scopedCSSText.replace(cssUrlRegEx, '$1$2?pkg=' + pkg +'$3');
 					}
 				}				
 			}

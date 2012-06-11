@@ -1,1 +1,7 @@
 ** from v1.1
+- new install instructions (see README)
+- new URL format (see README)
+- new command line tools (see README)
+- npm install from npmjs.org registry
+- in resource.json files, references should be wrapped with url(path) if inlining is needed. external references 
+	can be used directly e.g. image: "http://etc"

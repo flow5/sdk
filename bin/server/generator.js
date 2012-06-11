@@ -35,6 +35,17 @@ var fs = require('fs'),
 
 require('./JSONparseClean.js');	
 
+var resourcesURLRegExp = new RegExp(/url\((.*)\)/);
+function isURL(str) {
+	return resourcesURLRegExp.exec(str);
+}
+function getURL(str) {
+	return resourcesURLRegExp.exec(str)[1];	
+}
+
+var cssURLRegExp = new RegExp(/url\(\'([^\']*)\'\)/);
+
+
 function boolValue(string) {
 	if (string && string !== 'true' && string !== 'false') {
 		throw new Error('Bad bool value');
@@ -121,13 +132,13 @@ function parseJSON(path, cb) {
 }
 
 // the image references are at the leaf nodes
-function handleDataResourcesRecursive(obj, handler) {
+function handleURLsRecursive(obj, handler) {
 	forEach(obj, function (id, value) {
 		if (typeof value === 'object') {
 			if (value.constructor !== Array) {
-				handleDataResourcesRecursive(value, handler);				
+				handleURLsRecursive(value, handler);				
 			}
-		} else if (value.match(/(\.png)|(\.jpg)|(\.ttf)|(\.svg)|(\.html)|(\.css)/)) {
+		} else if (isURL(value)) {
 			handler(obj, id, value);
 		}
 	});
@@ -369,32 +380,34 @@ exports.generateScript = function (query, cb) {
 
 	var tasks = [];
 	
-	tasks.push(function (cb) {
-		var path = f5Base + 'lib/f5.js';
-		if (!query.lib) {
+	if (!query.lib) {
+		tasks.push(function (cb) {
+			var path = f5Base + 'lib/f5.js';
 			script += '// ' + path + '\n';				
 			script += fs.readFileSync(path).toString() + '\n';	
 			script += 'F5.query = ' + JSON.stringify(query) + '\n';				
-		}
-		cb();				
-	});
+			cb();				
+		});
+	}		
 	
 	tasks.push(function (cb) {
 		injectManifest(query.pkg, cb);		
 	});
 			
-	tasks.push(function (cb) {
-		if (!query.lib) {
-			var registerPath = f5Base + 'lib/register.js';
-			script += '// ' + registerPath + '\n';				
-			script += fs.readFileSync(registerPath).toString() + '\n';	
-
-			var headlessstartPath = f5Base + 'lib/headlessstart.js';
-			script += '// ' + headlessstartPath + '\n';				
-			script += fs.readFileSync(headlessstartPath).toString() + '\n';			
-		}
-		cb();		
-	});		
+	if (!query.lib) {
+		tasks.push(function (cb) {
+			var path = f5Base + 'lib/register.js';
+			script += '// ' + path + '\n';				
+			script += fs.readFileSync(path).toString() + '\n';	
+			cb();		
+		});		
+		tasks.push(function (cb) {
+			var path = f5Base + 'lib/headlessstart.js';
+			script += '// ' + path + '\n';				
+			script += fs.readFileSync(path).toString() + '\n';			
+			cb();		
+		});		
+	}
 
 	async.series(tasks, function (err) {
 		cb(err, script);
@@ -535,11 +548,10 @@ exports.generateHtml = function (query, cb) {
 						}
 
 						var statements = style.split(/(;)|(\})/);
-						var regExp = new RegExp(/url\(\'([^\']*)\'\)/);
 
 						var i;
 						for (i = 0; i < statements.length; i += 1) {
-							var matches = regExp.exec(statements[i]);
+							var matches = cssURLRegExp.exec(statements[i]);
 							if (matches && matches.length > 1) {
 								var url = matches[1];
 
@@ -585,12 +597,12 @@ exports.generateHtml = function (query, cb) {
 							cb(err);
 						} else {
 							if (boolValue(query.inline)) {
-								handleDataResourcesRecursive(r, function (obj, id, src) {						
-									obj[id] = inlineData(base + src);										
+								handleURLsRecursive(r, function (obj, id, value) {						
+									obj[id] = inlineData(base + getURL(value));										
 								});
 							} else {
-								handleDataResourcesRecursive(r, function (obj, id, src) {
-									obj[id] += '?pkg=' + pkg;										
+								handleURLsRecursive(r, function (obj, id, value) {
+									obj[id] = getURL(value) + '?pkg=' + pkg;										
 								});								
 							}
 							extend(resources, r);		
@@ -911,14 +923,12 @@ exports.generateCacheManifest = function(query, cb) {
 						tasks.push(function (cb) {
 							parseJSON(pkgBase + file, function (err, resources) {
 								if (err) {
-									console.log(pkgBase + file)
-									console.log('the new one: ' + err)
 									cb(err);
 								} else {
 									var tasks = [];
-									handleDataResourcesRecursive(resources, function (obj, id, src) {
+									handleURLsRecursive(resources, function (obj, id, value) {
 										tasks.push(function (cb) {
-											checkDate(pkgBase + src, cb);								
+											checkDate(pkgBase + getURL(value), cb);								
 										});
 									});			
 									async.parallel(tasks, cb);									
