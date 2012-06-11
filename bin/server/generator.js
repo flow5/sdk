@@ -426,7 +426,7 @@ exports.generateHtml = function (query, cb) {
 	document.appendChild(document.body);	
 				
 
-	function injectMeta(properties) {
+	function appendMeta(properties) {
 		var meta = new Element('meta');
 		var name;
 		for (name in properties) {
@@ -437,7 +437,7 @@ exports.generateHtml = function (query, cb) {
 		document.head.appendChild(meta);
 	}
 	
-	function injectLink(rel, href, type, pkg) {
+	function appendLink(rel, href, type, pkg) {
 		var link = new Element('link');
 		link.setAttribute('rel', rel);
 		if (pkg) {
@@ -569,7 +569,7 @@ exports.generateHtml = function (query, cb) {
 						styleDiv.innerHTML = statements.join('');
 						document.head.appendChild(styleDiv);												
 					} else {
-						injectLink('stylesheet', file, 'text/css', pkg);
+						appendLink('stylesheet', file, 'text/css', pkg);
 					}
 				} else {
 					var elementsDiv = new Element('div');
@@ -734,17 +734,17 @@ exports.generateHtml = function (query, cb) {
 		// TODO: if manifest.type === 'app' add this stuff. otherwise not
 
 		// ios webapp stuff
-	//	injectMeta({name: 'apple-mobile-web-app-status-bar-style', content: 'black'});
-	//	injectMeta({name: 'apple-mobile-web-app-capable', content: 'yes'});
-	//	injectLink('apple-touch-icon', 'apps/' + packageDomain(query.pkg) + '/images/icon.png', null);
-	//	injectLink('apple-touch-startup-image', 'apps/' + packageDomain(query.pkg) + '/images/splash.png', null);
+	//	appendMeta({name: 'apple-mobile-web-app-status-bar-style', content: 'black'});
+	//	appendMeta({name: 'apple-mobile-web-app-capable', content: 'yes'});
+	//	appendLink('apple-touch-icon', 'apps/' + packageDomain(query.pkg) + '/images/icon.png', null);
+	//	appendLink('apple-touch-startup-image', 'apps/' + packageDomain(query.pkg) + '/images/splash.png', null);
 
 		// ios
-		injectMeta({'http-equiv': 'Content-Type', content: 'text/html; charset=UTF-8'});
-		injectMeta({name: 'viewport', content: 'width=device-width initial-scale=1.0 maximum-scale=1.0 user-scalable=0'});
+		appendMeta({'http-equiv': 'Content-Type', content: 'text/html; charset=UTF-8'});
+		appendMeta({name: 'viewport', content: 'width=device-width initial-scale=1.0 maximum-scale=1.0 user-scalable=0'});
 
 		// android
-		injectMeta({name: 'viewport', content: 'target-densitydpi=device-dpi'});
+		appendMeta({name: 'viewport', content: 'target-densitydpi=device-dpi'});
 
 		// setup
 		makeScript('f5', 'lib/f5.js', function (err, script) {
