@@ -157,15 +157,26 @@ function get(query, path, encoding, failure, success) {
 		var protocol = url.protocol.replace(':', '');
 		var req = require(protocol).request(options, 
 			function(res) {
-				res.setEncoding(encoding);
+				// base64 encoding of response doesn't work
+				// https://github.com/joyent/node/issues/3026
+//				res.setEncoding(encoding);
 								
-				var contents = '';
+				// instead have to concatenate buffers and then encode on completion				
+				var buffers = [];
+				var size = 0;
 				res.on('data', function(chunk){
-					contents += chunk;
+					buffers.push(chunk);
+					size += chunk.length;
 				});
 
-				res.on('end', function(chunk){
-					success(contents);
+				res.on('end', function(){
+					var offset = 0;
+					var concat = new Buffer(size);
+					buffers.forEach(function (buffer) {
+						buffer.copy(concat, offset);
+						offset += buffer.length;
+					});
+					success(concat.toString(encoding));
 				});	
 			});
 		req.on('error', function(err) {
@@ -379,8 +390,10 @@ exports.generateScript = function (query, cb) {
 					scripts.forEach(function (file) {
 						tasks.push(function (cb) {
 							script += '// ' + pkgBase + file + '\n';
-							script += fs.readFileSync(pkgBase + file).toString() + '\n';
-							cb();
+							get(resolveURL(pkgBase, file), cb, function (content) {
+								script += content + '\n';
+								cb();								
+							});
 						});
 					});	
 					async.series(tasks, cb);
@@ -441,15 +454,19 @@ exports.generateScript = function (query, cb) {
 	if (!query.lib) {
 		tasks.push(function (cb) {
 			var path = f5Base + 'lib/register.js';
-			script += '// ' + path + '\n';				
-			script += fs.readFileSync(path).toString() + '\n';	
-			cb();		
+			script += '// ' + path + '\n';		
+			get(path, cb, function (content) {
+				script += content + '\n';	
+				cb();						
+			});	
 		});		
 		tasks.push(function (cb) {
 			var path = f5Base + 'lib/headlessstart.js';
-			script += '// ' + path + '\n';				
-			script += fs.readFileSync(path).toString() + '\n';			
-			cb();		
+			script += '// ' + path + '\n';		
+			get(path, cb, function (content) {
+				script += content + '\n';			
+				cb();						
+			})		
 		});		
 	}
 
@@ -586,7 +603,7 @@ exports.generateHtml = function (query, cb) {
 				tasks.push(function (cb) {
 					if (file.match('.css')) {
 						if (boolValue(query.inline)) {
-							var resolvedPath = base + file;
+							var resolvedPath = resolveURL(base, file);
 							get(query, resolvedPath, 'utf8', cb, function (style) {
 								if (boolValue(query.compress)) {
 									style = cssmin(style);
@@ -642,7 +659,7 @@ exports.generateHtml = function (query, cb) {
 						}
 					} else {
 						var elementsDiv = new Element('div');
-						get(query, base + file, 'utf8', cb, function (data) {
+						get(query, resolveURL(base, file), 'utf8', cb, function (data) {
 							elementsDiv.innerHTML = data;						
 							elementsDiv.setAttribute('f5id', file);				
 							templatesEl.appendChild(elementsDiv);				
