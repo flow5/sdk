@@ -73,7 +73,8 @@
 								}	
 								rule.selectorText = selectors.join(',');								
 							}
-							if (rule.style) {
+							// TODO: is inline always going to be global?
+							if (!F5.isInline() && rule.style) {
 								rule.style.cssText = rule.style.cssText.replace(cssUrlRegEx, '$1$2?pkg=' + pkg +'$3');								
 							}
 						}

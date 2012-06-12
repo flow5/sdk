@@ -76,7 +76,7 @@
 //			F5.addClass(document.body, 'f5debug');
 //		}
 
-		var width, height;
+		var width, height, style;
 		// in mobile browser, to get the full height of the device, have to size content so that it overflows
 		// the window by the same amount as the top toolbar. then scrolling to 0 will move the toolbar up
 		if (isMobile && !isNative && navigator.userAgent.match(/iphone/i)) {
@@ -105,7 +105,7 @@
 				landscapeToolbar = 30;			
 			}
 
-			var style = document.createElement('style');			
+			style = document.createElement('style');			
 			style.innerHTML = '@media screen and (orientation: portrait)\n\
 								{\n\
 									.f5mobile #f5screen {\n\
@@ -127,6 +127,36 @@
 					window.scrollTo(0, 0);
 				}, 0);			
 			});		
+		} else if (!isMobile && F5.query.geometry) {
+			// TODO: consolidate with server.js
+			switch (F5.query.geometry) {
+			case 'iphone-portrait':
+				width = 320;
+				height = 460;
+				break;
+			case 'iphone-landscape':
+				width = 480;
+				height = 300;
+				break;
+			case 'ipad-portrait':
+				height = 1004;
+				width = 768;
+				break;
+			case 'ipad-landscape':
+				height = 748;
+				width = 1024;
+				break;
+			default:			
+				var size = F5.query.geometry.split('x');
+				width = size[0];
+				height = size[1];
+				break;
+			}
+			width += 'px';
+			height += 'px';
+			style = document.createElement('style');			
+			style.innerHTML = '#f5screen {width: ' + width + '; height: ' + height+ ';}';
+			document.body.appendChild(style);
 		}	
 	}	
 

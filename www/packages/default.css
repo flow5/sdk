@@ -341,7 +341,7 @@ body {
 	height: 1em;
 	width: .75em;
 	background-size: 100% 100%;
-	background-image: url('images/activitysprite.svg?pkg=f5');
+	background-image: url('images/activitysprite.svg');
 }
 
 /* NOTE: the 50% is required for Safari. Chrome will do the rotate with just from and to */

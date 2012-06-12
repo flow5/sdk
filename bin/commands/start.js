@@ -30,7 +30,7 @@ exports.options = {
 	verbose: ['v', 'verbose logging']
 };
 
-exports.usage = 'start [OPTIONS]';
+exports.usage = 'start [OPTIONS]\n\nand some more information here';
 
 exports.exec = function (args, options) {	
 	require(require('path').resolve(__dirname, '..', 'server', 'server.js')).start(args, options, function (info) {

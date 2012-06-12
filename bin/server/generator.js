@@ -28,6 +28,7 @@
 (function () {
 				
 var fs = require('fs'),
+	url = require('url'),
 	npm = require('npm'),
 	async = require('async'),
 	cssmin = require('css-compressor').cssmin,
@@ -111,20 +112,21 @@ function packageBase(pkg) {
 }
 
 
-function parseJSON(path, cb) {	
+function parseJSON(path, failure, success) {	
 	fs.readFile(path, 'utf8', function (readErr, json) {
 		if (readErr) {
-			cb(readErr);
+			failure(readErr);
 		} else {
 			var parsedJSON;
 			try {
 				parsedJSON = JSON.parseClean(json);				
 			} catch (parseErr) {
-				cb(parseErr);
+				failure(parseErr);
 			}
 			try {
-				cb(null, parsedJSON);
+				success(parsedJSON);
 			} catch (cbErr) {
+				// SUCCESS FAILED!
 				console.log(cbErr);
 			}
 		}
@@ -144,24 +146,72 @@ function handleURLsRecursive(obj, handler) {
 	});
 }
 
-function inlineData(path) {			
-	try {
-		var ext = require('path').extname(path).substring(1);
+function get(query, path, encoding, failure, success) {
+	var url = require('url').parse(path);
+	if (url.protocol) {		
+		var options = {
+			hostname: url.hostname,
+			path: url.path + '?pkg=' + query.pkg,
+			port: url.port
+		};
+		var protocol = url.protocol.replace(':', '');
+		var req = require(protocol).request(options, 
+			function(res) {
+				res.setEncoding(encoding);
+								
+				var contents = '';
+				res.on('data', function(chunk){
+					contents += chunk;
+				});
 
-		var data;
-		if (ext === 'ttf') {
-			data = 'data:font/truetype;base64,' + fs.readFileSync(path, 'base64');
-		} else if (ext === 'svg') {
-			data = 'data:image/svg+xml;utf8,' + fs.readFileSync(path).toString().replace(/(\r\n|\n|\r)/gm, '');	
-		} else if (ext === 'html' || ext === 'css') {
-			data = 'base64,' + fs.readFileSync(path, 'base64');
-		} else {
-			data = 'data:image/' + ext + ';base64,' + fs.readFileSync(path, 'base64');				
-		}
+				res.on('end', function(chunk){
+					success(contents);
+				});	
+			});
+		req.on('error', function(err) {
+			failure(err);
+		});		
+		req.end();
+	} else {
+		fs.readFile(url.path, encoding, function (err, contents) {
+			if (err) {
+				failure(err);
+			} else {
+				success(contents);
+			}
+		});
+	}
+}
 
-		return data;
-	} catch (e) {
-		console.log('error:' + e.stack);
+function resolveURL(base, path) {
+	var url = require('url').parse(path);
+	if (url.protocol) {		
+		return path;
+	} else {
+		return base + path;
+	}
+}
+
+
+function inlineData(query, path, cb) {			
+	var ext = require('path').extname(path).substring(1);
+
+	if (ext === 'ttf') {
+		get(query, path, 'base64', cb, function (data) {
+			cb(null, 'data:font/truetype;base64,' + data);
+		});
+	} else if (ext === 'svg') {
+		get(query, path, 'utf8', cb, function (data) {
+			cb(null, 'data:image/svg+xml;utf8,' + data.replace(/(\r\n|\n|\r)/gm, ''));
+		});
+	} else if (ext === 'html' || ext === 'css') {
+		get(query, path, 'base64', cb, function (data) {
+			cb(null, 'base64,' + data);
+		});
+	} else {
+		get(query, path, 'base64', cb, function (data) {
+			cb(null, 'data:image/' + ext + ';base64,' + data);
+		});
 	}
 }
 
@@ -304,74 +354,66 @@ exports.generateScript = function (query, cb) {
 		var manifestName = packageManifestName(pkg);
 		var pkgBase = packageBase(pkg);
 				
-		parseJSON(pkgBase + manifestName, function (err, manifest) {
-			if (err) {
-				cb(err);
-			} else {
-				var tasks = [];
+		parseJSON(pkgBase + manifestName, cb, function (manifest) {
+			var tasks = [];
 
-				tasks.push(function (cb) {
-					// recurse
-					function injectPackages(packages, type, cb) {
-						var tasks = [];
-						packages.forEach(function (pkg) {
-							tasks.push(function (cb) {
-								injectManifest(pkg, cb);						
+			tasks.push(function (cb) {
+				// recurse
+				function injectPackages(packages, type, cb) {
+					var tasks = [];
+					packages.forEach(function (pkg) {
+						tasks.push(function (cb) {
+							injectManifest(pkg, cb);						
+						});
+					});
+					async.series(tasks, cb);
+				}
+				processManifest(manifest, query, 'packages', injectPackages, cb);				
+			});
+
+			tasks.push(function (cb) {
+				script += 'F5.pushPkg("' + pkg + '");\n';
+
+				function injectScripts(scripts, type, cb) {
+					var tasks = [];
+					scripts.forEach(function (file) {
+						tasks.push(function (cb) {
+							script += '// ' + pkgBase + file + '\n';
+							script += fs.readFileSync(pkgBase + file).toString() + '\n';
+							cb();
+						});
+					});	
+					async.series(tasks, cb);
+				}
+				processManifest(manifest, query, 'scripts', injectScripts, cb);					
+			});
+
+			tasks.push(function (cb) {
+				var flows = {};
+				function injectFlows(flowFiles, type, cb) {
+					var tasks = [];					
+					flowFiles.forEach(function (file) {
+						tasks.push(function (cb) {
+							parseJSON(pkgBase + file, cb, function (json) {
+								extend(flows, json);
+								cb();										
 							});
 						});
-						async.series(tasks, cb);
+					});			
+					async.series(tasks, cb);
+				}		
+				processManifest(manifest, query, 'flows', injectFlows, function (err) {
+					if (err) {
+						cb(err);
+					} else {
+						script += 'F5.addFlows("' + pkg + '", ' + JSON.stringify(flows) + ');\n';										
+						script += 'F5.popPkg();\n';
+						cb();						
 					}
-					processManifest(manifest, query, 'packages', injectPackages, cb);				
-				});
+				});					
+			});
 
-				tasks.push(function (cb) {
-					script += 'F5.pushPkg("' + pkg + '");\n';
-
-					function injectScripts(scripts, type, cb) {
-						var tasks = [];
-						scripts.forEach(function (file) {
-							tasks.push(function (cb) {
-								script += '// ' + pkgBase + file + '\n';
-								script += fs.readFileSync(pkgBase + file).toString() + '\n';
-								cb();
-							});
-						});	
-						async.series(tasks, cb);
-					}
-					processManifest(manifest, query, 'scripts', injectScripts, cb);					
-				});
-
-				tasks.push(function (cb) {
-					var flows = {};
-					function injectFlows(flowFiles, type, cb) {
-						var tasks = [];					
-						flowFiles.forEach(function (file) {
-							tasks.push(function (cb) {
-								parseJSON(pkgBase + file, function (err, json) {
-									if (err) {
-										cb(err);
-									} else {
-										extend(flows, json);
-										cb();										
-									}
-								});
-							});
-						});			
-						async.series(tasks, cb);
-					}		
-					processManifest(manifest, query, 'flows', injectFlows, function (err) {
-						if (err) {
-							cb(err);
-						} else {
-							script += 'F5.addFlows("' + pkg + '", ' + JSON.stringify(flows) + ');\n';										
-							script += 'F5.popPkg();\n';
-							cb();						
-						}
-					});					
-				});
-
-				async.series(tasks, cb);				
-			}			
+			async.series(tasks, cb);				
 		});
 	}
 	
@@ -383,10 +425,12 @@ exports.generateScript = function (query, cb) {
 	if (!query.lib) {
 		tasks.push(function (cb) {
 			var path = f5Base + 'lib/f5.js';
-			script += '// ' + path + '\n';				
-			script += fs.readFileSync(path).toString() + '\n';	
-			script += 'F5.query = ' + JSON.stringify(query) + '\n';				
-			cb();				
+			script += '// ' + path + '\n';		
+			get(path, 'utf8', cb, function (script) {
+				script += '\n';	
+				script += 'F5.query = ' + JSON.stringify(query) + '\n';				
+				cb();													
+			});
 		});
 	}		
 	
@@ -416,8 +460,8 @@ exports.generateScript = function (query, cb) {
 
 exports.generateHtml = function (query, cb) {
 	
-//	debugger;	
-//	console.log(query.pkg + ' generating');
+	debugger;	
+	console.log(query.pkg + ' generating');
 	
 	var document = new Element('html');
 	document.head = new Element('head');
@@ -537,53 +581,77 @@ exports.generateHtml = function (query, cb) {
 
 		// html and css
 		function injectElements(elements, type, cb) {
+			var tasks = [];
 			elements.forEach(function (file) {
-				if (file.match('.css')) {
-					if (boolValue(query.inline)) {
-						var resolvedPath = base + file;
-						var style = fs.readFileSync(resolvedPath).toString();
+				tasks.push(function (cb) {
+					if (file.match('.css')) {
+						if (boolValue(query.inline)) {
+							var resolvedPath = base + file;
+							get(query, resolvedPath, 'utf8', cb, function (style) {
+								if (boolValue(query.compress)) {
+									style = cssmin(style);
+								}
 
-						if (boolValue(query.compress)) {
-							style = cssmin(style);
+								var statements = style.split(/(;|\})/);
+
+								var tasks = [];
+								var i;
+								
+								function makeTask(cssBase, url, index) {
+									return function (cb) {
+										inlineData(query, resolveURL(cssBase, url), function (err, data) {
+											if (err) {
+												cb(err);
+											} else {
+												statements[index] = statements[index].replace(url, data);
+												cb();														
+											}
+										});
+									};
+								}
+								
+								for (i = 0; i < statements.length; i += 1) {
+									var matches = cssURLRegExp.exec(statements[i]);
+									if (matches && matches.length > 1) {
+										var url = matches[1];
+
+										// resolve the url relative to the css base
+										var cssBase = require('path').dirname(resolvedPath) + '/';
+
+										tasks.push(makeTask(cssBase, url, i));
+									}
+								}		
+								
+								async.parallel(tasks, function (err) {
+									if (err) {
+										cb(err);
+									} else {
+										var styleDiv = new Element('style');
+										styleDiv.setAttribute('f5id', resolvedPath);
+										styleDiv.setAttribute('f5pkg', pkg);
+										styleDiv.setAttribute('f5applyscope', true);
+										styleDiv.innerHTML = statements.join('');
+										document.head.appendChild(styleDiv);
+										cb();																				
+									}						
+								});																								
+							});												
+						} else {
+							appendLink('stylesheet', file, 'text/css', pkg);
+							cb();
 						}
-
-						var statements = style.split(/(;)|(\})/);
-
-						var i;
-						for (i = 0; i < statements.length; i += 1) {
-							var matches = cssURLRegExp.exec(statements[i]);
-							if (matches && matches.length > 1) {
-								var url = matches[1];
-
-								// resolve the url relative to the css base
-								var cssBase = require('path').dirname(resolvedPath);
-
-								var imageData = inlineData(cssBase + '/' + url);
-								statements[i] = statements[i].replace(url, imageData);
-							}
-						}								
-						var styleDiv = new Element('style');
-						styleDiv.setAttribute('f5id', resolvedPath);
-						styleDiv.setAttribute('f5pkg', pkg);
-						styleDiv.setAttribute('f5applyscope', true);
-						styleDiv.innerHTML = statements.join('');
-						document.head.appendChild(styleDiv);												
 					} else {
-						appendLink('stylesheet', file, 'text/css', pkg);
-					}
-				} else {
-					var elementsDiv = new Element('div');
-					try {
-						elementsDiv.innerHTML = fs.readFileSync(base + file).toString();						
-					} catch (e) {
-						console.log(e.stack);
-					}
-					elementsDiv.setAttribute('f5id', file);				
-
-					templatesEl.appendChild(elementsDiv);
-				}
+						var elementsDiv = new Element('div');
+						get(query, base + file, 'utf8', cb, function (data) {
+							elementsDiv.innerHTML = data;						
+							elementsDiv.setAttribute('f5id', file);				
+							templatesEl.appendChild(elementsDiv);				
+							cb();				
+						});
+					}					
+				});
 			});
-			cb();
+			async.series(tasks, cb);
 		}
 
 		// resource files
@@ -592,22 +660,34 @@ exports.generateHtml = function (query, cb) {
 			var tasks = [];
 			resourceFiles.forEach(function (file) {
 				tasks.push(function (cb) {
-					parseJSON(base + file, function (err, r) {
-						if (err) {
-							cb(err);
-						} else {
-							if (boolValue(query.inline)) {
-								handleURLsRecursive(r, function (obj, id, value) {						
-									obj[id] = inlineData(base + getURL(value));										
+					parseJSON(base + file, cb, function (r) {
+						var tasks = [];
+						if (boolValue(query.inline)) {
+							handleURLsRecursive(r, function (obj, id, value) {	
+								tasks.push(function (cb) {
+									inlineData(query, resolveURL(base, getURL(value)), function (err, data) {
+										if (err) {
+											cb(err);
+										} else {
+											obj[id] = data;
+											cb();
+										}
+									});																				
 								});
-							} else {
-								handleURLsRecursive(r, function (obj, id, value) {
-									obj[id] = getURL(value) + '?pkg=' + pkg;										
-								});								
-							}
-							extend(resources, r);		
-							cb();							
+							});
+						} else {
+							handleURLsRecursive(r, function (obj, id, value) {
+								obj[id] = getURL(value) + '?pkg=' + pkg;										
+							});								
 						}
+						async.parallel(tasks, function (err) {
+							if (err) {
+								cb(err);
+							} else {
+								extend(resources, r);		
+								cb();																								
+							}
+						});
 					});						
 				});				
 			});	
@@ -619,13 +699,9 @@ exports.generateHtml = function (query, cb) {
 			var tasks = [];			
 			flowFiles.forEach(function (file) {
 				tasks.push(function (cb) {
-					parseJSON(base + file, function (err, flow) {
-						if (err) {
-							cb(err);
-						} else {
-							extend(flows, flow);											
-							cb();							
-						}
+					parseJSON(base + file, cb, function (flow) {
+						extend(flows, flow);											
+						cb();							
 					});
 				});
 			});	
@@ -699,7 +775,7 @@ exports.generateHtml = function (query, cb) {
 			return;
 		}
 		
-		parseJSON(pkgBase + manifestName, function (err, manifest) {
+		parseJSON(pkgBase + manifestName, cb, function (manifest) {
 			function injectPackages(packages, type, cb) {
 				var tasks = [];			
 				packages.forEach(function (pkg) {
@@ -710,18 +786,14 @@ exports.generateHtml = function (query, cb) {
 				async.series(tasks, cb);			
 			}
 						
-			if (err) {
-				cb(err);
-			} else {
-				// recurse
-				processManifest(manifest, query, 'packages', injectPackages, function (err, result) {
-					if (err) {
-						cb(err);
-					} else {
-						injectPackage(pkg, manifest, pkgBase, cb);				
-					}
-				});				
-			}		
+			// recurse
+			processManifest(manifest, query, 'packages', injectPackages, function (err, result) {
+				if (err) {
+					cb(err);
+				} else {
+					injectPackage(pkg, manifest, pkgBase, cb);				
+				}
+			});				
 		});									
 	}	
 	
@@ -875,7 +947,7 @@ exports.generateFrame = function (query) {
 		height = size[1];
 		break;
 	}			
-	delete query.geometry;
+	delete query.frame;
 	
 	var frame = new Element('iframe');
 	frame.id = 'frame';
@@ -894,6 +966,7 @@ exports.generateFrame = function (query) {
 };
 
 exports.generateCacheManifest = function(query, cb) { 
+	console.log(query.pkg + ' generating manifest');
 		
 	function getModDate(cb) {
 		var latestDate;
@@ -905,7 +978,8 @@ exports.generateCacheManifest = function(query, cb) {
 				}	
 				cb();			
 			} catch (e) {
-				cb(e);
+				console.log(e.stack || e);
+				cb();
 			}
 		}
 		
@@ -917,22 +991,18 @@ exports.generateCacheManifest = function(query, cb) {
 				var tasks = [];
 				files.forEach(function (file) {
 					tasks.push(function (cb) {
-						checkDate(pkgBase + file, cb);						
+						checkDate(resolveURL(pkgBase, file), cb);						
 					});
 					if (type === 'resources') {
 						tasks.push(function (cb) {
-							parseJSON(pkgBase + file, function (err, resources) {
-								if (err) {
-									cb(err);
-								} else {
-									var tasks = [];
-									handleURLsRecursive(resources, function (obj, id, value) {
-										tasks.push(function (cb) {
-											checkDate(pkgBase + getURL(value), cb);								
-										});
-									});			
-									async.parallel(tasks, cb);									
-								}
+							parseJSON(pkgBase + file, cb, function (resources) {
+								var tasks = [];
+								handleURLsRecursive(resources, function (obj, id, value) {
+									tasks.push(function (cb) {
+										checkDate(resolveURL(pkgBase, getURL(value)), cb);								
+									});
+								});			
+								async.parallel(tasks, cb);									
 							});							
 						});
 					}
@@ -950,34 +1020,30 @@ exports.generateCacheManifest = function(query, cb) {
 				async.series(tasks, cb);
 			}		
 						
-			parseJSON(pkgBase + manifestName, function (err, manifest) {
-				if (err) {
-					cb(err);
-				} else {
-					var tasks = [];
-					tasks.push(function (cb) {
-						checkDate(pkgBase + manifestName, cb);						
-					});
-					tasks.push(function (cb) {
-						processManifest(manifest, query, 'packages', checkPackages, cb);																
-					});
-					tasks.push(function (cb) {
-						processManifest(manifest, query, 'flows', checkDates, cb);																
-					});
-					tasks.push(function (cb) {
-						processManifest(manifest, query, 'scripts', checkDates, cb);														
-					});
-					tasks.push(function (cb) {
-						processManifest(manifest, query, 'domscripts', checkDates, cb);														
-					});
-					tasks.push(function (cb) {
-						processManifest(manifest, query, 'elements', checkDates, cb);														
-					});
-					tasks.push(function (cb) {
-						processManifest(manifest, query, 'resources', checkDates, cb);																				
-					});
-					async.parallel(tasks, cb);
-				}
+			parseJSON(pkgBase + manifestName, cb, function (manifest) {
+				var tasks = [];
+				tasks.push(function (cb) {
+					checkDate(resolveURL(pkgBase, manifestName), cb);						
+				});
+				tasks.push(function (cb) {
+					processManifest(manifest, query, 'packages', checkPackages, cb);																
+				});
+				tasks.push(function (cb) {
+					processManifest(manifest, query, 'flows', checkDates, cb);																
+				});
+				tasks.push(function (cb) {
+					processManifest(manifest, query, 'scripts', checkDates, cb);														
+				});
+				tasks.push(function (cb) {
+					processManifest(manifest, query, 'domscripts', checkDates, cb);														
+				});
+				tasks.push(function (cb) {
+					processManifest(manifest, query, 'elements', checkDates, cb);														
+				});
+				tasks.push(function (cb) {
+					processManifest(manifest, query, 'resources', checkDates, cb);																				
+				});
+				async.parallel(tasks, cb);
 			});
 		}
 		

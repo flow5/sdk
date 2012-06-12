@@ -185,7 +185,7 @@ function doGenerate(query, req, res) {
 					res.end();												
 				}
 			});
-		} else if (query.geometry) {
+		} else if (query.frame) {
 			html = generator.generateFrame(query);
 			res.writeHead(200, {'Content-Type': 'text/html'});
 			res.write(html);
@@ -193,7 +193,7 @@ function doGenerate(query, req, res) {
 		} else {
 			generator.generateHtml(query, function (err, html) {
 				if (err) {
-					console.log(err);
+					console.log(err.stack || err);
 					res.writeHead(500);
 					res.write(err.stack);
 					res.end();
@@ -206,7 +206,7 @@ function doGenerate(query, req, res) {
 
 		}
 	} catch (e2) {
-		console.log('error:' + e2.message);
+		console.log(e2.stack || e2);
 		// TODO: would be nice to return 404 if the appname is bad
 		res.writeHead(500);
 		res.end();					
@@ -271,7 +271,7 @@ function doManifest(query, req, res) {
 		verifyQueryParameters(query);			
 		generator.generateCacheManifest(query, function (err, manifest) {
 			if (err) {
-				console.log(err);
+				console.log(err.stack || err);
 				res.writeHead(500);
 				res.write(err.stack);
 			} else {
