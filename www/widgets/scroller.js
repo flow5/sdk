@@ -334,7 +334,7 @@ F5.registerModule(function(F5) {
 				F5.addTouchStopListener(that.el, stopHandlerWrapper);			
 				F5.addTouchMoveListener(that.el, moveHandlerWrapper);
 			});
-						
+									
 			doTransform(this, this.staticOffset);
 		};
 		
@@ -461,7 +461,7 @@ F5.registerModule(function(F5) {
 				
 		this.widgetDidBecomeActive = function () {
 			window.addEventListener('orientationchange', this.refreshFunction);
-			document.addEventListener('statusBarTouched', this.scrollToTopFunction);
+			document.addEventListener('f5StatusBarTouched', this.scrollToTopFunction);
 			this.active = true;
 		};
 						

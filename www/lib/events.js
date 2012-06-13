@@ -27,8 +27,9 @@
 /*global F5*/
 
 (function () {
+		
 	function startEventName() {
-		if (F5.isMobile()) {
+		if (F5.isTouchDevice()) {
 			return 'touchstart';		
 		}
 		else {
@@ -37,7 +38,7 @@
 	}
 
 	function stopEventName() {
-		if (F5.isMobile()) {
+		if (F5.isTouchDevice()) {
 			return 'touchend';		
 		}
 		else {
@@ -46,7 +47,7 @@
 	}
 
 	function moveEventName() {
-		if (F5.isMobile()) {
+		if (F5.isTouchDevice()) {
 			return 'touchmove';		
 		}
 		else {
@@ -56,7 +57,7 @@
 	
 	F5.eventLocation = function(event) {
 		var x, y;
-		if (F5.isMobile()) {
+		if (F5.isTouchDevice()) {
 			if (event.touches[0]) {
 				x = event.touches[0].screenX;
 				y = event.touches[0].screenY;					

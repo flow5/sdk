@@ -39,7 +39,7 @@ try {
 	cli.parse(module.options);	
 } catch (e) {
 	console.log(e)
-	cli.setUsage('flow5 command [OPTIONS]');
+	cli.setUsage('f5 command [OPTIONS]');
 	cli.parse({}, commands);	
 	cli.getUsage();	
 }

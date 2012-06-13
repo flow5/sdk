@@ -14,7 +14,7 @@
 	  	"url" : "http://github.com/pgreyson/flow5"
 	},
 	"bin": {
-		"flow5": "./bin/flow5.js"
+		"f5": "./bin/f5.js"
 	},
 	"scripts": {
 		"install": "node ./bin/install.js"

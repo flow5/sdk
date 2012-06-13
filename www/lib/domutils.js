@@ -151,12 +151,12 @@
 		}	
 	};
 	
-	F5.fireStatusBarTouchedEvent = function () {
+	F5.firef5StatusBarTouchedEvent = function () {
         var e = document.createEvent('Events'); 
-        e.initEvent('statusBarTouched');
+        e.initEvent('f5StatusBarTouched');
         document.dispatchEvent(e);						
 	};
-	
+		
 	F5.reflow = function () {
 		var reflow = document.body.offsetTop;		
 	};
@@ -216,7 +216,11 @@
 		}
 		
 		return mapping[canonicalName];
-	};				
+	};
+	
+	F5.isTouchDevice = function() {
+		return navigator.userAgent.match(/iphone|ipad|android/i);
+	}					
 }());
 
 

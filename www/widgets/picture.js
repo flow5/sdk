@@ -30,11 +30,36 @@ F5.registerModule(function(F5) {
 	
 	function Picture() {
 		this.initialize = function (data) {	
-			this.refresh(data);				
+			// TODO: maybe allow client to install hidden image handler
+			var that = this;
+			this.el.style.visibility = '';					
+			this.onerror = function () {
+				that.el.style.visibility = 'hidden';
+			};
+			this.onload = function () {
+				this.el.style.visibility = '';					
+			};
+			if (!F5.isTouchDevice()) {
+				F5.addTouchStartListener(this.el, function (e) {
+					e.preventDefault();
+				});
+			}																	
+			this.refresh(data);							
 		};
 		
 		this.refresh = function (data) {			
-			if (data) {
+			if (data) {						
+				if (F5.ImagePreloader.isImagePreloader(data)) {
+					this.el.src = data.src();
+				} else {
+					this.el.src = data;
+				}
+			}			
+		};
+				
+/*		
+		this.refresh = function (data) {			
+			if (data) {		
 				if (!this.img) {
 					this.img = document.createElement('img');	
 					this.el.appendChild(this.img);	
@@ -61,6 +86,7 @@ F5.registerModule(function(F5) {
 				}
 			}			
 		};
+*/		
 	}
 	
 	F5.Prototypes.Widgets.Picture = new Picture();
