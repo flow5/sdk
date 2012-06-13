@@ -135,7 +135,10 @@ F5.registerModule(function (F5) {
 		this.reset = function () {
 			this.el.innerHTML = '';
 			if (this.className) {
-				F5.removeClass(this.el, this.className);
+				var that = this;
+				this.className.split(/\s/).forEach(function (name) {
+					F5.removeClass(that.el, name);					
+				});
 				delete this.className;
 			}
 			delete this.label;			
@@ -234,8 +237,10 @@ F5.registerModule(function (F5) {
 			
 			function applyResourceData(resourceData) {
 				if (resourceData.className) {
+					resourceData.className.split(/\s/).forEach(function (name) {						
+						F5.addClass(that.el, name);
+					});
 					that.className = resourceData.className;
-					F5.addClass(that.el, resourceData.className);
 				}
 				if (resourceData.image) {
 					if (resourceData.image.up) {

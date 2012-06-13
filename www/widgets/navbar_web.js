@@ -39,6 +39,8 @@ F5.registerModule(function (F5) {
 			
 			var that = this;
 			
+			this.data = data;
+			
 			F5.addClass(this.el, 'f5navbar');
 			
 			navbarEl = document.createElement('div');
@@ -165,7 +167,10 @@ F5.registerModule(function (F5) {
 					(currentConfigData && different(currentConfigData, configData))) {
 					if (configData) {
 						buttons[which].inactive.widget.reset();
-						buttons[which].inactive.widget.refresh(configData);
+						var data = {};
+						F5.merge(that.data && that.data[which], data);
+						F5.merge(configData, data);
+						buttons[which].inactive.widget.refresh(data);
 					} else {
 						buttons[which].inactive = null;						
 					}
