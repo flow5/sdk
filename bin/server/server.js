@@ -421,12 +421,13 @@ function doWaitForConnection(query, req, res) {
 	res.end();
 }
 
-function doDefault(query, req, res) {
+function doDefault(options, query, req, res) {
 	// TODO: allow-origin shouldn't be required here since the page is loaded from same domain?	
 	
 	var root = WEBROOT;
-	if (query.pkg) {
-		root = packageBase(query.pkg) + 'www/';
+	var pkg = query.pkg || options.default;
+	if (pkg) {
+		root = packageBase(pkg) + 'www/';
 	}
 	
 	paperboy
@@ -524,7 +525,7 @@ exports.start = function (args, options, cb) {
 							doWaitForConnection(parsed.query, req, res);
 							break;						
 						default:
-							doDefault(parsed.query, req, res);					
+							doDefault(options, parsed.query, req, res);					
 					}
 					break;
 				case 'OPTIONS':

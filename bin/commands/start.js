@@ -27,6 +27,7 @@
 ***********************************************************************************************************************/
 exports.options = {
 	port: ['p', 'port', 'number', 8008],
+	default: ['d', 'default domain to serve from', 'string'],
 	verbose: ['v', 'verbose logging']
 };
 

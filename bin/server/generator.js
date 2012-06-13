@@ -673,10 +673,16 @@ exports.generateHtml = function (query, cb) {
 					} else {
 						var elementsDiv = new Element('div');
 						get(query, resolveURL(base, file), 'utf8', cb, function (data) {
-							elementsDiv.innerHTML = data;						
-							elementsDiv.setAttribute('f5id', file);				
-							templatesEl.appendChild(elementsDiv);				
-							cb();				
+							
+							var fragments = data.split(/(>)/);
+							async.map(fragments, function (fragment, cb) {
+								cb(null, fragment.replace(/(<img.*)src=([\'\"]+)(.*)([\'\"]+)/, '$1src=$2$3?pkg=' + pkg + '$4'));
+							}, function (err, results) {
+								elementsDiv.innerHTML = results.join('');						
+								elementsDiv.setAttribute('f5id', file);				
+								templatesEl.appendChild(elementsDiv);				
+								cb();				
+							});
 						});
 					}					
 				});
