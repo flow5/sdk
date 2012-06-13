@@ -127,7 +127,7 @@
 					window.scrollTo(0, 0);
 				}, 0);			
 			});		
-		} else if (!isMobile && F5.query.geometry) {
+		} else if (F5.query.geometry) {
 			// TODO: consolidate with server.js
 			switch (F5.query.geometry) {
 			case 'iphone-portrait':
@@ -154,8 +154,12 @@
 			}
 			width += 'px';
 			height += 'px';
-			style = document.createElement('style');			
-			style.innerHTML = '#f5screen {width: ' + width + '; height: ' + height+ ';}';
+			style = document.createElement('style');	
+			if (F5.isMobile()) {
+				style.innerHTML = '.f5mobile #f5screen {width: ' + width + '; height: ' + height+ ';}';				
+			} else {
+				style.innerHTML = '#f5screen {width: ' + width + '; height: ' + height+ ';}';								
+			}
 			document.body.appendChild(style);
 		}	
 	}	

@@ -448,8 +448,7 @@ exports.start = function (args, options, cb) {
 		
 	npm.load({}, function () {
 		function handleRequest(req, res, protocol) {
-			// prevent directory climbing through passed parameters
-			var parsed = url.parse(req.url.replace('..', ''), true);	
+			var parsed = url.parse(req.url, true);	
 
 			var pathname = url.parse(req.url).pathname;
 
