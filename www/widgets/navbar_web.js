@@ -43,10 +43,17 @@ F5.registerModule(function (F5) {
 			
 			navbarEl = document.createElement('div');
 			F5.addClass(navbarEl, 'f5navbarcontainer');
-			this.el.appendChild(navbarEl);
-						
+			
 			containers.title = document.createElement('div');
 			F5.addClass(containers.title, 'f5titlecontainer');
+			
+			if (this.el.childNodes) {
+				F5.forEach(this.el.childNodes, function (child) {
+					containers.title.appendChild(child);
+				});
+			}
+
+			this.el.appendChild(navbarEl);
 			navbarEl.appendChild(containers.title);
 
 			containers.left = document.createElement('div');

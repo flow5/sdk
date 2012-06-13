@@ -44,7 +44,7 @@ function getURL(str) {
 	return resourcesURLRegExp.exec(str)[1];	
 }
 
-var cssURLRegExp = new RegExp(/url\(\'([^\']*)\'\)/);
+var cssURLRegExp = new RegExp(/url\([\'\""]?([^\']*)[\'\""]?\)/);
 
 
 function boolValue(string) {
@@ -211,7 +211,20 @@ function inlineData(query, path, cb) {
 		get(query, path, 'base64', cb, function (data) {
 			cb(null, 'data:font/truetype;base64,' + data);
 		});
-	} else if (ext === 'svg') {
+	} else if (ext === 'eot') {
+		get(query, path, 'base64', cb, function (data) {
+			cb(null, 'data:font/embedded-opentype;base64,' + data);
+		});
+	} else if (ext === 'woff') {
+		get(query, path, 'base64', cb, function (data) {
+			cb(null, 'data:font/woff;base64,' + data);
+		});
+	} else if (ext === 'otf') {
+		get(query, path, 'base64', cb, function (data) {
+			cb(null, 'data:font/otf;base64,' + data);
+		});
+	}
+	else if (ext === 'svg') {
 		get(query, path, 'utf8', cb, function (data) {
 			cb(null, 'data:image/svg+xml;utf8,' + data.replace(/(\r\n|\n|\r)/gm, ''));
 		});
@@ -466,7 +479,7 @@ exports.generateScript = function (query, cb) {
 			get(path, cb, function (content) {
 				script += content + '\n';			
 				cb();						
-			})		
+			});
 		});		
 	}
 
@@ -609,7 +622,7 @@ exports.generateHtml = function (query, cb) {
 									style = cssmin(style);
 								}
 
-								var statements = style.split(/(;|\})/);
+								var statements = style.split(/(;|\}|,)/);
 
 								var tasks = [];
 								var i;

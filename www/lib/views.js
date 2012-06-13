@@ -143,8 +143,7 @@
 			
 			// TODO: enable this with an additional URL parameter?
 			// Would require an additional build target for device
-			// TODO: Don't like to have to create a stub initialize method to make these go away
-			if (!this.delegate && F5.query.devoverlay) {				
+			if (!this.delegate || this.delegate.devoverlay) {				
 				this.addDevOverlay(node);
 			}			
 			

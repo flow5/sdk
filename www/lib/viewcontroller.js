@@ -33,23 +33,8 @@
 		F5.Global.flowController.addFlowObserver(this);						
 		
 		function doLifecycleEvent(node, event) {			
-			node.view['view' + event]();
-						
-			function doWidgetLifecycleEventRecursive(el, event) {
-				F5.forEach(el.childNodes, function doWidgetLifecycleEvent(childEl) {
-					if (childEl.getAttribute && childEl.getAttribute('f5widget')) {
-						if (childEl.widget['widget' + event]) {
-							childEl.widget['widget' + event]();							
-						}
-					}
-					// don't recurse through other views. they'll get handled
-					// via the associated node
-					if (!childEl.view) {
-						doWidgetLifecycleEventRecursive(childEl, event);
-					}
-				});					
-			}			
-			doWidgetLifecycleEventRecursive(node.view.el, event);
+			node.view['view' + event]();									
+			F5.doWidgetLifecycleEventRecursive(node.view.el, event);
 		}
 				
 		this.nodeDidBecomeActive = function (node) {

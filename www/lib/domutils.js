@@ -220,7 +220,22 @@
 	
 	F5.isTouchDevice = function() {
 		return navigator.userAgent.match(/iphone|ipad|android/i);
-	}					
+	};
+	
+	F5.doWidgetLifecycleEventRecursive = function(el, event) {
+		F5.forEach(el.childNodes, function doWidgetLifecycleEvent(childEl) {
+			if (childEl.getAttribute && childEl.getAttribute('f5widget')) {
+				if (childEl.widget['widget' + event]) {
+					childEl.widget['widget' + event]();							
+				}
+			}
+			// don't recurse through other views. they'll get handled
+			// via the associated node
+			if (!childEl.view) {
+				F5.doWidgetLifecycleEventRecursive(childEl, event);
+			}
+		});					
+	};				
 }());
 
 

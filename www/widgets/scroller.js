@@ -311,9 +311,9 @@ F5.registerModule(function(F5) {
 			}
 
 			function stopHandlerWrapper(e) {
-				if (!F5.isMobile()) {				
-					F5.removeTouchStopListener(document.body, stopHandlerWrapper);				
-					F5.removeTouchMoveListener(document.body, moveHandlerWrapper);				
+				if (!F5.isTouchDevice()) {		
+					window.removeEventListener('mouseup', stopHandlerWrapper);
+					window.removeEventListener('mousemove', moveHandlerWrapper);							
 				}
 				F5.removeTouchStopListener(that.el, stopHandlerWrapper);				
 				F5.removeTouchMoveListener(that.el, moveHandlerWrapper);				
@@ -327,9 +327,9 @@ F5.registerModule(function(F5) {
 				
 				startHandler(that, e);
 				// makes the scroller play nice in a desktop browser
-				if (!F5.isMobile()) {
-					F5.addTouchStopListener(document.body, stopHandlerWrapper);
-					F5.addTouchMoveListener(document.body, moveHandlerWrapper);					
+				if (!F5.isTouchDevice()) {
+					window.addEventListener('mouseup', stopHandlerWrapper);
+					window.addEventListener('mousemove', moveHandlerWrapper);
 				}
 				F5.addTouchStopListener(that.el, stopHandlerWrapper);			
 				F5.addTouchMoveListener(that.el, moveHandlerWrapper);

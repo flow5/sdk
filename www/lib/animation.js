@@ -202,6 +202,7 @@
 		overlayFadeIn: function (container, oldEl, newEl) {
 			newEl.style.visibility = '';				
 			newEl.style.opacity = 0;
+			newEl.style.display = '';
 			
 			return function (cb) {
 				function completeFadeIn() {
@@ -220,7 +221,8 @@
 			return function (cb) {
 				function completeFadeOut() {
 					oldEl.style[F5.styleName('transition')] = '';
-					F5.removeTransitionEndListener(newEl);
+					oldEl.style.display = 'none';
+					F5.removeTransitionEndListener(oldEl);
 					cb();
 				}
 
