@@ -150,10 +150,11 @@ function handleURLsRecursive(obj, handler) {
 
 function get(query, path, encoding, failure, success) {
 	var url = require('url').parse(path);
+	
 	if (url.protocol) {		
 		var options = {
 			hostname: url.hostname,
-			path: url.path + '?pkg=' + query.pkg,
+			path: packageDomain(query.pkg) + '/' + url.path,
 			port: url.port
 		};
 		var protocol = url.protocol.replace(':', '');
@@ -517,7 +518,7 @@ exports.generateHtml = function (query, cb) {
 		var link = new Element('link');
 		link.setAttribute('rel', rel);
 		if (pkg) {
-			link.setAttribute('href', href + '?pkg=' + pkg);			
+			link.setAttribute('href', '/' + packageDomain(pkg) + '/' + href);			
 		} else {
 			link.setAttribute('href', href);			
 		}
@@ -535,7 +536,7 @@ exports.generateHtml = function (query, cb) {
 		var script = new Element('script');		
 		if (!boolValue(query.inline)) {
 			// reference scripts
-			script.setAttribute('src', file + '?pkg=' + pkg);
+			script.setAttribute('src', '/' + packageDomain(pkg) + '/' + file);
 			cb(null, script);
 		} else {
 			var src = packageBase(pkg) + file;
@@ -684,7 +685,7 @@ exports.generateHtml = function (query, cb) {
 										cb(null, fragment);										
 									}
 								} else {
-									cb(null, fragment.replace(/(<img.*)src=([\'\"]+)(.*)([\'\"]+)/, '$1src=$2$3?pkg=' + pkg + '$4'));									
+									cb(null, fragment.replace(/(<img.*[\'\"]+)(.*)([\'\"]+)/, '$1/' + packageDomain(pkg) + '$2$3'));									
 								}
 							}, function (err, results) {
 								elementsDiv.innerHTML = results.join('');						
@@ -990,11 +991,13 @@ exports.generateFrame = function (query) {
 	}			
 	delete query.frame;
 	
+	console.log(query.domain)
+	
 	var frame = new Element('iframe');
 	frame.id = 'frame';
 	frame.setAttribute('width', width);
 	frame.setAttribute('height', height);
-	frame.setAttribute('src', '/generate?' + urlParameters(query));
+	frame.setAttribute('src', 'generate?' + urlParameters(query));
 	frame.setAttribute('frameborder', '0');
 	document.body.appendChild(frame);
 	

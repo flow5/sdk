@@ -48,8 +48,8 @@ function packageDomain(pkg) {
 	return pkg && pkg.split('.')[0];
 }
 
-function packageBase(pkg) {
-	var key = 'flow5:link_' + packageDomain(pkg);
+function domainBase(domain) {
+	var key = 'flow5:link_' + packageDomain(domain);
 	var value = npm.config.get(key);
 	if (!value) {
 		return null;
@@ -422,16 +422,13 @@ function doWaitForConnection(query, req, res) {
 }
 
 function doDefault(options, query, req, res) {
-	// TODO: allow-origin shouldn't be required here since the page is loaded from same domain?	
 	
-	var root = WEBROOT;
-	var pkg = query.pkg || options.default;
-	if (pkg) {
-		root = packageBase(pkg) + 'www/';
-	}
+	var root = domainBase(query.domain) + 'www/';	
+	req.url = req.url.replace(query.domain + '/', '');
 	
 	paperboy
 		.deliver(root, req, res)
+		// TODO: allow-origin shouldn't be required here since the page is loaded from same domain?	
 		.addHeader('Access-Control-Allow-Origin', '*')
 		.error(function () {
 			util.puts('Error delivering: ' + req.url);
@@ -452,7 +449,7 @@ exports.start = function (args, options, cb) {
 			var parsed = url.parse(req.url, true);	
 
 			var pathname = url.parse(req.url).pathname;
-
+			
 			if (options.verbose) {
 				console.log(req.method);
 				console.log(pathname);
@@ -461,33 +458,36 @@ exports.start = function (args, options, cb) {
 
 			parsed.query.devserv = protocol + '://' + req.headers.host;	
 			
-			if (parsed.query.pkg && !packageBase(parsed.query.pkg)) {
+			parsed.query.domain = pathname.split('/')[1];
+			var resource = pathname.split('/').slice(2).join('/');
+			
+			if (!domainBase(parsed.query.domain)) {
 				res.writeHead(500);
-				res.write('Unknown package: ' + parsed.query.pkg + '. Did you flow5 link?');
+				res.write('Unknown domain: ' + parsed.query.domain + '. Did you flow5 link?');
 				res.end();				
 				return;
 			}
 			
 			switch (req.method) {
 				case 'POST':
-					switch(pathname) {
-						case '/generate':
+					switch(resource) {
+						case 'generate':
 							getMessageBody(req, function (body) {
 								// assume that the body is a facebook signed request
 								parsed.query.body = body;
 								doGenerate(parsed.query, req, res);					
 							});
 							break;
-						case '/dot2svg':
+						case 'dot2svg':
 							doDot2Svg(req, res);	
 							break;
-						case '/proxy':
+						case 'proxy':
 							doProxy(parsed.query, req, res);
 							break;
-						case '/service':
+						case 'service':
 							doService(parsed.query, req, res);
 							break;
-						case '/talk': 
+						case 'talk': 
 							doTalk(parsed.query, req, res);
 							break;
 						default:
@@ -496,32 +496,32 @@ exports.start = function (args, options, cb) {
 					}
 					break;		
 				case 'GET':
-					switch (pathname) {
-						case '/generate':
+					switch (resource) {
+						case 'generate':
 							doGenerate(parsed.query, req, res);
 							break;
-						case '/ide':
+						case 'ide':
 							doIDE(parsed.query, req, res);
 							break;
-						case '/proxy':
+						case 'proxy':
 							doProxy(parsed.query, req, res);				
 							break;
-						case '/cache.manifest':
+						case 'cache.manifest':
 							doManifest(parsed.query, req, res);
 							break;	
-						case '/service':
+						case 'service':
 							doService(parsed.query, req, res);
 							break;
-						case '/listen': 
+						case 'listen': 
 							doListen(parsed.query, req, res);
 							break;						
-						case '/clientid': 
+						case 'clientid': 
 							doClientId(parsed.query, req, res);
 							break;						
-						case '/connectListener': 
+						case 'connectListener': 
 							doConnectListener(parsed.query, req, res);
 							break;						
-						case '/waitForConnection': 
+						case 'waitForConnection': 
 							doWaitForConnection(parsed.query, req, res);
 							break;						
 						default:
