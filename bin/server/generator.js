@@ -685,7 +685,7 @@ exports.generateHtml = function (query, cb) {
 										cb(null, fragment);										
 									}
 								} else {
-									cb(null, fragment.replace(/(<img.*[\'\"]+)(.*)([\'\"]+)/, '$1/' + packageDomain(pkg) + '$2$3'));									
+									cb(null, fragment.replace(/(<img.*src=[\'\"]+)(.*)([\'\"]+)/, '$1/' + packageDomain(pkg) + '$2$3'));									
 								}
 							}, function (err, results) {
 								elementsDiv.innerHTML = results.join('');						
@@ -719,7 +719,7 @@ exports.generateHtml = function (query, cb) {
 							});
 						} else {
 							handleURLsRecursive(r, function (obj, id, value) {
-								obj[id] = getURL(value) + '?pkg=' + pkg;										
+								obj[id] = getURL(value);										
 							});								
 						}
 						async.parallel(tasks, function (err) {
