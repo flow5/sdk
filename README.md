@@ -16,7 +16,7 @@ To install globally
 	
 Then
 
-	npm start flow5
+  flow5 start
 	
 will start the flow5 development server and open a browser pointing to the root page
 
