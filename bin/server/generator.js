@@ -46,6 +46,8 @@ function getURL(str) {
 
 var cssURLRegExp = new RegExp(/url\([\'\""]?([^\']*)[\'\""]?\)/);
 
+var imgSrcRegExp = new RegExp(/<img.*src=[\'\"]+(.*)[\'\"]+/);
+
 
 function boolValue(string) {
 	if (string && string !== 'true' && string !== 'false') {
@@ -204,37 +206,37 @@ function resolveURL(base, path) {
 }
 
 
-function inlineData(query, path, cb) {			
+function inlineData(query, path, failure, success) {			
 	var ext = require('path').extname(path).substring(1);
 
 	if (ext === 'ttf') {
-		get(query, path, 'base64', cb, function (data) {
-			cb(null, 'data:font/truetype;base64,' + data);
+		get(query, path, 'base64', failure, function (data) {
+			success('data:font/truetype;base64,' + data);
 		});
 	} else if (ext === 'eot') {
-		get(query, path, 'base64', cb, function (data) {
-			cb(null, 'data:font/embedded-opentype;base64,' + data);
+		get(query, path, 'base64', failure, function (data) {
+			success('data:font/embedded-opentype;base64,' + data);
 		});
 	} else if (ext === 'woff') {
-		get(query, path, 'base64', cb, function (data) {
-			cb(null, 'data:font/woff;base64,' + data);
+		get(query, path, 'base64', failure, function (data) {
+			success('data:font/woff;base64,' + data);
 		});
 	} else if (ext === 'otf') {
-		get(query, path, 'base64', cb, function (data) {
-			cb(null, 'data:font/otf;base64,' + data);
+		get(query, path, 'base64', failure, function (data) {
+			success('data:font/otf;base64,' + data);
 		});
 	}
 	else if (ext === 'svg') {
-		get(query, path, 'utf8', cb, function (data) {
-			cb(null, 'data:image/svg+xml;utf8,' + data.replace(/(\r\n|\n|\r)/gm, ''));
+		get(query, path, 'utf8', failure, function (data) {
+			success('data:image/svg+xml;utf8,' + data.replace(/(\r\n|\n|\r)/gm, ''));
 		});
 	} else if (ext === 'html' || ext === 'css') {
-		get(query, path, 'base64', cb, function (data) {
-			cb(null, 'base64,' + data);
+		get(query, path, 'base64', failure, function (data) {
+			success('base64,' + data);
 		});
 	} else {
-		get(query, path, 'base64', cb, function (data) {
-			cb(null, 'data:image/' + ext + ';base64,' + data);
+		get(query, path, 'base64', failure, function (data) {
+			success('data:image/' + ext + ';base64,' + data);
 		});
 	}
 }
@@ -629,13 +631,9 @@ exports.generateHtml = function (query, cb) {
 								
 								function makeTask(cssBase, url, index) {
 									return function (cb) {
-										inlineData(query, resolveURL(cssBase, url), function (err, data) {
-											if (err) {
-												cb(err);
-											} else {
-												statements[index] = statements[index].replace(url, data);
-												cb();														
-											}
+										inlineData(query, resolveURL(cssBase, url), cb, function (data) {
+											statements[index] = statements[index].replace(url, data);
+											cb();														
 										});
 									};
 								}
@@ -676,7 +674,18 @@ exports.generateHtml = function (query, cb) {
 							
 							var fragments = data.split(/(>)/);
 							async.map(fragments, function (fragment, cb) {
-								cb(null, fragment.replace(/(<img.*)src=([\'\"]+)(.*)([\'\"]+)/, '$1src=$2$3?pkg=' + pkg + '$4'));
+								if (boolValue(query.inline)) {
+									var matches = imgSrcRegExp.exec(fragment);// inline styles? || cssURLRegExp.exec(fragment);
+									if (matches && matches.length > 1) {
+										inlineData(query, resolveURL(base, matches[1]), cb, function (data) {
+											cb(null, fragment.replace(matches[1], data));																					
+										});										
+									} else {
+										cb(null, fragment);										
+									}
+								} else {
+									cb(null, fragment.replace(/(<img.*)src=([\'\"]+)(.*)([\'\"]+)/, '$1src=$2$3?pkg=' + pkg + '$4'));									
+								}
 							}, function (err, results) {
 								elementsDiv.innerHTML = results.join('');						
 								elementsDiv.setAttribute('f5id', file);				
@@ -701,13 +710,9 @@ exports.generateHtml = function (query, cb) {
 						if (boolValue(query.inline)) {
 							handleURLsRecursive(r, function (obj, id, value) {	
 								tasks.push(function (cb) {
-									inlineData(query, resolveURL(base, getURL(value)), function (err, data) {
-										if (err) {
-											cb(err);
-										} else {
-											obj[id] = data;
-											cb();
-										}
+									inlineData(query, resolveURL(base, getURL(value)), cb, function (data) {
+										obj[id] = data;
+										cb();
 									});																				
 								});
 							});
