@@ -216,20 +216,6 @@ function doGenerate(query, req, res) {
 	}	
 }
 
-function doIDE(query, req, res) {
-	doGenerate({
-		pkg: 'ide',
-		debug: 'true',
-		platform: 'ios',
-		inline: 'false',
-		compress: 'false',
-		mobile: 'false',
-		native: 'false',
-		app: query.app,
-		devserv: query.devserv
-	}, req, res);	
-}
-
 function doProxy(query, req, res) {
 
 	var proxyRequest = url.parse(query.url);	
@@ -286,47 +272,6 @@ function doManifest(query, req, res) {
 	} catch (e) {
 		console.log('error:' + e.stack);
 	}
-}
-
-function doService(query, req, res) {
-	
-	var service = require('../www/services/' + packageDomain(query.pkg) + '/' + query.name + '.js');
-	
-	function execService(body) {
-		try {
-			function complete(results) {
-				// TODO: allow-origin shouldn't be required here since the page is loaded from same domain?
-				res.writeHead(200, {'Content-Type': 'application/json',
-									'Access-Control-Allow-Origin': '*'});
-				res.write(JSON.stringify(results));						
-				res.end();				
-			}
-			if (body) {
-				service.exec(query, body, complete);			
-			} else {
-				service.exec(query, complete);							
-			}
-		} catch (e2) {
-			console.log('error:' + e2.message);
-			res.writeHead(500);
-			res.end();											
-		}		
-	}
-	
-	try {
-		switch (req.method) {
-			case 'POST':
-			case 'PUT':
-				getMessageBody(execService);
-				break;
-			default:
-				execService();
-				break;
-		}
-	} catch (e1) {
-		console.log('error:' + e1.message);
-		res.end();				
-	}	
 }
 
 var channels = {};
@@ -446,14 +391,14 @@ function doDefaultGET(resource, query, req, res) {
 			var servicePath = domainBase(query.domain) + 'services/' + resource + '.js';
 			try {
 				var service = require(servicePath);	
-				service.exec(query, function (err, result) {
+				service.exec(query, function (err, result, contentType) {
 					// TODO: allow service to specify mime type?
 					if (err) {
 						res.writeHead(500, {'Content-Type': 'text/plain'});
 						res.write(err.stack || err);
 					} else if (result) {
-						res.writeHead(200, {'Content-Type': 'application/json'});						
-						res.write(JSON.stringify(result));						
+						res.writeHead(200, {'Content-Type': contentType || 'text/plain'});						
+						res.write(result);						
 					}
 					res.end();								
 				});
@@ -510,9 +455,6 @@ exports.start = function (args, options, cb) {
 						case 'proxy':
 							doProxy(parsed.query, req, res);
 							break;
-						case 'service':
-							doService(parsed.query, req, res);
-							break;
 						case 'talk': 
 							doTalk(parsed.query, req, res);
 							break;
@@ -526,18 +468,12 @@ exports.start = function (args, options, cb) {
 						case 'generate':
 							doGenerate(parsed.query, req, res);
 							break;
-						case 'ide':
-							doIDE(parsed.query, req, res);
-							break;
 						case 'proxy':
 							doProxy(parsed.query, req, res);				
 							break;
 						case 'cache.manifest':
 							doManifest(parsed.query, req, res);
 							break;	
-						case 'service':
-							doService(parsed.query, req, res);
-							break;
 						case 'listen': 
 							doListen(parsed.query, req, res);
 							break;						
