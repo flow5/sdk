@@ -8,7 +8,7 @@
 		"name" : "Paul Greyson",
 		"email" : "paul@flow5.com"
 	},
-	"os": ["darwin"],
+	"os": ["darwin", "linux"],
 	"repository": { 
 		"type" : "git",
 	  	"url" : "http://github.com/pgreyson/flow5"
