@@ -342,13 +342,13 @@ function doPOST(resource, query, req, res) {
 	try {
 		var service = require(servicePath);	
 		getMessageBody(req, function (body) {
-			service.POST(query, body, function (err, result, contentType) {
+			service.POST(req, query, body, function (err, result, headers) {
 				// TODO: allow service to specify mime type?
 				if (err) {
 					res.writeHead(500, {'Content-Type': 'text/plain'});
 					res.write(err.stack || err);
 				} else if (result) {
-					res.writeHead(200, {'Content-Type': contentType || 'text/plain'});						
+					res.writeHead(200, headers || {'Content-Type': 'text/plain'});						
 					res.write(result);						
 				}
 				res.end();								
@@ -378,7 +378,7 @@ function doGET(resource, query, req, res) {
 			var servicePath = domainBase(query.domain) + 'services/' + resource + '.js';
 			try {
 				var service = require(servicePath);	
-				service.GET(query, function (err, result, headers) {
+				service.GET(req, query, function (err, result, headers) {
 					if (err) {
 						res.writeHead(500, {'Content-Type': 'text/plain'});
 						res.write(err.stack || err);
@@ -524,17 +524,11 @@ exports.start = function (args, options, cb) {
 			io.set('log level', 0);			
 		}
 		
-		var ide = io.of('/ide').on('connection', function (socket) {
-			socket.on('update', function (message) {
-				ide.emit('update', message);
+		io.on('connection', function (socket) {
+			socket.on('message', function (message) {
+				socket.broadcast.emit('message', message);
 			});
-		});
-
-		var app = io.of('/app').on('connection', function (socket) {
-			socket.on('command', function (message) {
-				app.emit('command', message);
-			});
-		});
+		});				
 		
 		cb(result);		
 	});			

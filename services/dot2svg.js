@@ -27,25 +27,22 @@
 var spawn = require('child_process').spawn,	
 	util = require('util');
 
-exports.POST = function (query, body, cb) {
-	function doDot2Svg(req, res) {	
-		var child = spawn('dot', ['-Tsvg']);		
-
-		child.stdout.on('data', function (data) {
-			res.write(data);
-		});		
-		child.on('exit', function (code) {
-			res.end();
-		});		
-		child.stderr.on('data', function (data) {
-			util.puts(data);
-		});	
-		
-		child.stdin.write(body);
-		
-		
-		
-		res.writeHead(200, {'Content-Type': 'image/svg+xml', 'sequence-number': req.headers['sequence-number']});		
-	}	
+exports.POST = function (req, query, body, cb) {	
 	
+	var child = spawn('dot', ['-Tsvg']);		
+
+	var svg = '';
+
+	child.stdout.on('data', function (data) {
+		svg += data.toString();
+	});		
+	child.on('exit', function (code) {
+		cb(null, svg, {'Content-Type': 'image/svg+xml', 'sequence-number': req.headers['sequence-number']});
+	});		
+	child.stderr.on('data', function (data) {
+		util.puts(data);
+	});	
+	
+	child.stdin.write(body);
+	child.stdin.end();	
 };

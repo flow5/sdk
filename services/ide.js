@@ -27,7 +27,7 @@
 
 var http = require('http');
 
-exports.GET = function (query, cb) {
+exports.GET = function (req, query, cb) {
 	
 	var path = '/f5/generate?' +
 				'pkg=f5.ide' + 

@@ -38,13 +38,12 @@ F5.registerModule(function (F5) {
 	socketioScript.src = F5.query.devserv + '/socket.io/socket.io.js';
 	document.head.appendChild(socketioScript);		
 	socketioScript.onload = function () {
-		var txSocket = io.connect(F5.query.devserv + '/ide');
-		var rxSocket = io.connect(F5.query.devserv + '/app');
+		var socket = io.connect(F5.query.devserv);
 		
 		function Console() {
 
 			function postMessage(message) {
-				txSocket.emit('update', message);
+				socket.emit('message', message);
 			}
 
 			function update() {
@@ -56,7 +55,8 @@ F5.registerModule(function (F5) {
 			this.update = update;
 
 			function listen() {
-				rxSocket.on('command', function (message) {						
+				socket.on('message', function (message) {		
+					
 //					console.log(message)
 
 					var response = {type: 'response', id: message.id};
@@ -136,18 +136,15 @@ F5.registerModule(function (F5) {
 							action(function (result) {
 								response.value = result;
 								postMessage(response);								
-								listen();																		
 							});								
 						} catch (e2) {
 							response.type = 'uncaughtException';
 							response.value = e2.message;
 							console.log(e2);	
 							postMessage(response);								
-							listen();																																	
 						}
 					} else {
 						postMessage(response);
-						listen();																		
 					}						
 				});
 			}

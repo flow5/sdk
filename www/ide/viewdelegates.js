@@ -28,7 +28,7 @@
 
 F5.registerModule(function (F5) {	
 	
-	var txSocket, rxSocket;
+	var socket;
 	var modelListeners = {};
 	
 	F5.Global.flowController.addWaitTask(function (cb) {
@@ -36,10 +36,9 @@ F5.registerModule(function (F5) {
 		socketioScript.src = F5.query.devserv + '/socket.io/socket.io.js';
 		document.head.appendChild(socketioScript);		
 		socketioScript.onload = function () {
-			txSocket = io.connect(F5.query.devserv + '/app');
-			rxSocket = io.connect(F5.query.devserv + '/ide');
+			socket = io.connect(F5.query.devserv);
 
-			rxSocket.on('update', function (message) {
+			socket.on('message', function (message) {
 				try {
 					if (message && message.model) {
 						var model = JSON.parse(message.model);
@@ -59,32 +58,31 @@ F5.registerModule(function (F5) {
 	
 
 	function Root() {
+		
+		function send(command) {
+			if (socket) {
+				socket.emit('message', command);	
+			}							
+		}
+		
 		this.initialize = function () {
 			var that = this;
 			this.widgets.resetbutton.setAction(function () {
-				if (txSocket) {
-					txSocket.emit('command', {type: 'reset'});							
-				}				
+				send({type: 'reset'});
 			});
 			this.widgets.refreshbutton.setAction(function () {
 				that.update();
 			});
 			this.widgets.backbutton.setAction(function () {
-				if (txSocket) {
-					txSocket.emit('command', {type: 'back'});							
-				}				
+				send({type: 'back'});
 			});
 			this.widgets.framesbutton.setAction(function () {
-				if (txSocket) {
-					txSocket.emit('command', {type: 'frames'});							
-				}				
+				send({type: 'frames'});							
 			});			
 		};
 		
 		this.update = function () {
-			if (txSocket) {
-				txSocket.emit('command', {type: 'update'});							
-			}
+			send({type: 'update'});							
 		};	
 		
 		this.viewDidBecomeActive = function () {
