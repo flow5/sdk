@@ -148,7 +148,6 @@ function verifyQueryParameters(query) {
 	assert(isBool(query.compress), 'Bad parameter "compress" = ' + query.compress);
 	assert(isBool(query.mobile), 'Bad parameter "mobile" = ' + query.mobile);
 	assert(isPlatform(query.platform), 'Bad parameter "platform" = ' + query.platform);
-	assert(query.pkg, 'Bad parameter "pkg" = ' + query.pkg);
 }	
 
 function doGenerate(query, req, res) {
@@ -166,6 +165,10 @@ function doGenerate(query, req, res) {
 		} else {
 			query.mobile = 'false';
 		}
+	}
+	
+	if (!query.pkg) {
+		query.pkg = query.domain;
 	}
 		
 	try {			
@@ -421,7 +424,11 @@ function doWaitForConnection(query, req, res) {
 	res.end();
 }
 
-function doDefault(resource, query, req, res) {
+function doDefaultPUTORPOST(resource, query, req, res) {
+	// get body and call service
+}
+
+function doDefaultGET(resource, query, req, res) {
 	
 	var root = domainBase(query.domain) + 'www/';	
 	req.url = req.url.replace(query.domain + '/', '');
@@ -449,7 +456,7 @@ function doDefault(resource, query, req, res) {
 						res.write(JSON.stringify(result));						
 					}
 					res.end();								
-				})			
+				});
 			} catch (e) {
 				res.writeHead(404, {'Content-Type': 'text/plain'});
 //				res.write(e.stack);
@@ -479,7 +486,7 @@ exports.start = function (args, options, cb) {
 			
 			parsed.query.domain = pathname.split('/')[1];
 			var resource = pathname.split('/').slice(2).join('/');
-			
+						
 			if (!domainBase(parsed.query.domain)) {
 				res.writeHead(500);
 				res.write('Unknown domain: ' + parsed.query.domain + '. Did you flow5 link?');
@@ -544,7 +551,7 @@ exports.start = function (args, options, cb) {
 							doWaitForConnection(parsed.query, req, res);
 							break;						
 						default:
-							doDefault(resource, parsed.query, req, res);					
+							doDefaultGET(resource, parsed.query, req, res);					
 					}
 					break;
 				case 'OPTIONS':

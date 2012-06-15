@@ -30,6 +30,5 @@ var npm = require('npm'),
 
 npm.load({}, function () {	
 	npm.commands.config(['set', 'flow5:link_f5', path.resolve(__dirname, '..')]);
-	npm.commands.config(['set', 'flow5:link_ide', path.resolve(__dirname, '..', 'ide')]);
 	npm.commands.config(['set', 'flow5:port', '8008']);
 });
