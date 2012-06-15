@@ -25,9 +25,7 @@
 
 ***********************************************************************************************************************/
 
-var http = require('http');
-
-exports.GET = function (req, query, cb) {
+exports.handleRequest = function (req, origRes) {
 	
 	var path = '/f5/generate?' +
 				'pkg=f5.ide' + 
@@ -38,21 +36,22 @@ exports.GET = function (req, query, cb) {
 				'&compress=false' +
 				'&mobile=false';
 				
+	var query = require('url').parse(req.url, true).query;
 	if (query.app) {
 		path += '&app=' + query.app;
 	}
 
-	http.get({host: 'localhost', port: 8008, path: path}, function(res) {
+	require('http').get({host: 'localhost', port: 8008, path: path}, function(res) {
 		res.setEncoding('utf8');
-
-		var html = '';
+		
+		origRes.writeHead(200, {'Content-Type': 'text/html'});
 
 		res.on('data', function(chunk){
-			html += chunk;
+			origRes.write(chunk);
 		});
 
 		res.on('end', function(){
-			cb(null, html, {'Content-Type': 'text/html'});
+			origRes.end();
 		});	
 	});	
 };

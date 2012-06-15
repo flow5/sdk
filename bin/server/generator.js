@@ -49,10 +49,7 @@ var cssURLRegExp = new RegExp(/url\([\'\""]?([^\']*)[\'\""]?\)/);
 var imgSrcRegExp = new RegExp(/<img.*src=[\'\"]+(.*)[\'\"]+/);
 
 
-function boolValue(string) {
-	if (string && string !== 'true' && string !== 'false') {
-		throw new Error('Bad bool value');
-	}
+function bool(string) {
 	return string === 'true';	
 }
 
@@ -334,22 +331,22 @@ function processManifest(manifest, query, type, process, cb) {
 		
 		addTask(section + '.' + type);
 		
-		if (!boolValue(query.mobile)) {
+		if (!bool(query.mobile)) {
 			addTask(section + '.desktop.' + type);
 		}						
 		
-		if (boolValue(query.native)) {
+		if (bool(query.native)) {
 			addTask(section + '.app.' + type);
 		} else {
 			addTask(section + '.browser.' + type);
 		}	
 		
-		if (boolValue(query.debug)) {
+		if (bool(query.debug)) {
 			addTask(section + '.debug.' + type);
-			if (!boolValue(query.mobile)) {
+			if (!bool(query.mobile)) {
 				addTask(section + '.desktop.debug.' + type);
 			}
-			if (boolValue(query.native)) {
+			if (bool(query.native)) {
 				addTask(section + '.app.debug.' + type);
 			} else {
 				addTask(section + '.browser.debug.' + type);
@@ -493,7 +490,8 @@ exports.generateScript = function (query, cb) {
 
 exports.generateHtml = function (query, cb) {
 	
-	debugger;	
+//	debugger;	
+
 	console.log(query.pkg + ' generating');
 	
 	var document = new Element('html');
@@ -534,7 +532,7 @@ exports.generateHtml = function (query, cb) {
 		
 	function makeScript(pkg, file, cb) {
 		var script = new Element('script');		
-		if (!boolValue(query.inline)) {
+		if (!bool(query.inline)) {
 			// reference scripts
 			script.setAttribute('src', '/' + packageDomain(pkg) + '/' + file);
 			cb(null, script);
@@ -547,7 +545,7 @@ exports.generateHtml = function (query, cb) {
 				if (err) {
 					cb(err);
 				} else {
-					if (boolValue(query.compress)) {
+					if (bool(query.compress)) {
 						minify(code, {engine: 'uglify'}, function (err, code) {
 							script.innerHTML = code;
 							cb(err, script);
@@ -618,10 +616,10 @@ exports.generateHtml = function (query, cb) {
 			elements.forEach(function (file) {
 				tasks.push(function (cb) {
 					if (file.match('.css')) {
-						if (boolValue(query.inline)) {
+						if (bool(query.inline)) {
 							var resolvedPath = resolveURL(base, file);
 							get(query, resolvedPath, 'utf8', cb, function (style) {
-								if (boolValue(query.compress)) {
+								if (bool(query.compress)) {
 									style = cssmin(style);
 								}
 
@@ -675,7 +673,7 @@ exports.generateHtml = function (query, cb) {
 							
 							var fragments = data.split(/(>)/);
 							async.map(fragments, function (fragment, cb) {
-								if (boolValue(query.inline)) {
+								if (bool(query.inline)) {
 									var matches = imgSrcRegExp.exec(fragment);// inline styles? || cssURLRegExp.exec(fragment);
 									if (matches && matches.length > 1) {
 										inlineData(query, resolveURL(base, matches[1]), cb, function (data) {
@@ -685,7 +683,8 @@ exports.generateHtml = function (query, cb) {
 										cb(null, fragment);										
 									}
 								} else {
-									cb(null, fragment.replace(/(<img.*[\'\"]+)(.*)([\'\"]+)/, '$1/' + packageDomain(pkg) + '$2$3'));									
+									cb(null, fragment.replace(/(<img.*[\'\"]+)(.*)([\'\"]+)/, '$1/' + 
+																		packageDomain(pkg) + '$2$3'));									
 								}
 							}, function (err, results) {
 								elementsDiv.innerHTML = results.join('');						
@@ -708,7 +707,7 @@ exports.generateHtml = function (query, cb) {
 				tasks.push(function (cb) {
 					parseJSON(base + file, cb, function (r) {
 						var tasks = [];
-						if (boolValue(query.inline)) {
+						if (bool(query.inline)) {
 							handleURLsRecursive(r, function (obj, id, value) {	
 								tasks.push(function (cb) {
 									inlineData(query, resolveURL(base, getURL(value)), cb, function (data) {
@@ -991,7 +990,7 @@ exports.generateFrame = function (query) {
 	}			
 	delete query.frame;
 	
-	console.log(query.domain)
+//	console.log(query.domain)
 	
 	var frame = new Element('iframe');
 	frame.id = 'frame';
@@ -1145,7 +1144,7 @@ exports.generateCacheManifest = function(query, cb) {
 // experiment with integrated png crush
 	FFI = require("node-ffi"),
 	libc = new FFI.Library(null, {"system": ["int32", ["string"]]}),
-	if (boolValue(query.crush)) {
+	if (bool(query.crush)) {
 		var tmpPath = '/tmp/' + process.pid + Date.now() + '.png';
 		var cmd = 'optipng -o2 -out ' + tmpPath + ' ' + path;
 //		var cmd = 'convert -quality 05 ' + path + ' ' + tmpPath;

@@ -95,29 +95,6 @@ function showRequest(req, printHeaders) {
 	}
 }
 
-function assert(cond, message) {
-	if (!cond) {
-		throw new Error(message);
-	}
-}
-
-function isBool(value) {
-	return value && (value === 'true' || value === 'false');
-}
-
-function isPlatform(value) {
-	return value && (value === 'ios' || value === 'android');
-}
-
-function verifyQueryParameters(query) {
-	assert(isBool(query.debug), 'Bad parameter "debug" = ' + query.debug);
-	assert(isBool(query.native), 'Bad parameter "native" = ' + query.native);
-	assert(isBool(query.inline), 'Bad parameter "inline" = ' + query.inline);
-	assert(isBool(query.compress), 'Bad parameter "compress" = ' + query.compress);
-	assert(isBool(query.mobile), 'Bad parameter "mobile" = ' + query.mobile);
-	assert(isPlatform(query.platform), 'Bad parameter "platform" = ' + query.platform);
-}	
-
 function doGenerate(query, req, res) {
 	var agent = req.headers['user-agent'];
 	if (!query.platform) {
@@ -140,8 +117,6 @@ function doGenerate(query, req, res) {
 	}
 		
 	try {			
-		verifyQueryParameters(query);
-
 		var html;
 		if (query.headless) {
 			generator.generateScript(query, function (err, script) {
@@ -225,7 +200,6 @@ function doProxy(query, req, res) {
 function doManifest(query, req, res) {
 //	res.writeHead(404);
 	try {
-		verifyQueryParameters(query);			
 		generator.generateCacheManifest(query, function (err, manifest) {
 			if (err) {
 				console.log(err.stack || err);
@@ -242,127 +216,23 @@ function doManifest(query, req, res) {
 	}
 }
 
-var channels = {};
-
-function doListen(query, req, res) {
-//	console.log(req.url);
-	
-	var channel = channels[query.channel];
-	
-	if (channel && channel[query.clientid]) {
-		res.writeHead(200, {'Content-Type': 'application/json',
-							'Access-Control-Allow-Origin': '*'});
-		if (channel[query.clientid].queue.length) {
-			res.write(channel[query.clientid].queue.shift());
-			res.end();
-		} else {
-			// hanging get
-			channel[query.clientid].res = res;
-		}			
-	} else {
-		res.writeHead(404);
-		res.end();
-	}	
-}
-function doTalk(query, req, res) {	
-//	console.log(req.url);
-	
-	var channel = channels[query.channel];
-	
-	if (channel) {
-		getMessageBody(req, function (body) {	
-//			console.log(body);			
-			// write to all of the open channels
-			forEach(channel, function (clientid, client) {
-				if (clientid !== query.clientid) {
-					if (client.res) {
-						client.res.write(body);
-						client.res.end();
-						client.res = null;
-					} else {
-						client.queue.push(body);
-					}
-				}
-			});
-			res.writeHead(200);
-			res.write(JSON.stringify({result: 'ok'}));
-			res.end();
-		});		
-	} else {
-		res.writeHead(404);
-		res.end();		
-	}
-}
-
-var clientid = 0;
-function doClientId(query, req, res) {
-	clientid +=1 ;	
-	res.writeHead(200, {'Content-Type': 'application/json',
-						'Access-Control-Allow-Origin': '*'});		
-	res.write(clientid.toString());
-	res.end();
-}
-
-function doConnectListener(query, req, res) {
-	if (!channels[query.channel]) {
-		channels[query.channel] = {};
-	}
-	
-	if (channels[query.channel][query.clientid]) {
-		console.log('reconnecting listener: ' + query.clientid + ' channel: ' + query.channel);				
-		if (channels[query.channel][query.clientid].timeout) {
-			clearTimeout(channels[query.channel][query.clientid].timeout);
-			delete channels[query.channel][query.clientid].timeout;		
-		}
-	} else {
-		console.log('connecting listener: ' + query.clientid + ' channel: ' + query.channel);		
-		channels[query.channel][query.clientid] = {res: null, queue: []};		
-	}
-	res.writeHead(200);
-	res.on('close', function () {
-		console.log('listener disconnected: ' + query.clientid + ' waiting for reconnect. . .');					
-		// wait 1s after connection close to give the client time to reconnect
-		if (channels[query.channel][query.clientid]) {
-			channels[query.channel][query.clientid].timeout = setTimeout(function () {
-				delete channels[query.channel][query.clientid];
-				console.log('listener disconnected: ' + query.clientid + ' closing connection');					
-			}, 1000);			
-		}
-	});
-}
-
-function doWaitForConnection(query, req, res) {
-	res.writeHead(200);
-	res.write(JSON.stringify({result: 'ok'}));
-	res.end();
-}
-
-function doPOST(resource, query, req, res) {
+function doService(resource, query, req, res) {
 	var servicePath = domainBase(query.domain) + 'services/' + resource + '.js';
 	try {
 		var service = require(servicePath);	
-		getMessageBody(req, function (body) {
-			service.POST(req, query, body, function (err, result, headers) {
-				// TODO: allow service to specify mime type?
-				if (err) {
-					res.writeHead(500, {'Content-Type': 'text/plain'});
-					res.write(err.stack || err);
-				} else if (result) {
-					res.writeHead(200, headers || {'Content-Type': 'text/plain'});						
-					res.write(result);						
-				}
-				res.end();								
-			});			
-		});
+		try {
+			service.handleRequest(req, res);
+		} catch (serviceError) {
+			res.writeHead(500, {'Content-Type': 'text/plain'});
+			res.write(serviceError.stack || serviceError);								
+		}
 	} catch (e) {
 		res.writeHead(404, {'Content-Type': 'text/plain'});
-//		res.write(e.stack);
 		res.end();			
-	}
+	}	
 }
 
-function doGET(resource, query, req, res) {
-	
+function doGET(resource, query, req, res) {	
 	var root = domainBase(query.domain) + 'www/';	
 	req.url = req.url.replace(query.domain + '/', '');
 	
@@ -374,31 +244,15 @@ function doGET(resource, query, req, res) {
 			util.puts('Error delivering: ' + req.url);
 		})
 		.otherwise(function () {
-			// see if this is a service
-			var servicePath = domainBase(query.domain) + 'services/' + resource + '.js';
-			try {
-				var service = require(servicePath);	
-				service.GET(req, query, function (err, result, headers) {
-					if (err) {
-						res.writeHead(500, {'Content-Type': 'text/plain'});
-						res.write(err.stack || err);
-					} else if (result) {
-						res.writeHead(200, headers || {'Content-Type': 'text/plain'});						
-						res.write(result);						
-					}
-					res.end();								
-				});
-			} catch (e) {
-				res.writeHead(404, {'Content-Type': 'text/plain'});
-				res.end();			
-			}
+			// otherwise see if it's a service
+			doService(resource, query, req, res);
 		});		
 }
 
 // http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
 exports.start = function (args, options, cb) {
 	
-	debugger;
+//	debugger;
 		
 	npm.load({}, function () {
 		function handleRequest(req, res, protocol) {
@@ -417,12 +271,12 @@ exports.start = function (args, options, cb) {
 			parsed.query.domain = pathname.split('/')[1];
 			var resource = pathname.split('/').slice(2).join('/');
 						
-//			if (!domainBase(parsed.query.domain)) {
-//				res.writeHead(500);
-//				res.write('Unknown domain: ' + parsed.query.domain + '. Did you flow5 link?');
-//				res.end();				
-//				return;
-//			}
+			if (!domainBase(parsed.query.domain)) {
+				res.writeHead(500);
+				res.write('Unknown domain: ' + parsed.query.domain + '. Did you flow5 link?');
+				res.end();				
+				return;
+			}
 			
 			switch (req.method) {
 				case 'POST':
@@ -437,11 +291,8 @@ exports.start = function (args, options, cb) {
 						case 'proxy':
 							doProxy(parsed.query, req, res);
 							break;
-						case 'talk': 
-							doTalk(parsed.query, req, res);
-							break;
 						default:
-							doPOST(resource, parsed.query, req, res);					
+							doService(resource, parsed.query, req, res);					
 					}
 					break;		
 				case 'GET':
@@ -455,18 +306,6 @@ exports.start = function (args, options, cb) {
 						case 'cache.manifest':
 							doManifest(parsed.query, req, res);
 							break;	
-						case 'listen': 
-							doListen(parsed.query, req, res);
-							break;						
-						case 'clientid': 
-							doClientId(parsed.query, req, res);
-							break;						
-						case 'connectListener': 
-							doConnectListener(parsed.query, req, res);
-							break;						
-						case 'waitForConnection': 
-							doWaitForConnection(parsed.query, req, res);
-							break;						
 						default:
 							doGET(resource, parsed.query, req, res);					
 					}

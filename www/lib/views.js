@@ -143,7 +143,7 @@
 			
 			// TODO: enable this with an additional URL parameter?
 			// Would require an additional build target for device
-			if (!this.delegate || this.delegate.devoverlay) {				
+			if (F5.isDebug() && (!this.delegate || this.delegate.devoverlay)) {				
 				this.addDevOverlay(node);
 			}			
 			
