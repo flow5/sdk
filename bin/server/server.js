@@ -421,11 +421,12 @@ function doWaitForConnection(query, req, res) {
 	res.end();
 }
 
-function doDefault(options, query, req, res) {
+function doDefault(resource, query, req, res) {
 	
 	var root = domainBase(query.domain) + 'www/';	
 	req.url = req.url.replace(query.domain + '/', '');
 	
+	// try to serve the file normally
 	paperboy
 		.deliver(root, req, res)
 		// TODO: allow-origin shouldn't be required here since the page is loaded from same domain?	
@@ -434,8 +435,26 @@ function doDefault(options, query, req, res) {
 			util.puts('Error delivering: ' + req.url);
 		})
 		.otherwise(function () {
-			res.writeHead(404, {'Content-Type': 'text/plain'});
-			res.end();
+			// see if this is a service
+			var servicePath = domainBase(query.domain) + 'services/' + resource + '.js';
+			try {
+				var service = require(servicePath);	
+				service.exec(query, function (err, result) {
+					// TODO: allow service to specify mime type?
+					if (err) {
+						res.writeHead(500, {'Content-Type': 'text/plain'});
+						res.write(err.stack || err);
+					} else if (result) {
+						res.writeHead(200, {'Content-Type': 'application/json'});						
+						res.write(JSON.stringify(result));						
+					}
+					res.end();								
+				})			
+			} catch (e) {
+				res.writeHead(404, {'Content-Type': 'text/plain'});
+//				res.write(e.stack);
+				res.end();			
+			}
 		});		
 }
 
@@ -525,7 +544,7 @@ exports.start = function (args, options, cb) {
 							doWaitForConnection(parsed.query, req, res);
 							break;						
 						default:
-							doDefault(options, parsed.query, req, res);					
+							doDefault(resource, parsed.query, req, res);					
 					}
 					break;
 				case 'OPTIONS':
