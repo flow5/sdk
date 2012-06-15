@@ -487,30 +487,38 @@ exports.start = function (args, options, cb) {
 					break;
 			}		
 		}
-
-		http.createServer(function (req, res) {					
-			if (options.verbose) {
-				showRequest(req, true);			
-			}		
-			handleRequest(req, res, 'http');		
-		}).listen(options.port);
-
-		var httpsOptions = {
-		  key: fs.readFileSync(__dirname + '/https/privatekey.pem'),
-		  cert: fs.readFileSync(__dirname + '/https/certificate.pem')
-		};	
-		https.createServer(httpsOptions, function (req, res) {
-			if (options.verbose) {
-				showRequest(req, true);			
-			}		
-			handleRequest(req, res, 'https');										
-		}).listen(options.port + 1);
 		
-		cb({
+		var result = {
 			webroot: WEBROOT,
-			http: options.port,
-			https: parseInt(options.port, 10) + 1
-		});
+			port: options.port
+		};
+		
+		
+		console.log(options)
+
+		if (options.secure) {
+			var httpsOptions = {
+			  key: fs.readFileSync(__dirname + '/https/privatekey.pem'),
+			  cert: fs.readFileSync(__dirname + '/https/certificate.pem')
+			};	
+			https.createServer(httpsOptions, function (req, res) {
+				if (options.verbose) {
+					showRequest(req, true);			
+				}		
+				handleRequest(req, res, 'https');										
+			}).listen(options.port);
+			result.protocol = 'https';	
+		} else {
+			http.createServer(function (req, res) {					
+				if (options.verbose) {
+					showRequest(req, true);			
+				}		
+				handleRequest(req, res, 'http');		
+			}).listen(options.port);			
+			result.protocol = 'http';	
+		}				
+		
+		cb(result);		
 	});			
 };
 

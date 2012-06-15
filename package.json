@@ -26,7 +26,8 @@
 		"async": "0.1.22",
 		"minifyjs": "0.1.0",
 		"npm": "1.1.24",
-		"xmlhttprequest": "1.4.2"
+		"xmlhttprequest": "1.4.2",
+		"socket.io": "0.9.6"		
     },
     "engines" : { "node" : ">=0.6.0" }
 }

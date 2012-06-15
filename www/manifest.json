@@ -4,7 +4,7 @@
             "scripts": [
                 "debug/flow_diags.js", 
                 "debug/flowcontroller_diags.js",
-				"debug/pipe.js",
+				"debug/socket.io.js",
 				"debug/console.js",
 				/* JSV */
 				"debug/3p/JSV/lib/uri/uri.js",

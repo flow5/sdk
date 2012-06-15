@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 /***********************************************************************************************************************
 
 	Copyright (c) 2012 Paul Greyson
@@ -25,18 +24,10 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-exports.options = {
-	port: ['p', 'port', 'number', 8008],
-	secure: ['s', 'run as https'],
-	verbose: ['v', 'verbose logging']
-};
+/*global F5*/
 
-exports.usage = 'start [OPTIONS]\n\nand some more information here';
-
-exports.exec = function (args, options) {	
-	require(require('path').resolve(__dirname, '..', 'server', 'server.js')).start(args, options, function (info) {
-		console.log('flow5 is running at:');
-		console.log('  ' + info.protocol + '://localhost:' + info.port);
-	});
-};
-
+(function (F5) {
+	var socketio = document.createElement('script');
+	socketio.src = '/socket.io/socket.io.js';
+	document.head.appendChild(socketio);		
+}());
