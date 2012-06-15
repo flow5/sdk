@@ -33,8 +33,6 @@ var http = require('http'),
 	cli = require('cli'),
 	path = require('path'),
 	paperboy = require('paperboy'),
-	exec = require('child_process').exec,	 
-	spawn = require('child_process').spawn,	
 	url = require('url'),
 	util = require('util');
 	
@@ -82,36 +80,6 @@ function getMessageBody(req, cb) {
 	req.on('end', function () {
 		cb(body);
 	});
-}
-
-function doDot2Svg(req, res) {	
-	/*global Iuppiter*/
-//	require('3p/Iuppiter.js');	
-		
-	var child = spawn('dot', ['-Tsvg']);		
-
-//	req.buffer = '';
-	
-	req.on('data', function (chunk) {
-//		req.buffer += chunk;
-		child.stdin.write(chunk);
-	});	
-	req.on('end', function () {
-//		child.stdin.write(Iuppiter.decompress(Iuppiter.Base64.decode(Iuppiter.toByteArray(req.buffer))));
-		child.stdin.end();
-	});
-	
-	child.stdout.on('data', function (data) {
-		res.write(data);
-	});		
-	child.on('exit', function (code) {
-		res.end();
-	});		
-	child.stderr.on('data', function (data) {
-		util.puts(data);
-	});	
-	
-	res.writeHead(200, {'Content-Type': 'image/svg+xml', 'sequence-number': req.headers['sequence-number']});		
 }
 
 function showRequest(req, printHeaders) {
@@ -369,11 +337,31 @@ function doWaitForConnection(query, req, res) {
 	res.end();
 }
 
-function doDefaultPUTORPOST(resource, query, req, res) {
-	// get body and call service
+function doPOST(resource, query, req, res) {
+	var servicePath = domainBase(query.domain) + 'services/' + resource + '.js';
+	try {
+		var service = require(servicePath);	
+		getMessageBody(req, function (body) {
+			service.POST(query, body, function (err, result, contentType) {
+				// TODO: allow service to specify mime type?
+				if (err) {
+					res.writeHead(500, {'Content-Type': 'text/plain'});
+					res.write(err.stack || err);
+				} else if (result) {
+					res.writeHead(200, {'Content-Type': contentType || 'text/plain'});						
+					res.write(result);						
+				}
+				res.end();								
+			});			
+		});
+	} catch (e) {
+		res.writeHead(404, {'Content-Type': 'text/plain'});
+//		res.write(e.stack);
+		res.end();			
+	}
 }
 
-function doDefaultGET(resource, query, req, res) {
+function doGET(resource, query, req, res) {
 	
 	var root = domainBase(query.domain) + 'www/';	
 	req.url = req.url.replace(query.domain + '/', '');
@@ -381,7 +369,6 @@ function doDefaultGET(resource, query, req, res) {
 	// try to serve the file normally
 	paperboy
 		.deliver(root, req, res)
-		// TODO: allow-origin shouldn't be required here since the page is loaded from same domain?	
 		.addHeader('Access-Control-Allow-Origin', '*')
 		.error(function () {
 			util.puts('Error delivering: ' + req.url);
@@ -391,20 +378,18 @@ function doDefaultGET(resource, query, req, res) {
 			var servicePath = domainBase(query.domain) + 'services/' + resource + '.js';
 			try {
 				var service = require(servicePath);	
-				service.exec(query, function (err, result, contentType) {
-					// TODO: allow service to specify mime type?
+				service.GET(query, function (err, result, headers) {
 					if (err) {
 						res.writeHead(500, {'Content-Type': 'text/plain'});
 						res.write(err.stack || err);
 					} else if (result) {
-						res.writeHead(200, {'Content-Type': contentType || 'text/plain'});						
+						res.writeHead(200, headers || {'Content-Type': 'text/plain'});						
 						res.write(result);						
 					}
 					res.end();								
 				});
 			} catch (e) {
 				res.writeHead(404, {'Content-Type': 'text/plain'});
-//				res.write(e.stack);
 				res.end();			
 			}
 		});		
@@ -432,25 +417,22 @@ exports.start = function (args, options, cb) {
 			parsed.query.domain = pathname.split('/')[1];
 			var resource = pathname.split('/').slice(2).join('/');
 						
-			if (!domainBase(parsed.query.domain)) {
-				res.writeHead(500);
-				res.write('Unknown domain: ' + parsed.query.domain + '. Did you flow5 link?');
-				res.end();				
-				return;
-			}
+//			if (!domainBase(parsed.query.domain)) {
+//				res.writeHead(500);
+//				res.write('Unknown domain: ' + parsed.query.domain + '. Did you flow5 link?');
+//				res.end();				
+//				return;
+//			}
 			
 			switch (req.method) {
 				case 'POST':
 					switch(resource) {
 						case 'generate':
 							getMessageBody(req, function (body) {
-								// assume that the body is a facebook signed request
+								// this is probably a facebook signed request
 								parsed.query.body = body;
 								doGenerate(parsed.query, req, res);					
 							});
-							break;
-						case 'dot2svg':
-							doDot2Svg(req, res);	
 							break;
 						case 'proxy':
 							doProxy(parsed.query, req, res);
@@ -459,8 +441,7 @@ exports.start = function (args, options, cb) {
 							doTalk(parsed.query, req, res);
 							break;
 						default:
-							res.writeHead(404);
-							res.end();				
+							doPOST(resource, parsed.query, req, res);					
 					}
 					break;		
 				case 'GET':
@@ -487,7 +468,7 @@ exports.start = function (args, options, cb) {
 							doWaitForConnection(parsed.query, req, res);
 							break;						
 						default:
-							doDefaultGET(resource, parsed.query, req, res);					
+							doGET(resource, parsed.query, req, res);					
 					}
 					break;
 				case 'OPTIONS':

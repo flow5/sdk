@@ -24,35 +24,28 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
+var spawn = require('child_process').spawn,	
+	util = require('util');
 
-var http = require('http');
+exports.POST = function (query, body, cb) {
+	function doDot2Svg(req, res) {	
+		var child = spawn('dot', ['-Tsvg']);		
 
-exports.GET = function (query, cb) {
-	
-	var path = '/f5/generate?' +
-				'pkg=f5.ide' + 
-				'&debug=true' +
-				'&platform=ios' + 
-				'&native=false' + 
-				'&inline=false' + 
-				'&compress=false' +
-				'&mobile=false';
-				
-	if (query.app) {
-		path += '&app=' + query.app;
-	}
-
-	http.get({host: 'localhost', port: 8008, path: path}, function(res) {
-		res.setEncoding('utf8');
-
-		var html = '';
-
-		res.on('data', function(chunk){
-			html += chunk;
-		});
-
-		res.on('end', function(){
-			cb(null, html, {'Content-Type': 'text/html'});
+		child.stdout.on('data', function (data) {
+			res.write(data);
+		});		
+		child.on('exit', function (code) {
+			res.end();
+		});		
+		child.stderr.on('data', function (data) {
+			util.puts(data);
 		});	
-	});	
+		
+		child.stdin.write(body);
+		
+		
+		
+		res.writeHead(200, {'Content-Type': 'image/svg+xml', 'sequence-number': req.headers['sequence-number']});		
+	}	
+	
 };
