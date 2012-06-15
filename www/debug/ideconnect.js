@@ -1,0 +1,199 @@
+/***********************************************************************************************************************
+
+	Copyright (c) 2012 Paul Greyson
+
+	Permission is hereby granted, free of charge, to any person 
+	obtaining a copy of this software and associated documentation 
+	files (the "Software"), to deal in the Software without 
+	restriction, including without limitation the rights to use, 
+	copy, modify, merge, publish, distribute, sublicense, and/or 
+	sell copies of the Software, and to permit persons to whom the 
+	Software is furnished to do so, subject to the following 
+	conditions:
+
+	The above copyright notice and this permission notice shall be 
+	included in all copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, 
+	EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES 
+	OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
+	NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT 
+	HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+	WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
+	FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR 
+	OTHER DEALINGS IN THE SOFTWARE.
+
+***********************************************************************************************************************/
+/*global F5, io*/
+
+F5.registerModule(function (F5) {
+	
+	// TODO: maybe make a separate console section in manifest instead
+	// currently console is include with debug scripts
+	if (!F5.query.ide) {
+		return;
+	}
+							
+	var socketioScript = document.createElement('script');
+	socketioScript.src = F5.query.devserv + '/socket.io/socket.io.js';
+	document.head.appendChild(socketioScript);		
+	socketioScript.onload = function () {
+		var txSocket = io.connect(F5.query.devserv + '/ide');
+		var rxSocket = io.connect(F5.query.devserv + '/app');
+		
+		function Console() {
+
+			function postMessage(message) {
+				txSocket.emit('update', message);
+			}
+
+			function update() {
+				postMessage({
+					model: F5.Global.flow.toJSON(F5.Global.flow.root)
+				});											
+			}
+
+			this.update = update;
+
+			function listen() {
+				rxSocket.on('command', function (message) {						
+//					console.log(message)
+
+					var response = {type: 'response', id: message.id};
+					var action;
+
+					try {
+						switch (message.type) {
+						case 'exec':
+							/*jslint evil:true*/
+							response.value = eval(message.value);
+							break;
+						case 'update':
+							update();
+							break;
+						case 'flowDelegate':
+							action = function (cb) {
+								var node = F5.Global.flow.getNodeFromPath(message.path);								
+								var args = message.args || [];
+								args.push(cb);								
+								node.flowDelegate[message.method].apply(node.flowDelegate, args);									
+							};
+							break;
+						case 'viewDelegate':
+							action = function (cb) {
+								var node = F5.Global.flow.getNodeFromPath(message.path);
+								var args = message.args || [];
+								args.push(cb);								
+								args.push(cb);
+								node.view.delegate[message.method].apply(node.view.delegate, args);									
+							};
+							break;
+						case 'transition':
+							action = function (cb) {
+								var node = F5.Global.flow.getNodeFromPath(message.path);
+								F5.Global.flowController.doTransition(node, message.to, message.parameters, cb);
+							};
+							break;
+						case 'selection':
+							response.message = 'did selection';
+							break;
+						case 'reset':
+							response.message = 'reloading. . .';
+							if (typeof location !== 'undefined') {
+								postMessage(response);
+								setTimeout(function () {
+									location.reload();										
+								}, 0);
+							}
+							break;
+						case 'frames':
+							if (typeof document !== 'defined') {
+								if (F5.hasClass(document.body, 'f5frames')) {
+									F5.removeClass(document.body, 'f5frames');
+								} else {
+									F5.addClass(document.body, 'f5frames');										
+								}
+							}
+							break;
+						case 'back': 
+							F5.Global.flowController.doBack();
+							break;
+						case 'data': 
+							var node = F5.Global.flow.getNodeFromPath(message.path);
+							response.message = JSON.stringify(node.data.dump());
+							break;
+						default:
+							response.value = 'unknown message type: ' + message.type;
+						}
+					} catch (e1) {
+						response.type = 'uncaughtException';
+						response.value = e1.message;
+						console.log(e1);
+					}
+
+					if (action) {
+						try {
+							action(function (result) {
+								response.value = result;
+								postMessage(response);								
+								listen();																		
+							});								
+						} catch (e2) {
+							response.type = 'uncaughtException';
+							response.value = e2.message;
+							console.log(e2);	
+							postMessage(response);								
+							listen();																																	
+						}
+					} else {
+						postMessage(response);
+						listen();																		
+					}						
+				});
+			}
+			listen();				
+		}		
+
+		F5.Global.flowController.addWaitTask(function (cb) {
+			F5.Global.flowController.addFlowObserver(new Console());
+			cb();
+		});
+	};
+});
+
+
+/*
+// this highjacks the delegates allowing a listener to track all lifecycle events
+// should use flowDelegates though I think
+F5.View.getViewDelegatePrototype = function (id) {
+	var prototype = F5.getPrototype('ViewDelegates', id);
+	function Wrapper() {
+		var that = this;
+		[
+			'initialize', 
+			'viewDidBecomeActive',
+			'viewWillBecomeActive',
+			'viewWillBecomeInactive',
+			'viewDidBecomeInactive',
+			'release'			
+		].forEach(function (event) {				
+			that[event] = function () {
+				var message = {
+					path: this.node.path,
+					event: event
+				};
+				F5.execService(null, 'f5.devserv.talk', {
+											clientid: clientid, 
+											channel: F5.query.pkg + '.listener',
+											message: message}, F5.noop);
+				if (prototype && prototype[event]) {
+					prototype[event].call(this);					
+				}					
+			};
+		});
+	}
+	Wrapper.prototype = prototype;
+
+	return new Wrapper();
+};
+*/

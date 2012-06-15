@@ -492,16 +492,14 @@ exports.start = function (args, options, cb) {
 			webroot: WEBROOT,
 			port: options.port
 		};
-		
-		
-		console.log(options)
-
+				
+		var server;
 		if (options.secure) {
 			var httpsOptions = {
 			  key: fs.readFileSync(__dirname + '/https/privatekey.pem'),
 			  cert: fs.readFileSync(__dirname + '/https/certificate.pem')
 			};	
-			https.createServer(httpsOptions, function (req, res) {
+			server = https.createServer(httpsOptions, function (req, res) {
 				if (options.verbose) {
 					showRequest(req, true);			
 				}		
@@ -509,14 +507,34 @@ exports.start = function (args, options, cb) {
 			}).listen(options.port);
 			result.protocol = 'https';	
 		} else {
-			http.createServer(function (req, res) {					
+			server = http.createServer(function (req, res) {					
 				if (options.verbose) {
 					showRequest(req, true);			
 				}		
 				handleRequest(req, res, 'http');		
 			}).listen(options.port);			
 			result.protocol = 'http';	
-		}				
+		}	
+		
+		var io = require('socket.io').listen(server);
+		
+		if (options.verbose) {
+			io.set('log level', 3);			
+		} else {
+			io.set('log level', 0);			
+		}
+		
+		var ide = io.of('/ide').on('connection', function (socket) {
+			socket.on('update', function (message) {
+				ide.emit('update', message);
+			});
+		});
+
+		var app = io.of('/app').on('connection', function (socket) {
+			socket.on('command', function (message) {
+				app.emit('command', message);
+			});
+		});
 		
 		cb(result);		
 	});			

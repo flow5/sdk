@@ -78,7 +78,7 @@ exports.exec = function (args, options, cli) {
 					'&compress=false' +
 					'&mobile=false' +
 					'&headless=true' +
-					'&console=true';
+					'&ide=true';
 
 		http.get({host: 'localhost', port: 8008, path: path}, function(res) {
 			res.setEncoding('utf8');

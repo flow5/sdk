@@ -24,73 +24,71 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global F5, IDE, JSONFormatter*/
+/*global F5, IDE, JSONFormatter, io*/
 
 F5.registerModule(function (F5) {	
 	
+	var txSocket, rxSocket;
 	var modelListeners = {};
+	
+	F5.Global.flowController.addWaitTask(function (cb) {
+		var socketioScript = document.createElement('script');
+		socketioScript.src = F5.query.devserv + '/socket.io/socket.io.js';
+		document.head.appendChild(socketioScript);		
+		socketioScript.onload = function () {
+			txSocket = io.connect(F5.query.devserv + '/app');
+			rxSocket = io.connect(F5.query.devserv + '/ide');
+
+			rxSocket.on('update', function (message) {
+				try {
+					if (message && message.model) {
+						var model = JSON.parse(message.model);
+						F5.forEach(modelListeners, function (id, listener) {
+							listener.update(model);
+						});			
+					} else {
+						
+					}							
+				} catch (e) {
+					console.log(e.message);
+				}
+			});				
+		};
+		cb();	
+	});
+	
 
 	function Root() {
 		this.initialize = function () {
 			var that = this;
 			this.widgets.resetbutton.setAction(function () {
-				if (that.pipe) {
-					that.pipe.talk(F5.query.app + '.app', {type: 'reset'});							
+				if (txSocket) {
+					txSocket.emit('command', {type: 'reset'});							
 				}				
 			});
 			this.widgets.refreshbutton.setAction(function () {
 				that.update();
 			});
 			this.widgets.backbutton.setAction(function () {
-				if (that.pipe) {
-					that.pipe.talk(F5.query.app + '.app', {type: 'back'});							
+				if (txSocket) {
+					txSocket.emit('command', {type: 'back'});							
 				}				
 			});
 			this.widgets.framesbutton.setAction(function () {
-				if (that.pipe) {
-					that.pipe.talk(F5.query.app + '.app', {type: 'frames'});							
+				if (txSocket) {
+					txSocket.emit('command', {type: 'frames'});							
 				}				
 			});			
 		};
 		
 		this.update = function () {
-			if (this.pipe) {
-				this.pipe.talk(F5.query.app + '.app', {type: 'update'});							
+			if (txSocket) {
+				txSocket.emit('command', {type: 'update'});							
 			}
-		};
+		};	
 		
-		this.viewWillBecomeActive = function () {
-			if (this.pipe) {
-				this.pipe.close();
-			}
-
-			var that = this;				
-			F5.openPipe(F5.query.pkg, F5.query.app + '.listener', function (pipe) {
-				that.pipe = pipe;
-
-				function listen() {		
-					pipe.listen(function (result, status) {
-						if (status === 200) {
-							try {
-								result = JSON.parse(result);
-								if (result && result.model) {
-									var model = JSON.parse(result.model);
-									F5.forEach(modelListeners, function (id, listener) {
-										listener.update(model);
-									});			
-								} else {
-	//								console.log(result && result.message && JSON.stringify(result.message));
-								}							
-							} catch (e) {
-								console.log(e.message);
-							}
-							listen();																
-						}
-					});
-				}																									
-				listen();	
-				that.update();											
-			});		
+		this.viewDidBecomeActive = function () {
+			this.update();
 		};
 	}
 	
