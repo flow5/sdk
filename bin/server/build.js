@@ -372,6 +372,8 @@ function processManifest(manifest, query, type, process, cb) {
 
 exports.buildScript = function (query, cb) {
 	
+	debugger;
+	
 	var pkg;
 	if (!query.pkg) {
 		pkg = query.domain;
@@ -382,10 +384,10 @@ exports.buildScript = function (query, cb) {
 	
 	var script = '';
 			
-	function injectManifest(pkg, cb) {			
+	function injectManifest(pkg, cb) {		
 		var manifestName = packageManifestName(pkg);
 		var pkgBase = packageBase(pkg);
-				
+
 		parseJSON(pkgBase + manifestName, cb, function (manifest) {
 			var tasks = [];
 
@@ -411,7 +413,7 @@ exports.buildScript = function (query, cb) {
 					scripts.forEach(function (file) {
 						tasks.push(function (cb) {
 							script += '// ' + pkgBase + file + '\n';
-							get(resolveURL(pkgBase, file), cb, function (content) {
+							get(pkg, resolveURL(pkgBase, file), 'utf8', cb, function (content) {
 								script += content + '\n';
 								cb();								
 							});
@@ -460,8 +462,8 @@ exports.buildScript = function (query, cb) {
 		tasks.push(function (cb) {
 			var path = f5Base + 'lib/f5.js';
 			script += '// ' + path + '\n';		
-			get(path, 'utf8', cb, function (script) {
-				script += '\n';	
+			get(pkg, path, 'utf8', cb, function (content) {
+				script += content + '\n';	
 				script += 'F5.query = ' + JSON.stringify(query) + '\n';				
 				script += 'F5.appPkg = ' + JSON.stringify(pkg) + '\n';				
 				cb();													
@@ -477,7 +479,7 @@ exports.buildScript = function (query, cb) {
 		tasks.push(function (cb) {
 			var path = f5Base + 'lib/register.js';
 			script += '// ' + path + '\n';		
-			get(path, cb, function (content) {
+			get(pkg, path, 'utf8', cb, function (content) {
 				script += content + '\n';	
 				cb();						
 			});	
@@ -485,7 +487,7 @@ exports.buildScript = function (query, cb) {
 		tasks.push(function (cb) {
 			var path = f5Base + 'lib/headlessstart.js';
 			script += '// ' + path + '\n';		
-			get(path, cb, function (content) {
+			get(pkg, path, 'utf8', cb, function (content) {
 				script += content + '\n';			
 				cb();						
 			});

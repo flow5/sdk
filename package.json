@@ -1,6 +1,6 @@
 {
     "name": "flow5",
-    "version": "0.1.2",
+    "version": "0.1.3",
 	"description": "framework and toolset for developing mobile apps and webapps",
 	"keywords": ["ios", "iphone", "android", "html5", "fat client", "templating", "ajax", "hybrid", "mobile app", "webapp"],
 	"bugs": "",
@@ -27,7 +27,8 @@
 		"minifyjs": "0.1.0",
 		"npm": "1.1.24",
 		"xmlhttprequest": "1.4.2",
-		"socket.io": "0.9.6"		
+		"socket.io": "0.9.6",
+		"socket.io-client": "0.9.6"
     },
     "engines" : { "node" : ">=0.6.0" }
 }

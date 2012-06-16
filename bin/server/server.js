@@ -36,10 +36,9 @@ var http = require('http'),
 	url = require('url'),
 	util = require('util');
 	
-var WEBROOT = path.resolve(__dirname, '../..', 'site');
-		
-// flow5 libs
+// flow5
 var builder = require('./build.js');	
+
 
 // TODO: move to utility package
 function packageDomain(pkg) {
@@ -55,7 +54,6 @@ function domainBase(domain) {
 		return value + '/';
 	}
 }
-
 
 function forEach(obj, fn) {
 	if (obj.constructor === Array) {
@@ -281,7 +279,6 @@ exports.start = function (args, options, cb) {
 		}
 		
 		var result = {
-			webroot: WEBROOT,
 			port: options.port
 		};
 				
