@@ -54,6 +54,7 @@ exports.exec = function (args, options, cli) {
 	var socket = io.connect(F5.query.devserv);
 	socket.on('message', function (message) {
 		if (message.type === 'exit') {
+			console.log('received exit command');
 			process.exit(0);
 		}		
 	});

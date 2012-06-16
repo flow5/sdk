@@ -31,15 +31,15 @@ F5 = {query: {devserv:'http://localhost:8008'}};
 var http = require('http'),
 	vm = require('vm'),
 	npm = require('npm'),
-	fs = require('fs');
+	fs = require('fs'),
+	io = require('socket.io-client');
 	
 XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 	
 require('../../www/lib/utils.js');
 require('../../www/lib/network.js');
-require('../../www/debug/pipe.js');
 		
-exports.usage = "script package script_name [OPTIONS]";
+exports.usage = "script domain script_name [OPTIONS]";
 
 exports.options = {
 	steptime: ['t', 'steptime', 'number', 0]
@@ -53,7 +53,25 @@ function id() {
 
 var executeScript;
 
-function makeTask(pkg, command, pipe, channel, options) {
+var socket = io.connect(F5.query.devserv);
+
+var completeFunction;
+socket.on('message', function (message) {
+	if (message.model) {
+		return;
+	}
+
+	if (completeFunction) {
+		completeFunction(message);
+		completeFunction = null;
+	} else {
+		console.log('unexpected message: ' + JSON.stringify(message));
+		socket.emit('message', {type: 'exit'});
+		process.exit(1);
+	}
+});
+
+function makeTask(command, options) {
 	function complete(message, cb) {
 		var script;
 		if (command.postprocess) {
@@ -61,7 +79,7 @@ function makeTask(pkg, command, pipe, channel, options) {
 		}
 		if (script) {
 			setTimeout(function () {
-				executeScript(pkg, script, options, pipe, cb);	
+				executeScript(script, options, cb);	
 			}, options.steptime);
 		} else {
 			setTimeout(cb, options.steptime);				
@@ -69,48 +87,37 @@ function makeTask(pkg, command, pipe, channel, options) {
 	}
 		
 	return function (cb) {
-		function listen() {
-			pipe.listen(function (message) {
-				message = JSON.parse(message);		
-				if (message.type === 'uncaughtException'){
-					console.log(message);
-					process.exit(1);
-				} else if (command.message.id === message.id) {
-					complete(message, cb);
-				} else{
-					// otherwise ignore the exit
-					listen();
-				}
-			});			
-		}
-				
 		if (command.preprocess) {
 			command.preprocess();
 		}
 		
 		command.message.id = id();
-		pipe.talk(channel, command.message, function () {
+		
+		completeFunction = function (message) {
+			if (message.type === 'uncaughtException'){
+				console.log(message);
+				process.exit(1);
+			} else if (command.message.id === message.id) {
+				complete(message, cb);
+			}				
+		};
+		
+		socket.emit('message', command.message, function () {
 			if (command.message.type === 'exit') {
 				process.exit(0);
-			} else {
-				listen();
 			}
-		});
+		});		
 	};
 }
 
-executeScript = function (pkg, script, options, pipe, cb) {
-	
-	var channel = pkg + '.app';
-	
+executeScript = function (script, options, cb) {	
 	var tasks = [];
 	script.forEach(function (command) {
-		tasks.push(makeTask(pkg, command, pipe, channel, options));		
+		tasks.push(makeTask(command, options));		
 	});	
 	
 	F5.chainTasks(tasks, cb);
 };
-
 
 exports.exec = function (args, options, cli) {
 	
@@ -123,50 +130,44 @@ exports.exec = function (args, options, cli) {
 			cli.getUsage();
 		}		
 		
-		var pkg = args[0];
+		var domain = args[0];
 		var scriptName = args[1];
 		
-		var uri = npm.config.get('flow5:link_' + pkg.split('.')[0]);
-		
-		F5.openPipe('script.js', pkg + '.listener', function (pipe) {	
-			var scriptName = args[1];
-
-			function runScript(script) {
-				vm.runInThisContext(script, scriptName);				
-				executeScript(pkg, commands, options, pipe, function () {
-					pipe.close();
+		var uri = npm.config.get('flow5:link_' + domain);	
+		var path = uri + '/scripts/' + scriptName + '.js';			
+		fs.readFile(path, 'utf8', function (err, script) {
+			if (err) {
+				console.log(err);
+				cli.exit();
+			} else {
+				vm.runInThisContext(script, scriptName);	
+				// each script is commands = [. . .]			
+				executeScript(commands, options, function () {
+					console.log('done');
+					socket.emit('message', {type: 'exit'});
+					process.exit(0);
 				});
 			}
-						
-			var path = uri + '/scripts/' + scriptName + '.js';			
-			fs.readFile(path, 'utf8', function (err, script) {
-				if (err) {
-					console.log(err);
-					cli.exit();
-				} else {
-					runScript(script);
-				}
-			});
-			
-			// if uri is a url do this
-
-/*			http.get({host: 'localhost', port: 8008, path: path}, function(res) {
-				res.setEncoding('utf8');
-
-				var script = '';
-				res.on('data', function(chunk){
-					script += chunk;
-				});
-
-				res.on('end', function(chunk){
-					runScript(script);
-				});	
-			});	
-*/		
-		});
-
+		});						
 	});	
 };
+
+
+// if uri is a url do this
+/*		http.get({host: 'localhost', port: 8008, path: path}, function(res) {
+			res.setEncoding('utf8');
+
+			var script = '';
+			res.on('data', function(chunk){
+				script += chunk;
+			});
+
+			res.on('end', function(chunk){
+				runScript(script);
+			});	
+		});	
+*/	
+
 
 
 

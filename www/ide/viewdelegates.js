@@ -252,6 +252,8 @@ F5.registerModule(function (F5) {
 		this.toDOT = function (model) {	
 			// deserialize from the model
 			var flow = F5.objectFromPrototype(F5.Flow);
+			
+			// TODO: is F5.query.app really required? thinks work so far without. . .
 			flow.initialize(F5.query.app, model);									
 
 			var that = this;

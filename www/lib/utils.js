@@ -293,16 +293,22 @@
 			parameters.push(key + '=' + value);
 		});
 
-		var domain = pkg.split('.')[0];
+		var libDomain = pkg.split('.')[0];		
+		var url = F5.query.devserv + '/' + libDomain + '/?lib=true&headless=true&debug=true';		
 		if (pkg.split('.').length === 2) {
-			parameters.push('pkg=' + pkg.split('.')[1]);
+			url += '&pkg=' + pkg.split('.')[1];
 		}				
 		
-		var url = F5.query.devserv + '/?' + parameters.join('&');
+		console.log(url);
 		return F5.doXHR('GET', url, null, 
 			function success(result, status) {
-				eval(result);
-				F5.registerPendingModules();
+				try {
+					eval(result);					
+					F5.registerPendingModules();
+				} catch (e) {
+					console.log('exception in F5.importPackage: ' + url);
+					console.log(e);
+				}
 				
 				if (cb) {
 					cb();

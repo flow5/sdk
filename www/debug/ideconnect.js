@@ -73,7 +73,7 @@ F5.registerModule(function (F5) {
 		this.update = update;
 
 		socket.on('message', function (message) {						
-	//		console.log(message)
+//			console.log(message)
 
 			var response = {type: 'response', id: message.id};
 			var action;
@@ -146,7 +146,7 @@ F5.registerModule(function (F5) {
 				response.value = e1.message;
 				console.log(e1);
 			}
-
+			
 			if (action) {
 				try {
 					action(function (result) {
