@@ -93,7 +93,9 @@ exports.exec = function (args, options, cli) {
 
 		res.on('end', function(chunk){
 			vm.runInThisContext(script, 'app.js');
-		});	
+		});			
+	}).on('error', function (e) {
+		console.log(e);
 	});			
 };
 
