@@ -159,44 +159,6 @@ function doGenerate(query, req, res) {
 	}	
 }
 
-function doProxy(query, req, res) {
-
-	var proxyRequest = url.parse(query.url);	
-	var proxyProtocol = proxyRequest.protocol.replace(':', '');
-
-	var options = {
-		 hostname: proxyRequest.hostname,
-		 port: proxyRequest.port,
-		 path: proxyRequest.path,
-		 method: req.method,
-		 headers: req.headers
-	};
-
-	if (options.headers) {
-		delete options.headers.host;
-	}
-
-	var proxyReq = {http: http, https: https}[proxyProtocol].request(options, function (proxyRes) {
-
-		proxyRes.on('data', function(chunk) {
-			res.write(chunk, 'binary');
-		});
-
-		proxyRes.on('end', function() {
-			res.end();
-		});
-		res.writeHead(proxyRes.statusCode, proxyRes.headers);
-	});
-
-	req.addListener('data', function(chunk) {
-		proxyReq.write(chunk, 'binary');
-	});
-
-	req.addListener('end', function() {
-		proxyReq.end();
-	});
-}
-
 function doManifest(query, req, res) {
 //	res.writeHead(404);
 	try {
@@ -288,9 +250,6 @@ exports.start = function (args, options, cb) {
 								doGenerate(parsed.query, req, res);					
 							});
 							break;
-						case 'proxy':
-							doProxy(parsed.query, req, res);
-							break;
 						default:
 							doService(resource, parsed.query, req, res);					
 					}
@@ -299,9 +258,6 @@ exports.start = function (args, options, cb) {
 					switch (resource) {
 						case 'generate':
 							doGenerate(parsed.query, req, res);
-							break;
-						case 'proxy':
-							doProxy(parsed.query, req, res);				
 							break;
 						case 'cache.manifest':
 							doManifest(parsed.query, req, res);
