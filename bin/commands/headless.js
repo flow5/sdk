@@ -69,7 +69,7 @@ exports.exec = function (args, options, cli) {
 			});			
 		});	
 				
-		var path = '/generate?' +
+		var path = '/build?' +
 					'pkg=' + pkg + 
 					'&debug=true' +
 					'&platform=ios' + 

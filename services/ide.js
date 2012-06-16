@@ -27,7 +27,7 @@
 
 exports.handleRequest = function (req, origRes) {
 	
-	var path = '/f5/generate?' +
+	var path = '/f5/build?' +
 				'pkg=f5.ide' + 
 				'&debug=true' +
 				'&platform=ios' + 

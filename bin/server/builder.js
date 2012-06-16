@@ -370,7 +370,7 @@ function processManifest(manifest, query, type, process, cb) {
 	// TODO: can get more specific here e.g. locale
 }
 
-exports.generateScript = function (query, cb) {
+exports.buildScript = function (query, cb) {
 	
 	var script = '';
 			
@@ -488,11 +488,11 @@ exports.generateScript = function (query, cb) {
 	});
 };
 
-exports.generateHtml = function (query, cb) {
+exports.buildHtml = function (query, cb) {
 	
 //	debugger;	
 
-	console.log(query.pkg + ' generating');
+	console.log(query.pkg + ' building html');
 	
 	var document = new Element('html');
 	document.head = new Element('head');
@@ -948,7 +948,7 @@ exports.generateHtml = function (query, cb) {
 	});
 };
 
-exports.generateFrame = function (query) {
+exports.buildFrame = function (query) {
 	var document = new Element('html');
 	
 	document.head = new Element('head');
@@ -996,7 +996,7 @@ exports.generateFrame = function (query) {
 	frame.id = 'frame';
 	frame.setAttribute('width', width);
 	frame.setAttribute('height', height);
-	frame.setAttribute('src', 'generate?' + urlParameters(query));
+	frame.setAttribute('src', 'build?' + urlParameters(query));
 	frame.setAttribute('frameborder', '0');
 	document.body.appendChild(frame);
 	
@@ -1008,8 +1008,8 @@ exports.generateFrame = function (query) {
 	return document.outerHTML();
 };
 
-exports.generateCacheManifest = function(query, cb) { 
-	console.log(query.pkg + ' generating manifest');
+exports.buildCacheManifest = function(query, cb) { 
+	console.log(query.pkg + ' building manifest');
 		
 	function getModDate(cb) {
 		var latestDate;

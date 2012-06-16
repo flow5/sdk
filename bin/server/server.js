@@ -39,7 +39,7 @@ var http = require('http'),
 var WEBROOT = path.resolve(__dirname, '../..', 'site');
 		
 // flow5 libs
-var generator = require('./generator.js');	
+var builder = require('./builder.js');	
 
 // TODO: move to utility package
 function packageDomain(pkg) {
@@ -95,7 +95,7 @@ function showRequest(req, printHeaders) {
 	}
 }
 
-function doGenerate(query, req, res) {
+function doBuild(query, req, res) {
 	var agent = req.headers['user-agent'];
 	if (!query.platform) {
 		if (agent.match(/android/i)) {
@@ -119,7 +119,7 @@ function doGenerate(query, req, res) {
 	try {			
 		var html;
 		if (query.headless) {
-			generator.generateScript(query, function (err, script) {
+			builder.buildScript(query, function (err, script) {
 				if (err) {
 					console.log(err);
 					res.writeHead(500);
@@ -132,12 +132,12 @@ function doGenerate(query, req, res) {
 				}
 			});
 		} else if (query.frame) {
-			html = generator.generateFrame(query);
+			html = builder.buildFrame(query);
 			res.writeHead(200, {'Content-Type': 'text/html'});
 			res.write(html);
 			res.end();								
 		} else {
-			generator.generateHtml(query, function (err, html) {
+			builder.buildHtml(query, function (err, html) {
 				if (err) {
 					console.log(err.stack || err);
 					res.writeHead(500);
@@ -162,7 +162,7 @@ function doGenerate(query, req, res) {
 function doManifest(query, req, res) {
 //	res.writeHead(404);
 	try {
-		generator.generateCacheManifest(query, function (err, manifest) {
+		builder.buildCacheManifest(query, function (err, manifest) {
 			if (err) {
 				console.log(err.stack || err);
 				res.writeHead(500);
@@ -243,11 +243,11 @@ exports.start = function (args, options, cb) {
 			switch (req.method) {
 				case 'POST':
 					switch(resource) {
-						case 'generate':
+						case 'build':
 							getMessageBody(req, function (body) {
 								// this is probably a facebook signed request
 								parsed.query.body = body;
-								doGenerate(parsed.query, req, res);					
+								doBuild(parsed.query, req, res);					
 							});
 							break;
 						default:
@@ -256,8 +256,8 @@ exports.start = function (args, options, cb) {
 					break;		
 				case 'GET':
 					switch (resource) {
-						case 'generate':
-							doGenerate(parsed.query, req, res);
+						case 'build':
+							doBuild(parsed.query, req, res);
 							break;
 						case 'cache.manifest':
 							doManifest(parsed.query, req, res);
