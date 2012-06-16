@@ -131,10 +131,25 @@
 			return;
 		}
 		
-		var url = location.href.replace(F5.pkg, pkg);
-		if (url.match('/generate?')) {
+		var appDomain = F5.appPkg.split('.')[0];
+		var appPkg = F5.appPkg.split('.')[1];
+		
+		var importDomain = pkg.split('.')[0];
+		var importPkg = pkg.split('.')[1];
+		
+		var url = location.href.replace(appDomain, importDomain);
+		
+		if (appPkg && importPkg) {
+			url = url.replace(appPkg, importPkg);
+		} else if (appPkg) {
+			url = url.replace('pkg=' + appPkg, '');
+		} else {
+			url += 'pkg=' + importPkg;		
+		}
+		
+		if (url.match('/?')) {
 			// imported packages have to be inlined to be evaluated properly
-			url = url.replace('inline=false', 'inline=true') + '&lib=true';			
+			url = url.replace(/inline=[^&]*/, '') + '&inline=true&lib=true';			
 		}		
 		
 		return F5.doXHR('GET', url, null, 
