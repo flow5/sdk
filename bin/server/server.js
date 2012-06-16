@@ -39,7 +39,7 @@ var http = require('http'),
 var WEBROOT = path.resolve(__dirname, '../..', 'site');
 		
 // flow5 libs
-var builder = require('./builder.js');	
+var builder = require('./build.js');	
 
 // TODO: move to utility package
 function packageDomain(pkg) {
@@ -97,6 +97,7 @@ function showRequest(req, printHeaders) {
 
 function doBuild(query, req, res) {
 	var agent = req.headers['user-agent'];
+	
 	if (!query.platform) {
 		if (agent.match(/android/i)) {
 			query.platform = 'android';
@@ -111,11 +112,7 @@ function doBuild(query, req, res) {
 			query.mobile = 'false';
 		}
 	}
-	
-	if (!query.pkg) {
-		query.pkg = query.domain;
-	}
-		
+			
 	try {			
 		var html;
 		if (query.headless) {
@@ -243,7 +240,7 @@ exports.start = function (args, options, cb) {
 			switch (req.method) {
 				case 'POST':
 					switch(resource) {
-						case 'build':
+						case '':
 							getMessageBody(req, function (body) {
 								// this is probably a facebook signed request
 								parsed.query.body = body;
@@ -256,7 +253,7 @@ exports.start = function (args, options, cb) {
 					break;		
 				case 'GET':
 					switch (resource) {
-						case 'build':
+						case '':
 							doBuild(parsed.query, req, res);
 							break;
 						case 'cache.manifest':

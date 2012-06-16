@@ -287,14 +287,18 @@
 		}
 		
 		var query = F5.clone(F5.query);
-		query.pkg = pkg;
 		query.lib = true;
 		var parameters = [];
 		F5.forEach(query, function (key, value) {
 			parameters.push(key + '=' + value);
 		});
+
+		var domain = pkg.split('.')[0];
+		if (pkg.split('.').length === 2) {
+			parameters.push('pkg=' + pkg.split('.')[1]);
+		}				
 		
-		var url = F5.query.devserv + '/generate?' + parameters.join('&');
+		var url = F5.query.devserv + '/?' + parameters.join('&');
 		return F5.doXHR('GET', url, null, 
 			function success(result, status) {
 				eval(result);

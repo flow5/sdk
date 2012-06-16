@@ -145,13 +145,13 @@ function handleURLsRecursive(obj, handler) {
 	});
 }
 
-function get(query, path, encoding, failure, success) {
+function get(pkg, path, encoding, failure, success) {
 	var url = require('url').parse(path);
 	
 	if (url.protocol) {		
 		var options = {
 			hostname: url.hostname,
-			path: packageDomain(query.pkg) + '/' + url.path,
+			path: packageDomain(pkg) + '/' + url.path,
 			port: url.port
 		};
 		var protocol = url.protocol.replace(':', '');
@@ -204,36 +204,36 @@ function resolveURL(base, path) {
 }
 
 
-function inlineData(query, path, failure, success) {			
+function inlineData(pkg, path, failure, success) {			
 	var ext = require('path').extname(path).substring(1);
 
 	if (ext === 'ttf') {
-		get(query, path, 'base64', failure, function (data) {
+		get(pkg, path, 'base64', failure, function (data) {
 			success('data:font/truetype;base64,' + data);
 		});
 	} else if (ext === 'eot') {
-		get(query, path, 'base64', failure, function (data) {
+		get(pkg, path, 'base64', failure, function (data) {
 			success('data:font/embedded-opentype;base64,' + data);
 		});
 	} else if (ext === 'woff') {
-		get(query, path, 'base64', failure, function (data) {
+		get(pkg, path, 'base64', failure, function (data) {
 			success('data:font/woff;base64,' + data);
 		});
 	} else if (ext === 'otf') {
-		get(query, path, 'base64', failure, function (data) {
+		get(pkg, path, 'base64', failure, function (data) {
 			success('data:font/otf;base64,' + data);
 		});
 	}
 	else if (ext === 'svg') {
-		get(query, path, 'utf8', failure, function (data) {
+		get(pkg, path, 'utf8', failure, function (data) {
 			success('data:image/svg+xml;utf8,' + data.replace(/(\r\n|\n|\r)/gm, ''));
 		});
 	} else if (ext === 'html' || ext === 'css') {
-		get(query, path, 'base64', failure, function (data) {
+		get(pkg, path, 'base64', failure, function (data) {
 			success('base64,' + data);
 		});
 	} else {
-		get(query, path, 'base64', failure, function (data) {
+		get(pkg, path, 'base64', failure, function (data) {
 			success('data:image/' + ext + ';base64,' + data);
 		});
 	}
@@ -372,6 +372,14 @@ function processManifest(manifest, query, type, process, cb) {
 
 exports.buildScript = function (query, cb) {
 	
+	var pkg;
+	if (!query.pkg) {
+		pkg = query.domain;
+	} else {
+		pkg = query.domain + '.' + query.pkg;
+	}
+	
+	
 	var script = '';
 			
 	function injectManifest(pkg, cb) {			
@@ -455,13 +463,14 @@ exports.buildScript = function (query, cb) {
 			get(path, 'utf8', cb, function (script) {
 				script += '\n';	
 				script += 'F5.query = ' + JSON.stringify(query) + '\n';				
+				script += 'F5.appPkg = ' + JSON.stringify(pkg) + '\n';				
 				cb();													
 			});
 		});
 	}		
 	
 	tasks.push(function (cb) {
-		injectManifest(query.pkg, cb);		
+		injectManifest(pkg, cb);		
 	});
 			
 	if (!query.lib) {
@@ -491,8 +500,15 @@ exports.buildScript = function (query, cb) {
 exports.buildHtml = function (query, cb) {
 	
 //	debugger;	
+	
+	var pkg;
+	if (!query.pkg) {
+		pkg = query.domain;
+	} else {
+		pkg = query.domain + '.' + query.pkg;
+	}
 
-	console.log(query.pkg + ' building html');
+	console.log(pkg + ' building html');
 	
 	var document = new Element('html');
 	document.head = new Element('head');
@@ -561,7 +577,7 @@ exports.buildHtml = function (query, cb) {
 	
 	function facebookId() {
 		try {
-			var path = packageBase(query.pkg) + 'facebook_appid.txt';
+			var path = packageBase(pkg) + 'facebook_appid.txt';
 			return fs.readFileSync(path).toString();
 		} catch (e) {
 //			console.log('Could not find facebook_appid.txt');
@@ -618,7 +634,7 @@ exports.buildHtml = function (query, cb) {
 					if (file.match('.css')) {
 						if (bool(query.inline)) {
 							var resolvedPath = resolveURL(base, file);
-							get(query, resolvedPath, 'utf8', cb, function (style) {
+							get(pkg, resolvedPath, 'utf8', cb, function (style) {
 								if (bool(query.compress)) {
 									style = cssmin(style);
 								}
@@ -630,7 +646,7 @@ exports.buildHtml = function (query, cb) {
 								
 								function makeTask(cssBase, url, index) {
 									return function (cb) {
-										inlineData(query, resolveURL(cssBase, url), cb, function (data) {
+										inlineData(pkg, resolveURL(cssBase, url), cb, function (data) {
 											statements[index] = statements[index].replace(url, data);
 											cb();														
 										});
@@ -669,14 +685,14 @@ exports.buildHtml = function (query, cb) {
 						}
 					} else {
 						var elementsDiv = new Element('div');
-						get(query, resolveURL(base, file), 'utf8', cb, function (data) {
+						get(pkg, resolveURL(base, file), 'utf8', cb, function (data) {
 							
 							var fragments = data.split(/(>)/);
 							async.map(fragments, function (fragment, cb) {
 								if (bool(query.inline)) {
 									var matches = imgSrcRegExp.exec(fragment);// inline styles? || cssURLRegExp.exec(fragment);
 									if (matches && matches.length > 1) {
-										inlineData(query, resolveURL(base, matches[1]), cb, function (data) {
+										inlineData(pkg, resolveURL(base, matches[1]), cb, function (data) {
 											cb(null, fragment.replace(matches[1], data));																					
 										});										
 									} else {
@@ -710,7 +726,7 @@ exports.buildHtml = function (query, cb) {
 						if (bool(query.inline)) {
 							handleURLsRecursive(r, function (obj, id, value) {	
 								tasks.push(function (cb) {
-									inlineData(query, resolveURL(base, getURL(value)), cb, function (data) {
+									inlineData(pkg, resolveURL(base, getURL(value)), cb, function (data) {
 										obj[id] = data;
 										cb();
 									});																				
@@ -840,8 +856,8 @@ exports.buildHtml = function (query, cb) {
 	
 	function injectHeader(cb) {
 		// manifest	
-		var manifestString = 'cache.manifest?' + urlParameters(query);
-		document.setAttribute('manifest', manifestString);	
+//		var manifestString = 'cache.manifest?' + urlParameters(query);
+//		document.setAttribute('manifest', manifestString);	
 
 		// TODO: create a meta section in manifest for this stuff		
 		// TODO: if manifest.type === 'app' add this stuff. otherwise not
@@ -849,8 +865,8 @@ exports.buildHtml = function (query, cb) {
 		// ios webapp stuff
 	//	appendMeta({name: 'apple-mobile-web-app-status-bar-style', content: 'black'});
 	//	appendMeta({name: 'apple-mobile-web-app-capable', content: 'yes'});
-	//	appendLink('apple-touch-icon', 'apps/' + packageDomain(query.pkg) + '/images/icon.png', null);
-	//	appendLink('apple-touch-startup-image', 'apps/' + packageDomain(query.pkg) + '/images/splash.png', null);
+	//	appendLink('apple-touch-icon', 'apps/' + packageDomain(pkg) + '/images/icon.png', null);
+	//	appendLink('apple-touch-startup-image', 'apps/' + packageDomain(pkg) + '/images/splash.png', null);
 
 		// ios
 		appendMeta({'http-equiv': 'Content-Type', content: 'text/html; charset=UTF-8'});
@@ -868,7 +884,9 @@ exports.buildHtml = function (query, cb) {
 
 				var queryScript = new Element('script');
 				queryScript.setAttribute('f5id', 'F5.query');
-				queryScript.innerHTML = "F5.query = " + JSON.stringify(query);
+				queryScript.innerHTML = "F5.query = " + JSON.stringify(query) + '\n' +
+					'F5.appPkg = ' + JSON.stringify(pkg) + '\n';				
+				
 				document.body.appendChild(queryScript);
 
 				// TODO: don't make facebook id a first class feature
@@ -921,7 +939,7 @@ exports.buildHtml = function (query, cb) {
 		
 	// inject the app manifest (and recursively insert packages)
 	tasks.push(function (cb) {
-		injectManifest(query.pkg, cb);		
+		injectManifest(pkg, cb);		
 	});																				
 					
 	// finally		
@@ -989,6 +1007,7 @@ exports.buildFrame = function (query) {
 		break;
 	}			
 	delete query.frame;
+	delete query.devserv;
 	
 //	console.log(query.domain)
 	
@@ -996,7 +1015,7 @@ exports.buildFrame = function (query) {
 	frame.id = 'frame';
 	frame.setAttribute('width', width);
 	frame.setAttribute('height', height);
-	frame.setAttribute('src', 'build?' + urlParameters(query));
+	frame.setAttribute('src', '?' + urlParameters(query));
 	frame.setAttribute('frameborder', '0');
 	document.body.appendChild(frame);
 	
@@ -1009,7 +1028,15 @@ exports.buildFrame = function (query) {
 };
 
 exports.buildCacheManifest = function(query, cb) { 
-	console.log(query.pkg + ' building manifest');
+	
+	var pkg;
+	if (!query.pkg) {
+		pkg = query.domain;
+	} else {
+		pkg = query.domain + '.' + query.pkg;
+	}
+	
+	console.log(pkg + ' building manifest');
 		
 	function getModDate(cb) {
 		var latestDate;
@@ -1110,14 +1137,14 @@ exports.buildCacheManifest = function(query, cb) {
 		});
 
 		tasks.push(function (cb) {
-			checkManifest(query.pkg, function (err) {
+			checkManifest(pkg, function (err) {
 				cb(err);
 			});					
 		});
 		
 		async.parallel(tasks, function (err) {
 			if (!err) {
-				console.log(query.pkg + ' last modified ' + latestDate);						
+				console.log(pkg + ' last modified ' + latestDate);						
 			}
 			cb(err, latestDate);
 		});

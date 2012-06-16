@@ -31,7 +31,7 @@
 	var cssUrlRegEx = new RegExp(/(url\(['"]?)([^'"\)]*)(['"]?\))/);
 	
 	F5.packageClass = function (pkg) {
-		pkg = pkg || F5.query.pkg;
+		pkg = pkg || F5.appPkg;
 		return pkg.split('.').join('-');
 	};	
 	
@@ -119,9 +119,6 @@
 				} else if (isImageResource(resource)){
 					resources[id] = F5.objectFromPrototype(F5.ImagePreloader);
 					resources[id].load(resource);
-				} else if (isHTMLResource(resource)) {
-					// I think nothing is required?
-//					resources[id] = 'apps/' + F5.query.pkg.split('.')[0] + '/' + resource;
 				}
 			});			
 		}
@@ -134,7 +131,7 @@
 			return;
 		}
 		
-		var url = location.href.replace(F5.query.pkg, pkg);
+		var url = location.href.replace(F5.pkg, pkg);
 		if (url.match('/generate?')) {
 			// imported packages have to be inlined to be evaluated properly
 			url = url.replace('inline=false', 'inline=true') + '&lib=true';			

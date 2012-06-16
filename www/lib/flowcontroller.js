@@ -213,7 +213,7 @@
 				console.log('start complete');
 			};
 						
-			F5.Global.flow.initialize(F5.query.pkg, F5.valueFromId(F5.Flows, F5.query.pkg));
+			F5.Global.flow.initialize(F5.appPkg, F5.valueFromId(F5.Flows, F5.appPkg));
 			
 			// TODO: sloppy. why isn't initialize part of observer?
 			if (F5.Global.viewController) {

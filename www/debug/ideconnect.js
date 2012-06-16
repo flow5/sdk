@@ -181,7 +181,7 @@ F5.View.getViewDelegatePrototype = function (id) {
 				};
 				F5.execService(null, 'f5.devserv.talk', {
 											clientid: clientid, 
-											channel: F5.query.pkg + '.listener',
+											channel: F5.appPkg + '.listener',
 											message: message}, F5.noop);
 				if (prototype && prototype[event]) {
 					prototype[event].call(this);					
