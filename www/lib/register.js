@@ -44,6 +44,7 @@
 		var prototypeRoot = F5.Prototypes;
 		var resourcesRoot = F5.Resources;
 		var servicesRoot = F5.Services;
+		var schemasRoot = F5.Schemas;
 		pkg.split('.').forEach(function (component) {
 			prototypeRoot[component] = prototypeRoot[component] || {};
 			prototypeRoot = prototypeRoot[component];
@@ -53,6 +54,9 @@
 
 			servicesRoot[component] = servicesRoot[component] || {};
 			servicesRoot = servicesRoot[component];
+
+			schemasRoot[component] = schemasRoot[component] || {};
+			schemasRoot = schemasRoot[component];
 		});
 
 		this.Prototypes = prototypeRoot;
@@ -61,8 +65,8 @@
 		this.Prototypes.ViewDelegates = {};
 
 		this.Resources = resourcesRoot;
-
 		this.Services = servicesRoot;
+		this.Schemas = schemasRoot;
 	}
 
 	// bootstrap

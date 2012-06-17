@@ -220,7 +220,7 @@
 
 		F5.assert(service, 'No service called: ' + name);		
 
-		var url = protocol + '://' + baseUrl;
+		var url = baseUrl ? (protocol + '://' + baseUrl) : '';
 		if (extendedUrl) {
 			url += extendedUrl;
 		}

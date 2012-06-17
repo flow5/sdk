@@ -33,11 +33,8 @@
 		var notifications = {};
 		var pendingTimeout;
 		var syncing = false;
-		this.objectChanged = function (fieldName) {
-			if (syncing) {
-				return;
-			}
-			
+		
+		this.modelChanged = function () {
 			notifications[this.internal.node.path] = this.internal.node;
 			if (!pendingTimeout) {
 				pendingTimeout = setTimeout(function () {
@@ -53,7 +50,15 @@
 					notifications = {};
 					pendingTimeout = null;
 				}, 0);
+			}			
+		}
+				
+		this.objectChanged = function (fieldName) {
+			if (syncing) {
+				return;
 			}
+			
+			this.modelChanged();			
 		};
 				
 		// TODO: move to diags

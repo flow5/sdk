@@ -185,6 +185,7 @@ function doService(resource, query, req, res) {
 		}
 	} catch (e) {
 		res.writeHead(404, {'Content-Type': 'text/plain'});
+		console.log(e.stack)
 		res.end();			
 	}	
 }

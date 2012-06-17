@@ -33,6 +33,7 @@
 	F5.pkg = 'f5';
 	F5.Prototypes = {};
 	F5.Flows = {};
+	F5.Schemas = {};
 	F5.Resources = {};
 	F5.Global = {};
 	F5.Services = {};
@@ -74,4 +75,9 @@
 	F5.addResources = function (pkg, flows) {
 		add(F5.Resources, pkg, flows);
 	};
+	
+	F5.addSchemas = function (pkg, schemas) {
+		add(F5.Schemas, pkg, schemas);
+	};
+	
 }());	

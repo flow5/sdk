@@ -114,12 +114,14 @@ function packageBase(pkg) {
 function parseJSON(path, failure, success) {	
 	fs.readFile(path, 'utf8', function (readErr, json) {
 		if (readErr) {
+			console.log(path);
 			failure(readErr);
 		} else {
 			var parsedJSON;
 			try {
 				parsedJSON = JSON.parseClean(json);				
 			} catch (parseErr) {
+				console.log(path);
 				failure(parseErr);
 			}
 			try {
@@ -766,6 +768,20 @@ exports.buildHtml = function (query, cb) {
 			});	
 			async.series(tasks, cb);
 		}
+		
+		var schemas = {};
+		function injectSchemas(schemaFiles, type, cb) {
+			var tasks = [];			
+			schemaFiles.forEach(function (file) {
+				tasks.push(function (cb) {
+					parseJSON(base + file, cb, function (schema) {
+						extend(schemas, schema);											
+						cb();							
+					});
+				});
+			});	
+			async.series(tasks, cb);
+		}		
 
 
 
@@ -792,6 +808,17 @@ exports.buildHtml = function (query, cb) {
 				}
 			});	
 		});
+		
+		tasks.push(function (cb) {
+			processManifest(manifest, query, 'schemas', injectSchemas, function (err) {
+				if (err) {
+					cb(err);
+				} else {
+					resourcesEl.innerHTML = 'F5.addSchemas("' + pkg + '", ' + JSON.stringify(schemas) + ');';
+					cb();
+				}
+			});	
+		});		
 
 		tasks.push(function (cb) {
 			processManifest(manifest, query, 'elements', injectElements, cb);				

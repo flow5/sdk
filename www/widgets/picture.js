@@ -48,45 +48,21 @@ F5.registerModule(function(F5) {
 		};
 		
 		this.refresh = function (data) {			
-			if (data) {						
+			if (data) {					
+				var src;	
 				if (F5.ImagePreloader.isImagePreloader(data)) {
-					this.el.src = data.src();
+					src = data.src();
 				} else {
-					this.el.src = data;
-				}
-			}			
-		};
-				
-/*		
-		this.refresh = function (data) {			
-			if (data) {		
-				if (!this.img) {
-					this.img = document.createElement('img');	
-					this.el.appendChild(this.img);	
-					
-					// TODO: maybe allow client to install hidden image handler
-					var that = this;
-					this.img.onerror = function () {
-						that.img.style.visibility = 'hidden';
-					};
-					
-					// prevent image dragging in browser
-					if (!F5.isMobile()) {
-						F5.addTouchStartListener(this.img, function (e) {
-							e.preventDefault();
-						});
-					}														
+					src = data;
 				}
 				
-				this.img.style.visibility = '';					
-				if (F5.ImagePreloader.isImagePreloader(data)) {
-					this.img.src = data.src();					
+				if (this.el.tagName.toLowerCase() === 'img') {
+					this.el.src = src;					
 				} else {
-					this.img.src = data;
+					this.el.style['background-image'] = 'url(' + src + ')';
 				}
 			}			
-		};
-*/		
+		};				
 	}
 	
 	F5.Prototypes.Widgets.Picture = new Picture();

@@ -49,7 +49,7 @@
 		
 		if (f5id) {
 			var instanceData = data && F5.valueFromId(data, f5id);
-			if (instanceData) {
+			if (typeof instanceData !== 'undefined') {
 				if (typeof instanceData === 'object' && mergedData) {
 					F5.assert(!mergedData || typeof mergedData === 'object', 'Merging object into simple type');
 					F5.merge(instanceData, mergedData);						
