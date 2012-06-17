@@ -44,6 +44,34 @@ function getURL(str) {
 	return resourcesURLRegExp.exec(str)[1];	
 }
 
+var getSizes = [];
+function dumpSizes() {
+	var sorted = getSizes.sort(function (a,b) {
+		return b.size - a.size;
+	});
+	
+	var total = 0;
+	sorted.forEach(function (record) {
+		total += record.size;
+	});
+	
+	var tally = 0;
+	var markers = {};
+	sorted.forEach(function (record) {
+		var percent = (tally * 100 / total).toFixed(2);
+		var id = Math.round(tally * 20 / total);
+		if (!markers[id]) {
+			console.log( '* ' +  percent  + '% (' + tally + ')\n' );
+			markers[id] = true;
+		}
+		
+		console.log(record.size + ' ' + record.path);
+		tally += record.size;
+	});
+	console.log( '* 100% (' + tally + ')' );
+}
+
+
 var cssURLRegExp = new RegExp(/url\([\'\""]?([^\']*)[\'\""]?\)/);
 
 var imgSrcRegExp = new RegExp(/<img.*src=[\'\"]+(.*)[\'\"]+/);
@@ -190,6 +218,7 @@ function get(pkg, path, encoding, failure, success) {
 			if (err) {
 				failure(err);
 			} else {
+				getSizes.push({path: url.path, size: contents.length});
 				success(contents);
 			}
 		});
@@ -206,7 +235,7 @@ function resolveURL(base, path) {
 }
 
 
-function inlineData(pkg, path, failure, success) {			
+function inlineData(pkg, path, failure, success) {		
 	var ext = require('path').extname(path).substring(1);
 
 	if (ext === 'ttf') {
@@ -505,6 +534,8 @@ exports.buildHtml = function (query, cb) {
 	
 //	debugger;	
 	
+	getSizes = [];
+	
 	var pkg;
 	if (!query.pkg) {
 		pkg = query.domain;
@@ -561,19 +592,15 @@ exports.buildHtml = function (query, cb) {
 			// inline scripts
 			// devserv layer will compress and minify	
 			script.id = src;			
-			fs.readFile(src, 'utf8', function (err, code) {
-				if (err) {
-					cb(err);
+			get(pkg, src, 'utf8', cb, function (code) {
+				if (bool(query.compress)) {
+					minify(code, {engine: 'uglify'}, function (err, code) {
+						script.innerHTML = code;
+						cb(err, script);
+					});
 				} else {
-					if (bool(query.compress)) {
-						minify(code, {engine: 'uglify'}, function (err, code) {
-							script.innerHTML = code;
-							cb(err, script);
-						});
-					} else {
-						script.innerHTML = code + '\n//@ sourceURL=' + src + '\n';
-						cb(null, script);											
-					}
+					script.innerHTML = code + '\n//@ sourceURL=' + src + '\n';
+					cb(null, script);											
 				}
 			});
 		}
@@ -992,6 +1019,8 @@ exports.buildHtml = function (query, cb) {
 			}			
 		}
 		cb(err, html);
+		
+//		dumpSizes();
 	});
 };
 
