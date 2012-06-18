@@ -638,6 +638,10 @@ exports.buildHtml = function (query, cb) {
 		var resourcesEl = new Element('script');
 		resourcesEl.setAttribute('f5id', pkg + '.resources');
 		pkgEl.appendChild(resourcesEl);				
+
+		var schemasEl = new Element('script');
+		resourcesEl.setAttribute('f5id', pkg + '.schemas');
+		pkgEl.appendChild(schemasEl);				
 	
 		// javascript
 		function injectScripts(scripts, type, cb) {
@@ -841,7 +845,7 @@ exports.buildHtml = function (query, cb) {
 				if (err) {
 					cb(err);
 				} else {
-					resourcesEl.innerHTML = 'F5.addSchemas("' + pkg + '", ' + JSON.stringify(schemas) + ');';
+					schemasEl.innerHTML = 'F5.addSchemas("' + pkg + '", ' + JSON.stringify(schemas) + ');';
 					cb();
 				}
 			});	
