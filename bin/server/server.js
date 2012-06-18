@@ -40,6 +40,9 @@ var http = require('http'),
 var builder = require('./build.js');	
 
 
+paperboy.contentTypes.otf = 'font/opentype';
+paperboy.contentTypes.ttf = 'font/opentype';
+
 // TODO: move to utility package
 function packageDomain(pkg) {
 	return pkg && pkg.split('.')[0];

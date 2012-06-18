@@ -73,10 +73,6 @@
 								}	
 								rule.selectorText = selectors.join(',');								
 							}
-							// TODO: is inline always going to be global?
-							if (!F5.isInline() && rule.style) {
-								rule.style.cssText = rule.style.cssText.replace(cssUrlRegEx, '$1$2?pkg=' + pkg +'$3');								
-							}
 						}
 					} else {
 						var scopedCSSText = '';
@@ -93,7 +89,6 @@
 								scopedCSSText += cssText;
 							}
 						}					
-						owner.innerHTML = scopedCSSText.replace(cssUrlRegEx, '$1$2?pkg=' + pkg +'$3');
 					}
 				}				
 			}

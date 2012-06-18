@@ -251,7 +251,9 @@ function inlineData(pkg, path, failure, success) {
 
 	if (ext === 'ttf') {
 		get(pkg, path, 'base64', failure, function (data) {
-			success('data:font/truetype;base64,' + data);
+			// causes chrome warnings
+//			success('data:font/truetype;base64,' + data);
+			success('data:font/opentype;base64,' + data);
 		});
 	} else if (ext === 'eot') {
 		get(pkg, path, 'base64', failure, function (data) {
@@ -263,7 +265,7 @@ function inlineData(pkg, path, failure, success) {
 		});
 	} else if (ext === 'otf') {
 		get(pkg, path, 'base64', failure, function (data) {
-			success('data:font/otf;base64,' + data);
+			success('data:font/opentype;base64,' + data);
 		});
 	}
 	else if (ext === 'svg') {

@@ -58,7 +58,6 @@
             "lib/connection.js",
 			"modules/analyticsobserver.js",
 			"modules/facebookinit.js",
-            "modules/googleinit.js", 			
 			"3p/b64.js",	
 	        "widgets/buttons.js", 
 	        "widgets/statictext.js", 
