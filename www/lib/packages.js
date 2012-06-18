@@ -108,7 +108,7 @@
 		
 		var schemas = F5.valueFromId(F5.Schemas, pkg);
 		schemas.forEach(function (schema) {
-			F5.JSV.env.createSchema(schema, null, pkg + '.' + schema.name);
+			F5.JSV.env.createSchema(schema, null, pkg + '#' + schema.name);
 		});
 	};
 	

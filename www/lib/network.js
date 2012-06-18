@@ -226,7 +226,7 @@
 		}
 
 		function validate(obj, schemaName) {
-			var uri = F5.getNodePackage(node) + '.' + schemaName;
+			var uri = F5.getNodePackage(node) + '#' + schemaName;
 			var schema = F5.JSV.env.findSchema(uri);
 			console.log(uri);
 			console.log(schema);
