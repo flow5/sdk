@@ -63,6 +63,10 @@ F5.registerModule(function(F5) {
 			this.el.appendChild(this.slider);				
 		};
 		
+		this.refresh = function (data) {
+			this.setState(data);
+		};
+		
 		this.widgetWillBecomeActive = function () {
 			this.control.style.width = this.control.offsetHeight + 'px';
 			this.deadZone = this.el.offsetWidth / 5;

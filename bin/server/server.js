@@ -249,7 +249,10 @@ exports.start = function (args, options, cb) {
 						default:
 							doService(resource, parsed.query, req, res);					
 					}
-					break;		
+					break;	
+				case 'PUT':
+					doService(resource, parsed.query, req, res);
+					break;
 				case 'GET':
 					switch (resource) {
 						case '':
