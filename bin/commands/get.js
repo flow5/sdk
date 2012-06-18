@@ -26,34 +26,51 @@
 
 ***********************************************************************************************************************/
 
-var cli = require('cli'),
-	path = require('path');
+exports.options = {
+	debug: ['d', 'debug', 'boolean', false],
+	platform: ['p', 'platform', 'string', 'ios'],
+	native: ['n', 'native', 'boolean', false],
+	inline: ['i', 'inline', 'boolean', true],
+	compress: ['c', 'compress', 'boolean', true],
+	mobile: ['m', 'mobile', 'boolean', true],
+	headless: ['h', 'headless', 'boolean', false]
+};
+
+exports.usage = 'get pkg [OPTIONS]';
+
+exports.exec = function (args, options, cli) {
+	if (!args[0]) {
+		cli.getUsage();
+	}		
 	
-var commands = ['start', 'link', 'script', 'headless', 'get'];
-var command = process.argv[2];
-
-var module;
-try {
-	module = require(path.resolve(__dirname, 'commands', command + '.js'));		
-	cli.setUsage(module.usage);
-	cli.parse(module.options);	
-} catch (e) {
-	console.log(e)
-	cli.setUsage('f5 command [OPTIONS]');
-	cli.parse({}, commands);	
-	cli.getUsage();	
-}
-
-cli.main(function (args, options) {
-	if (module) {
-		try {
-			module.exec(args.slice(1), options, cli);
-		} catch (e) {
-			console.log(e);
-		}		
+	var pkg = args[0];
+	
+	var appDomain = pkg.split('.')[0];
+	var appPackage = pkg.split('.')[1];
+			
+	var path = '/' + appDomain + '/?' +
+				'&debug=' + options.debug +
+				'&platform=' + options.platform +
+				'&native=' + options.native +
+				'&inline=' + options.inline +
+				'&compress=' + options.compress +
+				'&mobile=' + options.mobile;
+	
+	if (appPackage) {
+		path += '&pkg=' + appPackage;
 	}
-});		
 
+	require('http').get({host: 'localhost', port: 8008, path: path}, function(res) {
+		res.setEncoding('utf8');
 
+		res.on('data', function(chunk){
+			process.stdout.write(chunk);
+		});
 
-
+		res.on('end', function(chunk){
+			process.exit(0);
+		});			
+	}).on('error', function (e) {
+		console.log(e);
+	});
+};
