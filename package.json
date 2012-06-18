@@ -1,6 +1,6 @@
 {
     "name": "flow5",
-    "version": "0.1.3",
+    "version": "0.1.4",
 	"description": "framework and toolset for developing mobile apps and webapps",
 	"keywords": ["ios", "iphone", "android", "html5", "fat client", "templating", "ajax", "hybrid", "mobile app", "webapp"],
 	"bugs": "",
