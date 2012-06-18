@@ -44,7 +44,11 @@
 		while (elements.length) {
 			var key = elements.shift();
 			if (!obj[key]) {
-				obj[key] = {};
+				if (data.constructor === Array) {
+					obj[key] = [];
+				} else {
+					obj[key] = {};					
+				}
 			}
 			obj = obj[key];
 		}

@@ -188,7 +188,10 @@
 			
 			// also do this after importing a package
 			F5.scopePackages();
-			F5.parseResources(F5.appPkg);			
+			F5.parseResources(F5.appPkg);
+			if (F5.isDebug()) {
+				F5.parseSchemas(F5.appPkg);				
+			}			
 									
 			// create the essential divs
 			var appframeEl = document.createElement('div');

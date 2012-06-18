@@ -100,6 +100,18 @@
 		}		
 	};	
 	
+	F5.parseSchemas = function (pkg) {
+		/*global JSV*/
+		if (!F5.JSV) {
+			F5.JSV = {env: JSV.createEnvironment()};
+		}
+		
+		var schemas = F5.valueFromId(F5.Schemas, pkg);
+		schemas.forEach(function (schema) {
+			F5.JSV.env.createSchema(schema, null, pkg + '.' + schema.name);
+		});
+	};
+	
 	F5.parseResources = function (pkg) {		
 		function isImageResource(resource) {
 			return resource.indexOf('.png') !== -1 || 
@@ -174,6 +186,9 @@
 				});
 				F5.registerPendingModules();
 				F5.parseResources(pkg);
+				if (F5.isDebug()) {
+					F5.parseSchemas(pkg);					
+				}
 				
 				if (cb) {
 					cb();

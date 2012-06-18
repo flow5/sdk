@@ -95,16 +95,27 @@ function forEach(obj, fn) {
 }
 
 function extend(obj1, obj2) {
-	forEach(obj2, function (id, value) {
-		if (!obj1[id]) {
-			obj1[id] = value;
-		} else if (typeof value === 'object') {
-			extend(obj1[id], value);
-		} else {
-			console.log('Resource shadowed: ' + id);
-			obj1[id] = value;								
-		}
-	});
+	if (obj1.constructor !== obj2.constructor) {
+		console.log('mismatched types in extend');
+		process.exit(0);
+	}
+	
+	if (obj1.constructor === Array) {
+		obj2.forEach(function (item) {
+			obj1.push(item);
+		});
+	} else {
+		forEach(obj2, function (id, value) {
+			if (!obj1[id]) {
+				obj1[id] = value;
+			} else if (typeof value === 'object') {
+				extend(obj1[id], value);
+			} else {
+				console.log('Resource shadowed: ' + id);
+				obj1[id] = value;								
+			}
+		});		
+	}	
 }
 
 function urlParameters(query) {
@@ -800,7 +811,7 @@ exports.buildHtml = function (query, cb) {
 			async.series(tasks, cb);
 		}
 		
-		var schemas = {};
+		var schemas = [];
 		function injectSchemas(schemaFiles, type, cb) {
 			var tasks = [];			
 			schemaFiles.forEach(function (file) {

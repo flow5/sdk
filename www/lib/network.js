@@ -225,7 +225,11 @@
 			url += extendedUrl;
 		}
 
-		function validate(obj, schema) {
+		function validate(obj, schemaName) {
+			var uri = F5.getNodePackage(node) + '.' + schemaName;
+			var schema = F5.JSV.env.findSchema(uri);
+			console.log(uri);
+			console.log(schema);
 			var report = F5.JSV.env.validate(obj, schema);
 			F5.assert(report.errors.length === 0,
 				'Error validating service parameter schema: ' + 
@@ -236,10 +240,6 @@
 
 		// NOTE: url parameters for substitution are considered to be part of the schema
 		if (F5.isDebug()) {
-			/*global JSV*/
-			if (!F5.JSV) {
-				F5.JSV = {env: JSV.createEnvironment()};
-			}
 			if (parameterSchema) {
 				validate(parameters, parameterSchema);
 			}

@@ -220,9 +220,15 @@
 	};
 
 	F5.extend = function (obj1, obj2) {
-		F5.forEach(obj2, function (id, value) {
-			obj1[id] = value;
-		});
+		if (obj1.constructor === Array) {
+			obj2.forEach(function (item) {
+				obj1.push(item);
+			});
+		} else {
+			F5.forEach(obj2, function (id, value) {
+				obj1[id] = value;
+			});			
+		}
 	};	
 	
 	F5.clone = function (obj) {
