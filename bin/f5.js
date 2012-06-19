@@ -29,7 +29,7 @@
 var cli = require('cli'),
 	path = require('path');
 	
-var commands = ['start', 'link', 'script', 'headless', 'get'];
+var commands = ['start', 'link', 'script', 'headless', 'get', 'build'];
 var command = process.argv[2];
 
 var module;
@@ -38,7 +38,7 @@ try {
 	cli.setUsage(module.usage);
 	cli.parse(module.options);	
 } catch (e) {
-	console.log(e)
+	console.error(e)
 	cli.setUsage('f5 command [OPTIONS]');
 	cli.parse({}, commands);	
 	cli.getUsage();	
@@ -49,7 +49,7 @@ cli.main(function (args, options) {
 		try {
 			module.exec(args.slice(1), options, cli);
 		} catch (e) {
-			console.log(e);
+			console.error(e);
 		}		
 	}
 });		

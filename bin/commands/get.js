@@ -25,6 +25,7 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
+var npm = require('npm');
 
 exports.options = {
 	debug: ['d', 'debug', 'boolean', false],
@@ -38,6 +39,8 @@ exports.options = {
 
 exports.usage = 'get pkg [OPTIONS]';
 
+var builder = require('../server/build.js');
+
 exports.exec = function (args, options, cli) {
 	if (!args[0]) {
 		cli.getUsage();
@@ -47,30 +50,23 @@ exports.exec = function (args, options, cli) {
 	
 	var appDomain = pkg.split('.')[0];
 	var appPackage = pkg.split('.')[1];
-			
-	var path = '/' + appDomain + '/?' +
-				'&debug=' + options.debug +
-				'&platform=' + options.platform +
-				'&native=' + options.native +
-				'&inline=' + options.inline +
-				'&compress=' + options.compress +
-				'&mobile=' + options.mobile;
 	
-	if (appPackage) {
-		path += '&pkg=' + appPackage;
-	}
-
-	require('http').get({host: 'localhost', port: 8008, path: path}, function(res) {
-		res.setEncoding('utf8');
-
-		res.on('data', function(chunk){
-			process.stdout.write(chunk);
+	var query = {
+		domain: appDomain,
+		pkg: appPackage,
+		debug: JSON.stringify(options.debug),
+		platform: options.platform,
+		inline: JSON.stringify(options.inline),
+		compress: JSON.stringify(options.compress),
+		mobile: JSON.stringify(options.mobile)		
+	};
+	npm.load({}, function () {	
+		builder.buildHtml(query, function (err, html) {
+			if (err) {
+				console.error(err.stack || err);
+			} else {
+				console.log(html);
+			}
 		});
-
-		res.on('end', function(chunk){
-			process.exit(0);
-		});			
-	}).on('error', function (e) {
-		console.log(e);
-	});
+	});	
 };

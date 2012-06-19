@@ -61,14 +61,14 @@ function dumpSizes() {
 		var percent = (tally * 100 / total).toFixed(2);
 		var id = Math.round(tally * 20 / total);
 		if (!markers[id]) {
-			console.log( '* ' +  percent  + '% (' + tally + ')\n' );
+			console.error( '* ' +  percent  + '% (' + tally + ')\n' );
 			markers[id] = true;
 		}
 		
-		console.log(record.size + ' ' + record.path);
+		console.error(record.size + ' ' + record.path);
 		tally += record.size;
 	});
-	console.log( '* 100% (' + tally + ')' );
+	console.error( '* 100% (' + tally + ')' );
 }
 
 
@@ -96,7 +96,7 @@ function forEach(obj, fn) {
 
 function extend(obj1, obj2) {
 	if (obj1.constructor !== obj2.constructor) {
-		console.log('mismatched types in extend');
+		console.error('mismatched types in extend');
 		process.exit(0);
 	}
 	
@@ -111,7 +111,7 @@ function extend(obj1, obj2) {
 			} else if (typeof value === 'object') {
 				extend(obj1[id], value);
 			} else {
-				console.log('Resource shadowed: ' + id);
+				console.error('Resource shadowed: ' + id);
 				obj1[id] = value;								
 			}
 		});		
@@ -153,21 +153,21 @@ function packageBase(pkg) {
 function parseJSON(path, failure, success) {	
 	fs.readFile(path, 'utf8', function (readErr, json) {
 		if (readErr) {
-			console.log(path);
+			console.error(path);
 			failure(readErr);
 		} else {
 			var parsedJSON;
 			try {
 				parsedJSON = JSON.parseClean(json);				
 			} catch (parseErr) {
-				console.log(path);
+				console.error(path);
 				failure(parseErr);
 			}
 			try {
 				success(parsedJSON);
 			} catch (cbErr) {
 				// SUCCESS FAILED!
-				console.log(cbErr);
+				console.error(cbErr);
 			}
 		}
 	});	
@@ -556,7 +556,7 @@ exports.buildHtml = function (query, cb) {
 		pkg = query.domain + '.' + query.pkg;
 	}
 
-	console.log(pkg + ' building html');
+//	console.error(pkg + ' building html');
 	
 	var document = new Element('html');
 	document.head = new Element('head');
@@ -624,7 +624,7 @@ exports.buildHtml = function (query, cb) {
 			var path = packageBase(pkg) + 'facebook_appid.txt';
 			return fs.readFileSync(path).toString();
 		} catch (e) {
-//			console.log('Could not find facebook_appid.txt');
+//			console.error('Could not find facebook_appid.txt');
 		}		
 	}	
 	
@@ -1084,7 +1084,7 @@ exports.buildFrame = function (query) {
 	delete query.frame;
 	delete query.devserv;
 	
-//	console.log(query.domain)
+//	console.error(query.domain)
 	
 	var frame = new Element('iframe');
 	frame.id = 'frame';
@@ -1111,7 +1111,7 @@ exports.buildCacheManifest = function(query, cb) {
 		pkg = query.domain + '.' + query.pkg;
 	}
 	
-	console.log(pkg + ' building manifest');
+	console.error(pkg + ' building manifest');
 		
 	function getModDate(cb) {
 		var latestDate;
@@ -1123,7 +1123,7 @@ exports.buildCacheManifest = function(query, cb) {
 				}	
 				cb();			
 			} catch (e) {
-				console.log(e.stack || e);
+				console.error(e.stack || e);
 				cb();
 			}
 		}
@@ -1219,7 +1219,7 @@ exports.buildCacheManifest = function(query, cb) {
 		
 		async.parallel(tasks, function (err) {
 			if (!err) {
-				console.log(pkg + ' last modified ' + latestDate);						
+				console.error(pkg + ' last modified ' + latestDate);						
 			}
 			cb(err, latestDate);
 		});
@@ -1234,7 +1234,7 @@ exports.buildCacheManifest = function(query, cb) {
 						
 	getModDate(function (err, latestDate) {
 		cacheManifest += '#' + latestDate + '\n';
-	//	console.log(cacheManifest)
+	//	console.error(cacheManifest)
 		cb(err, cacheManifest);		
 	});						
 };
@@ -1250,7 +1250,7 @@ exports.buildCacheManifest = function(query, cb) {
 		var tmpPath = '/tmp/' + process.pid + Date.now() + '.png';
 		var cmd = 'optipng -o2 -out ' + tmpPath + ' ' + path;
 //		var cmd = 'convert -quality 05 ' + path + ' ' + tmpPath;
-//		console.log('cmd:' + cmd)
+//		console.error('cmd:' + cmd)
 		libc.system(cmd);					
 		path = tmpPath;
 	}

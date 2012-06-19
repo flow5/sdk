@@ -119,7 +119,7 @@ function doBuild(query, req, res) {
 		if (query.headless) {
 			builder.buildScript(query, function (err, script) {
 				if (err) {
-					console.log(err);
+					console.error(err);
 					res.writeHead(500);
 					res.write(err.stack);
 					res.end();
@@ -137,7 +137,7 @@ function doBuild(query, req, res) {
 		} else {
 			builder.buildHtml(query, function (err, html) {
 				if (err) {
-					console.log(err.stack || err);
+					console.error(err.stack || err);
 					res.writeHead(500);
 					res.write(err.stack);
 					res.end();
@@ -150,7 +150,7 @@ function doBuild(query, req, res) {
 
 		}
 	} catch (e2) {
-		console.log(e2.stack || e2);
+		console.error(e2.stack || e2);
 		// TODO: would be nice to return 404 if the appname is bad
 		res.writeHead(500);
 		res.end();					
@@ -162,7 +162,7 @@ function doManifest(query, req, res) {
 	try {
 		builder.buildCacheManifest(query, function (err, manifest) {
 			if (err) {
-				console.log(err.stack || err);
+				console.error(err.stack || err);
 				res.writeHead(500);
 				res.write(err.stack);
 			} else {
@@ -172,7 +172,7 @@ function doManifest(query, req, res) {
 			res.end();	
 		});
 	} catch (e) {
-		console.log('error:' + e.stack);
+		console.error('error:' + e.stack);
 	}
 }
 
@@ -188,7 +188,7 @@ function doService(resource, query, req, res) {
 		}
 	} catch (e) {
 		res.writeHead(404, {'Content-Type': 'text/plain'});
-		console.log(e.stack)
+		console.error(e.stack)
 		res.end();			
 	}	
 }
@@ -222,9 +222,9 @@ exports.start = function (args, options, cb) {
 			var pathname = url.parse(req.url).pathname;
 			
 			if (options.verbose) {
-				console.log(req.method);
-				console.log(pathname);
-				console.log(parsed);		
+				console.error(req.method);
+				console.error(pathname);
+				console.error(parsed);		
 			}
 
 			parsed.query.devserv = protocol + '://' + req.headers.host;	

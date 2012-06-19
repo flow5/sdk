@@ -35,8 +35,8 @@ exports.usage = 'start [OPTIONS]\n\nand some more information here';
 
 exports.exec = function (args, options) {	
 	require(require('path').resolve(__dirname, '..', 'server', 'server.js')).start(args, options, function (info) {
-		console.log('flow5 is running at:');
-		console.log('  ' + info.protocol + '://localhost:' + info.port);
+		console.error('flow5 is running at:');
+		console.error('  ' + info.protocol + '://localhost:' + info.port);
 	});
 };
 

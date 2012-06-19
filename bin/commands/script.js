@@ -65,7 +65,7 @@ socket.on('message', function (message) {
 		completeFunction(message);
 		completeFunction = null;
 	} else {
-		console.log('unexpected message: ' + JSON.stringify(message));
+		console.error('unexpected message: ' + JSON.stringify(message));
 		socket.emit('message', {type: 'exit'});
 		process.exit(1);
 	}
@@ -95,7 +95,7 @@ function makeTask(command, options) {
 		
 		completeFunction = function (message) {
 			if (message.type === 'uncaughtException'){
-				console.log(message);
+				console.error(message);
 				process.exit(1);
 			} else if (command.message.id === message.id) {
 				complete(message, cb);
@@ -137,13 +137,13 @@ exports.exec = function (args, options, cli) {
 		var path = uri + '/scripts/' + scriptName + '.js';			
 		fs.readFile(path, 'utf8', function (err, script) {
 			if (err) {
-				console.log(err);
+				console.error(err);
 				cli.exit();
 			} else {
 				vm.runInThisContext(script, scriptName);	
 				// each script is commands = [. . .]			
 				executeScript(commands, options, function () {
-					console.log('done');
+					console.error('done');
 					socket.emit('message', {type: 'exit'});
 					process.exit(0);
 				});
