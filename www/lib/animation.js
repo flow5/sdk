@@ -332,6 +332,30 @@
 			return sheetHorizontal(container, oldEl, container.offsetWidth);						
 		},
 		
+		flip: function (container, oldEl, newEl) {
+			
+			oldEl.style['-webkit-transform-style'] = 'preserve-3d';
+			oldEl.style['-webkit-backface-visibility'] = 'hidden';
+			oldEl.style['-webkit-transition'] = 'all .4s ease-in-out';
+
+			newEl.style['-webkit-transform-style'] = 'preserve-3d';
+			newEl.style['-webkit-backface-visibility'] = 'hidden';
+			newEl.style['-webkit-transition'] = 'all .4s ease-in-out';
+			
+			oldEl.style['-webkit-transform'] = 'rotateY(0deg)';
+			newEl.style['-webkit-transform'] = 'rotateY(-180deg)';
+									
+			return function (cb) {
+				function completeFlip() {
+					F5.removeTransitionEndListener(newEl);
+					cb();			
+				}
+				F5.addTransitionEndListener(newEl, completeFlip);
+				oldEl.style['-webkit-transform'] = 'rotateY(-180deg)';
+				newEl.style['-webkit-transform'] = 'rotateY(0deg)';
+			};
+		},
+		
 		inverseAnimation: function(animation) {
 			var inverse;
 			switch (animation) {
@@ -370,6 +394,9 @@
 				break;
 			case 'overlayFadeIn':
 				inverse = 'overlayFadeOut';
+				break;
+			case 'flip':
+				inverse = 'flip';
 				break;
 			}
 
