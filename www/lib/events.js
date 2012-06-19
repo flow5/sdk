@@ -87,7 +87,7 @@
 	// OPTION: retain references to the DOM elements to help track down dangling listeners
 	var eventListenerCount = 0;
 
-	function addEventListener(el, eventType, cb, eventName) {
+	function addEventListener(el, eventType, cb, capturing, eventName) {
 		if (!el.F5) {
 			el.F5 = {};
 		}
@@ -114,14 +114,15 @@
 				}, 0);
 			}			
 		};
-		el.addEventListener(eventType, el.F5.listeners[eventName], false);	
+		el.addEventListener(eventType, el.F5.listeners[eventName], capturing);	
 		eventListenerCount += 1;
 	}
 
 	function removeEventListener(el, eventType, eventName) {
 		eventName = eventName || eventType;
 		if (el.F5 && el.F5.listeners && el.F5.listeners[eventName]) {
-			el.removeEventListener(eventType, el.F5.listeners[eventName]);
+			el.removeEventListener(eventType, el.F5.listeners[eventName], false);
+			el.removeEventListener(eventType, el.F5.listeners[eventName], true);
 			delete el.F5.listeners[eventName];
 			eventListenerCount -= 1;
 		}
@@ -165,18 +166,18 @@
 		removeEventListener(el, stopEventName());		
 	};
 
-	F5.addTouchMoveListener = function (el, cb) {
+	F5.addTouchMoveListener = function (el, cb, capturing) {
 		addEventListener(el, moveEventName(), function (e) {
 			e.preventDefault();
 			cb(e);
-		});
+		}, capturing);
 	};
 
 	F5.removeTouchMoveListener = function (el) {
 		removeEventListener(el, moveEventName());		
 	};	
 
-	F5.maxClickDistance = 30;
+	F5.maxClickDistance = 10;
 	F5.maxClickTime = 1000;
 
 	F5.addTapListener = function (el, cb, pressTime) {		
@@ -194,7 +195,7 @@
 				if (moveDistance > F5.maxClickDistance) {
 					cancel = true;
 				}
-			}, 'tapMove');
+			}, false, 'tapMove');
 
 			addEventListener(el, stopEventName(), function (stopEvent) {
 				stopEvent.preventDefault();
@@ -218,8 +219,8 @@
 
 				F5.addTapListener(el, cb, pressTime);
 
-			}, 'tap');
-		}, 'tap');
+			}, false, 'tap');
+		}, false, 'tap');
 	};
 
 	F5.removeTapListener = function (el) {

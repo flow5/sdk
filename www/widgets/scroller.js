@@ -171,7 +171,8 @@ F5.registerModule(function(F5) {
 		}		
 				
 		scroller.staticOffset = Math.round(scroller.currentOffset);
-		scroller.tracking = false;		
+		scroller.tracking = false;	
+		scroller.capturing = false;
 		
 		var velocity = updateVelocity(scroller, e);	
 		var flickTo = scroller.flickTo(velocity);		
@@ -255,7 +256,25 @@ F5.registerModule(function(F5) {
 
 		var delta = scroller.horizontal ? eventPosition(scroller, e).x - scroller.startLoc.x : 
 											eventPosition(scroller, e).y - scroller.startLoc.y;
-
+											
+		if (!scroller.capturing && Math.abs(delta) > 10) {
+			scroller.capturing = true;
+			F5.removeTouchMoveListener(scroller.el);			
+			F5.addTouchMoveListener(scroller.el, function (e) {
+				moveHandler(scroller, e);
+				e.stopPropagation();
+			}, true);
+		}	
+		if (Math.abs(delta) <= 10) {
+			delta = 0;
+		} else {
+			if (delta > 10) {
+				delta -= 10;
+			} else {
+				delta += 10;
+			}
+		}										
+		
 		scroller.currentOffset = scroller.constrainDrag(scroller.staticOffset, delta);
 
 		doTransform(scroller, scroller.currentOffset);
