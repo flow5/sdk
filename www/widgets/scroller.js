@@ -195,12 +195,11 @@ F5.registerModule(function(F5) {
 			// OR maybe this is actually good. definitely not "uncanny valley"
 //			F5.addTransitionEndListener(scroller.el, function (e) {
 			scroller.bounceTimeout = setTimeout(function () {
-				scroller.bounceTimeout = null;
-				
-				F5.removeTransitionEndListener(scroller.el);				
+				scroller.bounceTimeout = null;				
+//				F5.removeTransitionEndListener(scroller.el);				
 				
 				// handle a flick past the scroller end
-				var now = Date.now();
+//				var now = Date.now();
 				if (flickTo.bezier === scroller.curves.flickPast) {
 					var bounceOffset;
 					if (F5.sign(velocity) === 1) {
@@ -234,7 +233,7 @@ F5.registerModule(function(F5) {
 					finishScrolling(scroller);										
 				}				
 //			});
-			}, flickTo.duration * 1000);						
+			}, flickTo.duration * 1000 - 10);						
 
 
 			if (flickTo.cb) {

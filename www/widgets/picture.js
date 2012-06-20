@@ -30,15 +30,7 @@ F5.registerModule(function(F5) {
 	
 	function Picture() {
 		this.initialize = function (data) {	
-			// TODO: maybe allow client to install hidden image handler
-			var that = this;
-			this.el.style.visibility = '';					
-			this.onerror = function () {
-				that.el.style.visibility = 'hidden';
-			};
-			this.onload = function () {
-				this.el.style.visibility = '';					
-			};
+			this.el.style.visibility = 'hidden';
 			if (!F5.isTouchDevice()) {
 				F5.addTouchStartListener(this.el, function (e) {
 					e.preventDefault();
@@ -47,19 +39,30 @@ F5.registerModule(function(F5) {
 			this.refresh(data);							
 		};
 		
-		this.refresh = function (data) {			
+		this.refresh = function (data) {
+			var that = this;			
+			var image = new Image();
+							
+			function complete() {
+				if (that.el.tagName.toLowerCase() === 'img') {
+					that.el.src = image.src;					
+				} else {
+					that.el.style['background-image'] = 'url(' + image.src + ')';
+				}	
+				that.el.style.visibility = '';								
+			}
+			
 			if (data) {					
-				var src;	
 				if (F5.ImagePreloader.isImagePreloader(data)) {
-					src = data.src();
+					image.src = data.src();
 				} else {
-					src = data;
+					image.src = data;
 				}
-				
-				if (this.el.tagName.toLowerCase() === 'img') {
-					this.el.src = src;					
+				if (image.complete) {
+					setTimeout(complete, 0);
 				} else {
-					this.el.style['background-image'] = 'url(' + src + ')';
+					image.onload = complete;
+					// TODO: maybe allow client to install image load error handler									
 				}
 			}			
 		};				
