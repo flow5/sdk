@@ -121,7 +121,9 @@ function extend(obj1, obj2) {
 function urlParameters(query) {
 	var result = [];
 	forEach(query, function (id, value) {
-		result.push(id + '=' + value);
+		if (typeof value !== 'undefined') {
+			result.push(id + '=' + value);			
+		}
 	});
 	return result.join('&');
 }
@@ -931,8 +933,10 @@ exports.buildHtml = function (query, cb) {
 	
 	function injectHeader(pkg, cb) {
 		// manifest	
-//		var manifestString = 'cache.manifest?' + urlParameters(query);
-//		document.setAttribute('manifest', manifestString);	
+		if (bool(query.manifest)) {
+			var manifestString = 'cache.manifest?' + urlParameters(query);
+			document.setAttribute('manifest', manifestString);				
+		}
 
 		// TODO: create a meta section in manifest for this stuff		
 		// TODO: if manifest.type === 'app' add this stuff. otherwise not
