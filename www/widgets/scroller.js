@@ -239,7 +239,7 @@ F5.registerModule(function(F5) {
 					finishScrolling(scroller);										
 				}				
 //			});
-			}, flickTo.duration * 1000 - 50);						
+			}, flickTo.duration * 1000 - 100);						
 
 
 			if (flickTo.cb) {
@@ -391,7 +391,7 @@ F5.registerModule(function(F5) {
 				}
 				
 				if (offset !== this.staticOffset) {
-					snapTo = {offset: offset, duration: 0.5, bezier: bezier};					
+					snapTo = {offset: offset, duration: 0.75, bezier: bezier};					
 				}
 			}	
 			

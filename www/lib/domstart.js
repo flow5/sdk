@@ -68,7 +68,7 @@
 	function hideAddressBar() {
 		setTimeout(function () {
 			window.scrollTo(0, 0);
-		}, 0);
+		}, 100);
 	}
 	
 	function setupScreenGeometry(isMobile, isNative) {
