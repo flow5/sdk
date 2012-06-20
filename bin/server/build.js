@@ -893,7 +893,7 @@ exports.buildHtml = function (query, cb) {
 
 		async.series(tasks, cb);
 	}
-		
+	
 	function injectManifest(pkg, cb) {		
 		
 		// TODO: move to function packageInfo()		
@@ -927,7 +927,7 @@ exports.buildHtml = function (query, cb) {
 		});									
 	}	
 	
-	function injectHeader(cb) {
+	function injectHeader(pkg, cb) {
 		// manifest	
 //		var manifestString = 'cache.manifest?' + urlParameters(query);
 //		document.setAttribute('manifest', manifestString);	
@@ -936,11 +936,8 @@ exports.buildHtml = function (query, cb) {
 		// TODO: if manifest.type === 'app' add this stuff. otherwise not
 
 		// ios webapp stuff
-	//	appendMeta({name: 'apple-mobile-web-app-status-bar-style', content: 'black'});
-	//	appendMeta({name: 'apple-mobile-web-app-capable', content: 'yes'});
-	//	appendLink('apple-touch-icon', 'apps/' + packageDomain(pkg) + '/images/icon.png', null);
-	//	appendLink('apple-touch-startup-image', 'apps/' + packageDomain(pkg) + '/images/splash.png', null);
-
+		appendMeta({name: 'apple-mobile-web-app-status-bar-style', content: 'black'});
+		appendMeta({name: 'apple-mobile-web-app-capable', content: 'yes'});
 		// ios
 		appendMeta({'http-equiv': 'Content-Type', content: 'text/html; charset=UTF-8'});
 		appendMeta({name: 'viewport', content: 'width=device-width initial-scale=1.0 maximum-scale=1.0 user-scalable=0'});
@@ -948,31 +945,70 @@ exports.buildHtml = function (query, cb) {
 		// android
 		appendMeta({name: 'viewport', content: 'target-densitydpi=device-dpi'});
 
-		// setup
-		makeScript('f5', 'lib/f5.js', function (err, script) {
-			if (err) {
-				cb(err);
-			} else {
-				document.body.appendChild(script);						
+		var tasks = [];
+		tasks.push(function (cb) {
+			// TODO: move to function packageInfo()		
+			var manifestName = packageManifestName(pkg);
+			var pkgBase = packageBase(pkg);
 
-				var queryScript = new Element('script');
-				queryScript.setAttribute('f5id', 'F5.query');
-				queryScript.innerHTML = "F5.query = " + JSON.stringify(query) + '\n' +
-					'F5.appPkg = ' + JSON.stringify(pkg) + '\n';				
+			parseJSON(pkgBase + manifestName, cb, function (manifest) {
+				if (manifest.meta && manifest.meta.icon) {
+					appendLink('apple-touch-icon', manifest.meta.icon, null);					
+				}
+				if (manifest.meta && manifest.meta.splash) {
+					appendLink('apple-touch-startup-image', manifest.meta.splash, null);					
+				}		
 				
-				document.body.appendChild(queryScript);
-
-				// TODO: don't make facebook id a first class feature
-				var facebook_appid = facebookId();
-				if (facebook_appid) {
-					var facebookScript = new Element('script');
-					facebookScript.innerHTML = "F5.facebook_appid = " + facebook_appid;
-					document.body.appendChild(facebookScript);		
-				}	
-
-				cb();				
-			}			
+				function complete(src) {
+					var splash = new Element('img');
+					splash.id = 'f5splash';
+					splash.setAttribute('src', src);
+					document.body.appendChild(splash);															
+					cb();																			
+				}
+				if (manifest.meta && manifest.meta.splash) {
+					if (bool(query.inline)) {
+						inlineData(pkg, pkgBase + manifest.meta.splash, cb, function (data) {
+							complete(data);
+						});													
+					} else {
+						complete(manifest.meta.splash);
+					}
+				} else {
+					cb();
+				}											
+			});
 		});
+
+		tasks.push(function (cb) {
+			// setup
+			makeScript('f5', 'lib/f5.js', function (err, script) {
+				if (err) {
+					cb(err);
+				} else {
+					document.body.appendChild(script);						
+
+					var queryScript = new Element('script');
+					queryScript.setAttribute('f5id', 'F5.query');
+					queryScript.innerHTML = "F5.query = " + JSON.stringify(query) + '\n' +
+						'F5.appPkg = ' + JSON.stringify(pkg) + '\n';				
+
+					document.body.appendChild(queryScript);
+
+					// TODO: don't make facebook id a first class feature
+					var facebook_appid = facebookId();
+					if (facebook_appid) {
+						var facebookScript = new Element('script');
+						facebookScript.innerHTML = "F5.facebook_appid = " + facebook_appid;
+						document.body.appendChild(facebookScript);		
+					}	
+
+					cb();				
+				}			
+			});			
+		});
+
+		async.series(tasks, cb);
 	}	
 	
 	function injectFooter(cb) {
@@ -1007,7 +1043,9 @@ exports.buildHtml = function (query, cb) {
 	var tasks = [];
 					
 	if (!query.lib) {
-		tasks.push(injectHeader);
+		tasks.push(function (cb) {
+			injectHeader(pkg, cb);
+		});
 	}
 		
 	// inject the app manifest (and recursively insert packages)

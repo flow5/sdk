@@ -41,6 +41,13 @@ body.f5mobile {
 	background-color: transparent;
 }
 
+#f5splash {
+	width: 320px;
+	height: 460px;
+	position: absolute;
+	top: 0px;
+	z-index: 1000;
+}
 
 #f5appframe {
 	position: absolute;
