@@ -36,7 +36,7 @@ exports.options = {
 	mobile: ['m', 'mobile', 'boolean', true],
 	headless: ['h', 'headless', 'boolean', false],
 	manifest: ['X', 'generate the cache manifest', 'boolean', false],
-	nocache: ['x', 'do not generate the cache.manifest header', 'boolean', false]
+	cache: ['x', 'generate the cache.manifest header', 'boolean', false]
 };
 
 exports.usage = 'get pkg [OPTIONS]';
@@ -61,7 +61,7 @@ exports.exec = function (args, options, cli) {
 		inline: JSON.stringify(options.inline),
 		compress: JSON.stringify(options.compress),
 		mobile: JSON.stringify(options.mobile),
-		nocache: JSON.stringify(options.nocache)
+		cache: JSON.stringify(options.cache)
 	};
 	npm.load({}, function () {	
 		var method = options.manifest ? 'buildCacheManifest' : 'buildHtml';

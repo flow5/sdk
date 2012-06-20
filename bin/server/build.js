@@ -933,7 +933,7 @@ exports.buildHtml = function (query, cb) {
 	
 	function injectHeader(pkg, cb) {
 		// manifest	
-		if (!bool(query.nocache)) {
+		if (bool(query.cache)) {
 			var manifestString = 'cache.manifest?' + urlParameters(query);
 			document.setAttribute('manifest', manifestString);				
 		}
