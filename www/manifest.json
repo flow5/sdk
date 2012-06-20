@@ -42,7 +42,8 @@
             "lib/flowcontroller.js", 
             "lib/network.js", 
 			"lib/cache.js",
-			"lib/model.js"
+			"lib/model.js",
+			"3p/md5.js"				
         ],
 		"domscripts": [
         	"lib/events.js", 
