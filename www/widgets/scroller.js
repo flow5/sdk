@@ -99,14 +99,22 @@ F5.registerModule(function(F5) {
 	}	
 			
 	function updateVelocity(scroller, e) {
-		// don't do instantaneous updating of velocity
-		var weighting = 0.25;
 
 		var newTouchLoc = eventPosition(scroller, e);
 		var delta = scroller.horizontal ? newTouchLoc.x - scroller.touchLoc.x : newTouchLoc.y - scroller.touchLoc.y;			
 		scroller.touchLoc = newTouchLoc;
 
 		var deltaT = e.timeStamp - scroller.touchTime;
+
+		// don't do instantaneous updating of velocity
+		var weighting;
+		var stopTime = 100;
+		var jitterTime = 50;
+		if (deltaT > stopTime) {
+			weighting = 1;
+		} else {
+			weighting = deltaT/(stopTime - jitterTime);
+		}
 				
 		if (deltaT) {
 			scroller.touchTime = e.timeStamp;
@@ -184,11 +192,12 @@ F5.registerModule(function(F5) {
 			// if we use the transition end event, there's a tiny hickup in the transition from the
 			// flick to the flickPast animation. so instead	use a setTimeout so that
 			// the flickPast animation gets set while the flick animation is still running
+			// OR maybe this is actually good. definitely not "uncanny valley"
 //			F5.addTransitionEndListener(scroller.el, function (e) {
 			scroller.bounceTimeout = setTimeout(function () {
 				scroller.bounceTimeout = null;
 				
-//				F5.removeTransitionEndListener(scroller.el);				
+				F5.removeTransitionEndListener(scroller.el);				
 				
 				// handle a flick past the scroller end
 				var now = Date.now();
@@ -224,7 +233,8 @@ F5.registerModule(function(F5) {
 					// TODO: not necessary?
 					finishScrolling(scroller);										
 				}				
-			}, flickTo.duration * 1000 - 10);						
+//			});
+			}, flickTo.duration * 1000);						
 
 
 			if (flickTo.cb) {
@@ -256,22 +266,24 @@ F5.registerModule(function(F5) {
 
 		var delta = scroller.horizontal ? eventPosition(scroller, e).x - scroller.startLoc.x : 
 											eventPosition(scroller, e).y - scroller.startLoc.y;
-											
-		if (!scroller.capturing && Math.abs(delta) > 10) {
-			scroller.capturing = true;
-			F5.removeTouchMoveListener(scroller.el);			
-			F5.addTouchMoveListener(scroller.el, function (e) {
-				moveHandler(scroller, e);
-				e.stopPropagation();
-			}, true);
-		}	
-		if (Math.abs(delta) <= 10) {
+								
+		if (Math.abs(delta) > F5.maxClickDistance) {
+			if (!scroller.capturing) {
+				scroller.capturing = true;
+				F5.removeTouchMoveListener(scroller.el);			
+				F5.addTouchMoveListener(scroller.el, function (e) {
+					moveHandler(scroller, e);
+					e.stopPropagation();
+				}, true);				
+			}
+		}
+		if (Math.abs(delta) <= F5.maxClickDistance) {
 			delta = 0;
 		} else {
-			if (delta > 10) {
-				delta -= 10;
+			if (delta > F5.maxClickDistance) {
+				delta -= F5.maxClickDistance;
 			} else {
-				delta += 10;
+				delta += F5.maxClickDistance;
 			}
 		}										
 		
@@ -295,8 +307,8 @@ F5.registerModule(function(F5) {
 
 		this.maxVelocity = 5.0;
 		this.enabled = true;
-		this.bounceDistance = 40;	
-		this.flickVelocityThreshold = 0.05;							
+		this.bounceDistance = 20;	
+		this.flickVelocityThreshold = 0.1;							
 		
 		this.initialize = function () {
 			var that = this;
