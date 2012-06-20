@@ -100,16 +100,18 @@ F5.registerModule(function(F5) {
 			
 	function updateVelocity(scroller, e) {
 		// don't do instantaneous updating of velocity
-		var weighting = .5;
+		var weighting = 0.5;
 
 		var newTouchLoc = eventPosition(scroller, e);
 		var delta = scroller.horizontal ? newTouchLoc.x - scroller.touchLoc.x : newTouchLoc.y - scroller.touchLoc.y;			
 		scroller.touchLoc = newTouchLoc;
 
-		var deltaT = e.timeStamp - scroller.touchTime;
+//		var deltaT = e.timeStamp - scroller.touchTime;
+		var deltaT = Date.now() - scroller.touchTime;
 				
 		if (deltaT) {
-			scroller.touchTime = e.timeStamp;
+//			scroller.touchTime = e.timeStamp;
+			scroller.touchTime = Date.now();
 
 			if (deltaT > 30) {
 				scroller.lastVelocity = 0;
@@ -146,7 +148,8 @@ F5.registerModule(function(F5) {
 		scroller.tracking = true;					
 		scroller.touchLoc = eventPosition(scroller, e);
 		scroller.startLoc = scroller.touchLoc;
-		scroller.touchTime = e.timeStamp;
+//		scroller.touchTime = e.timeStamp;
+		scroller.touchTime = Date.now();
 		scroller.lastVelocity = 0;
 		if (scroller.bounceTimeout) {
 			clearTimeout(scroller.bounceTimeout);
@@ -172,7 +175,15 @@ F5.registerModule(function(F5) {
 		if (!scroller.tracking) {
 			return;
 		}		
-				
+		
+		var that = this;
+		setTimeout(function () {
+			scroller.deferQueue.forEach(function (cb) {
+				cb();
+			});
+			scroller.deferQueue = [];
+		}, 0);	
+						
 		scroller.staticOffset = Math.round(scroller.currentOffset);
 		scroller.tracking = false;	
 		scroller.capturing = false;
@@ -262,8 +273,15 @@ F5.registerModule(function(F5) {
 			return;
 		}			
 
-		updateVelocity(scroller, e);	
+		// if there's too much jitter (e.g. due to image loading) throw out the move event
+		// because it will cause the scroller to jerk around. better to stall than jump.
+//		if (Date.now() - scroller.touchTime > 100) {
+//			scroller.touchTime = Date.now();
+//			return;
+//		}
 
+		updateVelocity(scroller, e);
+		
 		var delta = scroller.horizontal ? eventPosition(scroller, e).x - scroller.startLoc.x : 
 											eventPosition(scroller, e).y - scroller.startLoc.y;
 								
@@ -376,6 +394,8 @@ F5.registerModule(function(F5) {
 			if (Math.abs(this.staticOffset) > Math.abs(pinOffset(this, this.staticOffset, 0))) {
 
 				var offset = pinOffset(this, this.staticOffset, 0);	
+				
+				var duration = .2 * Math.sqrt(Math.abs(offset - this.staticOffset)/this.bounceDistance);
 
 				// sharp snapback if stretched
 				var bezier;
@@ -386,13 +406,15 @@ F5.registerModule(function(F5) {
 				}
 				
 				if (offset !== this.staticOffset) {
-					snapTo = {offset: offset, duration: 0.75, bezier: bezier};					
+					snapTo = {offset: offset, duration: duration, bezier: bezier};					
 				}
 			}	
 			
 			return snapTo;			
 		};
 		
+		this.deferQueue = [];
+				
 		this.constrainDrag = function(offset, delta) {	
 			
 			// limit is the furthest it's possible to drag without leaving the container
@@ -510,7 +532,7 @@ F5.registerModule(function(F5) {
 		this.stopScrolling = function () {
 			var transformMatrix = new WebKitCSSMatrix(window.getComputedStyle(this.el)['-webkitTransform']);			
 			stopScrollingAt(this, this.horizontal ? transformMatrix.m41 : transformMatrix.m42);	
-			this.tracking = false;				
+			this.tracking = false;			
 		};
 		
 		this.disable = function () {

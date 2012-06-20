@@ -44,12 +44,31 @@ F5.registerModule(function(F5) {
 			var image = new Image();
 							
 			function complete() {
-				if (that.el.tagName.toLowerCase() === 'img') {
-					that.el.src = image.src;					
+				function show() {
+					if (that.el.tagName.toLowerCase() === 'img') {
+						that.el.src = image.src;					
+					} else {
+						that.el.style['background-image'] = 'url(' + image.src + ')';
+					}	
+					that.el.style.visibility = '';
+				}
+				
+				var trackingScroller = that.el;
+				while (trackingScroller) {
+					if (trackingScroller.widget && 
+						trackingScroller.widget instanceof F5.Prototypes.Widgets.Scroller.constructor &&
+						trackingScroller.widget.tracking) {
+						break;
+					}
+					
+					trackingScroller = trackingScroller.parentElement;
+				}
+				
+				if (trackingScroller) {
+					trackingScroller.widget.deferQueue.push(show);
 				} else {
-					that.el.style['background-image'] = 'url(' + image.src + ')';
-				}	
-				that.el.style.visibility = '';								
+					show();															
+				}				
 			}
 			
 			if (data) {					
