@@ -99,29 +99,24 @@ F5.registerModule(function(F5) {
 	}	
 			
 	function updateVelocity(scroller, e) {
+		// don't do instantaneous updating of velocity
+		var weighting = .5;
 
 		var newTouchLoc = eventPosition(scroller, e);
 		var delta = scroller.horizontal ? newTouchLoc.x - scroller.touchLoc.x : newTouchLoc.y - scroller.touchLoc.y;			
 		scroller.touchLoc = newTouchLoc;
 
 		var deltaT = e.timeStamp - scroller.touchTime;
-
-		// don't do instantaneous updating of velocity
-		var weighting;
-		var stopTime = 100;
-		var jitterTime = 50;
-		if (deltaT > stopTime) {
-			weighting = 1;
-		} else {
-			weighting = deltaT/(stopTime - jitterTime);
-		}
 				
 		if (deltaT) {
 			scroller.touchTime = e.timeStamp;
 
-			var newVelocity = pinVelocity((1.0 - weighting) * scroller.lastVelocity + weighting * (delta / deltaT));
-
-			scroller.lastVelocity = newVelocity;				
+			if (deltaT > 30) {
+				scroller.lastVelocity = 0;
+			} else {
+				var newVelocity = pinVelocity((1.0 - weighting) * scroller.lastVelocity + weighting * (delta / deltaT));
+				scroller.lastVelocity = newVelocity;				
+			}
 		}
 		
 		return scroller.lastVelocity;
