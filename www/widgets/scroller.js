@@ -192,7 +192,6 @@ F5.registerModule(function(F5) {
 			// if we use the transition end event, there's a tiny hickup in the transition from the
 			// flick to the flickPast animation. so instead	use a setTimeout so that
 			// the flickPast animation gets set while the flick animation is still running
-			// OR maybe this is actually good. definitely not "uncanny valley"
 //			F5.addTransitionEndListener(scroller.el, function (e) {
 			scroller.bounceTimeout = setTimeout(function () {
 				scroller.bounceTimeout = null;				
@@ -209,7 +208,7 @@ F5.registerModule(function(F5) {
 					}
 
 					scroller.staticOffset = scroller.currentOffset = Math.round(bounceOffset);
-					
+																		
 					// match the starting velocity of the bounce to the ending velocity of the flick
 					var t1, t2;		
 								
@@ -218,8 +217,15 @@ F5.registerModule(function(F5) {
 					var endVelocity = (t2 - t1)*flickDistance/(0.01*flickTo.duration);
 					
 					t1 = F5.cubicBezierAtTime.apply(F5, [0.00].concat(scroller.curves.easeOut).concat(1));
-					t2 = F5.cubicBezierAtTime.apply(F5, [0.01].concat(scroller.curves.easeOut).concat(1));						
-					var duration = 100 * ((t2 - t1) * scroller.bounceDistance) / endVelocity;
+					t2 = F5.cubicBezierAtTime.apply(F5, [0.01].concat(scroller.curves.easeOut).concat(1));		
+					
+
+					// since the 
+					var transformMatrix = new WebKitCSSMatrix(window.getComputedStyle(scroller.el)['-webkitTransform']);
+					var realOffset = this.horizontal ? transformMatrix.m41 : transformMatrix.m42;		
+					var delta = Math.abs(realOffset - flickTo.offset);
+									
+					var duration = 100 * ((t2 - t1) * (scroller.bounceDistance + delta)) / endVelocity;
 															
 					F5.addTransitionEndListener(scroller.el, function () {
 						F5.removeTransitionEndListener(scroller.el);									
@@ -233,7 +239,7 @@ F5.registerModule(function(F5) {
 					finishScrolling(scroller);										
 				}				
 //			});
-			}, flickTo.duration * 1000 - 10);						
+			}, flickTo.duration * 1000 - 50);						
 
 
 			if (flickTo.cb) {
