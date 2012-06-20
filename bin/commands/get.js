@@ -28,7 +28,6 @@
 var npm = require('npm');
 
 exports.options = {
-	which: ['w', 'html|manifest', 'string', 'html'],
 	debug: ['d', 'debug', 'boolean', false],
 	platform: ['p', 'platform', 'string', 'ios'],
 	native: ['n', 'native', 'boolean', false],
@@ -36,7 +35,8 @@ exports.options = {
 	compress: ['c', 'compress', 'boolean', true],
 	mobile: ['m', 'mobile', 'boolean', true],
 	headless: ['h', 'headless', 'boolean', false],
-	manifest: ['f', 'use manifest', 'boolean', true]
+	manifest: ['X', 'generate the cache manifest', 'boolean', false],
+	nocache: ['x', 'do not generate the cache.manifest header', 'boolean', false]
 };
 
 exports.usage = 'get pkg [OPTIONS]';
@@ -61,10 +61,10 @@ exports.exec = function (args, options, cli) {
 		inline: JSON.stringify(options.inline),
 		compress: JSON.stringify(options.compress),
 		mobile: JSON.stringify(options.mobile),
-		manifest: JSON.stringify(options.manifest)
+		nocache: JSON.stringify(options.nocache)
 	};
 	npm.load({}, function () {	
-		var method = options.which === 'html' ? 'buildHtml' : 'buildCacheManifest';
+		var method = options.manifest ? 'buildCacheManifest' : 'buildHtml';
 		builder[method](query, function (err, html) {
 			if (err) {
 				console.error(err.stack || err);
