@@ -71,7 +71,7 @@ F5.registerModule(function(F5) {
 				}				
 			}
 			
-			if (data) {					
+			if (data) {	
 				if (F5.ImagePreloader.isImagePreloader(data)) {
 					image.src = data.src();
 				} else {
