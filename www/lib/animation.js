@@ -332,19 +332,32 @@
 			return sheetHorizontal(container, oldEl, container.offsetWidth);						
 		},
 		
+		flipBack: function (container, oldEl, newEl) {
+			
+			return function (cb) {
+				function completeFlip() {
+					F5.removeTransitionEndListener(newEl);
+					cb();			
+				}
+				F5.addTransitionEndListener(newEl, completeFlip);
+				oldEl.style['-webkit-transform'] = 'rotateY(180deg)';
+				newEl.style['-webkit-transform'] = 'rotateY(0deg)';
+			};
+		},	
+			
 		flip: function (container, oldEl, newEl) {
 			
-			oldEl.style['-webkit-transform-style'] = 'preserve-3d';
+			container.style['-webkit-perspective'] = 1000;
+			
 			oldEl.style['-webkit-backface-visibility'] = 'hidden';
-			oldEl.style['-webkit-transition'] = 'all .4s ease-in-out';
+			oldEl.style['-webkit-transition'] = 'all .5s ease-in-out';
 
-			newEl.style['-webkit-transform-style'] = 'preserve-3d';
 			newEl.style['-webkit-backface-visibility'] = 'hidden';
-			newEl.style['-webkit-transition'] = 'all .4s ease-in-out';
+			newEl.style['-webkit-transition'] = 'all .5s ease-in-out';
 			
 			oldEl.style['-webkit-transform'] = 'rotateY(0deg)';
-			newEl.style['-webkit-transform'] = 'rotateY(-180deg)';
-									
+			newEl.style['-webkit-transform'] = 'rotateY(180deg)';
+			
 			return function (cb) {
 				function completeFlip() {
 					F5.removeTransitionEndListener(newEl);
@@ -396,6 +409,9 @@
 				inverse = 'overlayFadeOut';
 				break;
 			case 'flip':
+				inverse = 'flipBack';
+				break;
+			case 'flipBack':
 				inverse = 'flip';
 				break;
 			}
