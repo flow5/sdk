@@ -28,7 +28,11 @@
 
 F5.registerModule(function (F5) {	
 	
-	function Button() {			
+	function TapControl() {
+		
+		this.initialize = function (data) {
+			this.data = data;
+		};
 		
 		/* true=down, false=up */	
 		this.setState = function (state) {
@@ -37,32 +41,18 @@ F5.registerModule(function (F5) {
 			this.state = state;
 
 			['up', 'down'].forEach(function (state) {
-				F5.removeClass(that.el, 'f5button-' + state);
+				F5.removeClass(that.el, that.data[state] || 'f5button-' + state);
 				if (that[state]) {
 					that[state].style.visibility = 'hidden';
 				}
 			});
-			
+
 			var tag = state ? 'down' : 'up';
-			F5.addClass(this.el, 'f5button-' + tag);
+			F5.addClass(this.el, this.data[tag] || 'f5button-' + tag);
 			if (this[tag]) {
 				this[tag].style.visibility = '';
 			}			
-		};	
-		
-		this.setLabel = function (label) {
-			if (!this.label) {
-				this.label = document.createElement('div');
-				F5.addClass(this.label, 'f5button-label');
-				this.el.appendChild(this.label);							
-			}
-
-			this.label.textContent = label;					
-		};
-		
-		this.getData = function () {
-			return this.data;
-		};
+		};		
 		
 		this.unsetAction = function () {
 			F5.removeTouchEventListenersRecursive(this.el);
@@ -72,7 +62,7 @@ F5.registerModule(function (F5) {
 			var that = this;
 			
 			function press() {
-				F5.addClass(that.el, 'f5button-press');
+				F5.addClass(that.el, that.data.press || 'f5button-press');
 				if (that.press) {
 					var tag = that.savedState ? 'down' : 'up';
 					that[tag].style.visibility = 'hidden';
@@ -81,7 +71,7 @@ F5.registerModule(function (F5) {
 			}
 			
 			function release() {
-				F5.removeClass(that.el, 'f5button-press');				
+				F5.removeClass(that.el, that.data.press || 'f5button-press');				
 				if (that.press) {
 					var tag = that.savedState ? 'down' : 'up';
 					that[tag].style.visibility = '';
@@ -131,7 +121,26 @@ F5.registerModule(function (F5) {
 				cb(e);										
 			});			
 		};		
+	}
+	F5.Prototypes.Widgets.TapControl = new TapControl();	
+	
+	
+	function Button() {			
+					
+		this.setLabel = function (label) {
+			if (!this.label) {
+				this.label = document.createElement('div');
+				F5.addClass(this.label, 'f5button-label');
+				this.el.appendChild(this.label);							
+			}
+
+			this.label.textContent = label;					
+		};
 		
+		this.getData = function () {
+			return this.data;
+		};
+				
 		this.reset = function () {
 			this.el.innerHTML = '';
 			if (this.className) {
@@ -275,6 +284,7 @@ F5.registerModule(function (F5) {
 			applyResourceData(mergedData);			
 		};
 	}	
+	Button.prototype = new TapControl();
 		
 	F5.Prototypes.Widgets.Button = new Button();	
 																				
