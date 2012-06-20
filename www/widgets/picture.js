@@ -38,17 +38,17 @@ F5.registerModule(function(F5) {
 			}																	
 			this.refresh(data);							
 		};
-		
+				
 		this.refresh = function (data) {
 			var that = this;			
-			var image = new Image();
+			this.image = new Image();
 							
 			function complete() {
 				function show() {
 					if (that.el.tagName.toLowerCase() === 'img') {
-						that.el.src = image.src;					
+						that.el.src = that.image.src;					
 					} else {
-						that.el.style['background-image'] = 'url(' + image.src + ')';
+						that.el.style['background-image'] = 'url(' + that.image.src + ')';
 					}	
 					that.el.style.visibility = '';
 				}
@@ -73,14 +73,14 @@ F5.registerModule(function(F5) {
 			
 			if (data) {	
 				if (F5.ImagePreloader.isImagePreloader(data)) {
-					image.src = data.src();
+					this.image.src = data.src();
 				} else {
-					image.src = data;
+					this.image.src = data;
 				}
-				if (image.complete) {
+				if (this.image.complete) {
 					setTimeout(complete, 0);
 				} else {
-					image.onload = complete;
+					this.image.onload = complete;
 					// TODO: maybe allow client to install image load error handler									
 				}
 			}			
