@@ -114,7 +114,7 @@ F5.registerModule(function (F5) {
 			});
 			F5.addTapListener(this.el, function (e) {
 				e.preventDefault();
-				e.stopPropagation();
+//				e.stopPropagation();
 				
 				stopListener();
 				

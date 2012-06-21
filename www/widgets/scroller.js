@@ -522,7 +522,7 @@ F5.registerModule(function(F5) {
 			this.tracking = false;
 			finishScrolling(this);
 			window.removeEventListener('orientationchange', this.refreshFunction);			
-			document.removeEventListener('statusBarTouched', this.scrollToTopFunction);
+			document.removeEventListener('f5StatusBarTouched', this.scrollToTopFunction);
 		};
 		
 		this.widgetDidBecomeInactive = function () {
