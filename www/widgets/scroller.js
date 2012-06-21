@@ -288,8 +288,8 @@ F5.registerModule(function(F5) {
 		if (Math.abs(delta) > F5.maxClickDistance) {
 			if (!scroller.capturing) {
 				scroller.capturing = true;
-				F5.removeTouchMoveListener(scroller.el);			
-				F5.addTouchMoveListener(scroller.el, function (e) {
+				F5.removeTouchMoveListener(scroller.el.parentElement);			
+				F5.addTouchMoveListener(scroller.el.parentElement, function (e) {
 					moveHandler(scroller, e);
 					e.stopPropagation();
 				}, true);				
@@ -364,12 +364,12 @@ F5.registerModule(function(F5) {
 					window.removeEventListener('mouseup', stopHandlerWrapper);
 					window.removeEventListener('mousemove', moveHandlerWrapper);							
 				}
-				F5.removeTouchStopListener(that.el, stopHandlerWrapper);				
-				F5.removeTouchMoveListener(that.el, moveHandlerWrapper);				
+				F5.removeTouchStopListener(that.el.parentElement, stopHandlerWrapper);				
+				F5.removeTouchMoveListener(that.el.parentElement, moveHandlerWrapper);				
 				stopHandler(that, e);
 			}			
 			
-			F5.addTouchStartListener(this.el, function (e) {
+			F5.addTouchStartListener(this.el.parentElement, function (e) {
 				if (!that.enabled) {
 					return;
 				}
@@ -380,8 +380,8 @@ F5.registerModule(function(F5) {
 					window.addEventListener('mouseup', stopHandlerWrapper);
 					window.addEventListener('mousemove', moveHandlerWrapper);
 				}
-				F5.addTouchStopListener(that.el, stopHandlerWrapper);			
-				F5.addTouchMoveListener(that.el, moveHandlerWrapper);
+				F5.addTouchStopListener(that.el.parentElement, stopHandlerWrapper);			
+				F5.addTouchMoveListener(that.el.parentElement, moveHandlerWrapper);
 			});
 									
 			doTransform(this, this.staticOffset);
@@ -574,15 +574,10 @@ F5.registerModule(function(F5) {
 			finishScrolling(this);
 		};
 				
-		// TODO: may run into the large div problem again in which case the content size
-		// may not be derivable from offsetHeight
 		this.refresh = function () {
-			
-// NOTE: it may be important to make the scroller a fixed size so that it doesn't grow to the size of the contained
-//		 divs. In the past I've seen glitches when a single div with -webkit-transform gets too big, probably
-//       due to paging of textures			
-//			this.el.style.width = '';
-//			this.el.style.height = '';			
+			// set the width and height to default to calculate geometry
+			this.el.style.width = '';
+			this.el.style.height = '';			
 			
 			this.container = F5.elementOffsetGeometry(this.el.parentElement);
 			var absolutePosition = F5.elementAbsolutePosition(this.el.parentElement);
@@ -602,11 +597,12 @@ F5.registerModule(function(F5) {
 			
 			this.initialized = false;				
 			
-//			if (this.horizontal) {
-//				this.el.style.width = '0px';				
-//			} else {
-//				this.el.style.height = '0px';				
-//			}			
+			// set height to 0px so that the OS doesn't try to page in the large div
+			if (this.horizontal) {
+				this.el.style.width = '0px';				
+			} else {
+				this.el.style.height = '0px';				
+			}			
 		};
 	}
 	

@@ -36,3 +36,9 @@
 .f5default.f5tabset .f5button .f5mask-shadow {
 	-webkit-mask-size: .30em .30em, 100% 100%;
 }
+
+/* putting the webkit transform onto the content elements makes touch events go to the elements that are past
+   the container bounds */
+.f5scroller > div {
+	-webkit-transform: translate3d(0, 0, 0);
+}

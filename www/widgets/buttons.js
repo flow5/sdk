@@ -102,7 +102,7 @@ F5.registerModule(function (F5) {
 			
 			F5.addTouchStartListener(this.el, function touchStartListenerCB(e) {
 				e.preventDefault();
-				e.stopPropagation();
+//				e.stopPropagation();
 				
 				that.savedState = that.state;
 				that.startLoc = F5.eventLocation(e);
