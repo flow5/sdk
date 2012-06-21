@@ -234,11 +234,13 @@ exports.start = function (args, options, cb) {
 						
 			if (!domainBase(parsed.query.domain)) {
 				res.writeHead(500);
-				res.write('Unknown domain: ' + parsed.query.domain + '. Did you flow5 link?');
+				var error = 'Unknown domain: ' + parsed.query.domain + '. Did you flow5 link?';
+				console.error(error)
+				res.write(error);
 				res.end();				
 				return;
 			}
-			
+						
 			switch (req.method) {
 				case 'POST':
 					switch(resource) {

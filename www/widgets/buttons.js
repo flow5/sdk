@@ -31,7 +31,7 @@ F5.registerModule(function (F5) {
 	function TapControl() {
 		
 		this.initialize = function (data) {
-			this.data = data;
+			this.data = data || {};
 		};
 		
 		/* true=down, false=up */	
@@ -119,7 +119,7 @@ F5.registerModule(function (F5) {
 				stopListener();
 				
 				cb(e);										
-			});			
+			});	
 		};		
 	}
 	F5.Prototypes.Widgets.TapControl = new TapControl();	
@@ -270,7 +270,7 @@ F5.registerModule(function (F5) {
 			}
 			
 			if (typeof data === 'object') {
-				this.data = data;				
+				this.data = data;
 			} else {
 				this.data = data ? {label: data} : {};
 			}

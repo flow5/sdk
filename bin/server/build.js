@@ -737,8 +737,11 @@ exports.buildHtml = function (query, cb) {
 						var elementsDiv = new Element('div');
 						get(pkg, resolveURL(base, file), 'utf8', cb, function (data) {
 							
+							// pull out stylesheet references. these should be done through the manifest
+							data = data.replace(/<link.*stylesheet[^>]*>/g, '');
+							
 							var fragments = data.split(/(>)/);
-							async.map(fragments, function (fragment, cb) {
+							async.map(fragments, function (fragment, cb) {								
 								if (bool(query.inline)) {
 									var matches = imgSrcRegExp.exec(fragment);// inline styles? || cssURLRegExp.exec(fragment);
 									if (matches && matches.length > 1) {
@@ -944,6 +947,7 @@ exports.buildHtml = function (query, cb) {
 		// ios webapp stuff
 		appendMeta({name: 'apple-mobile-web-app-status-bar-style', content: 'black'});
 		appendMeta({name: 'apple-mobile-web-app-capable', content: 'yes'});
+		appendMeta({name: 'format-detection', content: 'telephone=no'});
 		// ios
 		appendMeta({'http-equiv': 'Content-Type', content: 'text/html; charset=UTF-8'});
 		appendMeta({name: 'viewport', content: 'width=device-width initial-scale=1.0 maximum-scale=1.0 user-scalable=0'});

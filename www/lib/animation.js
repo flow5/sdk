@@ -37,18 +37,7 @@
 							
 		return function (cb) {
 			function complete() {
-				oldEl.style.visibility = 'hidden';
-				oldEl.style[F5.styleName('transform')] = '';
-				oldEl.style[F5.styleName('transition')] = '';
-
-				// Android pre-ICS: screen flashes if -webkit-transform is cleared while el is visible
-				if (F5.platform() !== 'android') {
-					newEl.style[F5.styleName('transform')] = '';					
-				}
-				newEl.style[F5.styleName('transition')] = '';
-
-				F5.removeTransitionEndListener(oldEl);			
-				
+				F5.removeTransitionEndListener(oldEl);							
 				cb();
 			}			
 		

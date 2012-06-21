@@ -9,7 +9,7 @@ COMPANY=`defaults read ${SRCROOT}/f5 company`
 defaults write ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Info CFBundleName -string $PKG
 defaults write ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Info CFBundleIdentifier -string "com.$COMPANY.$PKG"
 
-FBAPPID=`curl http://$HOSTNAME:8008/apps/$PKG/facebook_appid.txt`
+FBAPPID=`curl http://$HOSTNAME:8008/$PKG/facebook_appid.txt`
 defaults write ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Info CFBundleURLTypes -array "<dict><key>CFBundleURLSchemes</key><array><string>fb$FBAPPID</string></array></dict>"
 
 CONFIG=$CONFIGURATION
@@ -28,7 +28,7 @@ PLATFORM=$PLATFORM_NAME
 if [ $CONFIG = "Debug" ]
 then
 PDEBUG="debug=true"
-PCONSOLE="&console=true"
+PCONSOLE="&ide=true"
 else
 PDEBUG="debug=false"
 fi
@@ -42,7 +42,7 @@ PINLINE="inline=true"
 PCOMPRESS="compress=true"
 fi
 
-URL="http://$HOSTNAME:8008/generate?pkg=$PKG&native=true&mobile=true&platform=ios&$PINLINE&$PDEBUG&$PCOMPRESS$PCONSOLE"
+URL="http://$HOSTNAME:8008/$PKG/?native=true&mobile=true&platform=ios&$PINLINE&$PDEBUG&$PCOMPRESS$PCONSOLE"
 
 echo $URL
 

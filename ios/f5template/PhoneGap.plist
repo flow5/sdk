@@ -22,22 +22,22 @@
 	<false/>
 	<key>ExternalHosts</key>
 	<array>
-		<string>www.flow5.com</string>
-		<string>www.w3.org</string>
-		<string>api.foursquare.com</string>
-		<string>*.googleapis.com</string>
-		<string>*.gstatic.com</string>
-		<string>*.google.com</string>
-		<string>*.apple.com</string>
-		<string>localhost</string>
-		<string>query.yahooapis.com</string>
+		<string>*</string>
 	</array>
 	<key>Plugins</key>
 	<dict>
 		<key>com.flow5.navigationbar</key>
 		<string>F5NavigationBar</string>
+		<key>com.flow5.alert</key>
+		<string>F5Alert</string>
+		<key>com.flow5.networkactivity</key>
+		<string>F5NetworkActivity</string>
 		<key>com.flow5.mapview</key>
 		<string>F5MapView</string>
+		<key>com.flow5.analytics</key>
+		<string>F5Analytics</string>
+		<key>com.flow5.activity</key>
+		<string>F5Activity</string>
 		<key>com.flow5.commandqueue</key>
 		<string>F5CommandQueue</string>
 		<key>com.flow5.locationreminder</key>
