@@ -219,7 +219,7 @@
 						// TODO: why is the delay required?
 						setTimeout(function () {
 							splash.style.display = 'none';							
-						}, 1000);
+						}, 500);
 					}
 					setTimeout(function () {
 						if (typeof PhoneGap !== 'undefined') {
