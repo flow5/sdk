@@ -92,6 +92,7 @@ F5.registerModule(function (F5) {
 
 			moveListener = function (e) {
 				e.preventDefault();
+				// TODO: not sure about this
 				e.stopPropagation();
 				
 				var moveLoc = F5.eventLocation(e);
@@ -102,6 +103,7 @@ F5.registerModule(function (F5) {
 			
 			F5.addTouchStartListener(this.el, function touchStartListenerCB(e) {
 				e.preventDefault();
+				// TODO: not sure about this
 //				e.stopPropagation();
 				
 				that.savedState = that.state;
@@ -114,6 +116,7 @@ F5.registerModule(function (F5) {
 			});
 			F5.addTapListener(this.el, function (e) {
 				e.preventDefault();
+				// TODO: not sure about this
 //				e.stopPropagation();
 				
 				stopListener();
