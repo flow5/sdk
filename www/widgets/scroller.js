@@ -231,14 +231,14 @@ F5.registerModule(function(F5) {
 					var realOffset = this.horizontal ? transformMatrix.m41 : transformMatrix.m42;		
 					var delta = Math.abs(realOffset - flickTo.offset);
 									
-					var duration = 100 * ((t2 - t1) * (scroller.bounceDistance + delta)) / endVelocity;
+					var duration = 75 * ((t2 - t1) * (scroller.bounceDistance + delta)) / endVelocity;
 															
 					F5.addTransitionEndListener(scroller.el, function () {
 						F5.removeTransitionEndListener(scroller.el);									
 						finishScrolling(scroller);					
 					});										
 					
-					doTransform(scroller, bounceOffset, duration, scroller.curves.bounce);	
+					doTransform(scroller, bounceOffset, duration, scroller.curves.flickPast);	
 //					console.log(Date.now() - now);												
 				} else {
 					// TODO: not necessary?
@@ -316,10 +316,11 @@ F5.registerModule(function(F5) {
 		this.curves = {
 			bounce: [0.0, 0.0, 0.58, 1.0],
 			easeOut: [0.0, 0.0, 0.58, 1.0],
+			easeInOut: [0.42, 0.0, 0.58, 1.0],
 			easeIn: [0.42, 0.0, 1.0, 1.0],
 			flickTo: [0.33, 0.66, 0.76, 1],
 			flickPast: [0.33, 0.55, 0.55, 0.75],
-			hardSnap: [0, 0.75, 0.55, 1.0],
+			hardSnap: [0, 1.0, 0.75, 1.0],
 			softSnap: [0.25, 0.25, 0.55, 1.0]
 		};
 
@@ -395,14 +396,16 @@ F5.registerModule(function(F5) {
 
 				var offset = pinOffset(this, this.staticOffset, 0);	
 				
-				var duration = .2 * Math.sqrt(Math.abs(offset - this.staticOffset)/this.bounceDistance);
-
+				var duration;
+				
 				// sharp snapback if stretched
 				var bezier;
 				if (Math.abs(this.currentOffset-offset) > this.bounceDistance) {
 					bezier = this.curves.hardSnap;
+					duration = 0.2 * Math.sqrt(Math.abs(offset - this.staticOffset)/this.bounceDistance);					
 				} else {
-					bezier = this.curves.easeOut;
+					bezier = this.curves.easeIn;
+					duration = 0.2;
 				}
 				
 				if (offset !== this.staticOffset) {
