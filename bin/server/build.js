@@ -558,7 +558,7 @@ exports.buildHtml = function (query, cb) {
 		pkg = query.domain + '.' + query.pkg;
 	}
 
-//	console.error(pkg + ' building html');
+	console.error(pkg + ' building html');
 	
 	var document = new Element('html');
 	document.head = new Element('head');
