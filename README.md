@@ -16,11 +16,7 @@ To install globally
 	
 Then
 
-  flow5 start
+  f5 start
 	
-will start the flow5 development server and open a browser pointing to the root page
-
-
-Chrome is the default browser
 	
 
