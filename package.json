@@ -11,7 +11,7 @@
 	"os": ["darwin", "linux"],
 	"repository": { 
 		"type" : "git",
-	  	"url" : "http://github.com/pgreyson/flow5"
+	  	"url" : "http://github.com/flow5/sdk"
 	},
 	"bin": {
 		"f5": "./bin/f5.js"
