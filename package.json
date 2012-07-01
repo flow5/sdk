@@ -1,34 +1,48 @@
 {
-    "name": "flow5",
-    "version": "0.1.10",
-	"description": "framework and toolset for developing mobile apps and webapps",
-	"keywords": ["ios", "iphone", "android", "html5", "fat client", "templating", "ajax", "hybrid", "mobile app", "webapp"],
-	"bugs": "",
-	"author":{ 
-		"name" : "Paul Greyson",
-		"email" : "paul@flow5.com"
-	},
-	"os": ["darwin", "linux"],
-	"repository": { 
-		"type" : "git",
-	  	"url" : "http://github.com/flow5/sdk"
-	},
-	"bin": {
-		"f5": "./bin/f5.js"
-	},
-	"scripts": {
-		"install": "node ./bin/install.js"
-	},	
-    "dependencies": {
-		"cli": "0.4.0",
-		"css-compressor": "1.0.0",
-		"paperboy": "0.0.3",
-		"async": "0.1.22",
-		"minifyjs": "0.1.0",
-		"npm": "1.1.24",
-		"xmlhttprequest": "1.4.2",
-		"socket.io": "0.9.6",
-		"socket.io-client": "0.9.6"
-    },
-    "engines" : { "node" : ">=0.6.0" }
+  "name": "flow5",
+  "version": "0.1.11",
+  "description": "framework and toolset for developing mobile apps and webapps",
+  "keywords": [
+    "ios",
+    "iphone",
+    "android",
+    "html5",
+    "fat client",
+    "templating",
+    "ajax",
+    "hybrid",
+    "mobile app",
+    "webapp"
+  ],
+  "bugs": "",
+  "author": "Paul Greyson <paul@flow5.com>",
+  "os": [
+    "darwin",
+    "linux"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/flow5/sdk.git"
+  },
+  "bin": {
+    "f5": "./bin/f5.js"
+  },
+  "scripts": {
+    "install": "node ./bin/install.js"
+  },
+  "dependencies": {
+    "cli": "0.4.0",
+    "css-compressor": "1.0.0",
+    "paperboy": "0.0.3",
+    "async": "0.1.22",
+    "minifyjs": "0.1.0",
+    "npm": "1.1.24",
+    "xmlhttprequest": "1.4.2",
+    "socket.io": "0.9.6",
+    "socket.io-client": "0.9.6"
+  },
+  "engines": {
+    "node": ">=0.6.0"
+  },
+  "devDependencies": {}
 }
