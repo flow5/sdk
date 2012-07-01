@@ -159,7 +159,7 @@
 		var name = components[0];
 		var qualifier = components[1];
 
-		var protocol = 'http', method = 'GET', baseUrl, username, password, 
+		var protocol = 'http', method = 'GET', baseUrl, username, password, jsonp,
 			urlParameterKeys, extendedUrl, resourceName, headers, proxy, parameterSchema, responseSchema;
 
 		function extendParameters(service) {
@@ -183,6 +183,7 @@
 			extendedUrl = get('extendedUrl') || extendedUrl;
 			resourceName = get('resourceName') || resourceName;
 			method = get('method') || method;
+			jsonp = get('jsonp') || jsonp;
 			// which parameters should go into the URL for POST/PUT
 			urlParameterKeys = get('urlParameterKeys') || urlParameterKeys;
 
@@ -307,7 +308,35 @@
 		}					
 
 		networkActivityStarted();
-		if (method === 'GET' || method === 'DELETE') {			
+		if (typeof document !== 'undefined' && jsonp) {	
+			// TODO: error handling for jsonp would be helpful
+					
+			var script = document.createElement('script');
+
+			var cbid = 'f5jsonp' + Date.now();
+			
+			url += formatUrlParameters(parameters);			
+			script.src = url + '&jsonp=' + cbid;
+			
+			var completed;
+
+			window[cbid] = function(json) {
+				pendingComplete(node, pending);
+				cb(json, 200);
+				delete window[cbid];
+				document.body.removeChild(script);
+				completed = true;
+			};		
+			script.onerror = function () {
+				cb(null, 404);
+			};
+			script.onload = function () {
+				if (!completed) {
+					cb(null, 0);
+				}
+			};
+			document.body.appendChild(script);			
+		} else if (method === 'GET' || method === 'DELETE') {			
 			url += formatUrlParameters(parameters);
 
 

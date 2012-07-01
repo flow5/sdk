@@ -107,7 +107,7 @@ function doBuild(query, req, res) {
 		}
 	}
 	if (!query.mobile) {
-		if (agent.match(/(iphone)|(android)/i)) {
+		if (agent.match(/(iphone)|(android)|(silk)/i)) {
 			query.mobile = 'true';
 		} else {
 			query.mobile = 'false';

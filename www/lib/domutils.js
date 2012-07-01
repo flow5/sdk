@@ -219,7 +219,7 @@
 	};
 	
 	F5.isTouchDevice = function() {
-		return navigator.userAgent.match(/iphone|ipad|android/i);
+		return navigator.userAgent.match(/iphone|ipad|android|silk/i);
 	};
 	
 	F5.doWidgetLifecycleEventRecursive = function(el, event) {

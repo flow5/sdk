@@ -798,7 +798,7 @@
 					armv6,
 					"$(ARCHS_STANDARD_32_BIT)",
 				);
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Paul Greyson";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EXCLUDED_SOURCE_FILE_NAMES = Debug.m;
@@ -825,7 +825,7 @@
 					/usr/lib/libSystem.B.dylib,
 				);
 				PRODUCT_NAME = f5template;
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "2F55F09B-9312-4D2A-9A96-AD7CEAFCD445";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 				WRAPPER_EXTENSION = app;

@@ -104,9 +104,4 @@
 }
 
 .graph {
-	top: 0px;
-	position: absolute;
-	
-/*	-webkit-transition: -webkit-transform ease-in .15s; */
-	-webkit-transform: translate3d(0px, 0px, 0px);	
 }

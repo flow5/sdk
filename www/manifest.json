@@ -5,6 +5,7 @@
                 "debug/flow_diags.js", 
                 "debug/flowcontroller_diags.js",
 				"debug/ideconnect.js",
+				"debug/weinreconnect.js",
 				/* JSV */
 				"debug/3p/JSV/lib/uri/uri.js",
 				"debug/3p/JSV/lib/uri/schemes/urn.js",
@@ -121,7 +122,7 @@
             ],
 			"debug": {
 				"domscripts": [
-/*					"debug/weinreconnect.js" */
+					"debug/weinreconnect.js"
 				]
 			}
         }, 
