@@ -2,7 +2,8 @@
 	"all": {
 		"packages": [
 			"f5",
-			"f5.defaultstyles"
+			"f5.defaultstyles",
+			"f5.widgets"
 		],
 		"flows": [
 			"flow.json"
