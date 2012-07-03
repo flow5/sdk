@@ -158,7 +158,37 @@
 
 		return instance;			
 
-		// TODO: return {el: el, widgets: widgets}
-			
+		// TODO: return {el: el, widgets: widgets}			
 	};		
+
+	// itemCb = function (item, itemEl, itemWidgetsMap)
+	F5.populateList = function(scroller, itemTemplateName, node, items, itemCb) {
+		F5.clear(scroller.el);
+		var listItems = [];
+		F5.forEach(items, function (item) {
+			var el = F5.loadTemplate(itemTemplateName, node, item);
+			scroller.el.appendChild(el);
+			listItems.push({el: el, item: item});
+		});
+				
+		F5.forEach(listItems, function (listItem) {
+			var widgets = {};
+			F5.forEach(listItem.el.querySelectorAll('[f5widget]'), function (el) {
+				widgets[el.getAttribute('f5id')] = el.widget;
+			});			
+			itemCb(listItem.item, listItem.el, widgets);
+		});
+		
+		F5.forEach(listItems, function (listItem) {
+			F5.doWidgetLifecycleEventRecursive(listItem.el, 'WillBecomeActive');			
+		});
+		
+		if (F5.lifecycleEvent !== 'WillBecomeActive') {
+			F5.forEach(listItems, function (listItem) {
+				F5.doWidgetLifecycleEventRecursive(listItem.el, 'DidBecomeActive');			
+			});			
+		}				
+		
+		scroller.refresh();
+	};	
 }());
