@@ -24,44 +24,26 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global F5, PhoneGap*/
+/*global F5*/
 
-(function () {
+// TODO: move to a separate package
+F5.registerModule(function (F5) {
 	
-	function Connection() {
-		
-		this.callbacks = [];
-		
-		this.online = function () {
-			if (typeof PhoneGap !== 'undefined') {
-				return navigator.network.connection.type !== 'unknown';
-			} else {
-				return navigator.onLine;
-			}
-		};	
-		
-		this.addStatusChangeCallback = function (cb) {
-			this.callbacks.push(cb);
-		};				
-		
-		this.removeStatusChangeCallback = function (cb) {
-			this.callbacks.splice(this.callbacks.indexOf(cb), 1);
-		};
-		
-		var that = this;
-		
-		window.addEventListener("offline", function(e) {
-			that.callbacks.forEach(function (cb) {
-				cb(false);
+	F5.Global.flowController.addWaitTask(function (cb) {
+		if (F5.meta().facebookAppId) {
+			F5.facebook.initialize(function () {
+				F5.extend(F5.Services, {
+					protocol: 'https',
+					method: 'GET',
+					baseUrl: 'graph.facebook.com/',
+					me: {
+						extendedUrl: 'me'
+					}
+				});		
+				cb();
 			});
-		}, false);
-
-		window.addEventListener("online", function(e) {
-			that.callbacks.forEach(function (cb) {
-				cb(true);
-			});
-		}, false);
-	}
-			
-	F5.connection = new Connection();
-}());
+		} else {
+			cb();
+		}		
+	});
+});

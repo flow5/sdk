@@ -260,7 +260,7 @@
 					if (!isLifecycleSubflow(id)) {
 						showSubflows = true;
 
-						var subflowEl = F5.createWidget('Button', {id: id}, 'id');
+						var subflowEl = F5.createWidget('f5.widgets.Button', {id: id}, 'id');
 						F5.addClass(subflowEl, 'f5dosubflow');
 						subflowsEl.appendChild(subflowEl);	
 
@@ -282,7 +282,7 @@
 
 				F5.forEach(node.transitions, function (id, transition) {
 
-					var transitionEl = F5.createWidget('Button', {id: id}, 'id');					
+					var transitionEl = F5.createWidget('f5.widgets.Button', {id: id}, 'id');					
 					F5.addClass(transitionEl, 'f5dotransition');
 					transitionsEl.appendChild(transitionEl);	
 

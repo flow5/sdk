@@ -1,0 +1,23 @@
+{
+	"all": {
+		"packages": [
+			"f5",
+			"f5.defaultstyles"
+		],
+		"flows": [
+			"flow.json"
+		],
+		"elements": [
+			"templates.html",
+			"templates.css",
+			"json.css"
+		],
+		"scripts": [
+			"json.js",
+			"viewdelegates.js"
+		],
+		"resources": [
+			"data.json"
+		]
+	}
+}

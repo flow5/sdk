@@ -33,7 +33,7 @@
 		
 		if (typeof FB !== 'undefined') {
 		    FB.init({
-		      appId      : F5.facebook_appid,
+		      appId      : F5.meta().facebookAppId,
 	//	      channelUrl : '//staging.juiceperks.com/channel.html', // Channel File TODO: NEEDED?
 		      status     : true, // check login status
 		      cookie     : true, // enable cookies to allow the server to access the session

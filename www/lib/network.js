@@ -442,5 +442,42 @@
 		}	
 
 		node.pending.push(pending);			
-	};			
+	};	
+	
+	function Connection() {
+		
+		this.callbacks = [];
+		
+		this.online = function () {
+			if (typeof PhoneGap !== 'undefined') {
+				return navigator.network.connection.type !== 'unknown';
+			} else {
+				return navigator.onLine;
+			}
+		};	
+		
+		this.addStatusChangeCallback = function (cb) {
+			this.callbacks.push(cb);
+		};				
+		
+		this.removeStatusChangeCallback = function (cb) {
+			this.callbacks.splice(this.callbacks.indexOf(cb), 1);
+		};
+		
+		var that = this;
+		
+		window.addEventListener("offline", function(e) {
+			that.callbacks.forEach(function (cb) {
+				cb(false);
+			});
+		}, false);
+
+		window.addEventListener("online", function(e) {
+			that.callbacks.forEach(function (cb) {
+				cb(true);
+			});
+		}, false);
+	}
+			
+	F5.connection = new Connection();			
 }());

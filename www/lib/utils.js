@@ -270,6 +270,11 @@
 		return F5.query.platform;
 	};
 	
+	F5.meta = function (pkg) {
+		pkg = pkg || F5.appPkg;
+		return F5.clone(F5.valueFromId(F5.Meta, pkg));
+	};
+	
 	F5.isDebug = function () {
 		return F5.query.debug === 'true';
 	};

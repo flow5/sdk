@@ -1,0 +1,17 @@
+{
+    "all": {
+		"browser": {
+			"domscripts": [
+				"js/analytics_web.js"
+			]
+		},
+		"app": {
+			"domscripts": [
+				"js/analytics_native.js"
+			]
+		},	
+		"domscripts": [
+			"js/analyticsobserver.js"
+		]
+    }
+}

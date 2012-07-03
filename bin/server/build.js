@@ -133,13 +133,26 @@ function packageDomain(pkg) {
 	return pkg && pkg.split('.')[0];
 }
 
-function packageManifestName(pkg) {
-	if (pkg && pkg.split('.')[1]) {
-		return pkg.split('.')[1] + '.manifest.json';
-	} else {
-		return 'manifest.json';
+function packageName(pkg) {
+	return pkg && pkg.split('.')[1];
+}
+
+function packageManifestName() {
+	return 'manifest.json';
+}
+
+function packageUrl(pkg) {
+	var domain = pkg && pkg.split('.')[0];
+	if (domain) {
+		var pkgName = packageName(pkg);
+		if (pkgName) {
+			return domain + '/packages/' + pkgName;
+		} else {
+			return domain;
+		}
 	}
 }
+
 
 function packageBase(pkg) {
 	var key = 'flow5:link_' + packageDomain(pkg);
@@ -147,7 +160,12 @@ function packageBase(pkg) {
 	if (!value) {
 		return null;
 	} else {
-		return value + '/www/';		
+		var pkgName = packageName(pkg);
+		if (pkgName) {
+			return value + '/www/packages/' + pkgName + '/';
+		} else {
+			return value + '/www/';			
+		}
 	}
 }
 
@@ -194,7 +212,7 @@ function get(pkg, path, encoding, failure, success) {
 	if (url.protocol) {		
 		var options = {
 			hostname: url.hostname,
-			path: packageDomain(pkg) + '/' + url.path,
+			path: packageUrl(pkg) + '/' + url.path,
 			port: url.port
 		};
 		var protocol = url.protocol.replace(':', '');
@@ -418,7 +436,7 @@ function processManifest(manifest, query, type, process, cb) {
 
 exports.buildScript = function (query, cb) {
 	
-	debugger;
+//	debugger;
 	
 	var pkg;
 	if (!query.pkg) {
@@ -582,7 +600,7 @@ exports.buildHtml = function (query, cb) {
 		var link = new Element('link');
 		link.setAttribute('rel', rel);
 		if (pkg) {
-			link.setAttribute('href', '/' + packageDomain(pkg) + '/' + href);			
+			link.setAttribute('href', '/' + packageUrl(pkg) + '/' + href);			
 		} else {
 			link.setAttribute('href', href);			
 		}
@@ -600,7 +618,7 @@ exports.buildHtml = function (query, cb) {
 		var script = new Element('script');		
 		if (!bool(query.inline)) {
 			// reference scripts
-			script.setAttribute('src', '/' + packageDomain(pkg) + '/' + file);
+			script.setAttribute('src', '/' + packageUrl(pkg) + '/' + file);
 			cb(null, script);
 		} else {
 			var src = packageBase(pkg) + file;
@@ -754,7 +772,7 @@ exports.buildHtml = function (query, cb) {
 								} else {
 									// this shouldn't be needed
 //									cb(null, fragment.replace(/(<img.*[\'\"]+)(.*)([\'\"]+)/, '$1/' + 
-//																		packageDomain(pkg) + '$2$3'));																											
+//																		packageUrl(pkg) + '$2$3'));	
 									cb(null, fragment);
 								}
 							}, function (err, results) {

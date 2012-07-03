@@ -1,0 +1,7 @@
+{
+    "android": {
+        "domscripts": [
+            "modules/androidhwbuttons.js"
+        ]
+    }
+}

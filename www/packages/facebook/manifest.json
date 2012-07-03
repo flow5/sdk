@@ -1,0 +1,17 @@
+{
+    "all": {
+		"browser": {
+			"domscripts": [
+				"js/facebook_web.js"
+			]
+		},
+		"app": {
+			"domscripts": [
+				"js/facebook_native.js"
+			]
+		},	
+		"domscripts": [
+            "js/init.js"			
+		]
+    }
+}

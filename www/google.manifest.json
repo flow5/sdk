@@ -1,7 +1,0 @@
-{
-    "all": {
-		"domscripts": [
-            "packages/google/googleinit.js"			
-		]
-    }
-}

@@ -139,7 +139,7 @@
 	F5.startActivity = function (el) {
 		if (!activityEl) {
 			activityEl = document.createElement('div');
-			F5.attachWidget(activityEl, 'Activity');			
+			F5.attachWidget(activityEl, 'f5.widgets.Activity');			
 		}
 		
 		activityEl.widget.start(el);

@@ -24,26 +24,47 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global F5*/
+/*global F5, PhoneGap*/
 
-// TODO: move to a separate package
-F5.registerModule(function (F5) {
+(function () {
 	
-	F5.Global.flowController.addWaitTask(function (cb) {
-		if (F5.facebook_appid) {
-			F5.facebook.initialize(function () {
-				F5.Services.facebook = {
-					protocol: 'https',
-					method: 'GET',
-					baseUrl: 'graph.facebook.com/',
-					me: {
-						extendedUrl: 'me'
-					}
-				};		
+	function initialize(cb) {
+		PhoneGap.exec(		
+			function (result) { // success
+				console.log(result);
 				cb();
-			});
-		} else {
-			cb();
-		}		
-	});
-});
+			}, 
+			function (result) { // failure
+				console.log(result);
+				cb();
+			}, "com.flow5.facebookconnect", "initialize", [{appId: F5.meta().facebookAppId.toString()}]);				
+	}
+	
+	function login(permissions, cb) {
+		PhoneGap.exec(
+			function (result) { // success
+				cb(result);
+			}, 
+			function (result) { // failure
+				console.log(result);
+				cb(null);
+			}, "com.flow5.facebookconnect", "login", [{permissions:permissions}]);
+	} 
+	
+	function logout(cb) {
+		PhoneGap.exec(
+			function (result) { // success
+				cb(result);
+			}, 
+			function (result) { // failure
+				console.log(result);
+				cb(null);
+			}, "com.flow5.facebookconnect", "logout", []);
+	}
+			
+	F5.facebook = {
+		initialize: initialize,
+		login: login,
+		logout: logout
+	};
+}());
