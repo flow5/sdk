@@ -314,7 +314,7 @@ F5.registerModule(function (F5) {
 			}
 
 			function isCluster(node) {
-				return node.transitions || node.children || node.subflows || 
+				return node.transitions || (node.children && Object.keys(node.children).length) || node.subflows || 
 									(node.parent && node.parent.type === 'tabset');
 			}
 

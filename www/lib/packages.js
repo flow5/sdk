@@ -132,65 +132,70 @@
 		preloadImagesRecursive(F5.valueFromId(F5.Resources, pkg));				
 	};		
 	
-	F5.importPackage = function (pkg, cb) {
+	F5.importPackage = function (pkg, cb, url) {
 		if (F5.valueFromId(F5.Flows, pkg)) {
 			cb();
 			return;
 		}
 		
-		var appDomain = F5.appPkg.split('.')[0];
-		var appPkg = F5.appPkg.split('.')[1];
-		
-		var importDomain = pkg.split('.')[0];
-		var importPkg = pkg.split('.')[1];
-		
-		var url = location.href.replace(appDomain, importDomain);
-		
-		if (appPkg && importPkg) {
-			url = url.replace(appPkg, importPkg);
-		} else if (appPkg) {
-			url = url.replace('pkg=' + appPkg, '');
-		} else {
-			url += 'pkg=' + importPkg;		
+		if (!url) {
+			var appDomain = F5.appPkg.split('.')[0];
+			var appPkg = F5.appPkg.split('.')[1];
+
+			var importDomain = pkg.split('.')[0];
+			var importPkg = pkg.split('.')[1];
+
+			url = location.href.replace(appDomain, importDomain);
+
+			if (appPkg && importPkg) {
+				url = url.replace(appPkg, importPkg);
+			} else if (appPkg) {
+				url = url.replace('pkg=' + appPkg, '');
+			} else {
+				url += '&pkg=' + importPkg;		
+			}
+
+			if (url.match('/?')) {
+				// imported packages have to be inlined to be evaluated properly
+				url = url.replace(/inline=[^&]*/, '') + '&inline=true&lib=true';			
+			}			
 		}
-		
-		if (url.match('/?')) {
-			// imported packages have to be inlined to be evaluated properly
-			url = url.replace(/inline=[^&]*/, '') + '&inline=true&lib=true';			
-		}		
-		
+							
+		// TODO: client should provide error callback
 		return F5.doXHR('GET', url, null, 
 			function success(result, status) {
-				var d = document.implementation.createHTMLDocument('');
-				d.documentElement.innerHTML = result;
-				
-				var scripts = d.querySelectorAll('script');
-				F5.forEach(d.head.childNodes, function (el) {
-					document.head.appendChild(el);
-				});
-				F5.forEach(d.body.childNodes, function (el) {
-					document.body.appendChild(el);
-				});
-				
-				// TODO: parse resources
-				
-				F5.scopePackages();
-				F5.forEach(scripts, function (script) {
-					/*jslint evil:true*/
-					eval(script.textContent);
-				});
-				F5.registerPendingModules();
-				F5.parseResources(pkg);
-				if (F5.isDebug()) {
-					F5.parseSchemas(pkg);					
-				}
+				if (status === 200) {
+					var d = document.implementation.createHTMLDocument('');
+					d.documentElement.innerHTML = result;
+
+					var scripts = d.querySelectorAll('script');
+					F5.forEach(d.head.childNodes, function (el) {
+						document.head.appendChild(el);
+					});
+					F5.forEach(d.body.childNodes, function (el) {
+						document.body.appendChild(el);
+					});
+
+					F5.scopePackages();
+					F5.forEach(scripts, function (script) {
+						/*jslint evil:true*/
+						eval(script.textContent);
+					});
+					F5.registerPendingModules();
+					F5.parseResources(pkg);
+					if (F5.isDebug()) {
+						F5.parseSchemas(pkg);					
+					}					
+				} else {
+					console.log('error importing package: ' + pkg + ' status: ' + status + ' result: ' + result);
+				}				
 				
 				if (cb) {
 					cb();
 				}
 			},
 			function error(status) {
-				
+				console.log('error importing package: ' + pkg + ' status: ' + status);				
 			});
 	};	
 }());

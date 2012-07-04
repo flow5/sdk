@@ -294,6 +294,11 @@
 			}
 		};
 		
+		this.deleteNode = function (node) {
+			this.release(node);
+			delete node.parent.children[node.id];
+		};
+		
 		// select the child of node with the given id
 		this.doSelection = function (node, id, cb) {	
 			F5.assert(node.type === 'tabset', 'Can only doSelection on a tabset');
