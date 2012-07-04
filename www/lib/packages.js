@@ -132,10 +132,35 @@
 		preloadImagesRecursive(F5.valueFromId(F5.Resources, pkg));				
 	};		
 	
-	F5.importPackage = function (pkg, cb, url) {
+	F5.importPackage = function (pkg, cb, url, cache) {
 		if (F5.valueFromId(F5.Flows, pkg)) {
 			cb();
 			return;
+		}
+		
+		
+		function parse(result) {
+			var d = document.implementation.createHTMLDocument('');
+			d.documentElement.innerHTML = result;
+
+			var scripts = d.querySelectorAll('script');
+			F5.forEach(d.head.childNodes, function (el) {
+				document.head.appendChild(el);
+			});
+			F5.forEach(d.body.childNodes, function (el) {
+				document.body.appendChild(el);
+			});
+
+			F5.scopePackages();
+			F5.forEach(scripts, function (script) {
+				/*jslint evil:true*/
+				eval(script.textContent);
+			});
+			F5.registerPendingModules();
+			F5.parseResources(pkg);
+			if (F5.isDebug()) {
+				F5.parseSchemas(pkg);					
+			}			
 		}
 		
 		if (!url) {
@@ -160,42 +185,36 @@
 				url = url.replace(/inline=[^&]*/, '') + '&inline=true&lib=true';			
 			}			
 		}
+		
+		var requestHeaders = {};	
+		var cachedResult;				
+		if (cache && localStorage[pkg]) {
+			cachedResult = JSON.parse(localStorage[pkg]);
+			requestHeaders = {'If-None-Match': cachedResult.etag};
+		}
 							
 		// TODO: client should provide error callback
-		return F5.doXHR('GET', url, null, 
-			function success(result, status) {
-				if (status === 200) {
-					var d = document.implementation.createHTMLDocument('');
-					d.documentElement.innerHTML = result;
-
-					var scripts = d.querySelectorAll('script');
-					F5.forEach(d.head.childNodes, function (el) {
-						document.head.appendChild(el);
-					});
-					F5.forEach(d.body.childNodes, function (el) {
-						document.body.appendChild(el);
-					});
-
-					F5.scopePackages();
-					F5.forEach(scripts, function (script) {
-						/*jslint evil:true*/
-						eval(script.textContent);
-					});
-					F5.registerPendingModules();
-					F5.parseResources(pkg);
-					if (F5.isDebug()) {
-						F5.parseSchemas(pkg);					
-					}					
+		F5.doXHR('GET', url, null, 
+			function success(result, status, responseHeaders) {
+				if (status === 304) {
+					parse(cachedResult.result);					
+				} else if (status === 200) {
+					if (cache) {
+						localStorage[pkg] = JSON.stringify({result: result, etag: responseHeaders['ETag']});
+					}										
+					parse(result);
 				} else {
 					console.log('error importing package: ' + pkg + ' status: ' + status + ' result: ' + result);
 				}				
-				
+
 				if (cb) {
 					cb();
 				}
 			},
 			function error(status) {
 				console.log('error importing package: ' + pkg + ' status: ' + status);				
-			});
-	};	
+			},
+			requestHeaders
+		);			
+	};								
 }());

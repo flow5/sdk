@@ -55,31 +55,28 @@
 
 	F5.doXHR = function(method, url, body, success, error, headers, username, password) {				
 		var xhr = new XMLHttpRequest();
-		xhr.open(method, url, true);			
-		if (method === 'POST' || method === 'PUT') {
-			xhr.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
-		}
-
-		if (username && password) {
-			xhr.setRequestHeader("Authorization", 'Basic ' + F5.Base64.encode(username + ':' + password));			
-		}
-
-//		console.log(url);
-//		console.log(body);
-
-		if (headers) {
-			F5.forEach(headers, function (id, value) {
-				xhr.setRequestHeader(id, value);
-			});
-		}
 
 		xhr.onreadystatechange = function (e) {
+//			console.log(xhr.readyState)
 			switch (xhr.readyState) {
 			case xhr.UNSENT:
 //				console.log('XMLHttpRequest.UNSENT');
 				break;
 			case xhr.OPENED:
-//				console.log('XMLHttpRequest.OPENED');				
+//				console.log('XMLHttpRequest.OPENED');							
+				if (method === 'POST' || method === 'PUT') {
+					xhr.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
+				}
+
+				if (username && password) {
+					xhr.setRequestHeader("Authorization", 'Basic ' + F5.Base64.encode(username + ':' + password));			
+				}
+
+				if (headers) {
+					F5.forEach(headers, function (id, value) {
+						xhr.setRequestHeader(id, value);
+					});
+				}			
 				break;
 			case xhr.HEADERS_RECEIVED:
 //				console.log('XMLHttpRequest.HEADERS_RECEIVED');					
@@ -91,11 +88,14 @@
 				if (xhr.status !== 0) {
 					if (success) {
 						var responseHeaders = {};
-						if (headers) {
-							F5.forEach(headers, function (id, value) {
-								responseHeaders[id] =  xhr.getResponseHeader(id);
-							});													
-						}
+						xhr.getAllResponseHeaders().split(/\r\n|\r|\n/).forEach(function (header) {
+							if (header) {
+								var index = header.indexOf(':');
+								var key = header.substring(0, index);
+								var value = header.substring(index + 1).replace(/^\s/, '');
+								responseHeaders[key] = value;								
+							}
+						});
 
 						success(xhr.responseText, xhr.status, responseHeaders);
 					}
@@ -108,7 +108,9 @@
 				break;				
 			}								
 		};
-
+		
+		xhr.open(method, url, true);			
+		
 		// WORKAROUND: it seems that xhr.send can cause pending events to fire with reentrancy
 		// TODO: reference RADAR bug report
 		setTimeout(function () {

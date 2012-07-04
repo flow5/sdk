@@ -118,6 +118,7 @@ F5.registerModule(function (F5) {
 					if (typeof location !== 'undefined') {
 						postMessage(response);
 						setTimeout(function () {
+							localStorage.clear();
 							location.reload();										
 						}, 0);
 					}
