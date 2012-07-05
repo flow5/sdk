@@ -30,8 +30,7 @@
 (function () {	
 					
 	// TODO: this is a bit strange. pass in the newly created F5 Client below
-(function (F5) {
-		
+(function (F5) {		
 	
 	if (F5.isDebug()) {
 		F5.forEach(localStorage, function (id, value) {
@@ -164,7 +163,6 @@
 		}	
 	}	
 
-	window.addEventListener('load', hideAddressBar, false);
 	window.addEventListener('touchstart', hideAddressBar, false);
 		
 	// TODO: use the device block of manifest to avoid the PhoneGap reference
@@ -183,8 +181,15 @@
 		// let the plist specify
 	};
 
-	listener.addEventListener(startEvent, function startHandler(e) {	
-		function startUp() {			
+	listener.addEventListener(startEvent, function startHandler(e) {	       		
+		function startUp() {
+			
+			// set the meta tag programmatically. using the tag in the html causes a white flash
+			// after the startup image for full screen ios webapps
+			var meta = document.createElement('meta');
+			meta.name = 'viewport';
+			meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0';
+			document.head.appendChild(meta);						
 			
 			// also do this after importing a package
 			F5.scopePackages();
@@ -203,24 +208,29 @@
 			F5.addClass(appframeEl, F5.packageClass());
 			
 			var screenframeEl = document.createElement('div');
-			screenframeEl.id = 'f5screen';		
+			screenframeEl.id = 'f5screen';	
+			screenframeEl.style.opacity = 0;	
 			appframeEl.appendChild(screenframeEl);
 			document.body.appendChild(appframeEl);
 
 			setupScreenGeometry(F5.isMobile(), F5.isNative());	
+			
+			hideAddressBar();
 										
 			try {
 				F5.Global.flowController.start(function () {
 					// TODO: extract
 					/*global PhoneGap*/
 					console.log('started');
-					var splash = document.getElementById('f5splash');
-					if (splash) {
-						// TODO: why is the delay required?
-						setTimeout(function () {
-							splash.style.display = 'none';							
-						}, 500);
-					}
+					
+					setTimeout(function () {
+						screenframeEl.style.opacity = '';
+						F5.addTransitionEndListener(screenframeEl, function () {
+							document.body.style['background-image'] = '';							
+							F5.removeTransitionEndListener(screenframeEl);
+						});
+					}, 500);
+					
 					setTimeout(function () {
 						if (typeof PhoneGap !== 'undefined') {
 							// TODO: unify

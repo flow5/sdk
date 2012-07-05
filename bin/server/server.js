@@ -129,7 +129,7 @@ function doBuild(query, req, res) {
 					res.end();												
 				}
 			});
-		} else if (query.frame) {
+		} else if (query.frame === 'true') {
 			html = builder.buildFrame(query);
 			res.writeHead(200, {'Content-Type': 'text/html'});
 			res.write(html);

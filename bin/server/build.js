@@ -757,6 +757,7 @@ exports.buildHtml = function (query, cb) {
 							
 							// pull out stylesheet references. these should be done through the manifest
 							data = data.replace(/<link.*stylesheet[^>]*>/g, '');
+							data = data.replace(/<meta.*viewport[^>]*>/g, '');
 							
 							var fragments = data.split(/(>)/);
 							async.map(fragments, function (fragment, cb) {								
@@ -969,11 +970,12 @@ exports.buildHtml = function (query, cb) {
 		appendMeta({name: 'format-detection', content: 'telephone=no'});
 		// ios
 		appendMeta({'http-equiv': 'Content-Type', content: 'text/html; charset=UTF-8'});
-		appendMeta({name: 'viewport', content: 'width=device-width initial-scale=1.0 maximum-scale=1.0 user-scalable=0'});
+		// this causes a flash when using a home screen webapp on iOS. instead set it programmatically on the client
+//		appendMeta({name: 'viewport', content: 'width=device-width initial-scale=1.0 maximum-scale=1.0 user-scalable=0'});
 
 		// android
 		appendMeta({name: 'viewport', content: 'target-densitydpi=device-dpi'});
-
+		
 		var tasks = [];
 		tasks.push(function (cb) {
 			// TODO: move to function packageInfo()		
@@ -981,6 +983,12 @@ exports.buildHtml = function (query, cb) {
 			var pkgBase = packageBase(pkg);
 
 			parseJSON(pkgBase + manifestName, cb, function (manifest) {
+				if (manifest.meta && manifest.meta.title) {
+					var title = new Element('title');
+					title.innerHTML = manifest.meta.title;
+					document.head.appendChild(title);
+				}				
+				
 				if (manifest.meta && manifest.meta.icon) {
 					appendLink('apple-touch-icon', manifest.meta.icon, null);					
 				}
@@ -989,10 +997,7 @@ exports.buildHtml = function (query, cb) {
 				}		
 				
 				function complete(src) {
-					var splash = new Element('img');
-					splash.id = 'f5splash';
-					splash.setAttribute('src', src);
-					document.body.appendChild(splash);															
+					document.body.setAttribute('style', 'background-image: url(' + src + '); background-size: cover;');
 					cb();																			
 				}
 				if (manifest.meta && manifest.meta.splash) {
