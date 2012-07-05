@@ -267,9 +267,11 @@
 		}
 
 		if (window.applicationCache.status === window.applicationCache.IDLE || 
-			window.applicationCache.status === window.applicationCache.UNCACHED) {
+				window.applicationCache.status === window.applicationCache.UNCACHED || 
+				!F5.connection.online()) {
 			start();			
 		} else {
+			
 			window.applicationCache.addEventListener('noupdate', function (e) {
 				console.log('noupdate');
 				start();

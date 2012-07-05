@@ -33,7 +33,7 @@
 			message += '';
 		}		
 		
-		var alert = F5.createWidget('Alert', {alert: {title: title, message: message}}, 'alert');
+		var alert = F5.createWidget('f5.widgets.Alert', {alert: {title: title, message: message}}, 'alert');
 		alert.widget.setAction(action);
 		alert.widget.present();
 		return alert.widget;
@@ -44,7 +44,7 @@
 			message += '';
 		}		
 		
-		var confirm = F5.createWidget('Confirm', {confirm: {title: title, message: message}}, 'confirm');
+		var confirm = F5.createWidget('f5.widgets.Confirm', {confirm: {title: title, message: message}}, 'confirm');
 		confirm.widget.setAction(action);
 		confirm.widget.present();
 		return confirm.widget;

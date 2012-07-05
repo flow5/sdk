@@ -23,7 +23,8 @@
             "js/navbar_web.js", 
             "js/mapview_web.js",
             "js/webframe_web.js",
-            "js/activity_web.js"
+            "js/activity_web.js",
+            "js/dialogs_web.js"
         ]
     }, 
     "ios": {
@@ -32,14 +33,16 @@
                 "js/navbar_web.js", 
                 "js/mapview_native.js", 
 	            "js/activity_native.js",
-                "js/webframe_native.js"
+                "js/webframe_native.js",
+	            "js/dialogs_native.js"
             ]
         }, 
         "browser": {
             "domscripts": [
                 "js/navbar_web.js", 
                 "js/mapview_web.js",
-	            "js/activity_web.js"
+	            "js/activity_web.js",
+	            "js/dialogs_web.js"	
             ]
         }
     }

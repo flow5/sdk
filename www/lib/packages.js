@@ -134,7 +134,7 @@
 	
 	F5.importPackage = function (pkg, cb, url, cache) {
 		if (F5.valueFromId(F5.Flows, pkg)) {
-			cb();
+			cb(true);
 			return;
 		}
 		
@@ -192,29 +192,37 @@
 			cachedResult = JSON.parse(localStorage[pkg]);
 			requestHeaders = {'If-None-Match': cachedResult.etag};
 		}
-							
-		// TODO: client should provide error callback
-		F5.doXHR('GET', url, null, 
-			function success(result, status, responseHeaders) {
-				if (status === 304) {
-					parse(cachedResult.result);					
-				} else if (status === 200) {
-					if (cache) {
-						localStorage[pkg] = JSON.stringify({result: result, etag: responseHeaders['ETag']});
-					}										
-					parse(result);
-				} else {
-					console.log('error importing package: ' + pkg + ' status: ' + status + ' result: ' + result);
-				}				
-
-				if (cb) {
-					cb();
-				}
-			},
-			function error(status) {
-				console.log('error importing package: ' + pkg + ' status: ' + status);				
-			},
-			requestHeaders
-		);			
+		
+		if (!F5.connection.online()) {
+			if (cachedResult) {
+				parse(cachedResult.result);
+				cb(true);
+			} else {
+				cb(false);
+			}
+		} else {
+			// TODO: client should provide error callback
+			F5.doXHR('GET', url, null, 
+				function success(result, status, responseHeaders) {
+					if (status === 304) {
+						parse(cachedResult.result);	
+						cb(true);				
+					} else if (status === 200) {
+						if (cache) {
+							localStorage[pkg] = JSON.stringify({result: result, etag: responseHeaders['ETag']});
+						}										
+						parse(result);
+						cb(true);
+					} else {
+						cb(false);
+						console.log('error importing package: ' + pkg + ' status: ' + status + ' result: ' + result);
+					}									
+				},
+				function error(status) {
+					console.log('error importing package: ' + pkg + ' status: ' + status);				
+				},
+				requestHeaders
+			);			
+		}										
 	};								
 }());
