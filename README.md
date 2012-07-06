@@ -40,6 +40,11 @@ Then to view the package in a browser:
 e.g.
 
   http://localhost:8008/site/?mobile=true&debug=true&geometry=iphone-portrait&inline=true&frame=true
+  
+  
+To create an iOS native application:
+
+  restart Xcode after installation
 
 
 To view the flow5 source:
