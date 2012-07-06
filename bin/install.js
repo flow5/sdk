@@ -26,9 +26,46 @@
 ***********************************************************************************************************************/
 
 var npm = require('npm'),
-	path = require('path');
+	path = require('path'),
+	exec = require('child_process').exec;
 
 npm.load({}, function () {	
-	npm.commands.config(['set', 'flow5:link_f5', path.resolve(__dirname, '..')]);
-	npm.commands.config(['set', 'flow5:port', '8008']);
+	
+	npm.config.set('flow5:link_f5', path.resolve(__dirname, '..'));
+	npm.config.set('flow5:port', '8008');
+
+	var home = path.dirname(npm.config.get('userconfig'));
+	
+	var domain = home + '/Library/Preferences/com.apple.dt.Xcode';
+	var commandBase = 'defaults write ' + domain + ' ';
+	
+	var buildSettings = commandBase + 'IDEApplicationwideBuildSettings -dict-add FLOW5 "' + process.env.PWD + '/ios"';
+	var displayNames = commandBase + 'IDESourceTreeDisplayNames -dict-add FLOW5 ""';
+	
+	var defaultsCommand = buildSettings + ';' + displayNames;
+		
+	var prefsFile = domain + '.plist';
+	var ownerCommand = 'stat -f "%Su" ' + prefsFile;
+	
+	
+	exec(ownerCommand, function (error, owner, stderr) {
+		if (error) {
+			console.log('error configuring flow5 for Xcode: ' + error);
+		} else {
+			exec(defaultsCommand, function (error, stdout, stderr) {
+					if (error) {
+						console.log('error configuring flow5 for Xcode: ' + error);
+					} else {
+						var chownCommand = 'chown ' + owner.replace(/\s/, '') + ' ' + prefsFile;
+						exec(chownCommand, function (error, owner, stderr) {
+							if (error) {
+								console.log('error configuring flow5 for Xcode: ' + error);								
+							}
+						});
+					}
+				}
+			);
+			
+		}
+	});
 });

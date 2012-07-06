@@ -6,6 +6,8 @@ Flow5 requires
 
 To install the flow5 sdk:
 
+  Quit Xcode if running
+  
   $ sudo npm install --global flow5
   
 or
@@ -42,15 +44,24 @@ e.g.
   http://localhost:8008/site/?mobile=true&debug=true&geometry=iphone-portrait&inline=true&frame=true
   
   
-To create an iOS native application:
-
-  restart Xcode after installation
-
-
 To view the flow5 source:
 
   $ npm explore --global flow5
   $ open .
+  
+  
+To create a native application:
+
+  $ npm explore --global flow5
+  $ cp -r ios/f5template path-to-your-project
+  
+  
+To uninstall flow5
+
+  $ npm uninstall --global flow5
+  
+  In Xcode Preferences:Locations:SourceTrees remove the FLOW5 entry
+  
   
 
 	

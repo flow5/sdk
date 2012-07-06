@@ -29,6 +29,6 @@ var npm = require('npm'),
 	path = require('path');
 
 npm.load({}, function () {	
-	npm.commands.config(['delete', 'flow5:link_f5']);
-	npm.commands.config(['delete', 'flow5:port']);
+	npm.config.del('flow5:link_f5');
+	npm.config.del('flow5:port');
 });

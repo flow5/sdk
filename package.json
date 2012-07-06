@@ -2,6 +2,7 @@
   "name": "flow5",
   "version": "0.1.11",
   "description": "framework and toolset for developing mobile apps and webapps",
+  "preferGlobal": true,
   "keywords": [
     "ios",
     "iphone",
