@@ -213,7 +213,19 @@
 				console.log('start complete');
 			};
 						
-			F5.Global.flow.initialize(F5.appPkg, F5.valueFromId(F5.Flows, F5.appPkg));
+			var stateKey = F5.appPkg + '_state';
+			if (localStorage[stateKey]) {
+				var packageListKey = F5.appPkg + '_packages';
+				if (localStorage[packageListKey]) {
+					JSON.parse(localStorage[packageListKey]).forEach(function (pkg) {
+						var contents = JSON.parse(localStorage[pkg]).result;
+						F5.parsePackage(pkg, contents);
+					});
+				}
+				F5.Global.flow.initialize(F5.appPkg, JSON.parse(localStorage[stateKey]));								
+			} else {
+				F5.Global.flow.initialize(F5.appPkg, F5.valueFromId(F5.Flows, F5.appPkg));				
+			}
 			
 			// TODO: sloppy. why isn't initialize part of observer?
 			if (F5.Global.viewController) {

@@ -30,6 +30,19 @@
 	
 	function Flow() {
 		
+		this.getNodeFromPath = function (path, root) {
+			function getChildRecursive(node, components) {
+				if (components.length && components[0]) {
+					var child = node.children[components[0]];
+					F5.assert(child, 'Bad path');
+					return getChildRecursive(child, components.slice(1));
+				} else {
+					return node;
+				}
+			}
+			return getChildRecursive(root || this.root, path.split('-').slice(1));
+		};	
+				
 		this.importNode = function (id, flowspec, parent, pkg) {
 			var that = this;
 
@@ -48,6 +61,8 @@
 							type: nodeSpec.type, 
 							parent: parent,
 							spec: nodeSpec,
+							pkg: nodeSpec.pkg,
+							animation: nodeSpec.animation,
 							active: nodeSpec.active};
 							
 				node.data = F5.createModel().initialize(node, nodeSpec.schema);
@@ -104,6 +119,19 @@
 
 				return node;
 			}	
+			
+			function resolveBackNodesRecurive(node, root) {
+				if (node.spec.back) {
+					node.back = that.getNodeFromPath(node.spec.back, root);
+				}
+				
+				// recurse
+				if (node.children) {
+					F5.forEach(node.children, function (id, child) {
+						resolveBackNodesRecurive(child, root);
+					});
+				}				
+			}
 
 			function resolveTransitionsRecursive(node) {								
 
@@ -194,6 +222,9 @@
 
 			// resolve transitions
 			resolveTransitionsRecursive(node);								
+
+			// resolve back nodes
+			resolveBackNodesRecurive(node, node);								
 		
 			// remove the cached specs
 			removeSpecsRecursive(node);
@@ -216,12 +247,14 @@
 				return {parent: true,
 						selection: true,
 						node: true,
-						to: true,
-						back: true}[id];		
+						to: true}[id];		
 			}
 						
 			function replacer(key, value) {
-				if (isReference(key)) {
+				if (key === 'back') {
+					return value && value.path;
+				}
+				else if (isReference(key)) {
 					// break cycles by writing reference ids
 					return value && value.id;
 				} else if (!value || 

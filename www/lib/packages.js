@@ -130,39 +130,38 @@
 			});			
 		}
 		preloadImagesRecursive(F5.valueFromId(F5.Resources, pkg));				
-	};		
+	};	
+	
+	F5.parsePackage = function (pkg, contents) {
+		var d = document.implementation.createHTMLDocument('');
+		d.documentElement.innerHTML = contents;
+
+		var scripts = d.querySelectorAll('script');
+		F5.forEach(d.head.childNodes, function (el) {
+			document.head.appendChild(el);
+		});
+		F5.forEach(d.body.childNodes, function (el) {
+			document.body.appendChild(el);
+		});
+
+		F5.scopePackages();
+		F5.forEach(scripts, function (script) {
+			/*jslint evil:true*/
+			eval(script.textContent);
+		});
+		F5.registerPendingModules();
+		F5.parseResources(pkg);
+		if (F5.isDebug()) {
+			F5.parseSchemas(pkg);					
+		}
+	};
 	
 	F5.importPackage = function (pkg, cb, url, cache) {
 		if (F5.valueFromId(F5.Flows, pkg)) {
 			cb(true);
 			return;
 		}
-		
-		
-		function parse(result) {
-			var d = document.implementation.createHTMLDocument('');
-			d.documentElement.innerHTML = result;
-
-			var scripts = d.querySelectorAll('script');
-			F5.forEach(d.head.childNodes, function (el) {
-				document.head.appendChild(el);
-			});
-			F5.forEach(d.body.childNodes, function (el) {
-				document.body.appendChild(el);
-			});
-
-			F5.scopePackages();
-			F5.forEach(scripts, function (script) {
-				/*jslint evil:true*/
-				eval(script.textContent);
-			});
-			F5.registerPendingModules();
-			F5.parseResources(pkg);
-			if (F5.isDebug()) {
-				F5.parseSchemas(pkg);					
-			}			
-		}
-		
+						
 		if (!url) {
 			var appDomain = F5.appPkg.split('.')[0];
 			var appPkg = F5.appPkg.split('.')[1];
@@ -195,7 +194,7 @@
 		
 		if (!F5.connection.online()) {
 			if (cachedResult) {
-				parse(cachedResult.result);
+				F5.parsePackage(pkg, cachedResult.result);
 				cb(true);
 			} else {
 				cb(false);
@@ -205,13 +204,19 @@
 			F5.doXHR('GET', url, null, 
 				function success(result, status, responseHeaders) {
 					if (status === 304) {
-						parse(cachedResult.result);	
+						F5.parsePackage(pkg, cachedResult.result);	
 						cb(true);				
 					} else if (status === 200) {
 						if (cache) {
+							var packageListKey = F5.appPkg + '_packages';
+							var pkgList = localStorage.packageList ? JSON.parse(localStorage[packageListKey]) : [];
+							if (pkgList.indexOf(pkg) === -1) {
+								pkgList.push(pkg);
+							}
+							localStorage[packageListKey] = JSON.stringify(pkgList);
 							localStorage[pkg] = JSON.stringify({result: result, etag: responseHeaders['ETag']});
 						}										
-						parse(result);
+						F5.parsePackage(pkg, result);
 						cb(true);
 					} else {
 						cb(false);

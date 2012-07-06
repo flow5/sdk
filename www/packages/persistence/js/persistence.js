@@ -24,25 +24,13 @@
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
-/*global F5*/
+/*global F5, PhoneGap*/
 
-(function () {
-	F5.Flow.isSubflowActive = function (node) {
-		while (!node.activeSubflow && node.parent) {
-			node = node.parent;
+F5.registerModule(function (F5) {
+	
+	F5.Global.flowController.addFlowObserver({
+		update: function () {
+			localStorage[F5.appPkg + '_state'] = F5.Global.flow.toJSON(F5.Global.flow.root);
 		}
-		return node.activeSubflow;
-	};
-
-	// NOTE: only works for nodes with selection
-	F5.Flow.getActiveLeafNode = function () {
-		var node = this.root;
-		while (node.selection) {
-			node = node.selection;
-		}
-		if (node.activeSubflow) {
-			node = node.activeSubflow;
-		}
-		return node;
-	};		
-}());
+	});
+});

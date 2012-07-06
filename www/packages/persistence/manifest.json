@@ -1,0 +1,7 @@
+{
+    "all": {
+        "domscripts": [
+            "js/persistence.js"
+        ]
+    }
+}
