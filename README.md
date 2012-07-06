@@ -1,22 +1,53 @@
-Flow5 includes a set of command line tools. To get access to these tools you should either install globally 
-(which will add aliases) or install locally and add:
+Flow5 requires 
 
-	export PATH=$PATH:node_modules/.bin:~/node_modules/.bin
-	
-(or equivalent) to your shell configuration
+* nodejs >= v0.6.15 
+* npm >= v1.0
 
-To install locally (no sudo required)
 
-	npm install flow5
+To install the flow5 sdk:
 
-To install globally
+  $ sudo npm install --global flow5
+  
+or
 
-	sudo npm install --global flow5
-	
-	
-Then
+  $ git clone git://github.com/flow5/sdk.git
+  $ sudo npm install --global sdk
+  
+  
+To install the flow5 site/tutorial package:
 
-  f5 start
+  $ git clone git://github.com/flow5/site.git
+
+
+To link a package to the flow5 development server:
+
+  $ f5 link package-name path-to-package
+  
+e.g.
+
+  $ cd site
+  $ f5 link site .
+
+  
+To start the flow5 development server:
+
+  $ f5 start
+
+Then to view the package in a browser:
+
+  http://localhost:8008/package-name/?mobile=true&debug=true&geometry=iphone-portrait&inline=true&frame=true
+  
+e.g.
+
+  http://localhost:8008/site/?mobile=true&debug=true&geometry=iphone-portrait&inline=true&frame=true
+
+
+To view the flow5 source:
+
+  $ npm explore --global flow5
+  $ open .
+  
+
 	
 	
 

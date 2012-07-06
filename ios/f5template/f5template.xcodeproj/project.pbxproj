@@ -322,7 +322,7 @@
 			);
 			name = f5framework;
 			path = ../f5framework;
-			sourceTree = "<group>";
+			sourceTree = SOURCE_ROOT;
 		};
 		BEA63D6C15938C150052BA3A /* 3p */ = {
 			isa = PBXGroup;
