@@ -29,10 +29,16 @@ var npm = require('npm'),
 	path = require('path'),
 	exec = require('child_process').exec;
 
-npm.load({}, function () {	
+npm.load({}, function (err, npm) {	
 	
-	npm.config.set('flow5:link_f5', path.resolve(__dirname, '..'));
-	npm.config.set('flow5:port', '8008');
+	npm.commands.config(['set', 'flow5:link_f5', path.resolve(__dirname, '..')], function () {
+		
+	});
+	npm.commands.config(['set', 'flow5:port', '8008'], function () {
+		
+	});	
+//	npm.config.set('flow5:link_f5', path.resolve(__dirname, '..'));
+//	npm.config.set('flow5:port', '8008');
 
 	var home = path.dirname(npm.config.get('userconfig'));
 	

@@ -31,4 +31,10 @@ var npm = require('npm'),
 npm.load({}, function () {	
 	npm.config.del('flow5:link_f5');
 	npm.config.del('flow5:port');
+	
+//	var buildSettings = commandBase + 'IDEApplicationwideBuildSettings -dict-add FLOW5 "' + process.env.PWD + '/ios"';
+//	var displayNames = commandBase + 'IDESourceTreeDisplayNames -dict-add FLOW5 ""';
+	
+//	var defaultsCommand = buildSettings + ';' + displayNames;
+	
 });
