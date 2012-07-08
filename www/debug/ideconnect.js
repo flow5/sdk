@@ -71,6 +71,7 @@ F5.registerModule(function (F5) {
 		}
 
 		this.update = update;
+		this.refresh = update;
 
 		socket.on('message', function (message) {						
 //			console.log(message)
@@ -166,41 +167,3 @@ F5.registerModule(function (F5) {
 		});
 	};
 });
-
-
-
-/*
-// this highjacks the delegates allowing a listener to track all lifecycle events
-// should use flowDelegates though I think
-F5.View.getViewDelegatePrototype = function (id) {
-	var prototype = F5.getPrototype('ViewDelegates', id);
-	function Wrapper() {
-		var that = this;
-		[
-			'initialize', 
-			'viewDidBecomeActive',
-			'viewWillBecomeActive',
-			'viewWillBecomeInactive',
-			'viewDidBecomeInactive',
-			'release'			
-		].forEach(function (event) {				
-			that[event] = function () {
-				var message = {
-					path: this.node.path,
-					event: event
-				};
-				F5.execService(null, 'f5.devserv.talk', {
-											clientid: clientid, 
-											channel: F5.appPkg + '.listener',
-											message: message}, F5.noop);
-				if (prototype && prototype[event]) {
-					prototype[event].call(this);					
-				}					
-			};
-		});
-	}
-	Wrapper.prototype = prototype;
-
-	return new Wrapper();
-};
-*/

@@ -600,11 +600,11 @@ F5.registerModule(function(F5) {
 			
 			this.initialized = false;				
 			
-			// set height to 0px so that the OS doesn't try to page in the large div
+			// set height to 100% so that the OS doesn't try to page in the large div
 			if (this.horizontal) {
-				this.el.style.width = '0px';				
+				this.el.style.width = '100%';				
 			} else {
-				this.el.style.height = '0px';				
+				this.el.style.height = '100%';				
 			}			
 		};
 	}

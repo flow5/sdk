@@ -114,6 +114,10 @@
 					el.widget.release();
 				}
 			});
+			
+			if (node.view.delegate && node.view.delegate.release) {
+				node.view.delegate.release();
+			}
 
 			F5.removeTouchEventListenersRecursive(node.view.el);
 			node.view.el.parentElement.removeChild(node.view.el);
