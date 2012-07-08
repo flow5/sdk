@@ -133,11 +133,14 @@
 				}				
 			}
 
-			function resolveTransitionsRecursive(node) {								
-
+			function resolveTransitionsRecursive(node) {	
+				
 				if (node.spec.transitions) {
 					node.transitions = {};
-					F5.forEach(node.spec.transitions, function (transition) {
+					F5.forEach(node.spec.transitions, function (arg1, arg2) {
+						// handle both the case of an array or an object
+						var transition = typeof arg2 === 'object' && arg2 || arg1;
+						
 						var id;
 						if (typeof transition === 'object') {
 							if (transition.id) {

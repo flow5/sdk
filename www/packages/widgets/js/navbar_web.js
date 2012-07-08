@@ -120,7 +120,7 @@ F5.registerModule(function (F5) {
 					} else {
 						var same = true;
 						F5.forEach(a, function (id, value) {
-							if (same && id !== 'action') {
+							if (same && id !== 'action' && id !== 'node') {
 								if (id === 'node') {
 									same = a.node === b.node;
 								} else {
@@ -129,7 +129,7 @@ F5.registerModule(function (F5) {
 							}
 						});						
 						F5.forEach(b, function (id, value) {
-							if (same && id !== 'action') {
+							if (same && id !== 'action' && id !== 'node') {
 								if (id === 'node') {
 									same = b.node === a.node;
 								} else {

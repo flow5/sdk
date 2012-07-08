@@ -678,7 +678,7 @@ F5.registerModule(function (F5) {
 						if (isCluster(toNode)) {
 							head = makeClusterLabel(toNode.path);
 
-							while (toNode.children) {
+							while (toNode.children && Object.keys(toNode.children).length) {
 								toNode = getAProperty(toNode.children);
 							}
 							toPath = toNode.path;

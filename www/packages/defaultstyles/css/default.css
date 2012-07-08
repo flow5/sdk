@@ -51,7 +51,7 @@ body {
 
 .f5navbar .f5leftbutton, .f5navbar .f5rightbutton {
 	position: absolute;
-	top: .08em;
+	top: .07em;
 	display: -webkit-box;
 	-webkit-box-pack: center;
 	-webkit-box-align: center;
@@ -82,7 +82,7 @@ body {
 }
 
 .f5navbar .f5button-label {
-	font-size: .15em;
+	font-size: .16em;
 }
 
 .f5navbar .f5leftbutton {
@@ -95,7 +95,7 @@ body {
 
 .f5navbar .f5title {
 	font-family: arial;
-	font-size: .16em;
+	font-size: .24em;
 	padding:.16em;
 }
 
