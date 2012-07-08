@@ -194,10 +194,10 @@ F5.registerModule(function (F5) {
 		};
 		
 		this.widgetWillBecomeActive = function () {
-			if (!this.detents) {
+			if (this.initialized && !this.detents) {
 				this.refresh();
-				var that = this;
 			}
+			Carousel.prototype.widgetWillBecomeActive.call(this);
 		};
 		
 		this.getDetent = function () {

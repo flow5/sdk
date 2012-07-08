@@ -173,6 +173,7 @@ function Form() {
 	
 	this.widgetWillBecomeInactive = function () {
 		this.blur();
+		Form.prototype.widgetWillBecomeInactive.call(this);		
 	};
 	
 	this.getFormData = function () {

@@ -354,36 +354,7 @@ F5.registerModule(function(F5) {
 			
 			this.scrollToTopFunction = function () {
 				that.scrollTo(0);
-			};			
-			
-			function moveHandlerWrapper(e) {
-				moveHandler(that, e);
-			}
-
-			function stopHandlerWrapper(e) {
-				if (!F5.isTouchDevice()) {		
-					window.removeEventListener('mouseup', stopHandlerWrapper);
-					window.removeEventListener('mousemove', moveHandlerWrapper);							
-				}
-				F5.removeTouchStopListener(that.el.parentElement, stopHandlerWrapper);				
-				F5.removeTouchMoveListener(that.el.parentElement, moveHandlerWrapper);				
-				stopHandler(that, e);
-			}			
-			
-			F5.addTouchStartListener(this.el.parentElement, function (e) {
-				if (!that.enabled) {
-					return;
-				}
-				
-				startHandler(that, e);
-				// makes the scroller play nice in a desktop browser
-				if (!F5.isTouchDevice()) {
-					window.addEventListener('mouseup', stopHandlerWrapper);
-					window.addEventListener('mousemove', moveHandlerWrapper);
-				}
-				F5.addTouchStopListener(that.el.parentElement, stopHandlerWrapper);			
-				F5.addTouchMoveListener(that.el.parentElement, moveHandlerWrapper);
-			});
+			};								
 									
 			doTransform(this, this.staticOffset);
 		};
@@ -509,10 +480,46 @@ F5.registerModule(function(F5) {
 		};
 				
 		this.widgetWillBecomeActive = function () {
+			var that = this;
+			
 			if (!this.initialized) {
 				this.refresh();
 				this.initialized = true;				
+			}		
+			
+			function moveHandlerWrapper(e) {
+				moveHandler(that, e);
+			}
+
+			function stopHandlerWrapper(e) {
+				if (!F5.isTouchDevice()) {		
+					window.removeEventListener('mouseup', that.stopHandlerWrapper);
+					window.removeEventListener('mousemove', that.moveHandlerWrapper);	
+					
+					delete that.stopHandlerWrapper;
+					delete that.moveHandlerWrapper;	
+				}
+				F5.removeTouchStopListener(that.el.parentElement);				
+				F5.removeTouchMoveListener(that.el.parentElement);				
+				stopHandler(that, e);
 			}			
+			
+			F5.addTouchStartListener(this.el.parentElement, function (e) {
+				if (!that.enabled) {
+					return;
+				}
+				
+				startHandler(that, e);
+				// makes the scroller play nice in a desktop browser
+				if (!F5.isTouchDevice()) {
+					that.stopHandlerWrapper = stopHandlerWrapper;
+					that.moveHandlerWrapper = moveHandlerWrapper;
+					window.addEventListener('mouseup', that.stopHandlerWrapper);
+					window.addEventListener('mousemove', that.moveHandlerWrapper);
+				}
+				F5.addTouchStopListener(that.el.parentElement, stopHandlerWrapper);			
+				F5.addTouchMoveListener(that.el.parentElement, moveHandlerWrapper);
+			});				
 		};				
 				
 		this.widgetDidBecomeActive = function () {
@@ -526,6 +533,17 @@ F5.registerModule(function(F5) {
 			finishScrolling(this);
 			window.removeEventListener('orientationchange', this.refreshFunction);			
 			document.removeEventListener('f5StatusBarTouched', this.scrollToTopFunction);
+			
+			if (!F5.isTouchDevice()) {		
+				window.removeEventListener('mouseup', this.stopHandlerWrapper);
+				window.removeEventListener('mousemove', this.moveHandlerWrapper);	
+				
+				delete this.stopHandlerWrapper;
+				delete this.moveHandlerWrapper;	
+			}
+			F5.removeTouchStartListener(this.el.parentElement);
+			F5.removeTouchStopListener(this.el.parentElement);				
+			F5.removeTouchMoveListener(this.el.parentElement);							
 		};
 		
 		this.widgetDidBecomeInactive = function () {
