@@ -642,6 +642,10 @@ F5.registerModule(function(F5) {
 			this.widgetWillBecomeActive = function () {
 				this.el.parentElement.style.overflow = 'scroll';												
 			};
+
+			this.widgetWillBecomeInactive = function () {
+
+			};
 			
 			this.staticOffset = 0;
 			
