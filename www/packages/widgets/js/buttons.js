@@ -32,6 +32,8 @@ F5.registerModule(function (F5) {
 		
 		this.initialize = function (data) {
 			this.data = data || {};
+			
+			this.setAction(F5.noop);
 		};
 		
 		/* true=down, false=up */	
@@ -60,6 +62,8 @@ F5.registerModule(function (F5) {
 		
 		this.setAction = function (cb) {
 			var that = this;
+			
+			this.unsetAction();
 			
 			function press() {
 				F5.addClass(that.el, that.data.press || 'f5button-press');
@@ -156,11 +160,13 @@ F5.registerModule(function (F5) {
 			delete this.label;			
 		};
 					
-		this.initialize = function (data) {	
+		this.initialize = function (data) {				
 			this.labelText = this.el.textContent;
 			this.el.innerHTML = '';
 											
 			this.refresh(data);
+			
+			this.setAction(F5.noop);
 		};
 		
 		this.refresh = function (data) {

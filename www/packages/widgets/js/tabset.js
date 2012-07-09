@@ -35,6 +35,8 @@ F5.registerModule(function(F5) {
 		/* for tab button, the state is managed by the owning tabset */
 		this.setAction = function (cb) {
 			var that = this;
+			this.unsetAction();
+			
 			F5.addTouchStartListener(this.el, function touchStartListenerCb(e) {
 				e.stopPropagation();
 				if (!that.state) {

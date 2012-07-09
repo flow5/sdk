@@ -283,6 +283,9 @@
 			waitTasks.push(task);
 		};
 		
+		// TODO: handle the case of importNode being called outside a lifecycle event? 
+		// e.g., a view might call importNode in response to a click. In that case the node
+		// would not be called with WillBecomeActive/DidBecomeActive
 		this.importNode = function (id, flowspec, parent, pkg, cb) {
 			var lifecycleEvent = F5.lifecycleEvent;
 
@@ -297,7 +300,16 @@
 					if (lifecycleEvent === 'WillBecomeActive' || lifecycleEvent === 'DidBecomeActive') {
 						nodeWillBecomeActive(node, function () {				
 							if (lifecycleEvent === 'DidBecomeActive') {
-								nodeDidBecomeActive(node, complete);
+								nodeDidBecomeActive(node, function () {
+									flushWaitTasks(function () {
+										flowObservers.forEach(function (observer) {									
+											if (observer.update) {
+												observer.update();
+											}
+										});								
+										complete();
+									});									
+								});
 							} else {
 								complete();
 							}
