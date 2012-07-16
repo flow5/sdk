@@ -29,7 +29,15 @@
 
 F5.registerModule(function (F5) {		
 	F5.Services.s3 = {
-		baseUrl: 'flow5.local:8008/f5/',
+		baseUrl: 'flow5.local:8009/',
 		extendedUrl: 's3'
+	};
+	F5.Services.authenticate = {
+		baseUrl: 'flow5.local:8009/',
+		extendedUrl: 'authenticate'
+	};
+	F5.Services.verify = {
+		baseUrl: 'flow5.local:8009/',
+		extendedUrl: 'verify'		
 	};
 });

@@ -87,6 +87,23 @@ F5.registerModule(function (F5) {
 		
 		this.viewDidBecomeActive = function () {
 			this.update();
+			
+			var parameters = F5.parseUrlParameters();
+			if (parameters['openid.identity']) {
+				parameters.url = location.origin + location.pathname;
+				F5.execService(this.node, 'verify', parameters,
+					function success(result, status) {
+						if (result.status === 'ok') {
+							F5.alert('Welcome', result.authentication.email);
+						} else {
+							F5.alert('Sorry', 'Authentication Failed');
+						}
+						console.log(result);
+					},
+					function error(status) {
+						console.log(status);
+					});				
+			}	
 		};
 	}
 	
@@ -698,7 +715,12 @@ F5.registerModule(function (F5) {
 
 				var content = formData.data;
 				F5.execService(that.node, 's3', 
-					{method: 'PUT', resourceName:'up/' + formData.resource, contentType: 'text/plain', contentSize: content.length},
+					{
+						method: 'PUT', 
+						resourceName:'up/' + formData.resource, 
+						contentType: 'text/plain', 
+						contentSize: content.length
+					},
 					function success(result, status) {
 						result.body = content;
 						iframe.contentWindow.postMessage(result, '*');
@@ -717,6 +739,22 @@ F5.registerModule(function (F5) {
 					}, 
 					function error(status) {
 						
+					});				
+			});
+			
+			this.widgets.authorize.setAction(function () {
+				F5.execService(that.node, 'authenticate', 
+					{
+						provider: 'google',
+						url: location.origin + location.pathname
+					}, 
+					function success(result, status) {
+//						console.log(result);
+						// load the auth page
+						location.href = result.authUrl;
+					},
+					function error(status) {
+						console.log('error');
 					});				
 			});
 		};

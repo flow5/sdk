@@ -235,7 +235,24 @@
 				F5.doWidgetLifecycleEventRecursive(childEl, event);
 			}
 		});					
-	};				
+	};		
+	
+	F5.parseUrlParameters = function (url) {
+		url = url || location.href;
+		
+		var parameters = {};
+		
+		var search = url.split('?')[1];
+		if (search) {
+			search.split('&').forEach(function (param) {
+				var key = param.split('=')[0];
+				var value = param.split('=')[1];
+				parameters[key] = decodeURIComponent(value);
+			});
+		}		
+		
+		return parameters;
+	};	
 }());
 
 
