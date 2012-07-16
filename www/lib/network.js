@@ -65,7 +65,9 @@
 			case xhr.OPENED:
 //				console.log('XMLHttpRequest.OPENED');							
 				if (method === 'POST' || method === 'PUT') {
-					xhr.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
+					if (!headers || !headers['Content-Type']) {
+						xhr.setRequestHeader('Content-Type', 'application/json; charset=utf-8');						
+					}
 				}
 
 				if (username && password) {

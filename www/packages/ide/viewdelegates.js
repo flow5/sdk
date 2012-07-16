@@ -90,34 +90,6 @@ F5.registerModule(function (F5) {
 		};
 	}
 	
-	function Config() {
-		this.initialize = function () {
-			var that = this;
-			this.widgets.form.setOnSubmit(function () {
-				var data = that.widgets.form.getFormData();
-				var parameters = [];
-				F5.forEach({
-					debug: true,
-					inline: false,
-					compress: false,
-					platform: 'ios',
-					mobile: true,
-					native: false,
-					pkg: data.pkg,
-					console: true
-				}, function (id, value) {
-					parameters.push(id + '=' + value);
-				});
-				
-				var url = location.protocol + '//' + location.host + '/generate?' + parameters.join('&');	
-				console.log(url);			
-				window.open(url, data.pkg);	
-				
-				location.href = location.protocol + '//' + location.host + '/ide?app=' + data.pkg;			
-			});
-		};
-	}
-
 	function Model() {
 
 		this.initialize = function () {
@@ -706,13 +678,85 @@ F5.registerModule(function (F5) {
 			digraphFinish();
 
 			return result;			
-		};
-
-		
+		};		
 	}	
+	
+	
+	function Test() {
+		this.initialize = function () {
+			var that = this;
+			
+			var iframe = this.el.querySelector('iframe');
+			
+			window.addEventListener('message', function (e) {
+				that.widgets.data.setValue(e.data);
+				console.log(e.data);
+			});			
+			
+			this.widgets.put.setAction(function () {
+				var formData = that.widgets.form.getFormData();
+
+				var content = formData.data;
+				F5.execService(that.node, 's3', 
+					{method: 'PUT', resourceName:'up/' + formData.resource, contentType: 'text/plain', contentSize: content.length},
+					function success(result, status) {
+						result.body = content;
+						iframe.contentWindow.postMessage(result, '*');
+					}, 
+					function error(status) {
+						
+					});
+			});
+
+			this.widgets.get.setAction(function () {
+				var formData = that.widgets.form.getFormData();
+
+				F5.execService(that.node, 's3', {method: 'GET', resourceName:'up/' + formData.resource},
+					function success(result, status) {
+						iframe.contentWindow.postMessage(result, '*');
+					}, 
+					function error(status) {
+						
+					});				
+			});
+		};
+	}
 
 	F5.Prototypes.ViewDelegates.root = new Root();
-	F5.Prototypes.ViewDelegates.config = new Config();
 	F5.Prototypes.ViewDelegates.model = new Model();
 	F5.Prototypes.ViewDelegates.graph = new Graph();					
+	F5.Prototypes.ViewDelegates.test = new Test();
 });	
+
+
+
+/*
+function Config() {
+	this.initialize = function () {
+		var that = this;
+		this.widgets.form.setOnSubmit(function () {
+			var data = that.widgets.form.getFormData();
+			var parameters = [];
+			F5.forEach({
+				debug: true,
+				inline: false,
+				compress: false,
+				platform: 'ios',
+				mobile: true,
+				native: false,
+				pkg: data.pkg,
+				console: true
+			}, function (id, value) {
+				parameters.push(id + '=' + value);
+			});
+			
+			var url = location.protocol + '//' + location.host + '/generate?' + parameters.join('&');	
+			console.log(url);			
+			window.open(url, data.pkg);	
+			
+			location.href = location.protocol + '//' + location.host + '/ide?app=' + data.pkg;			
+		});
+	};
+}
+
+*/

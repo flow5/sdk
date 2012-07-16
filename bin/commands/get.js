@@ -31,9 +31,9 @@ exports.options = {
 	debug: ['d', 'debug', 'boolean', false],
 	platform: ['p', 'platform', 'string', 'ios'],
 	native: ['n', 'native', 'boolean', false],
-	inline: ['i', 'inline', 'boolean', true],
-	compress: ['c', 'compress', 'boolean', true],
-	mobile: ['m', 'mobile', 'boolean', true],
+	inline: ['i', 'inline', 'boolean', false],
+	compress: ['c', 'compress', 'boolean', false],
+	mobile: ['m', 'mobile', 'boolean', false],
 	headless: ['h', 'headless', 'boolean', false],
 	manifest: ['X', 'generate the cache manifest', 'boolean', false],
 	cache: ['x', 'generate the cache.manifest header', 'boolean', false],
@@ -65,6 +65,7 @@ exports.exec = function (args, options, cli) {
 		cache: JSON.stringify(options.cache),
 		lib: JSON.stringify(options.lib)
 	};
+
 	npm.load({}, function () {	
 		var method = options.manifest ? 'buildCacheManifest' : 'buildHtml';
 		builder[method](query, function (err, html) {

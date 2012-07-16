@@ -15,7 +15,8 @@
 		],
 		"scripts": [
 			"json.js",
-			"viewdelegates.js"
+			"viewdelegates.js",
+			"services.js"
 		],
 		"resources": [
 			"data.json"

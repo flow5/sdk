@@ -522,7 +522,7 @@ exports.buildScript = function (query, cb) {
 
 	var tasks = [];
 	
-	if (!query.lib) {
+	if (!bool(query.lib)) {
 		tasks.push(function (cb) {
 			var path = f5Base + 'lib/f5.js';
 			script += '// ' + path + '\n';		
@@ -539,7 +539,7 @@ exports.buildScript = function (query, cb) {
 		injectManifest(pkg, cb);		
 	});
 			
-	if (!query.lib) {
+	if (!bool(query.lib)) {
 		tasks.push(function (cb) {
 			var path = f5Base + 'lib/register.js';
 			script += '// ' + path + '\n';		
@@ -1076,7 +1076,7 @@ exports.buildHtml = function (query, cb) {
 	
 	var tasks = [];
 					
-	if (!query.lib) {
+	if (!bool(query.lib)) {
 		tasks.push(function (cb) {
 			injectHeader(pkg, cb);
 		});
@@ -1088,7 +1088,7 @@ exports.buildHtml = function (query, cb) {
 	});																				
 					
 	// finally		
-	if (!query.lib) {
+	if (!bool(query.lib)) {
 		tasks.push(injectFooter);
 	}		
 	

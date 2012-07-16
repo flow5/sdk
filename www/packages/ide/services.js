@@ -1,4 +1,4 @@
-<!--
+/***********************************************************************************************************************
 
 	Copyright (c) 2012 Paul Greyson
 
@@ -23,32 +23,13 @@
 	FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR 
 	OTHER DEALINGS IN THE SOFTWARE.
 
--->
+***********************************************************************************************************************/
+/*global F5*/
 
-<div id='root-header'>
-	<div f5widget='f5.widgets.Button' f5id='backbutton' class='backbutton'>&larr;</div>
-	<div f5widget='f5.widgets.Button' f5id='refreshbutton'>Refresh</div>				
-	<div f5widget='f5.widgets.Button' f5id='resetbutton'>Reset</div>				
-	<div f5widget='f5.widgets.Button' f5id='framesbutton'>Frames</div>				
-	<!--div f5widget='f5.Button' f5id='menubutton'>HW Menu</div-->	
-</div>
 
-<div id='root-footer' f5widget='f5.widgets.Tabset' f5id='tabset'></div>
-
-<div id='model'>
-	<div f5id='json' class='json'></div>
-</div>
-
-<div id='graph' f5widget='f5.widgets.Tracker'>
-	<div f5id='svg' class='svg'></div>
-</div>
-
-<div id='test'>
-  <iframe src='http://s3.amazonaws.com/www.flow5.com/s3xs.html' style='display:none'></iframe>
-	<div f5widget='f5.widgets.Form' f5id='form'>
-	  <div f5widget='f5.widgets.Button' f5id='put'>PUT</div>
-	  <div f5widget='f5.widgets.Button' f5id='get'>GET</div>
-		<div f5widget='f5.widgets.Input' f5id='resource'></div>
-		<div f5widget='f5.widgets.Input' f5id='data'></div>
-	</div>
-</div>
+F5.registerModule(function (F5) {		
+	F5.Services.s3 = {
+		baseUrl: 'flow5.local:8008/f5/',
+		extendedUrl: 's3'
+	};
+});

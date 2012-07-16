@@ -1,9 +1,9 @@
 {
 	"type": "tabset",
-	"selection": "config",
+	"selection": "test",
 	"children": {
 		"model": {},
 		"graph": {},
-		"config": {}
+		"test": {}
 	}
 }
