@@ -32,7 +32,7 @@ body {
 	width: 100%;
 	height: 100%;
 
-	background-color: darkslategray;
+	background-color: #0B2246;
 }
 
 /* background is transparent on mobile to allow compositing over native views */
@@ -57,7 +57,7 @@ body.f5mobile {
 	width: 100%;
 	height: 100%;
 	overflow: hidden;
-	-webkit-transition: opacity .25s;
+	-webkit-transition: opacity .15s;
 }
 
 #f5screen {
