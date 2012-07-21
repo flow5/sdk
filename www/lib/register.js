@@ -85,6 +85,4 @@
 		});
 		F5.pendingModules = [];		
 	};
-
-	F5.registerPendingModules();
 }());

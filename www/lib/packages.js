@@ -132,7 +132,28 @@
 		preloadImagesRecursive(F5.valueFromId(F5.Resources, pkg));				
 	};	
 	
-	F5.parsePackage = function (pkg, contents) {
+	F5.processPackage = function (pkg, cb) {
+		
+		var importTasks = [];
+		F5.forEach(F5.valueFromId(F5.Dependencies, pkg), function (dependency) {
+			importTasks.push(function (cb) {
+				// TODO: allow lazy import of url-based packages
+				F5.importPackage(dependency, cb, null, true);
+			});
+		});
+		
+		F5.chainTasks(importTasks, function () {
+			F5.scopePackages();
+			F5.registerPendingModules();
+			F5.parseResources(pkg);
+			if (F5.isDebug()) {
+				F5.parseSchemas(pkg);					
+			}
+			cb();			
+		});
+	};		
+	
+	F5.unpackPackage = function (pkg, contents, cb) {
 		var d = document.implementation.createHTMLDocument('');
 		d.documentElement.innerHTML = contents;
 
@@ -143,17 +164,12 @@
 		F5.forEach(d.body.childNodes, function (el) {
 			document.body.appendChild(el);
 		});
-
-		F5.scopePackages();
 		F5.forEach(scripts, function (script) {
 			/*jslint evil:true*/
 			eval(script.textContent);
 		});
-		F5.registerPendingModules();
-		F5.parseResources(pkg);
-		if (F5.isDebug()) {
-			F5.parseSchemas(pkg);					
-		}
+
+		F5.processPackage(pkg, cb);
 	};
 	
 	F5.importPackage = function (pkg, cb, url, cache) {
@@ -194,8 +210,9 @@
 		
 		if (!F5.connection.online()) {
 			if (cachedResult) {
-				F5.parsePackage(pkg, cachedResult.result);
-				cb(true);
+				F5.unpackPackage(pkg, cachedResult.result, function () {
+					cb(true);					
+				});
 			} else {
 				cb(false);
 			}
@@ -204,8 +221,9 @@
 			F5.doXHR('GET', url, null, 
 				function success(result, status, responseHeaders) {
 					if (status === 304) {
-						F5.parsePackage(pkg, cachedResult.result);	
-						cb(true);				
+						F5.unpackPackage(pkg, cachedResult.result, function () {
+							cb(true);											
+						});	
 					} else if (status === 200) {
 						if (cache) {
 							var packageListKey = F5.appPkg + '_packages';
@@ -216,8 +234,9 @@
 							localStorage[packageListKey] = JSON.stringify(pkgList);
 							localStorage[pkg] = JSON.stringify({result: result, etag: responseHeaders['ETag']});
 						}										
-						F5.parsePackage(pkg, result);
-						cb(true);
+						F5.unpackPackage(pkg, result, function () {
+							cb(true);							
+						});
 					} else {
 						cb(false);
 						console.log('error importing package: ' + pkg + ' status: ' + status + ' result: ' + result);

@@ -434,6 +434,7 @@ function processManifest(manifest, query, type, process, cb) {
 	// TODO: can get more specific here e.g. locale
 }
 
+// TODO: handle defered package load for headless mode
 exports.buildScript = function (query, cb) {
 	
 //	debugger;
@@ -674,7 +675,21 @@ exports.buildHtml = function (query, cb) {
 
 		var schemasEl = new Element('script');
 		resourcesEl.setAttribute('f5id', pkg + '.schemas');
-		pkgEl.appendChild(schemasEl);				
+		pkgEl.appendChild(schemasEl);	
+		
+		var dependenciesEl = new Element('script');
+		dependenciesEl.setAttribute('f5id', pkg + '.dependencies');
+		pkgEl.appendChild(dependenciesEl);
+		
+		var dependencies = [];
+		function injectDependencies(packages, type, cb) {
+			packages.forEach(function (pkg) {
+				if (typeof pkg === 'object' && !pkg.inline) {
+					dependencies.push(pkg.id);
+				}
+			});
+			cb();
+		}							
 	
 		// javascript
 		function injectScripts(scripts, type, cb) {
@@ -853,9 +868,18 @@ exports.buildHtml = function (query, cb) {
 			async.series(tasks, cb);
 		}		
 
-
-
 		var tasks = [];
+		
+		tasks.push(function (cb) {
+			processManifest(manifest, query, 'packages', injectDependencies, function (err, result) {
+				if (err) {
+					cb(err);
+				} else {
+					dependenciesEl.innerHTML = 'F5.addDependencies("' + pkg + '", ' + JSON.stringify(dependencies) + ');';
+					cb();
+				}
+			});							
+		});
 		
 		tasks.push(function (cb) {
 			processManifest(manifest, query, 'flows', injectFlows, function (err) {
@@ -935,9 +959,12 @@ exports.buildHtml = function (query, cb) {
 			function injectPackages(packages, type, cb) {
 				var tasks = [];			
 				packages.forEach(function (pkg) {
-					tasks.push(function (cb) {
-						injectManifest(pkg, cb);					
-					});
+					var pkgId = typeof pkg === 'string' ? pkg : pkg.inline ? pkg.id : null;
+					if (pkgId) {
+						tasks.push(function (cb) {
+							injectManifest(pkgId, cb);					
+						});						
+					}
 				});
 				async.series(tasks, cb);			
 			}

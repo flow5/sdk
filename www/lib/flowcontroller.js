@@ -208,7 +208,9 @@
 			}			
 		};
 			
-		this.start = function (cb) {	
+		this.start = function (cb) {
+			var that = this;
+				
 			cb = cb || function () {
 				console.log('start complete');
 			};
@@ -217,9 +219,12 @@
 			if (localStorage[stateKey]) {
 				var packageListKey = F5.appPkg + '_packages';
 				if (localStorage[packageListKey]) {
+					var that = this;
 					JSON.parse(localStorage[packageListKey]).forEach(function (pkg) {
 						var contents = JSON.parse(localStorage[pkg]).result;
-						F5.parsePackage(pkg, contents);
+						that.addWaitTask(function (cb) {
+							F5.unpackPackage(pkg, contents, cb);							
+						});
 					});
 				}
 				F5.Global.flow.initialize(F5.appPkg, JSON.parse(localStorage[stateKey]));								
