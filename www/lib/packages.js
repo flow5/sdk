@@ -227,7 +227,7 @@
 					} else if (status === 200) {
 						if (cache) {
 							var packageListKey = F5.appPkg + '_packages';
-							var pkgList = localStorage.packageList ? JSON.parse(localStorage[packageListKey]) : [];
+							var pkgList = localStorage[packageListKey] ? JSON.parse(localStorage[packageListKey]) : [];
 							if (pkgList.indexOf(pkg) === -1) {
 								pkgList.push(pkg);
 							}
