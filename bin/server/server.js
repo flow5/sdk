@@ -187,9 +187,13 @@ function doService(resource, query, req, res) {
 			res.write(serviceError.stack || serviceError);								
 		}
 	} catch (e) {
-		res.writeHead(404, {'Content-Type': 'text/plain'});
-		console.error(e.stack)
-		res.end();			
+		if (resource === 'default') {
+			res.writeHead(404, {'Content-Type': 'text/plain'});
+			console.error(e.stack)
+			res.end();						
+		} else {
+			doService('default', query, req, res);
+		}
 	}	
 }
 

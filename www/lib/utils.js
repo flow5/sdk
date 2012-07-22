@@ -91,7 +91,7 @@
 		while (traverse) {
 			var resourceData = {};
 			
-			var pkgResources = F5.valueFromId(F5.Resources, F5.getNodePackage(node));	
+			var pkgResources = F5.Resources[F5.getNodePackage(node)];	
 			if (pkgResources) {
 				F5.merge(pkgResources[traverse.id], resourceData);				
 			}	
@@ -179,20 +179,7 @@
 	F5.sign = function (x) {
 		return x/Math.abs(x);
 	};
-	
-	// TODO: why not path === null returns obj?
-	F5.valueFromId = function (obj, path) {
-		if (obj && path) {
-			var pathComponents = path.split('.');
-			while (obj && typeof obj === 'object' && pathComponents.length) {
-				obj = obj[pathComponents.shift()];
-			}
-			return obj;			
-		} else {
-			return null;
-		}
-	};
-			
+				
 	F5.forEach = function (obj, fn) {
 		if (obj) {
 			/*global NodeList*/
@@ -226,7 +213,9 @@
 			});
 		} else {
 			F5.forEach(obj2, function (id, value) {
-				obj1[id] = value;
+				if (typeof value !== 'undefined') {
+					obj1[id] = value;					
+				}
 			});			
 		}
 	};	
@@ -247,7 +236,7 @@
 	F5.getPrototype = function (type, id) {
 		var components = id.split('.');
 		var name = components.pop();
-		var prototypeRoot = F5.valueFromId(F5.Prototypes, components.join('.'));
+		var prototypeRoot = F5.Prototypes[components.join('.')];
 		return prototypeRoot && prototypeRoot[type] && prototypeRoot[type][name];
 	};
 		
@@ -259,7 +248,7 @@
 				id += '.children.' + component;			
 			});			
 		}
-		return F5.clone(F5.valueFromId(F5.Flows, id));
+		return F5.clone(F5.Flows[id]);
 	};
 	
 	F5.isMobile = function () {
@@ -272,7 +261,7 @@
 	
 	F5.meta = function (pkg) {
 		pkg = pkg || F5.appPkg;
-		return F5.clone(F5.valueFromId(F5.Meta, pkg));
+		return F5.clone(F5.Meta[pkg]);
 	};
 	
 	F5.isDebug = function () {
@@ -292,7 +281,7 @@
 	// this method is used for headless testing
 	F5.importPackage = function (pkg, cb) {
 		/*jslint evil:true*/
-		if (F5.valueFromId(F5.Flows, pkg)) {
+		if (F5.Flows[pkg]) {
 			cb();
 			return;
 		}

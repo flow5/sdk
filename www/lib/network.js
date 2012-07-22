@@ -203,7 +203,7 @@
 			F5.extend(parameters, get('parameters'));			
 		}
 
-		var service = F5.valueFromId(F5.Services, F5.getNodePackage(node));		
+		var service = F5.Services[F5.getNodePackage(node)];		
 		extendParameters(service);						
 		F5.forEach(name.split('.'), function (component) {
 			service = service && service[component];

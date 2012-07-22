@@ -38,23 +38,7 @@
 	F5.Resources = {};
 	F5.Global = {};
 	F5.Services = {};
-	F5.Meta = {};
-	
-	function add(obj, path, data) {
-		var elements = path.split('.');
-		while (elements.length) {
-			var key = elements.shift();
-			if (!obj[key]) {
-				if (data.constructor === Array) {
-					obj[key] = [];
-				} else {
-					obj[key] = {};					
-				}
-			}
-			obj = obj[key];
-		}
-		F5.extend(obj, data);
-	}
+	F5.Meta = {};	
 			
 	F5.pendingModules = [];
 	var packageStack = [];
@@ -64,9 +48,7 @@
 	
 	F5.pushPkg = function (pkg, meta) {
 		packageStack.push(pkg);
-		if (F5.extend) {
-			add(F5.Meta, pkg, meta);					
-		}
+		F5.Meta[pkg] = meta;
 	};
 	
 	F5.popPkg = function () {
@@ -74,19 +56,19 @@
 	};	
 		
 	F5.addFlows = function (pkg, flows) {
-		add(F5.Flows, pkg, flows);
+		F5.Flows[pkg] = flows;
 	};
 
-	F5.addResources = function (pkg, flows) {
-		add(F5.Resources, pkg, flows);
+	F5.addResources = function (pkg, resources) {
+		F5.Resources[pkg] = resources;
 	};
 	
 	F5.addSchemas = function (pkg, schemas) {
-		add(F5.Schemas, pkg, schemas);
+		F5.Schemas[pkg] = schemas;
 	};
 	
 	F5.addDependencies = function (pkg, dependencies) {
-		add(F5.Dependencies, pkg, dependencies);		
+		F5.Dependencies[pkg] = dependencies;
 	};
 	
 }());	

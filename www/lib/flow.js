@@ -110,10 +110,6 @@
 				}
 
 				if (parent) {
-					// allows import into a vanilla node
-					if (!parent.children) {
-						parent.children = {};
-					}
 					parent.children[id] = node;
 				}
 
@@ -240,8 +236,17 @@
 		};
 						
 		this.initialize = function (pkg, rootSpec) {
-			this.root = this.importNode('root', rootSpec, null, pkg);
+			this.root = this.importNode('root', rootSpec, null, rootSpec.pkg || pkg);
 			this.root.active = true;		
+		};
+		
+		this.attachFlow = function (node, flowSpec, pkg) {
+			var newNode = this.importNode(node.id, flowSpec, null, pkg);
+			F5.extend(node, newNode);
+			F5.forEach(node.children, function (id, child) {
+				child.parent = node;
+			});
+			node.pkg = pkg;
 		};
 		
 		// serialize to JSON

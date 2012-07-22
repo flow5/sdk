@@ -100,33 +100,37 @@
 				}				
 			}
 			
-			flowObservers.forEach(doLifecycleEvent);
-			
-			function recurse(node) {
-				if (node.selection) {
-					doLifecycleEventRecursive(event, node.selection, cb);									
-				} else {
-					var tasks = [];
-					F5.forEach(node.children, function (id, child) {
-						tasks.push(function (cb) {
-							doLifecycleEventRecursive(event, child, cb);																
-						});
-					});
-					F5.parallelizeTasks(tasks, cb);
-				}
-			}	
+			flushWaitTasks(function () {
+				flowObservers.forEach(doLifecycleEvent);
 
-			if (node.subflows && node.subflows[event]) {
-				that.doSubflow(node, event, function () {
+				function recurse(node) {
+					if (node.selection) {
+						doLifecycleEventRecursive(event, node.selection, cb);									
+					} else {
+						var tasks = [];
+						F5.forEach(node.children, function (id, child) {
+							tasks.push(function (cb) {
+								doLifecycleEventRecursive(event, child, cb);																
+							});
+						});
+						F5.parallelizeTasks(tasks, cb);
+					}
+				}	
+
+				if (node.subflows && node.subflows[event]) {
+					that.doSubflow(node, event, function () {
+						recurse(node);
+					});		
+				} else {
 					recurse(node);
-				});		
-			} else {
-				recurse(node);
-			}					
+				}				
+			});				
 		}	
 		
-		function nodeInitialize(node, cb) {			
-			doLifecycleEventRecursive('Initialize', node, cb);										
+		function nodeInitialize(node, cb) {	
+			F5.importPackage(F5.getNodePackage(node), function () {
+				doLifecycleEventRecursive('Initialize', node, cb);														
+			});
 		}					
 		
 		function nodeDidBecomeActive(node, cb) {								
@@ -236,7 +240,7 @@
 				if (localStorage[stateKey]) {
 					F5.Global.flow.initialize(F5.appPkg, JSON.parse(localStorage[stateKey]));								
 				} else {
-					F5.Global.flow.initialize(F5.appPkg, F5.valueFromId(F5.Flows, F5.appPkg));				
+					F5.Global.flow.initialize(F5.appPkg, F5.Flows[F5.appPkg]);				
 				}
 
 				// TODO: sloppy. why isn't initialize part of observer?
@@ -291,7 +295,7 @@
 		this.addWaitTask = function (task) {
 			waitTasks.push(task);
 		};
-		
+				
 		// TODO: handle the case of importNode being called outside a lifecycle event? 
 		// e.g., a view might call importNode in response to a click. In that case the node
 		// would not be called with WillBecomeActive/DidBecomeActive

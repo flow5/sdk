@@ -101,7 +101,7 @@
 			F5.JSV = {env: JSV.createEnvironment()};
 		}
 		
-		var schemas = F5.valueFromId(F5.Schemas, pkg);
+		var schemas = F5.Schemas[pkg];
 		schemas.forEach(function (schema) {
 			F5.JSV.env.createSchema(schema, null, pkg + '#' + schema.name);
 		});
@@ -129,13 +129,13 @@
 				}
 			});			
 		}
-		preloadImagesRecursive(F5.valueFromId(F5.Resources, pkg));				
+		preloadImagesRecursive(F5.Resources[pkg]);				
 	};	
 	
 	F5.processPackage = function (pkg, cb) {
 		
 		var importTasks = [];
-		F5.forEach(F5.valueFromId(F5.Dependencies, pkg), function (dependency) {
+		F5.forEach(F5.Dependencies[pkg], function (dependency) {
 			importTasks.push(function (cb) {
 				// TODO: allow lazy import of url-based packages
 				F5.importPackage(dependency, cb, null, true);
@@ -173,32 +173,22 @@
 	};
 	
 	F5.importPackage = function (pkg, cb, url, cache) {
-		if (F5.valueFromId(F5.Flows, pkg)) {
+		if (F5.Flows[pkg]) {
 			cb(true);
 			return;
 		}
 						
 		if (!url) {
-			var appDomain = F5.appPkg.split('.')[0];
-			var appPkg = F5.appPkg.split('.')[1];
-
 			var importDomain = pkg.split('.')[0];
 			var importPkg = pkg.split('.')[1];
-
-			url = location.href.replace(appDomain, importDomain);
-
-			if (appPkg && importPkg) {
-				url = url.replace(appPkg, importPkg);
-			} else if (appPkg) {
-				url = url.replace('pkg=' + appPkg, '');
-			} else {
-				url += '&pkg=' + importPkg;		
+			
+			var search = location.search.replace(/inline=[^&]*/, '').replace(/pkg=[^&]*/, '');
+			search += (search ? '&' : '?') + 'inline=true&lib=true';
+			if (importPkg) {
+				search += '&pkg=' + importPkg;
 			}
-
-			if (url.match('/?')) {
-				// imported packages have to be inlined to be evaluated properly
-				url = url.replace(/inline=[^&]*/, '') + '&inline=true&lib=true';			
-			}			
+			
+			url = location.origin + '/' + importDomain + '/' + search;
 		}
 		
 		var requestHeaders = {};	

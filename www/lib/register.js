@@ -40,33 +40,17 @@
 	function Client(pkg) {
 		this.pkg = pkg;
 
-		// setup a prototype root for the package
-		var prototypeRoot = F5.Prototypes;
-		var resourcesRoot = F5.Resources;
-		var servicesRoot = F5.Services;
-		var schemasRoot = F5.Schemas;
-		pkg.split('.').forEach(function (component) {
-			prototypeRoot[component] = prototypeRoot[component] || {};
-			prototypeRoot = prototypeRoot[component];
-
-			resourcesRoot[component] = resourcesRoot[component] || {};
-			resourcesRoot = resourcesRoot[component];
-
-			servicesRoot[component] = servicesRoot[component] || {};
-			servicesRoot = servicesRoot[component];
-
-			schemasRoot[component] = schemasRoot[component] || {};
-			schemasRoot = schemasRoot[component];
-		});
-
-		this.Prototypes = prototypeRoot;
+		// TODO: make this more consistent. some of these get initialized during package processing
+		// and some need to be set to empty object
+		this.Prototypes = F5.Prototypes[pkg] = {};
 		this.Prototypes.Widgets = {};
 		this.Prototypes.FlowDelegates = {};
 		this.Prototypes.ViewDelegates = {};
 
-		this.Resources = resourcesRoot;
-		this.Services = servicesRoot;
-		this.Schemas = schemasRoot;
+		this.Services = F5.Services[pkg] = F5.Services[pkg] = {};
+		
+		this.Resources = F5.Resources[pkg] = F5.Resources[pkg];
+		this.Schemas = F5.Schemas[pkg] = F5.Schemas[pkg];
 	}
 
 	// bootstrap

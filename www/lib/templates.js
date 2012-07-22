@@ -40,6 +40,20 @@
 		return el;		
 	};	
 	
+	// TODO: why not path === null returns obj?
+	function valueFromId(obj, path) {
+		if (obj && path) {
+			var pathComponents = path.split('.');
+			while (obj && typeof obj === 'object' && pathComponents.length) {
+				obj = obj[pathComponents.shift()];
+			}
+			return obj;			
+		} else {
+			return null;
+		}
+	};
+	
+	
 	function widgetData(data, f5id, f5class) {
 		var mergedData;
 		
@@ -48,7 +62,7 @@
 		}
 		
 		if (f5id) {
-			var instanceData = data && F5.valueFromId(data, f5id);
+			var instanceData = data && valueFromId(data, f5id);
 			if (typeof instanceData !== 'undefined') {
 				if (typeof instanceData === 'object' && mergedData) {
 					F5.assert(!mergedData || typeof mergedData === 'object', 'Merging object into simple type');
@@ -75,12 +89,12 @@
 		// fully qualifed widget name
 		var prototypes, prototype;
 		if (f5widget.split('.').length === 1) {
-			prototypes = F5.valueFromId(F5.Prototypes, pkg);
+			prototypes = F5.Prototypes[pkg];
 			prototype = prototypes.Widgets[f5widget];
 		} else {
 			var components = f5widget.split('.');
 			var widgetName = components.pop();
-			prototypes = F5.valueFromId(F5.Prototypes, components.join('.'));
+			prototypes = F5.Prototypes[components.join('.')];
 			F5.assert(prototypes, 'No prototypes for package: ' + components.join('.'));
 			prototype = prototypes.Widgets[widgetName];
 		}					
