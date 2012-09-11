@@ -135,7 +135,7 @@
 				break;
 			case 'iphone-landscape':
 				width = 480;
-				height = 300;
+				height = 320;
 				break;
 			case 'ipad-portrait':
 				height = 1004;
@@ -182,7 +182,13 @@
 	};
 
 	listener.addEventListener(startEvent, function startHandler(e) {
-		function startUp() {			
+		var started = false;
+		function startUp() {
+			if (started) {
+				return;
+			}
+			started = true;			
+						
 			// also do this after importing a package
 			F5.processPackage(F5.appPkg, function () {
 				// set the meta tag programmatically. using the tag in the html causes a white flash
@@ -278,6 +284,8 @@
 				!F5.connection.online()) {
 			start();			
 		} else {
+			
+			setTimeout(startUp, 3000);
 			
 			window.applicationCache.addEventListener('noupdate', function (e) {
 				console.log('noupdate');

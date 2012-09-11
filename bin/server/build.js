@@ -983,7 +983,7 @@ exports.buildHtml = function (query, cb) {
 	function injectHeader(pkg, cb) {
 		// manifest	
 		if (bool(query.cache)) {
-			delete query.devserv;
+//			delete query.devserv;
 			var manifestString = 'cache.manifest?' + urlParameters(query);
 			document.setAttribute('manifest', manifestString);				
 		}
@@ -1160,18 +1160,18 @@ exports.buildFrame = function (query) {
 	switch (query.geometry) {
 	case 'iphone-portrait':
 		width = 320;
-		height = 460;
+		height = 480;
 		break;
 	case 'iphone-landscape':
 		width = 480;
-		height = 300;
+		height = 320;
 		break;
 	case 'ipad-portrait':
-		height = 1004;
+		height = 1024;
 		width = 768;
 		break;
 	case 'ipad-landscape':
-		height = 748;
+		height = 768;
 		width = 1024;
 		break;
 	default:			
@@ -1258,7 +1258,8 @@ exports.buildCacheManifest = function(query, cb) {
 				var tasks = [];
 				packages.forEach(function (pkg) {
 					tasks.push(function (cb) {
-						checkManifest(pkg, cb);
+						var pkgId = typeof pkg === 'string' ? pkg : pkg.id;						
+						checkManifest(pkgId, cb);
 					});
 				});
 				async.series(tasks, cb);

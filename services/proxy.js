@@ -29,11 +29,8 @@ var url = require('url'),
 	http = require('http'),
 	https = require('https');
 	
-// TODO: useful?
-
-exports.handleRequest = function (req, origRes) {
-	
-	var proxyRequest = url.parse(url.parse(req.url, true).query.url);	
+exports.handleRequest = function (req, origRes) {	
+	var proxyRequest = url.parse(url.parse(req.url, true).query.url);
 	var proxyProtocol = proxyRequest.protocol.replace(':', '');
 
 	var options = {
@@ -47,7 +44,7 @@ exports.handleRequest = function (req, origRes) {
 	if (options.headers) {
 		delete options.headers.host;
 	}
-	
+		
 	var proxyReq = {http: http, https: https}[proxyProtocol].request(options, function (proxyRes) {
 
 		proxyRes.on('data', function(chunk) {
@@ -58,14 +55,21 @@ exports.handleRequest = function (req, origRes) {
 			origRes.end();
 		});
 		
+		proxyRes.headers['Access-Control-Allow-Origin'] = '*';
+		
 		origRes.writeHead(proxyRes.statusCode, proxyRes.headers);
 	});
 	
-	req.addListener('data', function(chunk) {
-		proxyReq.write(chunk, 'binary');
-	});
-
-	req.addListener('end', function() {
+	if (req.method === 'GET') {
 		proxyReq.end();
-	});	
+	} else {
+		req.addListener('data', function(chunk) {
+			proxyReq.write(chunk, 'binary');
+		});
+
+		req.addListener('end', function() {
+			proxyReq.end();
+		});			
+	}
+	
 };

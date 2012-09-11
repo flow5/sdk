@@ -329,10 +329,7 @@
 			container.style['-webkit-perspective'] = 1000;
 			
 			oldEl.style['-webkit-backface-visibility'] = 'hidden';
-			oldEl.style['-webkit-transition'] = 'all .5s ease-in-out';
-
 			newEl.style['-webkit-backface-visibility'] = 'hidden';
-			newEl.style['-webkit-transition'] = 'all .5s ease-in-out';	
 			
 			newEl.style['-webkit-transform'] = 'rotateY(-180deg)';
 			oldEl.style['-webkit-transform'] = 'rotateY(0deg)';					
@@ -343,6 +340,9 @@
 					cb();			
 				}
 				F5.addTransitionEndListener(newEl, completeFlip);
+				oldEl.style['-webkit-transition'] = '-webkit-transform .5s ease-in-out';
+				newEl.style['-webkit-transition'] = '-webkit-transform .5s ease-in-out';	
+				
 				oldEl.style['-webkit-transform'] = 'rotateY(180deg)';
 				newEl.style['-webkit-transform'] = 'rotateY(0deg)';
 			};
@@ -356,10 +356,7 @@
 			container.style['-webkit-perspective'] = 1000;
 			
 			oldEl.style['-webkit-backface-visibility'] = 'hidden';
-			oldEl.style['-webkit-transition'] = 'all .5s ease-in-out';
-
 			newEl.style['-webkit-backface-visibility'] = 'hidden';
-			newEl.style['-webkit-transition'] = 'all .5s ease-in-out';
 			
 			oldEl.style['-webkit-transform'] = 'rotateY(0deg)';
 			newEl.style['-webkit-transform'] = 'rotateY(180deg)';
@@ -370,6 +367,10 @@
 					cb();			
 				}
 				F5.addTransitionEndListener(newEl, completeFlip);
+				
+				oldEl.style['-webkit-transition'] = '-webkit-transform .5s ease-in-out';				
+				newEl.style['-webkit-transition'] = '-webkit-transform .5s ease-in-out';
+				
 				oldEl.style['-webkit-transform'] = 'rotateY(-180deg)';
 				newEl.style['-webkit-transform'] = 'rotateY(0deg)';
 			};
