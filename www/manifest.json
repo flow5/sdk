@@ -81,7 +81,7 @@
             ],
 			"debug": {
 				"domscripts": [
-					"debug/weinreconnect.js"
+/*					"debug/weinreconnect.js"*/
 				]
 			}
         }, 

@@ -28,7 +28,7 @@ PLATFORM=$PLATFORM_NAME
 if [ $CONFIG = "Debug" ]
 then
 PDEBUG="debug=true"
-PCONSOLE="&ide=true"
+#PCONSOLE="&ide=true"
 else
 PDEBUG="debug=false"
 fi

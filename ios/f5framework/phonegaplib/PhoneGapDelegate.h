@@ -36,6 +36,7 @@
 + (NSString*) phoneGapVersion;
 + (NSString*) applicationDocumentsDirectory;
 + (NSString*) startPage;
++ (UIWebView*) webView:(NSDictionary*)settings;
 
 - (int)executeQueuedCommands;
 - (void)flushCommandQueue;

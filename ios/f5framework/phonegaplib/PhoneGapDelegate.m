@@ -97,6 +97,18 @@
     return @"index.html";
 }
 
++ (UIWebView*) webView:(NSDictionary*)settings
+{
+    CGRect webViewBounds = [[UIScreen mainScreen] bounds];;
+    webViewBounds.size.height -= 20;
+    
+    UIWebView *webView;
+    webView = [[ [ UIWebView alloc ] initWithFrame:webViewBounds] autorelease];
+    webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);    
+    webView.scalesPageToFit = [[settings objectForKey:@"EnableViewportScale"] boolValue];   
+    return webView;
+}
+
 + (BOOL) isIPad 
 {
 #ifdef UI_USER_INTERFACE_IDIOM
@@ -393,7 +405,6 @@ BOOL gSplashScreenShown = NO;
     self.viewController = [[[PhoneGapViewController alloc] init] autorelease];
     
     NSNumber *enableLocation       = [self.settings objectForKey:@"EnableLocation"];
-    NSString *enableViewportScale  = [self.settings objectForKey:@"EnableViewportScale"];
     NSNumber *allowInlineMediaPlayback = [self.settings objectForKey:@"AllowInlineMediaPlayback"];
     NSNumber *mediaPlaybackRequiresUserAction = [self.settings objectForKey:@"MediaPlaybackRequiresUserAction"];
     
@@ -410,14 +421,11 @@ BOOL gSplashScreenShown = NO;
 
 
     self.window.autoresizesSubviews = YES;
-    CGRect webViewBounds = screenBounds;
-    webViewBounds.size.height -= 20;
+        
         
     if (!self.webView) {
-        self.webView = [[ [ UIWebView alloc ] initWithFrame:webViewBounds] autorelease];
+        self.webView = [[self class] webView:self.settings];
     }
-    self.webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
-    self.webView.scalesPageToFit = [enableViewportScale boolValue];
     
     viewController.webView = self.webView;
     [self.viewController.view addSubview:self.webView];
