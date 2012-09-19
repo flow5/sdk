@@ -100,8 +100,8 @@
 
 			// NOTE: this handles the ios webapp case. android still needs wo
 			if (window.innerHeight !== screen.availHeight) {
-				portraitToolbar = 44;
-				landscapeToolbar = 30;			
+//				portraitToolbar = 44;
+//				landscapeToolbar = 30;			
 			}
 
 			style = document.createElement('style');			

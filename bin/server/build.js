@@ -823,7 +823,7 @@ exports.buildHtml = function (query, cb) {
 							});
 						} else {
 							handleURLsRecursive(r, function (obj, id, value) {
-								obj[id] = getURL(value);										
+								obj[id] = pkg + '/' + getURL(value);										
 							});								
 						}
 						async.parallel(tasks, function (err) {
@@ -1033,7 +1033,7 @@ exports.buildHtml = function (query, cb) {
 							complete(data);
 						});													
 					} else {
-						complete(manifest.meta.splash);
+						complete(pkg + '/' + manifest.meta.splash);
 					}
 				} else {
 					cb();

@@ -51,7 +51,7 @@
 		} else {
 			return null;
 		}
-	};
+	}
 	
 	
 	function widgetData(data, f5id, f5class) {
@@ -135,10 +135,22 @@
 	};
 	
 	F5.loadTemplate = function (id, node, data) {
+		function packageFromId(id) {
+			var parts = id.split('.');
+			if (parts.length > 1) {
+				return parts.slice(0, parts.length - 1).join('.');
+			}
+		}		
+		
+		function classFromId(id) {
+			var parts = id.split('.');
+			return parts[parts.length - 1];
+		}
+		
 		// namespacing
 		var templateId = id;
-		var pkg = (node && F5.getNodePackage(node)) || this.pkg;
-		if (pkg) {
+		var pkg = packageFromId(id) || (node && F5.getNodePackage(node)) || this.pkg;
+		if (!packageFromId(id) && pkg) {
 			templateId = pkg + '.' + id;
 		}	
 		
@@ -153,7 +165,10 @@
 		if (!instance.hasAttribute('f5id')) {
 			instance.setAttribute('f5id', id);			
 		}
-		F5.addClass(instance, id);	
+		F5.addClass(instance, classFromId(id));	
+		if (packageFromId(id)) {
+			F5.addClass(instance, F5.packageClass(packageFromId(id)));
+		}
 		
 		
 		var widgetEls = [];
