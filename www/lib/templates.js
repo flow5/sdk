@@ -76,7 +76,7 @@
 		return mergedData;
 	}
 	
-	F5.attachWidget = function(el, f5widget, data, pkg) {
+	F5.attachWidget = function(el, f5widget, data, pkg, noInit) {
 		F5.assert(!el.widget, 'Widget already attached to element');
 		
 		// NOTE: this is just for readability in the DOM inspector
@@ -108,7 +108,9 @@
 		if (className) {
 			F5.addClass(el, className);
 		}
-		widget.initialize(widgetData(data, el.getAttribute('f5id'), el.getAttribute('f5class')));	
+		if (!noInit) {
+			widget.initialize(widgetData(data, el.getAttribute('f5id'), el.getAttribute('f5class')));				
+		}
 		
 		return widget;	
 	};
@@ -170,6 +172,21 @@
 			F5.addClass(instance, F5.packageClass(packageFromId(id)));
 		}
 		
+		var widgetEls = [];
+
+		if (instance.hasAttribute('f5widget')) {
+			widgetEls.push(instance);
+		}
+
+		F5.forEach(instance.querySelectorAll('[f5widget]'), function (el) {
+			widgetEls.unshift(el);			
+		});
+
+		var mergedData = (node && F5.getNodeData(node, data)) || data;	
+
+		F5.forEach(widgetEls, function attachWidget(el) {
+			F5.attachWidget(el, el.getAttribute('f5widget'), mergedData, pkg, initializingView);
+		});	
 				
 		if (!initializingView) {
 			F5.initializeWidgets(pkg, node, instance, data);		
@@ -180,21 +197,20 @@
 		// TODO: return {el: el, widgets: widgets}			
 	};		
 	
-	F5.initializeWidgets = function (pkg, node, el, data) {
+	F5.initializeWidgets = function (pkg, node, el, data) {												
 		var widgetEls = [];
 
-//		if (node.el.hasAttribute('f5widget')) {
-//			widgetEls.push(node.el);
-//		}
+		if (el.hasAttribute('f5widget')) {
+			widgetEls.push(node.el);
+		}
 
 		F5.forEach(el.querySelectorAll('[f5widget]'), function (el) {
 			widgetEls.unshift(el);			
 		});
 
-		var mergedData = (node && F5.getNodeData(node, data)) || data;	
-
+		var mergedData = (node && F5.getNodeData(node, data)) || data;			
 		F5.forEach(widgetEls, function attachWidget(el) {
-			F5.attachWidget(el, el.getAttribute('f5widget'), mergedData, pkg);
+			el.widget.initialize(widgetData(mergedData, el.getAttribute('f5id'), el.getAttribute('f5class')));
 		});		
 	};
 
