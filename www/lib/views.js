@@ -54,7 +54,7 @@
 			
 			var pkg = F5.getNodePackage(node);			
 																					
-			var nodeEl = F5.loadTemplate(node.id, node);
+			var nodeEl = F5.loadTemplate(node.id, node, null, true);
 			if (!nodeEl) {
 				nodeEl = document.createElement('div');
 				F5.addClass(nodeEl, node.id);					
@@ -62,14 +62,14 @@
 			F5.addClass(nodeEl, 'f5node');	
 																								
 			if (node.children) {								
-				var headerTemplate = F5.loadTemplate(node.id + '-header', node);
+				var headerTemplate = F5.loadTemplate(node.id + '-header', node, null, true);
 				if (headerTemplate) {
 					attachTabset(headerTemplate);
 					nodeEl.appendChild(headerTemplate);
 				}
 								
 				var container = document.createElement('div');
-				var containerTemplate = F5.loadTemplate(node.id + '-container', node);
+				var containerTemplate = F5.loadTemplate(node.id + '-container', node, null, true);
 				if (containerTemplate) {
 					var frame = document.createElement('div');
 					F5.addClass(frame, 'f5frame');
@@ -84,7 +84,7 @@
 				F5.addClass(container, 'f5container');
 				nodeEl.appendChild(container);	
 				
-				var footerTemplate = F5.loadTemplate(node.id + '-footer', node);
+				var footerTemplate = F5.loadTemplate(node.id + '-footer', node, null, true);
 				if (footerTemplate) {
 					attachTabset(footerTemplate);
 					nodeEl.appendChild(footerTemplate, this.container);
@@ -139,7 +139,9 @@
 				if (this.delegate.initialize) {
 					this.delegate.initialize();					
 				}								
-			}			
+			}
+			
+			F5.initializeWidgets(pkg, this.node, this.el);			
 			
 			// TODO: enable this with an additional URL parameter?
 			// Would require an additional build target for device

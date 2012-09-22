@@ -15,7 +15,8 @@
 	        "js/scroller.js", 
 	        "js/carousel.js", 
 	        "js/input.js", 
-	        "js/form.js"
+	        "js/form.js",
+			"js/templateloader.js"
 		]
     }, 
     "android": {

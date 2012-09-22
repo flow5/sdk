@@ -134,7 +134,7 @@
 		});
 	};
 	
-	F5.loadTemplate = function (id, node, data) {
+	F5.loadTemplate = function (id, node, data, initializingView) {
 		function packageFromId(id) {
 			var parts = id.split('.');
 			if (parts.length > 1) {
@@ -170,14 +170,24 @@
 			F5.addClass(instance, F5.packageClass(packageFromId(id)));
 		}
 		
-		
-		var widgetEls = [];
-
-		if (instance.hasAttribute('f5widget')) {
-			widgetEls.push(instance);
+				
+		if (!initializingView) {
+			F5.initializeWidgets(pkg, node, instance, data);		
 		}
 
-		F5.forEach(instance.querySelectorAll('[f5widget]'), function (el) {
+		return instance;			
+
+		// TODO: return {el: el, widgets: widgets}			
+	};		
+	
+	F5.initializeWidgets = function (pkg, node, el, data) {
+		var widgetEls = [];
+
+//		if (node.el.hasAttribute('f5widget')) {
+//			widgetEls.push(node.el);
+//		}
+
+		F5.forEach(el.querySelectorAll('[f5widget]'), function (el) {
 			widgetEls.unshift(el);			
 		});
 
@@ -185,12 +195,8 @@
 
 		F5.forEach(widgetEls, function attachWidget(el) {
 			F5.attachWidget(el, el.getAttribute('f5widget'), mergedData, pkg);
-		});
-
-		return instance;			
-
-		// TODO: return {el: el, widgets: widgets}			
-	};		
+		});		
+	};
 
 	// itemCb = function (item, itemEl, itemWidgetsMap)
 	F5.populateList = function(el, itemTemplateName, node, items, itemCb) {
