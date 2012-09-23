@@ -337,7 +337,7 @@ F5.registerModule(function(F5) {
 			stopScrollingAt(this, 0);
 			
 			// TODO: let this do x/y with constraint to one or the other axis
-			this.horizontal = false;
+//			this.horizontal = false;
 			
 			// other parameters that get used
 ///			this.tracking			
@@ -611,7 +611,7 @@ F5.registerModule(function(F5) {
 			} else {
 				this.minOffset = Math.min(this.container.height - this.el.offsetHeight, 0);
 			}
-			if (oldMinOffset !== this.minOffset) {
+			if (oldMinOffset < this.minOffset) {
 				this.staticOffset = 0;
 				doTransform(this, 0);				
 			}

@@ -43,6 +43,9 @@ function isURL(str) {
 function getURL(str) {
 	return resourcesURLRegExp.exec(str)[1];	
 }
+function getExtension(path) {
+	return require('path').extname(path);
+}
 
 var getSizes = [];
 function dumpSizes() {
@@ -295,6 +298,10 @@ function inlineData(pkg, path, failure, success) {
 	} else if (ext === 'html' || ext === 'css') {
 		get(pkg, path, 'base64', failure, function (data) {
 			success('base64,' + data);
+		});
+	} else if (ext === 'xml') {
+		get(pkg, path, 'utf8', failure, function (data) {
+			success(data);
 		});
 	} else {
 		get(pkg, path, 'base64', failure, function (data) {
@@ -811,21 +818,20 @@ exports.buildHtml = function (query, cb) {
 			resourceFiles.forEach(function (file) {
 				tasks.push(function (cb) {
 					parseJSON(base + file, cb, function (r) {
-						var tasks = [];
-						if (bool(query.inline)) {
-							handleURLsRecursive(r, function (obj, id, value) {	
+						var tasks = [];						
+						handleURLsRecursive(r, function (obj, id, value) {	
+							var url = getURL(value);
+							if (bool(query.inline) || getExtension(url) === '.xml') {
 								tasks.push(function (cb) {
-									inlineData(pkg, resolveURL(base, getURL(value)), cb, function (data) {
+									inlineData(pkg, resolveURL(base, url), cb, function (data) {
 										obj[id] = data;
 										cb();
 									});																				
-								});
-							});
-						} else {
-							handleURLsRecursive(r, function (obj, id, value) {
-								obj[id] = pkg + '/' + getURL(value);										
-							});								
-						}
+								});									
+							} else {
+								obj[id] = pkg + '/' + url;																			
+							}
+						});
 						async.parallel(tasks, function (err) {
 							if (err) {
 								cb(err);
