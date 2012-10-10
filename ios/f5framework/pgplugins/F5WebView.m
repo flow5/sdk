@@ -87,9 +87,18 @@
                                   [[bounds objectForKey:@"height"] floatValue]);            
     [self.overlayWebView setFrame:viewBounds];     
                 
-    NSString *url = [options objectForKey:@"url"];
+    NSString *path = [options objectForKey:@"url"];
     
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url] cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.0];
+    NSURL *url;
+    if ([path rangeOfString:@"http"].location == 0) {
+        url = [NSURL URLWithString:path];
+    } else {
+        NSString *bundlePath = [[NSBundle mainBundle] bundlePath];
+        path = [NSString stringWithFormat:@"%@/www/%@", bundlePath, path];
+        url = [NSURL fileURLWithPath:path];
+    }
+    
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:20.0];
     
     [self.overlayWebView loadRequest:request];        
 }
@@ -152,18 +161,14 @@
                      animations:^{
                          self.overlayWebView.alpha = 0;
                      }
-                     completion:^(BOOL finished){
-                         NSString *path = [[NSBundle mainBundle] bundlePath];
-                         NSURL *baseURL = [NSURL fileURLWithPath:path];
-                         self.overlayWebView.hidden = YES;
-                         [self.overlayWebView loadHTMLString:@"<html></html>" baseURL:baseURL];
-                     }];   
+                     completion:nil];
     
 }
 
 - (PluginResult*)hide:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
 {
-    [self hide];
+    [self performSelectorOnMainThread:@selector(hide) withObject:nil waitUntilDone:NO];
+//    [self hide];
     return [PluginResult resultWithStatus:PGCommandStatus_OK];
 }
 

@@ -24,7 +24,7 @@
 
     UIView *hit = nil;
     UIView *webView = nil;
-    for (UIView* view in self.subviews) {
+    for (UIView* view in [self.subviews reverseObjectEnumerator]) {
         BOOL masked = NO;
         if ([view class] != [UIWebView class]) {
             CGPoint pointLocal = [view convertPoint:point fromView:self];

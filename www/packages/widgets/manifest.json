@@ -1,49 +1,50 @@
 {
     "all": {
 		"domscripts": [
-	        "js/buttons.js", 
-	        "js/statictext.js", 
-	        "js/picture.js", 
-	        "js/tabset.js", 
-	        "js/navcontroller.js", 
-	        "js/streetview.js", 
-	        "js/distance.js", 
-	        "js/menu.js", 
-	        "js/tracker.js", 
-	        "js/switch.js", 
-	        "js/loader.js", 
-	        "js/scroller.js", 
-	        "js/carousel.js", 
-	        "js/input.js", 
+	        "js/buttons.js",
+	        "js/statictext.js",
+	        "js/picture.js",
+	        "js/tabset.js",
+	        "js/navcontroller.js",
+	        "js/streetview.js",
+	        "js/distance.js",
+	        "js/menu.js",
+	        "js/tracker.js",
+	        "js/switch.js",
+	        "js/loader.js",
+	        "js/scroller.js",
+	        "js/carousel.js",
+	        "js/input.js",
 	        "js/form.js",
 			"js/templateloader.js"
 		]
-    }, 
+    },
     "android": {
         "domscripts": [
-            "js/navbar_web.js", 
+            "js/navbar_web.js",
             "js/mapview_web.js",
             "js/webframe_web.js",
             "js/activity_web.js",
             "js/dialogs_web.js"
         ]
-    }, 
+    },
     "ios": {
         "app": {
             "domscripts": [
-                "js/navbar_web.js", 
-                "js/mapview_native.js", 
+                "js/navbar_web.js",
+                "js/mapview_native.js",
 	            "js/activity_native.js",
                 "js/webframe_native.js",
 	            "js/dialogs_native.js"
             ]
-        }, 
+        },
         "browser": {
             "domscripts": [
-                "js/navbar_web.js", 
+                "js/navbar_web.js",
                 "js/mapview_web.js",
 	            "js/activity_web.js",
-	            "js/dialogs_web.js"	
+                "js/webframe_web.js",
+	            "js/dialogs_web.js"
             ]
         }
     }

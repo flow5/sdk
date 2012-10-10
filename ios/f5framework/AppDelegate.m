@@ -118,6 +118,11 @@
     return [super init];
 }
 
+- (NSUInteger)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window
+{
+    return UIInterfaceOrientationMaskLandscapeLeft;
+}
+
 /**
  * This is main kick off after the app inits, the views and Settings are setup here. (preferred - iOS4 and up)
  */

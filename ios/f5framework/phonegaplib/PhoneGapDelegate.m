@@ -451,7 +451,8 @@ BOOL gSplashScreenShown = NO;
 
     self.webView.delegate = self;
 
-    [self.window addSubview:self.viewController.view];
+    [self.window setRootViewController:self.viewController];
+//    [self.window addSubview:self.viewController.view];
 
     /*
      * webView

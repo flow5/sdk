@@ -46,9 +46,21 @@ URL="http://$HOSTNAME:8008/$PKG/?native=true&mobile=true&platform=ios&$PINLINE&$
 
 echo $URL
 
+mkdir -p ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/www
+
 if [[ $PLATFORM != "iphonesimulator" || $CONFIG != "Debug" ]]
 then
 #get the webapp
-mkdir -p ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/www
 /usr/local/bin/wget $URL -O ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/www/index.html
 fi
+
+#get dependent packages
+IFS=","
+packages=`defaults read /Users/paulgreyson/Dev/Clients/liquidimage/app/ios/f5 packages | tr -d '(\n) '`
+for pkg in $packages
+do
+    #device=true is a temporary (?) hack to allow the package to know if it's operating in a device environment
+    URL="http://$HOSTNAME:8008/$PKG/?pkg=$pkg&native=false&mobile=true&platform=ios&inline=true&$PDEBUG&$PCOMPRESS&device=true"
+    echo $URL
+    /usr/local/bin/wget $URL -O ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/www/$pkg.html
+done
