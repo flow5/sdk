@@ -28,6 +28,7 @@
 #import "F5WebView.h"
 #import "AppDelegate.h"
 #import <QuartzCore/QuartzCore.h>
+#import "Debug.h"
 
 
 @interface F5OverlayWebview : UIWebView 
@@ -50,6 +51,10 @@
         self.overlayWebView = [[ [ F5OverlayWebview alloc ] initWithFrame:webViewBounds] autorelease]; 
         self.overlayWebView.hidden = YES;
         self.overlayWebView.delegate = self;
+        
+#if DEBUG
+        [Debug instrumentWebView:self.overlayWebView];
+#endif
                 
         AppDelegate *appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];                
         UIView *mainView = [appDelegate.viewController view];
