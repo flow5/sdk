@@ -59,8 +59,8 @@ IFS=","
 packages=`defaults read /Users/paulgreyson/Dev/Clients/liquidimage/app/ios/f5 packages | tr -d '(\n) '`
 for pkg in $packages
 do
-    #device=true is a temporary (?) hack to allow the package to know if it's operating in a device environment
-    URL="http://$HOSTNAME:8008/$PKG/?pkg=$pkg&native=false&mobile=true&platform=ios&inline=true&$PDEBUG&$PCOMPRESS&device=true"
+    #TODO: native=false is because PhoneGap only supports a single webview, isDevice lets the package know it can use the minimal messaging system
+    URL="http://$HOSTNAME:8008/$PKG/?pkg=$pkg&native=false&mobile=true&platform=ios&inline=true&$PDEBUG&$PCOMPRESS&isDevice=true"
     echo $URL
     /usr/local/bin/wget $URL -O ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/www/$pkg.html
 done
