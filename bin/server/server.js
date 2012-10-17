@@ -3,25 +3,25 @@
 
 	Copyright (c) 2011 Paul Greyson
 
-	Permission is hereby granted, free of charge, to any person 
-	obtaining a copy of this software and associated documentation 
-	files (the "Software"), to deal in the Software without 
-	restriction, including without limitation the rights to use, 
-	copy, modify, merge, publish, distribute, sublicense, and/or 
-	sell copies of the Software, and to permit persons to whom the 
-	Software is furnished to do so, subject to the following 
+	Permission is hereby granted, free of charge, to any person
+	obtaining a copy of this software and associated documentation
+	files (the "Software"), to deal in the Software without
+	restriction, including without limitation the rights to use,
+	copy, modify, merge, publish, distribute, sublicense, and/or
+	sell copies of the Software, and to permit persons to whom the
+	Software is furnished to do so, subject to the following
 	conditions:
 
-	The above copyright notice and this permission notice shall be 
+	The above copyright notice and this permission notice shall be
 	included in all copies or substantial portions of the Software.
 
-	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, 
-	EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES 
-	OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
-	NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT 
-	HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
-	WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
-	FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR 
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+	EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+	OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+	NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+	HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+	WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+	FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
@@ -35,9 +35,9 @@ var http = require('http'),
 	paperboy = require('paperboy'),
 	url = require('url'),
 	util = require('util');
-	
+
 // flow5
-var builder = require('./build.js');	
+var builder = require('./build.js');
 
 
 paperboy.contentTypes.otf = 'font/opentype';
@@ -58,6 +58,14 @@ function domainBase(domain) {
 	}
 }
 
+
+function subpackage(domain) {
+	if (domain && domain.split('.')[1]) {
+		return domain.split('.')[1];
+	}
+}
+
+
 function forEach(obj, fn) {
 	if (obj.constructor === Array) {
 		obj.forEach(fn);
@@ -67,17 +75,17 @@ function forEach(obj, fn) {
 			if (obj.hasOwnProperty(name)) {
 				fn(name, obj[name]);
 			}
-		}							
+		}
 	}
 }
 
 function getMessageBody(req, cb) {
 	var body = '';
-	
+
 	req.on('data', function (chunk) {
 		body += chunk;
 	});
-	
+
 	req.on('end', function () {
 		cb(body);
 	});
@@ -90,20 +98,20 @@ function showRequest(req, printHeaders) {
 		var name;
 		for (name in req.headers) {
 			if (req.headers.hasOwnProperty(name)) {
-				util.puts(name + ' : ' + req.headers[name]);				
+				util.puts(name + ' : ' + req.headers[name]);
 			}
-		}			
+		}
 	}
 }
 
 function doBuild(query, req, res) {
 	var agent = req.headers['user-agent'];
-	
+
 	if (!query.platform) {
 		if (agent.match(/android/i)) {
 			query.platform = 'android';
 		} else {
-			query.platform = 'ios';						
+			query.platform = 'ios';
 		}
 	}
 	if (!query.mobile) {
@@ -113,8 +121,8 @@ function doBuild(query, req, res) {
 			query.mobile = 'false';
 		}
 	}
-			
-	try {			
+
+	try {
 		var html;
 		if (query.headless) {
 			builder.buildScript(query, function (err, script) {
@@ -126,14 +134,14 @@ function doBuild(query, req, res) {
 				} else {
 					res.writeHead(200, {'Content-Type': 'application/javascript'});
 					res.write(script);
-					res.end();												
+					res.end();
 				}
 			});
 		} else if (query.frame === 'true') {
 			html = builder.buildFrame(query);
 			res.writeHead(200, {'Content-Type': 'text/html'});
 			res.write(html);
-			res.end();								
+			res.end();
 		} else {
 			builder.buildHtml(query, function (err, html) {
 				if (err) {
@@ -144,7 +152,7 @@ function doBuild(query, req, res) {
 				} else {
 					res.writeHead(200, {'Content-Type': 'text/html'});
 					res.write(html);
-					res.end();					
+					res.end();
 				}
 			});
 
@@ -153,8 +161,8 @@ function doBuild(query, req, res) {
 		console.error(e2.stack || e2);
 		// TODO: would be nice to return 404 if the appname is bad
 		res.writeHead(500);
-		res.end();					
-	}	
+		res.end();
+	}
 }
 
 function doManifest(query, req, res) {
@@ -167,9 +175,9 @@ function doManifest(query, req, res) {
 				res.write(err.stack);
 			} else {
 				res.writeHead(200, {'Content-Type': 'text/cache-manifest'});
-				res.write(manifest);									
+				res.write(manifest);
 			}
-			res.end();	
+			res.end();
 		});
 	} catch (e) {
 		console.error('error:' + e.stack);
@@ -179,28 +187,36 @@ function doManifest(query, req, res) {
 function doService(resource, query, req, res) {
 	var servicePath = domainBase(query.domain) + 'services/' + resource + '.js';
 	try {
-		var service = require(servicePath);	
+		var service = require(servicePath);
 		try {
 			service.handleRequest(req, res);
 		} catch (serviceError) {
 			res.writeHead(500, {'Content-Type': 'text/plain'});
-			res.write(serviceError.stack || serviceError);								
+			res.write(serviceError.stack || serviceError);
 		}
 	} catch (e) {
 		if (resource === 'default') {
 			res.writeHead(404, {'Content-Type': 'text/plain'});
 			console.error(e.stack)
-			res.end();						
+			res.end();
 		} else {
 			doService('default', query, req, res);
 		}
-	}	
+	}
 }
 
-function doGET(resource, query, req, res) {	
-	var root = domainBase(query.domain) + 'www/';	
+function doGET(resource, query, req, res) {
+	var root = domainBase(query.domain) + 'www/';
+
+	var package = subpackage(query.domain);
+	if (package) {
+		root += 'packages/' + package;
+	}
+
 	req.url = req.url.replace(query.domain + '/', '');
-	
+
+	console.log(query);
+
 	// try to serve the file normally
 	paperboy
 		.deliver(root, req, res)
@@ -211,40 +227,40 @@ function doGET(resource, query, req, res) {
 		.otherwise(function () {
 			// otherwise see if it's a service
 			doService(resource, query, req, res);
-		});		
+		});
 }
 
 // http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
 exports.start = function (args, options, cb) {
-	
+
 //	debugger;
-		
+
 	npm.load({}, function () {
 		function handleRequest(req, res, protocol) {
-			var parsed = url.parse(req.url, true);	
+			var parsed = url.parse(req.url, true);
 
 			var pathname = url.parse(req.url).pathname;
-			
+
 			if (options.verbose) {
 				console.error(req.method);
 				console.error(pathname);
-				console.error(parsed);		
+				console.error(parsed);
 			}
 
-			parsed.query.devserv = protocol + '://' + req.headers.host;	
-			
+			parsed.query.devserv = protocol + '://' + req.headers.host;
+
 			parsed.query.domain = pathname.split('/')[1];
 			var resource = pathname.split('/').slice(2).join('/');
-						
+
 			if (!domainBase(parsed.query.domain)) {
 				res.writeHead(500);
 				var error = 'Unknown domain: ' + parsed.query.domain + '. Did you flow5 link?';
 				console.error(error)
 				res.write(error);
-				res.end();				
+				res.end();
 				return;
 			}
-						
+
 			switch (req.method) {
 				case 'POST':
 					switch(resource) {
@@ -252,13 +268,13 @@ exports.start = function (args, options, cb) {
 							getMessageBody(req, function (body) {
 								// this is probably a facebook signed request
 								parsed.query.body = body;
-								doBuild(parsed.query, req, res);					
+								doBuild(parsed.query, req, res);
 							});
 							break;
 						default:
-							doService(resource, parsed.query, req, res);					
+							doService(resource, parsed.query, req, res);
 					}
-					break;	
+					break;
 				case 'PUT':
 					doService(resource, parsed.query, req, res);
 					break;
@@ -269,9 +285,9 @@ exports.start = function (args, options, cb) {
 							break;
 						case 'cache.manifest':
 							doManifest(parsed.query, req, res);
-							break;	
+							break;
 						default:
-							doGET(resource, parsed.query, req, res);					
+							doGET(resource, parsed.query, req, res);
 					}
 					break;
 				case 'OPTIONS':
@@ -288,51 +304,51 @@ exports.start = function (args, options, cb) {
 					res.writeHead(405);
 					res.end();
 					break;
-			}		
+			}
 		}
-		
+
 		var result = {
 			port: options.port
 		};
-				
+
 		var server;
 		if (options.secure) {
 			var httpsOptions = {
 			  key: fs.readFileSync(__dirname + '/https/privatekey.pem'),
 			  cert: fs.readFileSync(__dirname + '/https/certificate.pem')
-			};	
+			};
 			server = https.createServer(httpsOptions, function (req, res) {
 				if (options.verbose) {
-					showRequest(req, true);			
-				}		
-				handleRequest(req, res, 'https');										
+					showRequest(req, true);
+				}
+				handleRequest(req, res, 'https');
 			}).listen(options.port);
-			result.protocol = 'https';	
+			result.protocol = 'https';
 		} else {
-			server = http.createServer(function (req, res) {					
+			server = http.createServer(function (req, res) {
 				if (options.verbose) {
-					showRequest(req, true);			
-				}		
-				handleRequest(req, res, 'http');		
-			}).listen(options.port);			
-			result.protocol = 'http';	
-		}	
-		
-		var io = require('socket.io').listen(server);
-		
-		if (options.verbose) {
-			io.set('log level', 3);			
-		} else {
-			io.set('log level', 0);			
+					showRequest(req, true);
+				}
+				handleRequest(req, res, 'http');
+			}).listen(options.port);
+			result.protocol = 'http';
 		}
-		
+
+		var io = require('socket.io').listen(server);
+
+		if (options.verbose) {
+			io.set('log level', 3);
+		} else {
+			io.set('log level', 0);
+		}
+
 		io.on('connection', function (socket) {
 			socket.on('message', function (message) {
 				socket.broadcast.emit('message', message);
 			});
-		});				
-		
-		cb(result);		
-	});			
+		});
+
+		cb(result);
+	});
 };
 

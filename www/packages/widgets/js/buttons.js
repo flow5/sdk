@@ -33,7 +33,7 @@ F5.registerModule(function (F5) {
 		this.initialize = function (data) {
 			this.data = data || {};
 
-			this.setAction(F5.noop);
+//			this.setAction(F5.noop);
 		};
 
 		/* true=down, false=up */
@@ -166,7 +166,7 @@ F5.registerModule(function (F5) {
 
 			this.refresh(data);
 
-			this.setAction(F5.noop);
+//			this.setAction(F5.noop);
 		};
 
 		this.refresh = function (data) {

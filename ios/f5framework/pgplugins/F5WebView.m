@@ -162,7 +162,7 @@
 - (void)hide
 {
     [UIView animateWithDuration:0.25 delay:0.0
-                        options: UIViewAnimationOptionCurveEaseIn
+                        options: UIViewAnimationOptionCurveEaseOut
                      animations:^{
                          self.overlayWebView.alpha = 0;
                      }
