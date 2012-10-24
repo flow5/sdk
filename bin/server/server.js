@@ -215,7 +215,7 @@ function doGET(resource, query, req, res) {
 
 	req.url = req.url.replace(query.domain + '/', '');
 
-	console.log(query);
+//	console.log(query);
 
 	// try to serve the file normally
 	paperboy
