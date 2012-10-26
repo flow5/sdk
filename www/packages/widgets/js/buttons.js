@@ -134,14 +134,34 @@ F5.registerModule(function (F5) {
 
 	function Button() {
 
+		this.makeLabelContainer = function () {
+			if (!this.labelContainer) {
+				this.labelContainer = document.createElement('div');
+				F5.addClass(this.labelContainer, 'f5button-labelContainer');
+				this.el.appendChild(this.labelContainer);
+			}
+		};
+
 		this.setLabel = function (label) {
+			this.makeLabelContainer();
 			if (!this.label) {
 				this.label = document.createElement('div');
 				F5.addClass(this.label, 'f5button-label');
-				this.el.appendChild(this.label);
+				this.labelContainer.appendChild(this.label);
 			}
 
 			this.label.textContent = label;
+		};
+
+		this.setSubLabel = function (label) {
+			this.makeLabelContainer();
+			if (!this.subLabel) {
+				this.subLabel = document.createElement('div');
+				F5.addClass(this.subLabel, 'f5button-sublabel');
+				this.labelContainer.appendChild(this.subLabel);
+			}
+
+			this.subLabel.textContent = label;
 		};
 
 		this.getData = function () {
@@ -162,6 +182,10 @@ F5.registerModule(function (F5) {
 
 		this.initialize = function (data) {
 			this.labelText = this.el.textContent;
+			delete this.labelContainer;
+			delete this.label;
+			delete this.subLabel;
+			delete this.container;
 			this.el.innerHTML = '';
 
 			this.refresh(data);
@@ -173,7 +197,9 @@ F5.registerModule(function (F5) {
 			var that = this;
 
 			if (that.container) {
-				that.container.parentElement.removeChild(that.container);
+				if (that.container.parentElement) {
+					that.container.parentElement.removeChild(that.container);
+				}
 				that.container = null;
 			}
 
@@ -279,6 +305,9 @@ F5.registerModule(function (F5) {
 				}
 				if (resourceData.label) {
 					that.setLabel(resourceData.label);
+				}
+				if (resourceData.subLabel) {
+					that.setSubLabel(resourceData.subLabel);
 				}
 			}
 
