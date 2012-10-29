@@ -56,6 +56,10 @@ F5.registerModule(function (F5) {
 			}
 		};
 
+		this.getState = function () {
+			return this.state;
+		};
+
 		this.unsetAction = function () {
 			F5.removeTouchEventListenersRecursive(this.el);
 		};
