@@ -81,7 +81,8 @@ function Input() {
 			if (data && data.options) {
 				data.options.forEach(function (option) {
 					var optionEl = document.createElement('option');
-					optionEl.textContent = option;
+					optionEl.value = option.value;
+					optionEl.textContent = option.text;
 					that.input.appendChild(optionEl);
 				});
 			}
