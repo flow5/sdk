@@ -2,42 +2,42 @@
 
 	Copyright (c) 2011 Paul Greyson
 
-	Permission is hereby granted, free of charge, to any person 
-	obtaining a copy of this software and associated documentation 
-	files (the "Software"), to deal in the Software without 
-	restriction, including without limitation the rights to use, 
-	copy, modify, merge, publish, distribute, sublicense, and/or 
-	sell copies of the Software, and to permit persons to whom the 
-	Software is furnished to do so, subject to the following 
+	Permission is hereby granted, free of charge, to any person
+	obtaining a copy of this software and associated documentation
+	files (the "Software"), to deal in the Software without
+	restriction, including without limitation the rights to use,
+	copy, modify, merge, publish, distribute, sublicense, and/or
+	sell copies of the Software, and to permit persons to whom the
+	Software is furnished to do so, subject to the following
 	conditions:
 
-	The above copyright notice and this permission notice shall be 
+	The above copyright notice and this permission notice shall be
 	included in all copies or substantial portions of the Software.
 
-	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, 
-	EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES 
-	OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
-	NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT 
-	HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
-	WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
-	FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR 
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+	EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+	OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+	NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+	HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+	WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+	FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
 
 /*global F5*/
 
-(function () {	
-					
+(function () {
+
 	// TODO: this is a bit strange. pass in the newly created F5 Client below
-(function (F5) {		
-	
+(function (F5) {
+
 	if (F5.isDebug()) {
 		F5.forEach(localStorage, function (id, value) {
-//			console.log(id + ': ' + value);			
+//			console.log(id + ': ' + value);
 		});
 	}
-		
+
 	// TODO: specify a mock image server location
 	if (F5.isMobile()) {
 		F5.addClass(document.body, 'f5mobile');
@@ -45,23 +45,23 @@
 	} else {
 		F5.imageServerHost = '';
 	}
-		
+
 	// prevent scrolling
 	document.body.addEventListener('touchmove', function (e) {
 		e.preventDefault();
 	});
-	
+
 	// prevent the webview from doing click stuff
 	document.body.addEventListener('click', function (e) {
 		e.preventDefault();
-	});	
-	
+	});
+
 	if (F5.isMobile()) {
 		window.onscroll = function () {
 			if (document.body.scrollTop) {
-				document.body.scrollTop = 0;				
+				document.body.scrollTop = 0;
 			}
-		};		
+		};
 	}
 
 	function hideAddressBar() {
@@ -69,7 +69,7 @@
 			window.scrollTo(0, 0);
 		}, 100);
 	}
-	
+
 	function setupScreenGeometry(isMobile, isNative) {
 //		if (F5.isDebug()) {
 //			F5.addClass(document.body, 'f5debug');
@@ -101,10 +101,10 @@
 			// NOTE: this handles the ios webapp case. android still needs wo
 			if (window.innerHeight !== screen.availHeight) {
 //				portraitToolbar = 44;
-//				landscapeToolbar = 30;			
+//				landscapeToolbar = 30;
 			}
 
-			style = document.createElement('style');			
+			style = document.createElement('style');
 			style.innerHTML = '@media screen and (orientation: portrait)\n\
 								{\n\
 									.f5mobile #f5screen {\n\
@@ -119,13 +119,13 @@
 										height:' + (screen.width - (statusbar + landscapeToolbar)) + 'px;\n\
 									}\n\
 								}';
-			document.body.appendChild(style);						
+			document.body.appendChild(style);
 
 			document.addEventListener('orientationchange', function () {
 				setTimeout(function () {
 					window.scrollTo(0, 0);
-				}, 0);			
-			});		
+				}, 0);
+			});
 		} else if (F5.query.geometry) {
 			// TODO: consolidate with server.js
 			switch (F5.query.geometry) {
@@ -145,7 +145,7 @@
 				height = 748;
 				width = 1024;
 				break;
-			default:			
+			default:
 				var size = F5.query.geometry.split('x');
 				width = size[0];
 				height = size[1];
@@ -153,18 +153,18 @@
 			}
 			width += 'px';
 			height += 'px';
-			style = document.createElement('style');	
+			style = document.createElement('style');
 			if (F5.isMobile()) {
-				style.innerHTML = '.f5mobile #f5screen {width: ' + width + '; height: ' + height+ ';}';				
+				style.innerHTML = '.f5mobile #f5screen {width: ' + width + '; height: ' + height+ ';}';
 			} else {
-				style.innerHTML = '#f5screen {width: ' + width + '; height: ' + height+ ';}';								
+				style.innerHTML = '#f5screen {width: ' + width + '; height: ' + height+ ';}';
 			}
 			document.body.appendChild(style);
-		}	
-	}	
+		}
+	}
 
 	window.addEventListener('touchstart', hideAddressBar, false);
-		
+
 	// TODO: use the device block of manifest to avoid the PhoneGap reference
 	var startEvent, listener;
 	if (F5.isNative()) {
@@ -174,7 +174,7 @@
 		startEvent = 'load';
 		listener = window;
 	}
-	
+
 	/*global shouldRotateToOrientation: true*/
 	// TODO: this is a phonegap thing. . .
 	shouldRotateToOrientation = function () {
@@ -187,8 +187,8 @@
 			if (started) {
 				return;
 			}
-			started = true;			
-						
+			started = true;
+
 			// also do this after importing a package
 			F5.processPackage(F5.appPkg, function () {
 				// set the meta tag programmatically. using the tag in the html causes a white flash
@@ -196,7 +196,7 @@
 				var meta = document.createElement('meta');
 				meta.name = 'viewport';
 				meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0';
-				document.head.appendChild(meta);						
+				document.head.appendChild(meta);
 
 
 
@@ -210,12 +210,12 @@
 				F5.addClass(appframeEl, F5.packageClass());
 
 				var screenframeEl = document.createElement('div');
-				screenframeEl.id = 'f5screen';	
-				screenframeEl.style.opacity = 0;	
+				screenframeEl.id = 'f5screen';
+				screenframeEl.style.opacity = 0;
 				appframeEl.appendChild(screenframeEl);
 				document.body.appendChild(appframeEl);
 
-				setupScreenGeometry(F5.isMobile(), F5.isNative());	
+				setupScreenGeometry(F5.isMobile(), F5.isNative());
 
 				hideAddressBar();
 
@@ -228,7 +228,7 @@
 						setTimeout(function () {
 							screenframeEl.style.opacity = '';
 							F5.addTransitionEndListener(screenframeEl, function () {
-								document.body.style['background-image'] = '';							
+								document.body.style['background-image'] = '';
 								F5.removeTransitionEndListener(screenframeEl);
 							});
 						}, 500);
@@ -247,31 +247,34 @@
 										console.log(result);
 									}, function (result) { // failure
 										console.log(result);
-									}, "com.phonegap.splashscreen", "hide", []);									
-								}							
-							}						
-						}, 1000); 
-						// NOTE: the delay shouldn't be necessary, but on older devices	
+									}, "com.phonegap.splashscreen", "hide", []);
+								}
+							}
+						}, 1000);
+						// NOTE: the delay shouldn't be necessary, but on older devices
 						// sometimes the webview doesn't reflow completely before the
-						// splashscreen is hidden otherwise																		
+						// splashscreen is hidden otherwise
 					});
 				} catch (exception) {
 					console.log(exception.message);
 					document.body.className = 'errorframe';
 					document.body.innerHTML = exception.message;
-				}				
-			});						
+				}
+			});
 		}
-		// increase to delay to allow attaching to webview from remote debugger
 		function start() {
-			setTimeout(startUp, 0);
+			if (F5.isPaused()) {
+				setTimeout(start, 1000);
+			} else {
+				startUp();
+			}
 		}
-	
+
 		function updateReady() {
 			console.log('updateready');
 			window.location.reload();
 		}
-				
+
 		window.applicationCache.addEventListener('updateready', function (e) {
 			updateReady();
 		}, false);
@@ -279,14 +282,14 @@
 			updateReady();
 		}
 
-		if (window.applicationCache.status === window.applicationCache.IDLE || 
-				window.applicationCache.status === window.applicationCache.UNCACHED || 
+		if (window.applicationCache.status === window.applicationCache.IDLE ||
+				window.applicationCache.status === window.applicationCache.UNCACHED ||
 				!F5.connection.online()) {
-			start();			
+			start();
 		} else {
-			
+
 			setTimeout(startUp, 3000);
-			
+
 			window.applicationCache.addEventListener('noupdate', function (e) {
 				console.log('noupdate');
 				start();
@@ -300,12 +303,12 @@
 			window.applicationCache.addEventListener('error', function (e) {
 				console.log('error');
 				start();
-			}, false);			
-		}				
-	}, false);	
-	
+			}, false);
+		}
+	}, false);
+
 }(F5.Clients.f5));
-					
+
 }());
 
 

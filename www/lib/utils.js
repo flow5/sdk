@@ -2,82 +2,82 @@
 
 	Copyright (c) 2011 Paul Greyson
 
-	Permission is hereby granted, free of charge, to any person 
-	obtaining a copy of this software and associated documentation 
-	files (the "Software"), to deal in the Software without 
-	restriction, including without limitation the rights to use, 
-	copy, modify, merge, publish, distribute, sublicense, and/or 
-	sell copies of the Software, and to permit persons to whom the 
-	Software is furnished to do so, subject to the following 
+	Permission is hereby granted, free of charge, to any person
+	obtaining a copy of this software and associated documentation
+	files (the "Software"), to deal in the Software without
+	restriction, including without limitation the rights to use,
+	copy, modify, merge, publish, distribute, sublicense, and/or
+	sell copies of the Software, and to permit persons to whom the
+	Software is furnished to do so, subject to the following
 	conditions:
 
-	The above copyright notice and this permission notice shall be 
+	The above copyright notice and this permission notice shall be
 	included in all copies or substantial portions of the Software.
 
-	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, 
-	EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES 
-	OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
-	NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT 
-	HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
-	WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
-	FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR 
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+	EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+	OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+	NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+	HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+	WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+	FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
 /*global F5*/
 
-(function () {	
-	
+(function () {
+
 	// TODO: need a unit test for this one
 	F5.merge = function(src, dst) {
-		
+
 		// resources may also contain other object types which should be treated as literals
 		function isSimpleObject(value) {
 			return typeof value === 'object' && value.constructor === Object;
 		}
-				
+
 		function assign(id, value) {
 			if (!dst[id]) {
 				if (value && isSimpleObject(value)) {
 					dst[id] = {};
 				}
-			} 
+			}
 
 			if (value && isSimpleObject(value)) {
 				F5.assert(typeof dst[id] === 'object', 'mismatched data schema');
 				F5.forEach(value, function (valueid, value) {
 					if (dst[id][valueid]) {
 						if (typeof value === 'object' || typeof dst[id][valueid] !== 'object') {
-							console.log('WARNING: data field name shadowed: ' + id + '.' + valueid);										
-							dst[id][valueid] = value;													
+							console.log('WARNING: data field name shadowed: ' + id + '.' + valueid);
+							dst[id][valueid] = value;
 						} else {
 							// otherwise shove the value into the object
 							// TODO: this needs to be documented clearly. obscure behavior
 							dst[id][valueid].value = value;
 						}
 					} else {
-						dst[id][valueid] = value;						
+						dst[id][valueid] = value;
 					}
 				});
 			} else {
 				if (dst[id]) {
 					if (typeof value === 'object' || typeof dst[id] !== 'object') {
 						console.log('WARNING: data field name shadowed: ' + id);
-						dst[id] = value;						
+						dst[id] = value;
 					} else {
 						dst[id].value = value;
 					}
 				} else {
-					dst[id] = value;					
+					dst[id] = value;
 				}
-				
+
 			}
 		}
 		if (src && typeof src === 'object') {
-			F5.forEach(src, assign);			
+			F5.forEach(src, assign);
 		}
 	};
-	
+
 	// TODO: need a better name
 	// this function takes the user data and combines it with data from the images
 	// and string files to create a structure which contains all the data that is going
@@ -85,17 +85,17 @@
 	F5.getNodeData = function (node, userData) {
 		// if arg2 is provided, copy out its fields
 		var data = {};
-		
+
 		// then add all of the resources associated with this node and ancestors
 		var traverse = node;
 		while (traverse) {
 			var resourceData = {};
-			
-			var pkgResources = F5.Resources[F5.getNodePackage(node)];	
+
+			var pkgResources = F5.Resources[F5.getNodePackage(node)];
 			if (pkgResources) {
-				F5.merge(pkgResources[traverse.id], resourceData);				
-			}	
-						
+				F5.merge(pkgResources[traverse.id], resourceData);
+			}
+
 			if (traverse !== node) {
 				F5.forEach(resourceData, function (id, value) {
 					if (id[0] !== '.') {
@@ -106,16 +106,16 @@
 			F5.merge(resourceData, data);
 			traverse = traverse.parent;
 		}
-		
+
 		if (node){
-			F5.merge(node.data, data);			
+			F5.merge(node.data, data);
 		}
-		
-		F5.merge(userData, data);		
-		
+
+		F5.merge(userData, data);
+
 		return data;
-	};	
-	
+	};
+
 	// NOTE: overridden in domtuils.js to use alert() instead of console.log()
 	F5.assert = function(condition, message) {
 		if (!condition) {
@@ -123,22 +123,22 @@
 			throw new Error(message);
 		}
 	};
-	
+
 	F5.objectFromPrototype = function(prototype) {
 		function Instance() {}
 		Instance.prototype = prototype;
 		return new Instance();
 	};
-	
+
 	F5.createCache = function () {
 		return F5.objectFromPrototype(F5.Cache);
 	};
-	
+
 	F5.createModel = function (node) {
 		var model = F5.objectFromPrototype(F5.Model);
 		return model;
 	};
-	
+
 	F5.callback = function (cb, arg) {
 		try {
 			cb(arg);
@@ -146,7 +146,7 @@
 			console.log(e.message);
 		}
 	};
-			
+
 	F5.chainTasks = function(tasks, cb) {
         if (tasks.length) {
             tasks.shift()(function() {
@@ -157,7 +157,7 @@
         }
     };
 
-	F5.parallelizeTasks = function (tasks, cb) {				
+	F5.parallelizeTasks = function (tasks, cb) {
 		var count = tasks.length;
 		if (!count) {
 			cb();
@@ -173,13 +173,13 @@
 			task(complete);
 		});
 	};
-	
+
 	F5.noop = function () {};
-	
+
 	F5.sign = function (x) {
 		return x/Math.abs(x);
 	};
-				
+
 	F5.forEach = function (obj, fn) {
 		if (obj) {
 			/*global NodeList*/
@@ -201,8 +201,8 @@
 					if (obj.hasOwnProperty(name)) {
 						fn(name, obj[name]);
 					}
-				}							
-			}			
+				}
+			}
 		}
 	};
 
@@ -214,69 +214,80 @@
 		} else {
 			F5.forEach(obj2, function (id, value) {
 				if (typeof value !== 'undefined') {
-					obj1[id] = value;					
+					obj1[id] = value;
 				}
-			});			
+			});
 		}
-	};	
-	
+	};
+
 	F5.clone = function (obj) {
 		return JSON.parse(JSON.stringify(obj));
 	};
-		
+
 	F5.getNodePackage = function (node) {
 		var pkg = node.pkg;
 		while (!pkg && node.parent) {
 			node = node.parent;
 			pkg = node.pkg;
-		}	
-		return pkg;	
-	};	
-	
+		}
+		return pkg;
+	};
+
 	F5.getPrototype = function (type, id) {
 		var components = id.split('.');
 		var name = components.pop();
 		var prototypeRoot = F5.Prototypes[components.join('.')];
 		return prototypeRoot && prototypeRoot[type] && prototypeRoot[type][name];
 	};
-		
+
 	// TODO: decompose path to allow references to nested components
 	F5.nodeFromPathInPackage = function (pkg, path) {
 		var id = pkg;
 		if (path) {
 			path.split('.').forEach(function (component) {
-				id += '.children.' + component;			
-			});			
+				id += '.children.' + component;
+			});
 		}
 		return F5.clone(F5.Flows[id]);
 	};
-	
+
 	F5.isMobile = function () {
 		return F5.query.mobile === 'true';
 	};
-	
+
 	F5.platform = function () {
 		return F5.query.platform;
 	};
-	
+
 	F5.meta = function (pkg) {
 		pkg = pkg || F5.appPkg;
 		return F5.clone(F5.Meta[pkg]);
 	};
-	
+
 	F5.isDebug = function () {
 		return F5.query.debug === 'true';
 	};
-	
+
 	F5.isInline = function () {
-		return F5.query.inline === 'true';		
+		return F5.query.inline === 'true';
 	};
-	
+
 	F5.isNative = function () {
 		// F5.query.native confuses the JavaScript compressor
-		return F5.query['native'] === 'true';		
-	};	
-	
+		return F5.query['native'] === 'true';
+	};
+
+	// set to true to enable pause on start for remote debugging in native shell
+	F5.paused = false;
+
+	F5.setPaused = function (paused) {
+		F5.paused = paused;
+	}
+
+	F5.isPaused = function () {
+		return F5.paused;
+	}
+
 	// NOTE: overridden by domutils.js
 	// this method is used for headless testing
 	F5.importPackage = function (pkg, cb) {
@@ -285,7 +296,7 @@
 			cb();
 			return;
 		}
-		
+
 		var query = F5.clone(F5.query);
 		query.lib = true;
 		var parameters = [];
@@ -293,31 +304,31 @@
 			parameters.push(key + '=' + value);
 		});
 
-		var libDomain = pkg.split('.')[0];		
-		var url = F5.query.devserv + '/' + libDomain + '/?lib=true&headless=true&debug=true';		
+		var libDomain = pkg.split('.')[0];
+		var url = F5.query.devserv + '/' + libDomain + '/?lib=true&headless=true&debug=true';
 		if (pkg.split('.').length === 2) {
 			url += '&pkg=' + pkg.split('.')[1];
-		}				
-		
+		}
+
 		console.log(url);
-		return F5.doXHR('GET', url, null, 
+		return F5.doXHR('GET', url, null,
 			function success(result, status) {
 				try {
-					eval(result);					
+					eval(result);
 					F5.registerPendingModules();
 				} catch (e) {
 					console.log('exception in F5.importPackage: ' + url);
 					console.log(e);
 				}
-				
+
 				if (cb) {
 					cb();
 				}
 			},
 			function error(status) {
-				
+
 			});
-	};		
+	};
 }());
 
 
