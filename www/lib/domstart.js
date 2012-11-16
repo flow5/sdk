@@ -228,7 +228,7 @@
 						setTimeout(function () {
 							screenframeEl.style.opacity = '';
 							F5.addTransitionEndListener(screenframeEl, function () {
-								document.body.style['background-image'] = '';
+								document.body.style['background-image'] = 'none';
 								F5.removeTransitionEndListener(screenframeEl);
 							});
 						}, 500);
