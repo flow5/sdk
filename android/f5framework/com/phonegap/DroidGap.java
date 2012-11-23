@@ -227,8 +227,8 @@ public class DroidGap extends PhonegapActivity {
         LOG.d(TAG, "DroidGap.onCreate()");
         super.onCreate(savedInstanceState);
         getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN,
+//                WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
         // This builds the view.  We could probably get away with NOT having a LinearLayout, but I like having a bucket!
 
         Display display = getWindowManager().getDefaultDisplay(); 
@@ -1214,7 +1214,14 @@ public class DroidGap extends PhonegapActivity {
         @Override
         public boolean onConsoleMessage(ConsoleMessage consoleMessage)
         {       
-            LOG.d(TAG, consoleMessage.message());
+        	String message = consoleMessage.message();
+        	// TODO: why is message sometimes null?
+        	if (message != null) {
+        		LOG.d(TAG, consoleMessage.message());                
+        	} else {
+        		LOG.d(TAG, "NULL Message in onConsoleMessage. Why??");
+        	}
+        	
             return super.onConsoleMessage(consoleMessage);
         }
 

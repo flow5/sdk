@@ -49,8 +49,8 @@ public class F5Activity extends DroidGap {
 					public void run() {
 						String url;
 						if (address != null) {
-							url = "http://" + address + ":8008/generate?app=" + app + 
-									"&native=true&inline=true&debug=true&compress=true&platform=android&mobile=true";
+							url = "http://" + address + ":8008/" + app + 
+									"?native=true&inline=true&debug=true&compress=true&platform=android&mobile=true";
 						} else {
 							url = "file:///android_asset/index.html";							
 						}

@@ -9,8 +9,8 @@ COMPANY=`defaults read ${SRCROOT}/f5 company`
 defaults write ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Info CFBundleName -string $PKG
 defaults write ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Info CFBundleIdentifier -string "com.$COMPANY.$PKG"
 
-FBAPPID=`curl http://$HOSTNAME:8008/$PKG/facebook_appid.txt`
-defaults write ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Info CFBundleURLTypes -array "<dict><key>CFBundleURLSchemes</key><array><string>fb$FBAPPID</string></array></dict>"
+#FBAPPID=`curl http://$HOSTNAME:8008/$PKG/facebook_appid.txt`
+#defaults write ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Info CFBundleURLTypes -array "<dict><key>CFBundleURLSchemes</key><array><string>fb$FBAPPID</string></array></dict>"
 
 CONFIG=$CONFIGURATION
 PLATFORM=$PLATFORM_NAME

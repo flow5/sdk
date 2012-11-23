@@ -2,7 +2,7 @@
     "all": {
         "debug": {
             "scripts": [
-                "debug/flow_diags.js", 
+                "debug/flow_diags.js",
                 "debug/flowcontroller_diags.js",
 				"debug/ideconnect.js",
 /*				"debug/weinreconnect.js",*/
@@ -10,46 +10,46 @@
 				"debug/3p/JSV/lib/uri/uri.js",
 				"debug/3p/JSV/lib/uri/schemes/urn.js",
 				"debug/3p/JSV/lib/jsv.js",
-				"debug/3p/JSV/lib/json-schema-draft-03.js"				
+				"debug/3p/JSV/lib/json-schema-draft-03.js"
             ]
-        }, 
+        },
         "desktop": {
             "debug": {
                 "scripts": [
                 ]
             }
-        }, 
+        },
         "elements": [
-            "css/core.css"            
-        ], 
+            "css/core.css"
+        ],
         "scripts": [
-            "lib/utils.js", 
-            "lib/flow.js", 
-            "lib/flowcontroller.js", 
-            "lib/network.js", 
+            "lib/utils.js",
+            "lib/flow.js",
+            "lib/flowcontroller.js",
+            "lib/network.js",
 			"lib/cache.js",
 			"lib/model.js",
-			"3p/md5.js"				
+			"3p/md5.js"
         ],
 		"domscripts": [
-        	"lib/events.js", 
-	        "lib/domutils.js", 
+        	"lib/events.js",
+	        "lib/domutils.js",
 			"lib/packages.js",
-	        "lib/views.js", 
-	        "lib/viewcontroller.js", 
-			"lib/phone.js",	
-			"lib/imagepreloader.js",			
-	        "lib/animation.js", 
-            "lib/templates.js", 
-            "lib/location.js", 	
-			"3p/b64.js",	
-	        "3p/bezier.js"	
+	        "lib/views.js",
+	        "lib/viewcontroller.js",
+			"lib/phone.js",
+			"lib/imagepreloader.js",
+	        "lib/animation.js",
+            "lib/templates.js",
+            "lib/location.js",
+			"3p/b64.js",
+	        "3p/bezier.js"
 		]
-    }, 
+    },
     "android": {
         "app": {
 			"scripts": [
-                "lib/bridge_web.js"				
+                "lib/bridge_web.js"
 			],
             "domscripts": [
                 "3p/phonegap/phonegap-1.3.0.js"
@@ -59,24 +59,24 @@
 					"debug/weinreconnect.js"
 				]
 			}
-        }, 
+        },
         "browser": {
             "scripts": [
                 "lib/bridge_web.js"
             ]
-        }, 
+        },
         "elements": [
             "css/android.css"
-        ], 
+        ],
         "domscripts": [
-            "modules/androidhwbuttons.js"
+/*            "modules/androidhwbuttons.js"*/
         ]
-    }, 
+    },
     "ios": {
         "app": {
             "domscripts": [
-                "lib/bridge_native.js", 
-                "lib/udp.js", 
+                "lib/bridge_native.js",
+                "lib/udp.js",
                 "3p/phonegap/phonegap-1.1.0.js"
             ],
 			"debug": {
@@ -84,12 +84,12 @@
 /*					"debug/weinreconnect.js"*/
 				]
 			}
-        }, 
+        },
         "browser": {
 			"scripts": [
-            	"lib/bridge_web.js"			
+            	"lib/bridge_web.js"
 			]
-        }, 
+        },
         "elements": [
             "css/ios.css"
         ]
