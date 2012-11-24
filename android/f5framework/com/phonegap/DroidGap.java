@@ -1337,10 +1337,13 @@ public class DroidGap extends PhonegapActivity {
 
             // All else
             else {
-
+            	// PG: I don't think I'm every going to want the behavior below
+            	return false;
+/*	
                 // If our app or file:, then load into a new phonegap webview container by starting a new instance of our activity.
                 // Our app continues to run.  When BACK is pressed, our app is redisplayed.
-                if (url.startsWith("file://") || url.indexOf(this.ctx.baseUrl) == 0 || isUrlWhiteListed(url)) {
+
+            	if (url.startsWith("file://") || url.indexOf(this.ctx.baseUrl) == 0 || isUrlWhiteListed(url)) {
                     this.ctx.loadUrl(url);
                 }
 
@@ -1354,6 +1357,7 @@ public class DroidGap extends PhonegapActivity {
                         LOG.e(TAG, "Error loading url "+url, e);
                     }
                 }
+*/                
             }
             return true;
         }

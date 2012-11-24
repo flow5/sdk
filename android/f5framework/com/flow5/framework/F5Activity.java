@@ -17,6 +17,8 @@ public class F5Activity extends DroidGap {
         final F5Activity activity = this;
         final MDNSResolver resolver = new MDNSResolver(this); 
         
+        // TODO: ONLY DO ON DEBUG
+        
         new Thread(new Runnable() {
 			@Override
 			public void run() {
