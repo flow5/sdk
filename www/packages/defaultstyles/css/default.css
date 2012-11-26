@@ -2,25 +2,25 @@
 
 	Copyright (c) 2011 Paul Greyson
 
-	Permission is hereby granted, free of charge, to any person 
-	obtaining a copy of this software and associated documentation 
-	files (the "Software"), to deal in the Software without 
-	restriction, including without limitation the rights to use, 
-	copy, modify, merge, publish, distribute, sublicense, and/or 
-	sell copies of the Software, and to permit persons to whom the 
-	Software is furnished to do so, subject to the following 
+	Permission is hereby granted, free of charge, to any person
+	obtaining a copy of this software and associated documentation
+	files (the "Software"), to deal in the Software without
+	restriction, including without limitation the rights to use,
+	copy, modify, merge, publish, distribute, sublicense, and/or
+	sell copies of the Software, and to permit persons to whom the
+	Software is furnished to do so, subject to the following
 	conditions:
 
-	The above copyright notice and this permission notice shall be 
+	The above copyright notice and this permission notice shall be
 	included in all copies or substantial portions of the Software.
 
-	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, 
-	EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES 
-	OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
-	NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT 
-	HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
-	WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
-	FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR 
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+	EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+	OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+	NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+	HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+	WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+	FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
@@ -29,7 +29,7 @@
 
 /* override default tap highlighting on webview content */
 body {
-	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);	
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
 /***************************************/
@@ -37,15 +37,15 @@ body {
 /***************************************/
 
 .f5navbar {
-	height: .44em;	
+	height: .44em;
 	display: -webkit-box;
 	width: 100%;
 	padding-left: .02em;
 	-webkit-box-align: center;
-	-webkit-box-pack: center;	
+	-webkit-box-pack: center;
 	background-color:lightgrey;
 	-webkit-box-sizing: border-box;
-	-webkit-transition: opacity .25s;	
+	-webkit-transition: opacity .25s;
 	box-shadow: 0px .01em .03em #888;
 }
 
@@ -55,7 +55,7 @@ body {
 	display: -webkit-box;
 	-webkit-box-pack: center;
 	-webkit-box-align: center;
-	background-color: white;	
+	background-color: white;
 	-webkit-box-sizing: border-box;
 	max-width: 30%;
 }
@@ -107,20 +107,20 @@ body {
 	position: relative;
 	display: -webkit-box;
 	-webkit-box-pack: center;
-	
-	-webkit-box-align: center;	
+
+	-webkit-box-align: center;
 	-webkit-box-align: middle;	/* TODO better way to handle MSIE? */
 
-	font-family: arial;	
-	height: .30em;	
+	font-family: arial;
+	height: .30em;
 	padding-left: .12em;
 	padding-right: .12em;
 }
 
 .f5tab.f5button {
-	border-radius: 0px;	
+	border-radius: 0px;
 	height: auto;
-	padding: 0px;	
+	padding: 0px;
 }
 
 .f5button-container, .f5button-container .f5button-up {
@@ -152,7 +152,7 @@ body {
 	-webkit-mask-size: .30em .30em;
 	-webkit-mask-position: center center;
 	width: 100%;
-	height: 100%;	
+	height: 100%;
 }
 
 .f5button.f5button-up .f5mask {
@@ -166,7 +166,7 @@ body {
 }
 
 .f5default.f5tabset .f5button.f5maskbutton {
-	-webkit-box-align: end;	
+	-webkit-box-align: end;
 }
 
 .f5togglebutton {
@@ -180,15 +180,15 @@ body {
 /***************************************/
 
 .f5tabset {
-	height: .49em;	
+	height: .49em;
 	width: 100%;
-	display: -webkit-box;	
+	display: -webkit-box;
 }
 
 .f5tab {
 	display: -webkit-box;
 	-webkit-box-flex: 1.0;
-	width: 100%;	
+	width: 100%;
 }
 
 .f5button {
@@ -219,14 +219,14 @@ body {
 	white-space: nowrap;
 	width: 100%;
 	display: -webkit-box;
-	-webkit-box-pack: center;		
+	-webkit-box-pack: center;
 }
 
 /***************************************/
 /*             Miscellany              */
 /***************************************/
 
-.f5form {	
+.f5form {
 /* would be nice, but the caret doesn't keep up */
 /* 	-webkit-transition: top .25s; */
 	position: relative;
@@ -234,7 +234,7 @@ body {
 	-webkit-box-orient: vertical;
 	width: 100%;
 /*	height: 100%; */
-	-webkit-box-sizing: border-box;	
+	-webkit-box-sizing: border-box;
 }
 
 .f5form .f5label {
@@ -291,7 +291,7 @@ body {
 	position: relative;
 	border: none;
 	background-color: transparent;
-	-webkit-transition: opacity .5s;	
+	-webkit-transition: opacity .5s;
 }
 
 .f5closebutton {
@@ -307,7 +307,7 @@ body {
 
 .f5closebutton img {
 	height: .20em;
-	width: .20em;	
+	width: .20em;
 }
 
 .f5activityspriteroot {
@@ -316,7 +316,7 @@ body {
 	left: 0px;
 	z-index: 1000;
 	height: 100%;
-	width: 100%;	
+	width: 100%;
 }
 
 .f5activityspritecontainer {
@@ -330,7 +330,7 @@ body {
 .f5activityspritemask {
 	height: .25em;
 	width: .25em;
-	overflow: hidden;	
+	overflow: hidden;
 }
 
 .f5activitysprite {
@@ -343,6 +343,11 @@ body {
 	background-size: 100% 100%;
 	background-image: url('../images/activitysprite.svg');
 }
+
+.white .f5activitysprite {
+	background-image: url('../images/activitysprite-white.svg');
+}
+
 
 /* NOTE: the 50% is required for Safari. Chrome will do the rotate with just from and to */
 @-webkit-keyframes activitySprite {
@@ -433,10 +438,10 @@ body {
 	top: 0px;
 	left: 0px;
 	width: 100%;
-	height: 100%;	
+	height: 100%;
 	z-index: 1000;
-	-webkit-transition: opacity .3s;	
-	opacity: 0;	
+	-webkit-transition: opacity .3s;
+	opacity: 0;
 }
 
 
@@ -460,8 +465,8 @@ body {
 	-webkit-box-pack: justify;
 	-webkit-box-align: center;
 	-webkit-box-orient: vertical;
-	min-width: 66%;	
-	max-width: 80%;	
+	min-width: 66%;
+	max-width: 80%;
 	position: relative;
 	overflow: hidden;
 	text-align: center;
@@ -470,7 +475,7 @@ body {
 
 .f5alerttitle {
 	font-size: .18em;
-	color: white;	
+	color: white;
 	position: relative;
 }
 
@@ -490,7 +495,7 @@ body {
 	width: 100%;
 }
 
-.f5alertbutton  {	
+.f5alertbutton  {
 	border: .01em solid rgba(0, 0, 0, 1);
 	margin: .04em;
 	margin-bottom: .02em;
@@ -499,7 +504,7 @@ body {
 	height: .40em;
 }
 
-.f5alertbutton .f5button-label  {	
+.f5alertbutton .f5button-label  {
 	font-size: .18em;
 	font-weight: 600;
 	text-shadow: 0px -1px black;
@@ -534,11 +539,11 @@ body {
 }
 
 .f5menutitle {
-	font-size: .16em;	
+	font-size: .16em;
 }
 
 .f5menuitem {
-	border-bottom: 1px solid black;	
+	border-bottom: 1px solid black;
 	padding:.06em;
 	width: 100%;
 	height: .30em;
@@ -546,7 +551,7 @@ body {
 }
 
 .f5menuitem .f5button-label {
-	font-size: .16em;		
+	font-size: .16em;
 }
 
 .f5menuitem:last-child {
@@ -572,7 +577,7 @@ body {
 	width: .70em;
 	display: -webkit-box;
 	-webkit-box-align: center;
-	overflow: hidden;		
+	overflow: hidden;
 }
 
 .f5slider .f5control {
@@ -582,12 +587,12 @@ body {
 }
 
 .f5slider {
-	height: 100%;	
-	-webkit-box-sizing: border-box;		
+	height: 100%;
+	-webkit-box-sizing: border-box;
 	display: -webkit-box;
 	-webkit-box-pack: center;
 	-webkit-box-align: center;
-	
+
 	position: relative;
 }
 
@@ -603,18 +608,18 @@ body {
 
 .f5slider .f5label {
 	font-size: .14em;
-	font-weight: 600;	
+	font-weight: 600;
 	color: darkgrey;
 	position: absolute;
 	top: .6em;
 }
 
 .f5slider .left .f5label {
-	left: .9em;		
+	left: .9em;
 }
 
 .f5slider .right .f5label {
-	left: 1.35em;		
+	left: 1.35em;
 }
 
 .f5slider .left {
@@ -630,7 +635,7 @@ body {
 	right: 0px;
 	padding-left: .15em;
 	-webkit-box-sizing: border-box;
-	color: rgba(127,127,127,1.0);	
+	color: rgba(127,127,127,1.0);
 }
 
 
@@ -674,7 +679,7 @@ body {
 }
 
 .f5dotransition, .f5dosubflow {
-	border-bottom: 1px solid black;	
+	border-bottom: 1px solid black;
 	padding:.06em;
 	width: 100%;
 	-webkit-box-sizing: border-box;
@@ -706,7 +711,7 @@ body {
 .errorframe {
 	display: -webkit-box;
 	-webkit-box-align: center;
-	-webkit-box-pack: center;	
+	-webkit-box-pack: center;
 }
 
 .f5frames .f5node {
