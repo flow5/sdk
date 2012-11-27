@@ -359,6 +359,16 @@ static NSString *gapVersion;
     }
     
     self.activityView.center = self.viewController.view.center;
+    
+    NSDictionary *offset = [self.settings objectForKey:@"SplashActivityOffset"];
+    if (offset) {
+        CGPoint center = self.activityView.center;
+        center.x += [[offset objectForKey:@"x"] floatValue];
+        center.y += [[offset objectForKey:@"y"] floatValue];
+        self.activityView.center = center;
+    }
+    
+    
     [self.activityView startAnimating];
     
     
