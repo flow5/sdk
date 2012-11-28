@@ -681,10 +681,12 @@
 												observer.syncSelection(node);
 											}
 										});
+										completionCb();
 									});
 								});
+							} else {
+								completionCb();
 							}
-							completionCb();
 						} else {
 							if (node.type === 'flow') {
 								// for a flow, the string indicates a node to transition to
