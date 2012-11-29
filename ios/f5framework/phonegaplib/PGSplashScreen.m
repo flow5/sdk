@@ -20,11 +20,18 @@
 	}
 	
     delegate.activityView.hidden = !show;
-    [UIView animateWithDuration:.5 delay:0 options:0 animations:^{
-        delegate.imageView.alpha = show ? 1.0 : 0.0;
-    } completion:^(BOOL finished) {
-        delegate.imageView.hidden = !show;
-    }];
+    [UIView animateWithDuration:.5 delay:0 options:0
+            animations:^{
+                delegate.imageView.alpha = show ? 1.0 : 0.0;
+            }
+#if TARGET_IPHONE_SIMULATOR
+            completion:nil];
+    delegate.imageView.hidden = !show;
+#else
+            completion:^(BOOL finished) {
+                delegate.imageView.hidden = !show;
+            }];
+#endif
 }
 
 - (void) show:(NSArray*)arguments withDict:(NSMutableDictionary*)options
