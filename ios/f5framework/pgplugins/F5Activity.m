@@ -35,7 +35,7 @@
 - (id)initWithWebView:(UIWebView*)webview {
     self = [super initWithWebView:webview];
     if (self) {        
-        self.activityView = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray] autorelease];
+        self.activityView = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge] autorelease];
                 
         self.activityView.hidden = YES;
         
