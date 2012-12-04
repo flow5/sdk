@@ -98,7 +98,9 @@
 
 		// triggers a very expensive outerHTML call!
 //		F5.assert(!el.F5.listeners[eventName], 'Already listening for: ' + eventName + ' on: ' + el.outerHTML);
-		F5.assert(!el.F5.listeners[eventName], 'Already listening for: ' + eventName + ' on element with id: ' + el.id);
+		if (F5.isDebug()) {
+			F5.assert(!el.F5.listeners[eventName], 'Already listening for: ' + eventName + ' on element with id: ' + el.id);
+		}
 
 		el.F5.listeners[eventName] = function f5eventListenerWrapper(e) {
 			// TODO: check for transitioning for all event callbacks?

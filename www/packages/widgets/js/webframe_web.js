@@ -30,6 +30,8 @@ F5.registerModule(function(F5) {
 
 	function WebFrame() {
 
+		var fakeLoadWaitTime = 0;
+
 		this.initialize = function (data) {
 			F5.addClass(this.el, 'f5webframe');
 			this.el.style.display = 'none';
@@ -79,8 +81,11 @@ F5.registerModule(function(F5) {
 		this.openHTML = function (html) {
 			this.frame.contentDocument.querySelector('html').innerHTML = html;
 			this.el.style.display = '';
+			var that = this;
 			if (this.onLoadAction) {
-				this.onLoadAction();
+				setTimeout(function () {
+					that.onLoadAction();
+				}, fakeLoadWaitTime);
 			}
 		};
 
@@ -90,7 +95,9 @@ F5.registerModule(function(F5) {
 
 			this.frame.onload = function () {
 				if (that.onLoadAction) {
-					that.onLoadAction();
+					setTimeout(function () {
+						that.onLoadAction();
+					}, fakeLoadWaitTime);
 				}
 			};
 
