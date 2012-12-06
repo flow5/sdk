@@ -2,55 +2,55 @@
 
 	Copyright (c) 2011 Paul Greyson
 
-	Permission is hereby granted, free of charge, to any person 
-	obtaining a copy of this software and associated documentation 
-	files (the "Software"), to deal in the Software without 
-	restriction, including without limitation the rights to use, 
-	copy, modify, merge, publish, distribute, sublicense, and/or 
-	sell copies of the Software, and to permit persons to whom the 
-	Software is furnished to do so, subject to the following 
+	Permission is hereby granted, free of charge, to any person
+	obtaining a copy of this software and associated documentation
+	files (the "Software"), to deal in the Software without
+	restriction, including without limitation the rights to use,
+	copy, modify, merge, publish, distribute, sublicense, and/or
+	sell copies of the Software, and to permit persons to whom the
+	Software is furnished to do so, subject to the following
 	conditions:
 
-	The above copyright notice and this permission notice shall be 
+	The above copyright notice and this permission notice shall be
 	included in all copies or substantial portions of the Software.
 
-	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, 
-	EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES 
-	OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
-	NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT 
-	HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
-	WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
-	FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR 
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+	EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+	OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+	NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+	HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+	WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+	FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
 /*global F5, WebKitCSSMatrix*/
 
 F5.registerModule(function(F5) {
-		
+
 	// see below
-	var useAndroidTransformWorkaround = false;			
-	function doTransform(scroller, offset, duration, bezierValues) {					
+	var useAndroidTransformWorkaround = false;
+	function doTransform(scroller, offset, duration, bezierValues) {
 		var transform;
 		if (scroller.horizontal) {
-			transform = 'translate3d(' + offset + 'px, 0px, 0px)';				
+			transform = 'translate3d(' + offset + 'px, 0px, 0px)';
 		} else {
-			transform = 'translate3d(0px, ' + offset + 'px, 0px)';				
+			transform = 'translate3d(0px, ' + offset + 'px, 0px)';
 		}
-		
+
 		// On MSIE, Firefox and Android the animation doesn't fire reliably if it's setup in the same frame
 		// as the transition parameters
 		if (duration) {
 			setTimeout(function () {
-				scroller.el.style[F5.styleName('transform')] = transform;									
+				scroller.el.style[F5.styleName('transform')] = transform;
 			}, 10);
 		} else {
-			scroller.el.style[F5.styleName('transform')] = transform;									
+			scroller.el.style[F5.styleName('transform')] = transform;
 		}
 
 		if (duration) {
 			var bezier = 'cubic-bezier(' + bezierValues.join(',') + ')';
-			scroller.el.style[F5.styleName('transition')] = F5.styleName('transform_rhs') + ' ' + duration + 's ' + bezier;	
+			scroller.el.style[F5.styleName('transition')] = F5.styleName('transform_rhs') + ' ' + duration + 's ' + bezier;
 
 			if (F5.platform() === 'android') {
 				useAndroidTransformWorkaround = true;
@@ -62,53 +62,53 @@ F5.registerModule(function(F5) {
 			// in this case, the change to -webkit-transform is ignored (sometimes) unless there
 			// is still a transition in place
 			if (useAndroidTransformWorkaround) {
-				scroller.el.style[F5.styleName('transition')] = F5.styleName('transform_rhs') + ' .0001s linear';				
+				scroller.el.style[F5.styleName('transition')] = F5.styleName('transform_rhs') + ' .0001s linear';
 				useAndroidTransformWorkaround = false;
 			} else {
-				scroller.el.style[F5.styleName('transition')] = '';				
+				scroller.el.style[F5.styleName('transition')] = '';
 			}
 		}
 	}
-	
+
 	function pinOffset(scroller, offset, margin) {
 		if (offset > margin) {
-			offset = margin;			
+			offset = margin;
 		}
 		if (offset < scroller.minOffset - margin) {
-			offset = scroller.minOffset - margin;			
+			offset = scroller.minOffset - margin;
 		}
 
 		return offset;
-	}	
-	
+	}
+
 	function pinVelocity(velocity) {
 		if (Math.abs(velocity) > this.maxVelocity) {
 			velocity = F5.sign(velocity)*this.maxVelocity;
-		}		
-		return velocity;	
+		}
+		return velocity;
 	}
-	
+
 	function stopScrollingAt(scroller, offset) {
 		scroller.staticOffset = scroller.currentOffset = Math.round(offset);
 		doTransform(scroller, scroller.staticOffset);
 	}
-		
+
 	function eventPosition(scroller, e) {
 		var location = F5.eventLocation(e);
 		return {x:location.x-scroller.container.left,y:location.y-scroller.container.top};
-	}	
-			
+	}
+
 	function updateVelocity(scroller, e) {
 		// don't do instantaneous updating of velocity
 		var weighting = 0.5;
 
 		var newTouchLoc = eventPosition(scroller, e);
-		var delta = scroller.horizontal ? newTouchLoc.x - scroller.touchLoc.x : newTouchLoc.y - scroller.touchLoc.y;			
+		var delta = scroller.horizontal ? newTouchLoc.x - scroller.touchLoc.x : newTouchLoc.y - scroller.touchLoc.y;
 		scroller.touchLoc = newTouchLoc;
 
 //		var deltaT = e.timeStamp - scroller.touchTime;
 		var deltaT = Date.now() - scroller.touchTime;
-				
+
 		if (deltaT) {
 //			scroller.touchTime = e.timeStamp;
 			scroller.touchTime = Date.now();
@@ -117,14 +117,14 @@ F5.registerModule(function(F5) {
 				scroller.lastVelocity = 0;
 			} else {
 				var newVelocity = pinVelocity((1.0 - weighting) * scroller.lastVelocity + weighting * (delta / deltaT));
-				scroller.lastVelocity = newVelocity;				
+				scroller.lastVelocity = newVelocity;
 			}
 		}
-		
+
 		return scroller.lastVelocity;
 	}
-	
-	function finishScrolling(scroller) {			
+
+	function finishScrolling(scroller) {
 		var snapTo = scroller.snapTo();
 
 		if (snapTo && scroller.staticOffset !== snapTo.offset) {
@@ -132,20 +132,20 @@ F5.registerModule(function(F5) {
 				F5.addTransitionEndListener(scroller.el, function () {
 					snapTo.cb();
 					F5.removeTransitionEndListener(scroller.el);
-				});				
-			}		
-			
+				});
+			}
+
 			doTransform(scroller, snapTo.offset, snapTo.duration, snapTo.bezier);
 			scroller.currentOffset = scroller.staticOffset = Math.round(snapTo.offset);
-		}		
+		}
 	}
-		
+
 	function startHandler(scroller, e) {
 		if (!scroller.enabled) {
 			return;
 		}
-				
-		scroller.tracking = true;					
+
+		scroller.tracking = true;
 		scroller.touchLoc = eventPosition(scroller, e);
 		scroller.startLoc = scroller.touchLoc;
 //		scroller.touchTime = e.timeStamp;
@@ -153,56 +153,56 @@ F5.registerModule(function(F5) {
 		scroller.lastVelocity = 0;
 		if (scroller.bounceTimeout) {
 			clearTimeout(scroller.bounceTimeout);
-			scroller.bounceTimeout = null;		
+			scroller.bounceTimeout = null;
 		}
 
 		if (typeof WebKitCSSMatrix !== 'undefined') {
 			var transformMatrix = new WebKitCSSMatrix(window.getComputedStyle(scroller.el)['-webkitTransform']);
-			stopScrollingAt(scroller, scroller.horizontal ? transformMatrix.m41 : transformMatrix.m42);								
+			stopScrollingAt(scroller, scroller.horizontal ? transformMatrix.m41 : transformMatrix.m42);
 		}
-	}	
-	
-	
+	}
+
+
 	function doMomentum(scroller) {
 	  var velocity = this.getEndVelocity();
-	}		
+	}
 
-	function stopHandler(scroller, e) {	
+	function stopHandler(scroller, e) {
 		if (!scroller.enabled) {
 			return;
 		}
-		
+
 		if (!scroller.tracking) {
 			return;
-		}		
-		
+		}
+
 		var that = this;
 		setTimeout(function () {
 			scroller.deferQueue.forEach(function (cb) {
 				cb();
 			});
 			scroller.deferQueue = [];
-		}, 0);	
-						
+		}, 0);
+
 		scroller.staticOffset = Math.round(scroller.currentOffset);
-		scroller.tracking = false;	
+		scroller.tracking = false;
 		scroller.capturing = false;
-		
-		var velocity = updateVelocity(scroller, e);	
-		var flickTo = scroller.flickTo(velocity);		
-		
+
+		var velocity = updateVelocity(scroller, e);
+		var flickTo = scroller.flickTo(velocity);
+
 		if (flickTo) {
 			var flickDistance = Math.abs(scroller.staticOffset - flickTo.offset);
-			
-			F5.removeTransitionEndListener(scroller.el);			
+
+			F5.removeTransitionEndListener(scroller.el);
 			// if we use the transition end event, there's a tiny hickup in the transition from the
 			// flick to the flickPast animation. so instead	use a setTimeout so that
 			// the flickPast animation gets set while the flick animation is still running
 //			F5.addTransitionEndListener(scroller.el, function (e) {
 			scroller.bounceTimeout = setTimeout(function () {
-				scroller.bounceTimeout = null;				
-//				F5.removeTransitionEndListener(scroller.el);				
-				
+				scroller.bounceTimeout = null;
+//				F5.removeTransitionEndListener(scroller.el);
+
 				// handle a flick past the scroller end
 //				var now = Date.now();
 				if (flickTo.bezier === scroller.curves.flickPast) {
@@ -214,64 +214,64 @@ F5.registerModule(function(F5) {
 					}
 
 					scroller.staticOffset = scroller.currentOffset = Math.round(bounceOffset);
-																		
-					// match the starting velocity of the bounce to the ending velocity of the flick
-					var t1, t2;		
-								
-					t1 = F5.cubicBezierAtTime.apply(F5, [0.99].concat(flickTo.bezier).concat(1));
-					t2 = F5.cubicBezierAtTime.apply(F5, [1.00].concat(flickTo.bezier).concat(1));					
-					var endVelocity = (t2 - t1)*flickDistance/(0.01*flickTo.duration);
-					
-					t1 = F5.cubicBezierAtTime.apply(F5, [0.00].concat(scroller.curves.easeOut).concat(1));
-					t2 = F5.cubicBezierAtTime.apply(F5, [0.01].concat(scroller.curves.easeOut).concat(1));		
-					
 
-					// since the 
+					// match the starting velocity of the bounce to the ending velocity of the flick
+					var t1, t2;
+
+					t1 = F5.cubicBezierAtTime.apply(F5, [0.99].concat(flickTo.bezier).concat(1));
+					t2 = F5.cubicBezierAtTime.apply(F5, [1.00].concat(flickTo.bezier).concat(1));
+					var endVelocity = (t2 - t1)*flickDistance/(0.01*flickTo.duration);
+
+					t1 = F5.cubicBezierAtTime.apply(F5, [0.00].concat(scroller.curves.easeOut).concat(1));
+					t2 = F5.cubicBezierAtTime.apply(F5, [0.01].concat(scroller.curves.easeOut).concat(1));
+
+
+					// since the
 					var transformMatrix = new WebKitCSSMatrix(window.getComputedStyle(scroller.el)['-webkitTransform']);
-					var realOffset = this.horizontal ? transformMatrix.m41 : transformMatrix.m42;		
+					var realOffset = this.horizontal ? transformMatrix.m41 : transformMatrix.m42;
 					var delta = Math.abs(realOffset - flickTo.offset);
-									
+
 					var duration = 75 * ((t2 - t1) * (scroller.bounceDistance + delta)) / endVelocity;
-															
+
 					F5.addTransitionEndListener(scroller.el, function () {
-						F5.removeTransitionEndListener(scroller.el);									
-						finishScrolling(scroller);					
-					});										
-					
-					doTransform(scroller, bounceOffset, duration, scroller.curves.flickPast);	
-//					console.log(Date.now() - now);												
+						F5.removeTransitionEndListener(scroller.el);
+						finishScrolling(scroller);
+					});
+
+					doTransform(scroller, bounceOffset, duration, scroller.curves.flickPast);
+//					console.log(Date.now() - now);
 				} else {
 					// TODO: not necessary?
-					finishScrolling(scroller);										
-				}				
+					finishScrolling(scroller);
+				}
 //			});
-			}, flickTo.duration * 1000 - 100);						
+			}, flickTo.duration * 1000 - 100);
 
 
 			if (flickTo.cb) {
 				F5.addTransitionEndListener(scroller.el, function () {
 					flickTo.cb();
 					F5.removeTransitionEndListener(scroller.el);
-				});				
-			}		
+				});
+			}
 
 			doTransform(scroller, flickTo.offset, flickTo.duration, flickTo.bezier);
-						
+
 			scroller.staticOffset = scroller.currentOffset = Math.round(flickTo.offset);
 		} else {
-			finishScrolling(scroller);			
-		}			
-	}	
+			finishScrolling(scroller);
+		}
+	}
 
 	function moveHandler(scroller, e) {
 		if (!scroller.enabled) {
 			return;
 		}
-					
+
 		// browser compatibility
 		if (!scroller.tracking) {
 			return;
-		}			
+		}
 
 		// if there's too much jitter (e.g. due to image loading) throw out the move event
 		// because it will cause the scroller to jerk around. better to stall than jump.
@@ -281,18 +281,18 @@ F5.registerModule(function(F5) {
 //		}
 
 		updateVelocity(scroller, e);
-		
-		var delta = scroller.horizontal ? eventPosition(scroller, e).x - scroller.startLoc.x : 
+
+		var delta = scroller.horizontal ? eventPosition(scroller, e).x - scroller.startLoc.x :
 											eventPosition(scroller, e).y - scroller.startLoc.y;
-								
+
 		if (Math.abs(delta) > F5.maxClickDistance) {
 			if (!scroller.capturing) {
 				scroller.capturing = true;
-				F5.removeTouchMoveListener(scroller.el.parentElement);			
+				F5.removeTouchMoveListener(scroller.el.parentElement);
 				F5.addTouchMoveListener(scroller.el.parentElement, function (e) {
 					moveHandler(scroller, e);
 					e.stopPropagation();
-				}, true);				
+				}, true);
 			}
 		}
 		if (Math.abs(delta) <= F5.maxClickDistance) {
@@ -303,13 +303,13 @@ F5.registerModule(function(F5) {
 			} else {
 				delta += F5.maxClickDistance;
 			}
-		}										
-		
+		}
+
 		scroller.currentOffset = scroller.constrainDrag(scroller.staticOffset, delta);
 
 		doTransform(scroller, scroller.currentOffset);
-	}	
-		
+	}
+
 	function TouchScroller(el) {
 
 		// prototype functions
@@ -326,77 +326,77 @@ F5.registerModule(function(F5) {
 
 		this.maxVelocity = 5.0;
 		this.enabled = true;
-		this.bounceDistance = 20;	
-		this.flickVelocityThreshold = 0.1;							
-		
+		this.bounceDistance = 20;
+		this.flickVelocityThreshold = 0.1;
+
 		this.initialize = function () {
 			var that = this;
-						
+
 			F5.addClass(this.el, 'f5scroller');
-						
+
 			stopScrollingAt(this, 0);
-			
+
 			// TODO: let this do x/y with constraint to one or the other axis
 //			this.horizontal = false;
-			
+
 			// other parameters that get used
-///			this.tracking			
+///			this.tracking
 //			this.minOffset
 //			this.container
-//			this.startLoc;									
-//			this.touchLoc;	
+//			this.startLoc;
+//			this.touchLoc;
 //			this.touchTime;
 //			this.lastVelocity;
-			
+
 			this.refreshFunction = function () {
 				that.refresh();
 			};
-			
+
 			this.scrollToTopFunction = function () {
 				that.scrollTo(0);
-			};								
-									
+			};
+
 			doTransform(this, this.staticOffset);
 		};
-		
+
 		// standard snapTo logic: bound to beginning and end of scroller
 		this.snapTo = function () {
 			var snapTo;
-			// bounce back						
+			// bounce back
 			if (Math.abs(this.staticOffset) > Math.abs(pinOffset(this, this.staticOffset, 0))) {
 
-				var offset = pinOffset(this, this.staticOffset, 0);	
-				
+				var offset = pinOffset(this, this.staticOffset, 0);
+
 				var duration;
-				
+
 				// sharp snapback if stretched
 				var bezier;
 				if (Math.abs(this.currentOffset-offset) > this.bounceDistance) {
 					bezier = this.curves.hardSnap;
-					duration = 0.2 * Math.sqrt(Math.abs(offset - this.staticOffset)/this.bounceDistance);					
+					duration = 0.2 * Math.sqrt(Math.abs(offset - this.staticOffset)/this.bounceDistance);
 				} else {
 					bezier = this.curves.easeIn;
 					duration = 0.2;
 				}
-				
+
 				if (offset !== this.staticOffset) {
-					snapTo = {offset: offset, duration: duration, bezier: bezier};					
+					snapTo = {offset: offset, duration: duration, bezier: bezier};
 				}
-			}	
-			
-			return snapTo;			
+			}
+
+			return snapTo;
 		};
-		
+
 		this.deferQueue = [];
-				
-		this.constrainDrag = function(offset, delta) {	
-			
+
+		this.constrainDrag = function(offset, delta) {
+
 			// limit is the furthest it's possible to drag without leaving the container
-			var limit = this.horizontal ? this.container.width : this.container.height;		
-							
+			var limit = this.horizontal ? this.container.width : this.container.height;
+
 			// maxDrag is the furthest it's possible to drag without leaving the container
 			// given the initial touch position
-			var maxDrag = this.horizontal ? limit - this.startLoc.x : limit - this.startLoc.y;				
+			var maxDrag = this.horizontal ? limit - this.startLoc.x : limit - this.startLoc.y;
 			if (F5.sign(delta) < 0 ) {
 				maxDrag = this.horizontal ? -this.startLoc.x : -this.startLoc.y;
 			}
@@ -425,8 +425,8 @@ F5.registerModule(function(F5) {
 			}
 
 			// if overdragged, constrain and apply a rubbery effect using bezier
-			if (overDrag) {								
-				// limit the overdrag to half the 
+			if (overDrag) {
+				// limit the overdrag to half the
 				var overDragLimit = 0.5 * F5.sign(delta) * Math.min(Math.abs(maxOverdrag), limit);
 				// make it stretchy
 				var constrainedOverdrag = overDragLimit * F5.cubicBezierAtTime(overDrag/maxOverdrag, 0, 0, 0.5 ,1, 2.0);
@@ -435,15 +435,15 @@ F5.registerModule(function(F5) {
 
 			return offset + delta;
 		};
-		
+
 		this.flickTo = function (velocity) {
-			var that = this;			
+			var that = this;
 			function overDragged(velocity) {
-				return (F5.sign(velocity) === 1 && that.staticOffset > 0) || 
+				return (F5.sign(velocity) === 1 && that.staticOffset > 0) ||
 					   (F5.sign(velocity) === -1 && that.staticOffset < that.minOffset);
 			}
-			
-			if (Math.abs(velocity) > this.flickVelocityThreshold && !overDragged(velocity)) {	
+
+			if (Math.abs(velocity) > this.flickVelocityThreshold && !overDragged(velocity)) {
 				velocity = pinVelocity(velocity);
 
 				// based on http://code.google.com/mobile/articles/webapp_fixed_ui.html
@@ -459,13 +459,13 @@ F5.registerModule(function(F5) {
 
 				// Not quite right because of decelleration
 				var scaler = Math.abs(scrollDistance/momentumDistance);
-				
+
 				// TODO: need to take a closer look at this. this should never be > 1
 				if (scaler > 1) {
 					scaler = 1;
 				}
 				scrollDuration *= scaler;
-				
+
 				var bezier;
 				if (flickPast) {
 					bezier = this.curves.flickPast;
@@ -474,41 +474,41 @@ F5.registerModule(function(F5) {
 				}
 
 				if (pinnedOffset !== this.staticOffset) {
-					return {offset: pinnedOffset, duration: scrollDuration/1000, bezier: bezier};					
+					return {offset: pinnedOffset, duration: scrollDuration/1000, bezier: bezier};
 				}
-			}			
+			}
 		};
-				
+
 		this.widgetWillBecomeActive = function () {
 			var that = this;
-			
+
 			if (!this.initialized) {
 				this.refresh();
-				this.initialized = true;				
-			}		
-			
+				this.initialized = true;
+			}
+
 			function moveHandlerWrapper(e) {
 				moveHandler(that, e);
 			}
 
 			function stopHandlerWrapper(e) {
-				if (!F5.isTouchDevice()) {		
+				if (!F5.isTouchDevice()) {
 					window.removeEventListener('mouseup', that.stopHandlerWrapper);
-					window.removeEventListener('mousemove', that.moveHandlerWrapper);	
-					
+					window.removeEventListener('mousemove', that.moveHandlerWrapper);
+
 					delete that.stopHandlerWrapper;
-					delete that.moveHandlerWrapper;	
+					delete that.moveHandlerWrapper;
 				}
-				F5.removeTouchStopListener(that.el.parentElement);				
-				F5.removeTouchMoveListener(that.el.parentElement);				
+				F5.removeTouchStopListener(that.el.parentElement);
+				F5.removeTouchMoveListener(that.el.parentElement);
 				stopHandler(that, e);
-			}			
-			
+			}
+
 			F5.addTouchStartListener(this.el.parentElement, function (e) {
 				if (!that.enabled) {
 					return;
 				}
-				
+
 				startHandler(that, e);
 				// makes the scroller play nice in a desktop browser
 				if (!F5.isTouchDevice()) {
@@ -517,45 +517,45 @@ F5.registerModule(function(F5) {
 					window.addEventListener('mouseup', that.stopHandlerWrapper);
 					window.addEventListener('mousemove', that.moveHandlerWrapper);
 				}
-				F5.addTouchStopListener(that.el.parentElement, stopHandlerWrapper);			
+				F5.addTouchStopListener(that.el.parentElement, stopHandlerWrapper);
 				F5.addTouchMoveListener(that.el.parentElement, moveHandlerWrapper);
-			});				
-		};				
-				
+			});
+		};
+
 		this.widgetDidBecomeActive = function () {
 			window.addEventListener('orientationchange', this.refreshFunction);
 			document.addEventListener('f5StatusBarTouched', this.scrollToTopFunction);
 			this.active = true;
 		};
-						
+
 		this.widgetWillBecomeInactive = function () {
 			this.tracking = false;
 			finishScrolling(this);
-			window.removeEventListener('orientationchange', this.refreshFunction);			
+			window.removeEventListener('orientationchange', this.refreshFunction);
 			document.removeEventListener('f5StatusBarTouched', this.scrollToTopFunction);
-			
-			if (!F5.isTouchDevice()) {		
+
+			if (!F5.isTouchDevice()) {
 				window.removeEventListener('mouseup', this.stopHandlerWrapper);
-				window.removeEventListener('mousemove', this.moveHandlerWrapper);	
-				
+				window.removeEventListener('mousemove', this.moveHandlerWrapper);
+
 				delete this.stopHandlerWrapper;
-				delete this.moveHandlerWrapper;	
+				delete this.moveHandlerWrapper;
 			}
 			F5.removeTouchStartListener(this.el.parentElement);
-			F5.removeTouchStopListener(this.el.parentElement);				
-			F5.removeTouchMoveListener(this.el.parentElement);							
+			F5.removeTouchStopListener(this.el.parentElement);
+			F5.removeTouchMoveListener(this.el.parentElement);
 		};
-		
+
 		this.widgetDidBecomeInactive = function () {
 			this.active = false;
 		};
-		
+
 		this.stopScrolling = function () {
-			var transformMatrix = new WebKitCSSMatrix(window.getComputedStyle(this.el)['-webkitTransform']);			
-			stopScrollingAt(this, this.horizontal ? transformMatrix.m41 : transformMatrix.m42);	
-			this.tracking = false;			
+			var transformMatrix = new WebKitCSSMatrix(window.getComputedStyle(this.el)['-webkitTransform']);
+			stopScrollingAt(this, this.horizontal ? transformMatrix.m41 : transformMatrix.m42);
+			this.tracking = false;
 		};
-		
+
 		this.disable = function () {
 			this.enabled = false;
 		};
@@ -563,10 +563,10 @@ F5.registerModule(function(F5) {
 		this.enable = function () {
 			this.enabled = true;
 		};
-		
+
 		this.scrollTo = function (offset, cb) {
 			var that = this;
-			
+
 			function completeScroll() {
 				F5.removeTransitionEndListener(that.el);
 				cb();
@@ -575,84 +575,87 @@ F5.registerModule(function(F5) {
 			if (this.staticOffset === offset) {
 				if (cb) {
 					cb();
-				}				
+				}
 			} else {
 				this.staticOffset = this.currentOffset = Math.round(offset);
-				doTransform(this, offset, 0.5, this.curves.softSnap);			
+				doTransform(this, offset, 0.5, this.curves.softSnap);
 
 				if (cb) {
 					F5.addTransitionEndListener(this.el, completeScroll);
-				}				
+				}
 			}
 		};
-		
+
 		this.jumpTo = function (offset) {
 			this.staticOffset = this.currentOffset = Math.round(offset);
-			doTransform(this, offset);	
+			doTransform(this, offset);
 		};
-		
+
 		this.finishScrolling = function () {
 			finishScrolling(this);
 		};
-				
+
 		this.refresh = function () {
 			// set the width and height to default to calculate geometry
 			this.el.style.width = '';
-			this.el.style.height = '';			
-			
+			this.el.style.height = '';
+
 			this.container = F5.elementOffsetGeometry(this.el.parentElement);
 			var absolutePosition = F5.elementAbsolutePosition(this.el.parentElement);
 			this.container.left = absolutePosition.x;
 			this.container.top = absolutePosition.y;
-			
+
 			var oldMinOffset = this.minOffset;
 			if (this.horizontal) {
-				this.minOffset = Math.min(this.container.width - this.el.offsetWidth, 0);				
+				this.minOffset = Math.min(this.container.width - this.el.offsetWidth, 0);
 			} else {
 				this.minOffset = Math.min(this.container.height - this.el.offsetHeight, 0);
 			}
 			if (oldMinOffset < this.minOffset) {
 				this.staticOffset = 0;
-				doTransform(this, 0);				
+				doTransform(this, 0);
 			}
-			
-			this.initialized = false;				
-			
+
+			this.initialized = false;
+
 			// set height to 100% so that the OS doesn't try to page in the large div
-			if (this.horizontal) {
-				this.el.style.width = '100%';				
-			} else {
-				this.el.style.height = '100%';				
-			}			
+			// this doesn't work properly on Android. might just pull in another scroller impl
+			if (F5.platform() !== 'android') {
+				if (this.horizontal) {
+					this.el.style.width = '100%';
+				} else {
+					this.el.style.height = '100%';
+				}
+			}
 		};
 	}
-	
+
 
 	// TODO: refactor. don't like having the non-generic methods (commented out below) in the TouchScroller
 	function DesktopScroller() {
-						
+
 			this.initialize = function () {
-				
+
 			};
 
 			this.refresh = function () {
 				// noop. overflow logic handles this
-			};	
-			
+			};
+
 			this.widgetWillBecomeActive = function () {
-				this.el.parentElement.style.overflow = 'scroll';												
+				this.el.parentElement.style.overflow = 'scroll';
 			};
 
 			this.widgetWillBecomeInactive = function () {
 
 			};
-			
+
 			this.staticOffset = 0;
-			
+
 			// used by mobile forms (to keep scroller from moving when an input is focused)
 			// but also by application layer (which it should not be)
-			this.enable = F5.noop;				
-			this.disable = F5.noop;								
+			this.enable = F5.noop;
+			this.disable = F5.noop;
 
 			// this is only called by the touchscroller implementation and
 			// mobile forms
@@ -661,26 +664,26 @@ F5.registerModule(function(F5) {
 
 			// this is only called by the mobile version of forms
 //			this.jumpTo
-			
-			// this is used by forms			
-//			this.finishScrolling	
-			
-			// this is only called by Carousel (when going to detents) and by the 
+
+			// this is used by forms
+//			this.finishScrolling
+
+			// this is only called by Carousel (when going to detents) and by the
 			// status bar touch event handler
 //			this.scrollTo
 
 	}
-	
-	
-	
+
+
+
 
 	F5.Prototypes.Widgets.TouchScroller = new TouchScroller();
-	
+
 	if (F5.isMobile()) {
 		F5.Prototypes.Widgets.Scroller = F5.Prototypes.Widgets.TouchScroller;
 	} else {
 		F5.Prototypes.Widgets.Scroller = new DesktopScroller();
 	}
-			
-		
+
+
 });

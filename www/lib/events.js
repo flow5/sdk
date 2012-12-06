@@ -103,6 +103,7 @@
 		}
 
 		el.F5.listeners[eventName] = function f5eventListenerWrapper(e) {
+			console.log('event: ' + eventName);
 			// TODO: check for transitioning for all event callbacks?
 			if (!F5.xhrSendBlocking) {
 				F5.callback(cb, e);

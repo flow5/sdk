@@ -3,5 +3,10 @@
 		"elements": [
 			"css/default.css"
 		]
+	},
+	"android": {
+		"elements": [
+			"css/android.css"
+		]
 	}
 }

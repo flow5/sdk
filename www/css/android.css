@@ -2,25 +2,25 @@
 
 	Copyright (c) 2011 Paul Greyson
 
-	Permission is hereby granted, free of charge, to any person 
-	obtaining a copy of this software and associated documentation 
-	files (the "Software"), to deal in the Software without 
-	restriction, including without limitation the rights to use, 
-	copy, modify, merge, publish, distribute, sublicense, and/or 
-	sell copies of the Software, and to permit persons to whom the 
-	Software is furnished to do so, subject to the following 
+	Permission is hereby granted, free of charge, to any person
+	obtaining a copy of this software and associated documentation
+	files (the "Software"), to deal in the Software without
+	restriction, including without limitation the rights to use,
+	copy, modify, merge, publish, distribute, sublicense, and/or
+	sell copies of the Software, and to permit persons to whom the
+	Software is furnished to do so, subject to the following
 	conditions:
 
-	The above copyright notice and this permission notice shall be 
+	The above copyright notice and this permission notice shall be
 	included in all copies or substantial portions of the Software.
 
-	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, 
-	EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES 
-	OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
-	NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT 
-	HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
-	WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
-	FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR 
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+	EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+	OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+	NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+	HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+	WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+	FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
@@ -37,14 +37,14 @@
    one of a number of cases where the Android WebKit implementation seems to drop some rendering tasks on the floor
 */
 .f5button-container {
-	-webkit-transform: translate3d(0px, 0px, 0px);	
+	-webkit-transform: translate3d(0px, 0px, 0px);
 }
 
 /* for web map view, on high density devices google map default font size is too small */
 @media only screen and (-webkit-min-device-pixel-ratio: 1.5) {
 	.map {
 		zoom: 2;
-	}	
+	}
 }
 
 /* default presentation for the android settings menu */
@@ -57,25 +57,33 @@
 	position: absolute;
 	bottom: 0px;
 	width: 100%;
-	height: 100%;	
+	height: 100%;
 }
 
 .f5androidsettingscontainer {
-	-webkit-box-shadow: 0 0 10px 1px #000;	
+	-webkit-box-shadow: 0 0 10px 1px #000;
 	opacity: 0;
 	-webkit-transform: scale(.9);
 	-webkit-transform-origin: 50% 100%;
 	-webkit-transition-property: opacity, -webkit-transform;
-	-webkit-transition-duration: .15s, .15s;	
+	-webkit-transition-duration: .15s, .15s;
 	width: 75%;
 }
 
 .f5androidsetting {
-	border-bottom: 1px solid #4F4F4F;	
+	border-bottom: 1px solid #4F4F4F;
 	padding: .5em;
-	-webkit-box-sizing: border-box;	
+	-webkit-box-sizing: border-box;
 	font-size: .18em;
 	background-color: #303030;
 	color: #EEE;
 }
+
+/*
+body, #f5appframe, #f5screen, .f5node, .f5container, .f5frame {
+	-webkit-transform: translate3d(0,0,0);
+}
+*/
+
+
 
