@@ -46,7 +46,7 @@ body {
 	background-color:lightgrey;
 	-webkit-box-sizing: border-box;
 	-webkit-transition: opacity .25s;
-	box-shadow: 0px .01em .03em #888;
+	-webkit-box-shadow: 0px .01em .03em #888;
 }
 
 .f5navbar .f5leftbutton, .f5navbar .f5rightbutton {

@@ -44,6 +44,7 @@ public class F5Activity extends DroidGap {
 				}
 								              
                 final String address = null; // resolver.resolve(devservhostname);
+//                final String address = resolver.resolve(devservhostname);
                 final String app = appName;
                 
                 activity.runOnUiThread(new Runnable() {

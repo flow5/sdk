@@ -49,6 +49,7 @@ import android.view.Display;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -67,6 +68,7 @@ import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.phonegap.api.LOG;
 import com.phonegap.api.PhonegapActivity;
@@ -165,7 +167,7 @@ public class DroidGap extends PhonegapActivity {
     private ArrayList<Pattern> whiteList = new ArrayList<Pattern>();
     private HashMap<String, Boolean> whiteListCache = new HashMap<String,Boolean>();
 
-    protected LinearLayout root;
+    public RelativeLayout root;
     public boolean bound = false;
     public CallbackServer callbackServer;
     protected PluginManager pluginManager;
@@ -235,11 +237,11 @@ public class DroidGap extends PhonegapActivity {
         int width = display.getWidth();
         int height = display.getHeight();
         
-        root = new LinearLayoutSoftKeyboardDetect(this, width, height);
-        root.setOrientation(LinearLayout.VERTICAL);
+        root = new RelativeLayoutSoftKeyboardDetect(this, width, height);
+//        root.setOrientation(LinearLayout.VERTICAL);
         root.setBackgroundColor(this.backgroundColor);
-        root.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, 
-                ViewGroup.LayoutParams.FILL_PARENT, 0.0F));               
+//        root.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, 
+//                ViewGroup.LayoutParams.FILL_PARENT, 0.0F));               
         
         // Load PhoneGap configuration:
         //      white list of allowed URLs
@@ -265,13 +267,39 @@ public class DroidGap extends PhonegapActivity {
         LOG.d(TAG, "DroidGap.init()");
         
         // Create web container
-        this.appView = new WebView(DroidGap.this);
+        this.appView = new WebView(DroidGap.this) {
+        	 @Override
+        	    public boolean onTouchEvent(MotionEvent ev)
+        	    {
+	            	 int count = DroidGap.this.root.getChildCount();
+	            	 View hitView = null;
+	            	 // dispatch events to any native view that is not the webview first
+	            	 // TODO: to make this more general purpose can provide a mask region that allows webview to override behavior
+	            	 for (int i = 0; i < count; ++i) {
+	            		 View subview = DroidGap.this.root.getChildAt(i);
+	            		 if (subview != DroidGap.this.appView) {
+	                		 if (isPointInsideView(ev.getX(), ev.getY(), subview)) {
+	                			 hitView = subview;
+	                		 }    			 
+	            		 }
+	            	 }
+	            	 
+	            	 if (hitView != null && hitView.getVisibility() == View.VISIBLE) {
+	            		  return hitView.onTouchEvent(ev);
+	            	 } else {
+	            		 return super.onTouchEvent(ev);
+	            	 }
+        	    }        	
+        };
         this.appView.setId(100);
         
         this.appView.setLayoutParams(new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.FILL_PARENT,
                 ViewGroup.LayoutParams.FILL_PARENT, 
                 1.0F));
+        
+        // TODO: move this to app layer
+        this.appView.setBackgroundColor(Color.TRANSPARENT);
 
         this.appView.setWebChromeClient(new GapClient(DroidGap.this));
         this.setWebViewClient(this.appView, new GapViewClient(this));
@@ -1579,7 +1607,29 @@ public class DroidGap extends PhonegapActivity {
              callback.onActivityResult(requestCode, resultCode, intent);
          }        
      }
+     
+     /**
+      * Determines if given points are inside view
+      * @param x - x coordinate of point
+      * @param y - y coordinate of point
+      * @param view - view object to compare
+      * @return true if the points are within view bounds, false otherwise
+      */
+     private boolean isPointInsideView(float x, float y, View view){
+         int location[] = new int[2];
+         view.getLocationOnScreen(location);
+         int viewX = location[0];
+         int viewY = location[1];
 
+         //point is inside view bounds
+         if(( x > viewX && x < (viewX + view.getWidth())) &&
+                 ( y > viewY && y < (viewY + view.getHeight()))){
+             return true;
+         } else {
+             return false;
+         }
+     }
+     
      @Override
      public void setActivityResultCallback(IPlugin plugin) {
          this.activityResultCallback = plugin;
@@ -1654,7 +1704,7 @@ public class DroidGap extends PhonegapActivity {
       * We are providing this class to detect when the soft keyboard is shown 
       * and hidden in the web view.
       */
-     class LinearLayoutSoftKeyboardDetect extends LinearLayout {
+     class RelativeLayoutSoftKeyboardDetect extends RelativeLayout {
 
             private static final String TAG = "SoftKeyboardDetect";
             
@@ -1663,7 +1713,7 @@ public class DroidGap extends PhonegapActivity {
             private int screenWidth = 0;
             private int screenHeight = 0;
                         
-            public LinearLayoutSoftKeyboardDetect(Context context, int width, int height) {
+            public RelativeLayoutSoftKeyboardDetect(Context context, int width, int height) {
                 super(context);     
                 screenWidth = width;
                 screenHeight = height;                  
