@@ -101,7 +101,7 @@ F5.registerModule(function (F5) {
 			moveListener = function (e) {
 				e.preventDefault();
 				// TODO: not sure about this
-				e.stopPropagation();
+//				e.stopPropagation();
 
 				var moveLoc = F5.eventLocation(e);
 				if (F5.eventDistance(moveLoc, that.startLoc) > F5.maxClickDistance) {

@@ -295,6 +295,9 @@ F5.registerModule(function(F5) {
 				}, true);
 			}
 		}
+
+// TODO: what was the motivation for this? makes the scroller jerk
+/*
 		if (Math.abs(delta) <= F5.maxClickDistance) {
 			delta = 0;
 		} else {
@@ -304,6 +307,7 @@ F5.registerModule(function(F5) {
 				delta += F5.maxClickDistance;
 			}
 		}
+*/
 
 		scroller.currentOffset = scroller.constrainDrag(scroller.staticOffset, delta);
 
