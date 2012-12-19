@@ -62,6 +62,7 @@ import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebSettings.LayoutAlgorithm;
+import android.webkit.WebSettings.RenderPriority;
 import android.webkit.WebStorage;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -160,9 +161,10 @@ import 	org.xmlpull.v1.XmlPullParserException;
 public class DroidGap extends PhonegapActivity {
     public static String TAG = "DroidGap";
     
+    public ImageView splashScreenView;
+
     // The webview for our app
     protected WebView appView;
-    protected ImageView splashScreenView;
     protected WebViewClient webViewClient;
     private ArrayList<Pattern> whiteList = new ArrayList<Pattern>();
     private HashMap<String, Boolean> whiteListCache = new HashMap<String,Boolean>();
@@ -307,6 +309,9 @@ public class DroidGap extends PhonegapActivity {
         this.appView.setInitialScale(0);
         this.appView.setVerticalScrollBarEnabled(false);
         this.appView.requestFocusFromTouch();
+        
+        this.appView.getSettings().setRenderPriority(RenderPriority.HIGH);
+        this.appView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);        
 
         // Enable JavaScript
         WebSettings settings = this.appView.getSettings();
@@ -363,8 +368,10 @@ public class DroidGap extends PhonegapActivity {
         if ((this.urls.size() == 0) && (this.splashscreen != 0)) {
  //           root.setBackgroundResource(this.splashscreen);
         	splashScreenView = new ImageView(this);
+        	splashScreenView.setBackgroundColor(Color.BLACK);
         	splashScreenView.setImageResource(this.splashscreen);
-        	splashScreenView.setAdjustViewBounds(true); // set the ImageView bounds to match the Drawable's dimensions
+        	splashScreenView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+//        	splashScreenView.setAdjustViewBounds(false); // set the ImageView bounds to match the Drawable's dimensions
         	splashScreenView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT));
         	root.addView(splashScreenView);
         }
