@@ -23,7 +23,7 @@
         "domscripts": [
             "js/navbar_web.js",
             "js/mapview_web.js",
-            "js/webframe_web.js",
+            "js/webframe_native.js",
             "js/activity_web.js",
             "js/dialogs_web.js"
         ]

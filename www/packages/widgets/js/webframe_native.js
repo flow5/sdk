@@ -134,6 +134,7 @@ F5.registerModule(function(F5) {
 							that.onLoadAction();
 						}
 					} else if (message.message && that.messageAction) {
+						console.log(JSON.stringify(message));
 						that.messageAction(message.message);
 					}
 				},
