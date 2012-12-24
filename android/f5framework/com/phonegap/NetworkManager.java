@@ -195,7 +195,7 @@ public class NetworkManager extends Plugin {
      * 
      * @param connection the network info to set as navigator.connection
      */
-    private void sendUpdate(String type) {
+    protected void sendUpdate(String type) {
         PluginResult result = new PluginResult(PluginResult.Status.OK, type);
         result.setKeepCallback(true);
         this.success(result, this.connectionCallbackId);
