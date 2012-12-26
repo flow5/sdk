@@ -71,7 +71,7 @@ public class NetworkManager extends Plugin {
 
     private String connectionCallbackId;
 
-    ConnectivityManager sockMan;
+    protected ConnectivityManager sockMan;
     BroadcastReceiver receiver;
     
     /**
@@ -165,7 +165,7 @@ public class NetworkManager extends Plugin {
      * @param info the current active network info
      * @return
      */
-    private void updateConnectionInfo(NetworkInfo info) {     
+    protected void updateConnectionInfo(NetworkInfo info) {     
         // send update to javascript "navigator.network.connection"
         sendUpdate(this.getConnectionInfo(info));
     }
@@ -176,7 +176,7 @@ public class NetworkManager extends Plugin {
      * @param info the current active network info
      * @return a JSONObject that represents the network info
      */
-    private String getConnectionInfo(NetworkInfo info) {
+    protected String getConnectionInfo(NetworkInfo info) {
         String type = TYPE_NONE;
         if (info != null) {
             // If we are not connected to any network set type to none
