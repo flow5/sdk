@@ -195,6 +195,8 @@ F5.registerModule(function(F5) {
 			var flickDistance = Math.abs(scroller.staticOffset - flickTo.offset);
 
 			F5.removeTransitionEndListener(scroller.el);
+
+		if (F5.platform() === 'ios') {
 			// if we use the transition end event, there's a tiny hickup in the transition from the
 			// flick to the flickPast animation. so instead	use a setTimeout so that
 			// the flickPast animation gets set while the flick animation is still running
@@ -246,7 +248,7 @@ F5.registerModule(function(F5) {
 				}
 //			});
 			}, flickTo.duration * 1000 - 100);
-
+		}
 
 			if (flickTo.cb) {
 				F5.addTransitionEndListener(scroller.el, function () {
