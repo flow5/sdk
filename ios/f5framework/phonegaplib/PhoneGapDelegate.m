@@ -840,6 +840,7 @@ BOOL gSplashScreenShown = NO;
 - (void)applicationWillResignActive:(UIApplication *)application
 {
     //DLog(@"%@",@"applicationWillResignActive");
+    [self.webView stringByEvaluatingJavaScriptFromString:@"PhoneGap.fireDocumentEvent('resign');"];    
 }
 
 /*
@@ -857,6 +858,7 @@ BOOL gSplashScreenShown = NO;
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
     //DLog(@"%@",@"applicationDidBecomeActive");
+    [self.webView stringByEvaluatingJavaScriptFromString:@"PhoneGap.fireDocumentEvent('active');"];    
 }
 
 /*
