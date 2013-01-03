@@ -25,7 +25,7 @@
             "js/mapview_web.js",
             "js/webframe_native.js",
             "js/activity_web.js",
-            "js/dialogs_web.js"
+            "js/dialogs_native.js"
         ]
     },
     "ios": {
