@@ -210,11 +210,7 @@
 				var clickTime = stopEvent.timeStamp - startEvent.timeStamp;
 				var clickMove = F5.eventDistance(startLoc, stopLoc);
 
-				// NOTE: not sure why the set timeout is needed. but without, sometimes
-				// the event gets delayed. possibly an interaction with animation
-				// in any case, the small delay guarantees that touch feedback gets a chance
-				// to display
-				setTimeout(function () {
+				function complete() {
 					if (pressTime) {
 						if (clickTime >= pressTime && clickMove <= F5.maxClickDistance) {
 							F5.callback(cb, stopEvent);
@@ -224,7 +220,18 @@
 							F5.callback(cb, stopEvent);
 						}
 					}
-				}, 30);
+				}
+
+				// NOTE: not sure why the set timeout is needed. but without, sometimes
+				// the event gets delayed. possibly an interaction with animation
+				// in any case, the small delay guarantees that touch feedback gets a chance
+				// to display
+				// On android, the setTimeout creates weird touch feedback latency inconsistency
+				if (F5.platform() === 'android') {
+					complete();
+				} else {
+					setTimeout(complete, 30);
+				}
 
 				F5.addTapListener(el, cb, pressTime);
 
