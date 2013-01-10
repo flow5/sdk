@@ -77,6 +77,10 @@
 }
 
 
+- (BOOL)shouldAutorotate {
+    return self.supportedOrientations.count > 1;
+}
+
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation) interfaceOrientation 
 {
 	// First ask the webview via JS if it wants to support the new orientation -jm

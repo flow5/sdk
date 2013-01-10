@@ -9,8 +9,8 @@ import com.phonegap.api.LOG;
 
 public class F5Activity extends DroidGap {
     public void onCreate(Bundle savedInstanceState, final int configId) {
-//    	LOG.setLogLevel("VERBOSE");
-    	LOG.setLogLevel("ERROR");
+    	LOG.setLogLevel("VERBOSE");
+//    	LOG.setLogLevel("ERROR");
         super.onCreate(savedInstanceState);
                 
  //       super.init();
