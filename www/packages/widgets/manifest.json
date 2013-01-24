@@ -24,7 +24,7 @@
             "js/navbar_web.js",
             "js/mapview_web.js",
             "js/webframe_native.js",
-            "js/activity_web.js",
+            "js/activity_native.js",
             "js/dialogs_native.js"
         ]
     },
