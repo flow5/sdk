@@ -32,7 +32,13 @@
 	};
 
 	F5.openLink = function (url) {
-		window.open(url, '_blank');
+		PhoneGap.exec(
+			function success(result) {
+			},
+			function failure(result) {
+				console.log(result);
+			}, "com.flow5.utils", "openLink", [url]
+		);
 	};
 
 	F5.callBridgeSynchronous = function (className, methodName, arguments, options) {

@@ -1243,7 +1243,7 @@ public class DroidGap extends PhonegapActivity {
         public void onConsoleMessage(String message, int lineNumber, String sourceID)
         {       
             LOG.d(TAG, "%s: Line %d : %s", sourceID, lineNumber, message);
-            super.onConsoleMessage(message, lineNumber, sourceID);
+//            super.onConsoleMessage(message, lineNumber, sourceID);
         }
         
         @Override
@@ -1257,7 +1257,8 @@ public class DroidGap extends PhonegapActivity {
         		LOG.d(TAG, "NULL Message in onConsoleMessage. Why??");
         	}
         	
-            return super.onConsoleMessage(consoleMessage);
+        	return true;        
+//            return super.onConsoleMessage(consoleMessage);
         }
 
         @Override
