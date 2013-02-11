@@ -261,7 +261,7 @@ function Input() {
 		this.value = value;
 		if (this.type === 'menu') {
 			F5.forEach(this.input.querySelectorAll('option'), function (option) {
-				if (option.textContent === value) {
+				if (option.value == value) {
 					option.selected = true;
 				}
 			});
