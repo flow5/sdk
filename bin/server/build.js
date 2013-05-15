@@ -990,7 +990,7 @@ exports.buildHtml = function (query, cb) {
 		// manifest
 		if (bool(query.cache)) {
 //			delete query.devserv;
-			var manifestString = 'cache.manifest?' + urlParameters(query);
+			var manifestString = 'cache.manifest';
 			document.setAttribute('manifest', manifestString);
 		}
 
