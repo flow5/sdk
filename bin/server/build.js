@@ -1182,6 +1182,10 @@ exports.buildFrame = function (query) {
 		width = 320;
 		height = 480;
 		break;
+	case 'iphone5-portrait':
+		width = 320;
+		height = 568;
+		break;
 	case 'iphone-landscape':
 		width = 480;
 		height = 320;
