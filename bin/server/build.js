@@ -1338,6 +1338,9 @@ exports.buildCacheManifest = function(query, cb) {
 		});
 
 		async.parallel(tasks, function (err) {
+			// FIX: this isn't working for CSS yet
+			latestDate = new Date().toLocaleString();
+
 			if (!err) {
 				console.error(pkg + ' last modified ' + latestDate);
 			}
@@ -1353,6 +1356,7 @@ exports.buildCacheManifest = function(query, cb) {
 	cacheManifest += '*\n';
 
 	getModDate(function (err, latestDate) {
+
 		cacheManifest += '#' + latestDate + '\n';
 	//	console.error(cacheManifest)
 		cb(err, cacheManifest);

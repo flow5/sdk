@@ -666,13 +666,13 @@
 
 								// TODO: might want to call willBecomeInactive on the previous active node. . .
 
-								if (node.parent && node.parent.selection) {
+//								if (node.parent && node.parent.selection) {
 									node.selection = node.children[nextAction];
 									F5.forEach(node.children, function (id, child) {
 										child.active = false;
 									});
 									node.selection.active = true;
-								}
+//								}
 
 								doLifecycleEventRecursive('Initialize', node.selection, function () {
 									doLifecycleEventRecursive('WillBecomeActive', node.selection, function () {
