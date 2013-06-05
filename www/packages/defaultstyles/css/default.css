@@ -310,123 +310,43 @@ body {
 	width: .20em;
 }
 
-.f5activityspriteroot {
+.f5activityroot {
 	position: absolute;
 	top: 0px;
 	left: 0px;
 	z-index: 1000;
 	height: 100%;
 	width: 100%;
-}
-
-.f5activityspritecontainer {
-	height: 100%;
-	width: 100%;
 	display: -webkit-box;
-	-webkit-box-pack: center;
 	-webkit-box-align: center;
+	-webkit-box-pack: center;
 }
 
-.f5activityspritemask {
-	height: .25em;
-	width: .25em;
-	overflow: hidden;
-}
-
-.f5activitysprite {
-	-webkit-animation-name: activitySprite;
-	-webkit-animation-duration: 1s;
-	-webkit-animation-iteration-count: infinite;
-	-webkit-animation-timing-function: linear;
-	height: 1em;
-	width: .75em;
-	background-size: 100% 100%;
-	background-image: url('../images/activitysprite.svg');
-}
-
-.white .f5activitysprite {
-	background-image: url('../images/activitysprite-white.svg');
+.f5activity {
+    -webkit-animation: activityRotate 2s linear infinite;
+    -webkit-transform-origin: 50% 50%;
 }
 
 
 /* NOTE: the 50% is required for Safari. Chrome will do the rotate with just from and to */
-@-webkit-keyframes activitySprite {
-	from {
-		-webkit-transform: translate3d(0px, 0px, 0px);
-	}
-	8.33% {
-		-webkit-transform: translate3d(0px, 0px, 0px);
-	}
-	8.34% {
-		-webkit-transform: translate3d(-.25em, 0px, 0px);
-	}
-	16.66% {
-		-webkit-transform: translate3d(-.25em, 0px, 0px);
-	}
-	16.67% {
-		-webkit-transform: translate3d(-.50em, 0px, 0px);
-	}
-	25% {
-		-webkit-transform: translate3d(-.50em, 0px, 0px);
-	}
-	25.01% {
-		-webkit-transform: translate3d(0px, -.25em, 0px);
-	}
-	33.33% {
-		-webkit-transform: translate3d(0px, -.25em, 0px);
-	}
-	33.34% {
-		-webkit-transform: translate3d(-.25em, -.25em, 0px);
-	}
-	41.66% {
-		-webkit-transform: translate3d(-.25em, -.25em, 0px);
-	}
-	41.67% {
-		-webkit-transform: translate3d(-.50em, -.25em, 0px);
-	}
-	50% {
-		-webkit-transform: translate3d(-.50em, -.25em, 0px);
-	}
-	50.01% {
-		-webkit-transform: translate3d(0px, -.50em, 0px);
-	}
-	58.33% {
-		-webkit-transform: translate3d(0px, -.50em, 0px);
-	}
-	58.34% {
-		-webkit-transform: translate3d(-.25em, -.50em, 0px);
-	}
-	66.66% {
-		-webkit-transform: translate3d(-.25em, -.50em, 0px);
-	}
-	66.67% {
-		-webkit-transform: translate3d(-.50em, -.50em, 0px);
-	}
-	75% {
-		-webkit-transform: translate3d(-.50em, -.50em, 0px);
-	}
-	75.01% {
-		-webkit-transform: translate3d(0px, -.75em, 0px);
-	}
-	83.33% {
-		-webkit-transform: translate3d(0px, -.75em, 0px);
-	}
-	83.34% {
-		-webkit-transform: translate3d(-.25em, -.75em, 0px);
-	}
-	91.66% {
-		-webkit-transform: translate3d(-.25em, -.75em, 0px);
-	}
-	91.67% {
-		-webkit-transform: translate3d(-.50em, -.75em, 0px);
-	}
-	99.99% {
-		-webkit-transform: translate3d(-.50em, -.75em, 0px);
-	}
-	to {
-		-webkit-transform: translate3d(0px, 0px, 0px);
-	}
+@-webkit-keyframes activityRotate {
+    from{
+        -webkit-transform: rotate(0deg);
+    }
+    to{
+        -webkit-transform: rotate(360deg);
+    }
 }
+
+@-webkit-keyframes rotating {
+    from{
+        -webkit-transform: rotate(0deg);
+    }
+    to{
+        -webkit-transform: rotate(360deg);
+    }
+}
+
 
 /***************************************/
 /*                Alerts               */
