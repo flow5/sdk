@@ -223,7 +223,7 @@
 					F5.Global.flowController.start(function () {
 						// TODO: extract
 						/*global PhoneGap*/
-						console.log('started');
+//						console.log('started');
 
 						setTimeout(function () {
 							screenframeEl.style.opacity = '';

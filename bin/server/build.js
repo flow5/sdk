@@ -284,7 +284,7 @@ function inlineData(pkg, path, failure, success) {
 		});
 	} else if (ext === 'woff') {
 		get(pkg, path, 'base64', failure, function (data) {
-			success('data:font/woff;base64,' + data);
+			success('data:font/opentype;base64,' + data);
 		});
 	} else if (ext === 'otf') {
 		get(pkg, path, 'base64', failure, function (data) {
@@ -1007,7 +1007,7 @@ exports.buildHtml = function (query, cb) {
 //		appendMeta({name: 'viewport', content: 'width=device-width initial-scale=1.0 maximum-scale=1.0 user-scalable=0'});
 
 		// android
-		appendMeta({name: 'viewport', content: 'target-densitydpi=device-dpi'});
+//		appendMeta({name: 'viewport', content: 'target-densitydpi=device-dpi'});
 
 		var tasks = [];
 		tasks.push(function (cb) {
