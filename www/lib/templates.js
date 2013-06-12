@@ -104,9 +104,13 @@
 		widget.el = el;
 		el.widget = widget;
 
-		var className = el.getAttribute('f5class');
-		if (className) {
-			F5.addClass(el, className);
+		var f5class = el.getAttribute('f5class');
+		if (f5class) {
+			F5.addClass(el, f5class);
+		}
+		var f5id = el.getAttribute('f5id');
+		if (f5id) {
+			F5.addClass(el, f5id);
 		}
 		if (!noInit) {
 			widget.initialize(widgetData(data, el.getAttribute('f5id'), el.getAttribute('f5class')));

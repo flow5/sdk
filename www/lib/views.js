@@ -44,6 +44,7 @@
 				var widget = el.getAttribute('f5widget');
 				if (widget && widget.match('Tabset')) {
 					that.tabset = el;
+					that.tabset.widget.initialize();
 					that.tabset.widget.attachToNode(node);
 					that.tabset.widget.setAction(function selectionChangeCb(id) {
 						F5.Global.flowController.doSelection(node, id);
