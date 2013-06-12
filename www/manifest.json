@@ -39,7 +39,6 @@
 	        "lib/viewcontroller.js",
 			"lib/phone.js",
 			"lib/imagepreloader.js",
-	        "lib/animation.js",
             "lib/templates.js",
             "lib/location.js",
 			"3p/b64.js",

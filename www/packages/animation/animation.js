@@ -27,7 +27,7 @@
 /*global F5*/
 
 // TODO: move animation definitions into a F5.Animations namespace to parallel Widgets etc.
-(function () {
+F5.registerModule(function (F5) {
 
 	function pushHorizontal(container, oldEl, newEl, distance) {
 
@@ -178,17 +178,15 @@
 		};
 	}
 
-	F5.Animation = {
-
-		cut: function (container, oldEl, newEl) {
+		F5.Animation.cut = function (container, oldEl, newEl) {
 			return function (cb) {
 				newEl.style.visibility = '';
 				oldEl.style.visibility = 'hidden';
 				setTimeout(cb, 0);
 			};
-		},
+		};
 
-		overlayFadeIn: function (container, oldEl, newEl) {
+		F5.Animation.overlayFadeIn = function (container, oldEl, newEl) {
 			newEl.style.visibility = '';
 			newEl.style.opacity = 0;
 			newEl.style.display = '';
@@ -204,9 +202,9 @@
 				newEl.style[F5.styleName('transition')] = 'opacity .25s';
 				newEl.style.opacity = 1;
 			};
-		},
+		};
 
-		overlayFadeOut: function (container, oldEl, newEl) {
+		F5.Animation.overlayFadeOut = function (container, oldEl, newEl) {
 			return function (cb) {
 				function completeFadeOut() {
 					oldEl.style[F5.styleName('transition')] = '';
@@ -219,10 +217,10 @@
 				oldEl.style[F5.styleName('transition')] = 'opacity .25s';
 				oldEl.style.opacity = 0;
 			};
-		},
+		};
 
 		// oldElement sits on top, fades out to reveal newEl
-		fadeIn: function (container, oldEl, newEl) {
+		F5.Animation.fadeIn = function (container, oldEl, newEl) {
 
 			newEl.style.visibility = '';
 			newEl.style.opacity = 0;
@@ -255,9 +253,9 @@
 
 				newEl.style.opacity = 1;
 			};
-		},
+		};
 
-		fadeOut: function (container, oldEl, newEl) {
+		F5.Animation.fadeOut = function (container, oldEl, newEl) {
 
 			newEl.style.visibility = '';
 			newEl.style.opacity = 1;
@@ -287,9 +285,9 @@
 				oldEl.style.opacity = 0;
 				setTimeout(completeFadeOut, 250);
 			};
-		},
+		};
 
-		crossFade: function (container, oldEl, newEl) {
+		F5.Animation.crossFade = function (container, oldEl, newEl) {
 
 			newEl.style.visibility = '';
 			newEl.style.opacity = 0;
@@ -323,41 +321,41 @@
 				newEl.style.opacity = 1;
 				setTimeout(completeCrossFade, 250);
 			};
-		},
+		};
 
-		pushLeft: function (container, oldEl, newEl) {
+		F5.Animation.pushLeft = function (container, oldEl, newEl) {
 			return pushHorizontal(container, oldEl, newEl, container.offsetWidth);
-		},
+		};
 
-		pushRight: function (container, oldEl, newEl) {
+		F5.Animation.pushRight = function (container, oldEl, newEl) {
 			return pushHorizontal(container, oldEl, newEl, -container.offsetWidth);
-		},
+		};
 
-		sheetDown: function (container, oldEl, newEl) {
+		F5.Animation.sheetDown = function (container, oldEl, newEl) {
 			return sheetVertical(container, newEl, oldEl, container.offsetHeight);
-		},
+		};
 
-		sheetUp: function (container, oldEl, newEl) {
+		F5.Animation.sheetUp = function (container, oldEl, newEl) {
 			return sheetVertical(container, oldEl, newEl, -container.offsetHeight);
-		},
+		};
 
-		drawerDown: function (container, oldEl, newEl) {
+		F5.Animation.drawerDown = function (container, oldEl, newEl) {
 			return drawerVertical(container, newEl, oldEl, container.offsetHeight);
-		},
+		};
 
-		drawerUp: function (container, oldEl, newEl) {
+		F5.Animation.drawerUp = function (container, oldEl, newEl) {
 			return drawerVertical(container, oldEl, newEl, -container.offsetHeight);
-		},
+		};
 
-		sheetLeft: function (container, oldEl, newEl) {
+		F5.Animation.sheetLeft = function (container, oldEl, newEl) {
 			return sheetHorizontal(container, newEl, -container.offsetWidth);
-		},
+		};
 
-		sheetRight: function (container, oldEl, newEl) {
+		F5.Animation.sheetRight = function (container, oldEl, newEl) {
 			return sheetHorizontal(container, oldEl, container.offsetWidth);
-		},
+		};
 
-		flipBack: function (container, oldEl, newEl) {
+		F5.Animation.flipBack = function (container, oldEl, newEl) {
 
 			newEl.parentElement.appendChild(newEl);
 			newEl.style.visibility = '';
@@ -382,9 +380,9 @@
 				oldEl.style['-webkit-transform'] = 'rotateY(180deg)';
 				newEl.style['-webkit-transform'] = 'rotateY(0deg)';
 			};
-		},
+		};
 
-		flip: function (container, oldEl, newEl) {
+		F5.Animation.flip = function (container, oldEl, newEl) {
 
 			newEl.parentElement.appendChild(newEl);
 			newEl.style.visibility = '';
@@ -410,9 +408,9 @@
 				oldEl.style['-webkit-transform'] = 'rotateY(-180deg)';
 				newEl.style['-webkit-transform'] = 'rotateY(0deg)';
 			};
-		},
+		};
 
-		inverseAnimation: function(animation) {
+		F5.Animation.inverseAnimation = function(animation) {
 			var inverse;
 			switch (animation) {
 			case 'cut':
@@ -460,7 +458,7 @@
 			}
 
 			return inverse;
-		}
-	};
-}());
+		};
+	}
+);
 

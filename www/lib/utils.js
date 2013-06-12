@@ -233,6 +233,13 @@
 		return pkg;
 	};
 
+	F5.getAnimation = function (id) {
+		var components = id.split('.');
+		var name = components.pop();
+		var animationRoot = F5.Animation[components.join('.')];
+		return animationRoot && animationRoot[name];
+	};
+
 	F5.getPrototype = function (type, id) {
 		var components = id.split('.');
 		var name = components.pop();
