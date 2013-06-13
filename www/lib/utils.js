@@ -240,6 +240,14 @@
 		return animationRoot && animationRoot[name];
 	};
 
+	F5.getInverseAnimation = function (id) {
+		var components = id.split('.');
+		var name = components.pop();
+		var prefix = components.join('.');
+		var animationRoot = F5.Animation[prefix];
+		return animationRoot && (prefix + '.' + animationRoot.inverseAnimation(name));
+	};
+
 	F5.getPrototype = function (type, id) {
 		var components = id.split('.');
 		var name = components.pop();

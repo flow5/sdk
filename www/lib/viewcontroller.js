@@ -87,7 +87,12 @@
 			var that = this;
 
 			if (!animation && id === 'back') {
-				animation = F5.Animation.inverseAnimation(container.selection.animation);
+				var qualifiedAnimation = container.selection.animation;
+				if (qualifiedAnimation.split('.').length == 1) {
+					qualifiedAnimation = F5.getNodePackage(container) + '.' + animation;
+				}
+
+				animation = F5.getInverseAnimation(qualifiedAnimation);
 			}
 			if (!animation)  {
 				animation = 'pushLeft'; // default
