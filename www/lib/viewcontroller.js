@@ -102,7 +102,12 @@
 			var oldEl = oldNode.view.el;
 			var newEl = to.view.el;
 
-			var animationFunction = F5.getAnimation(animation)(containerElement, oldEl, newEl);
+			var qualifiedAnimation = animation;
+			if (qualifiedAnimation.split('.').length == 1) {
+				qualifiedAnimation = F5.getNodePackage(container) + '.' + animation;
+			}
+
+			var animationFunction = F5.getAnimation(qualifiedAnimation)(containerElement, oldEl, newEl);
 			return function (cb) {
 				animationFunction(cb);
 			};
