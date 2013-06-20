@@ -53,7 +53,7 @@ F5.registerModule(function (F5) {
 				search = search.parentElement;
 			}
 
-			if (search) {
+			if (search && this.el.parentElement) {
 				this.el.parentElement.removeChild(this.el);
 			}
 		};

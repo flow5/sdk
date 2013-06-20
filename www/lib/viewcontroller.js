@@ -160,18 +160,5 @@
 				node.selection.view.el.style.visibility = '';
 			}
 		};
-
-		this.startSubflow = function (subflow) {
-			var data = {method: subflow.method, choices: subflow.choices};
-			subflow.menu = F5.createWidget('Menu', data);
-			subflow.menu.widget.setAction(function (id) {
-				F5.Global.flowController.doSubflowChoice(subflow.node, id);
-			});
-			subflow.menu.widget.present();
-		};
-
-		this.completeSubflow = function (subflow) {
-			subflow.menu.widget.dismiss();
-		};
 	};
 }());

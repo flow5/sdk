@@ -28,13 +28,6 @@
 
 (function () {
 
-	function isLifecycleSubflow(id) {
-		return {DidBecomeActive: true,
-				DidBecomeInactive: true,
-				WillBecomeActive: true,
-				WillBecomeInactive: true}[id];
-	}
-
 	function View() {
 		this.initialize = function (node) {
 			var that = this;
@@ -242,7 +235,7 @@
 			// default navigation controls
 			var navControls;
 
-			if (node.subflows || node.transitions) {
+			if (node.transitions) {
 				var div = document.createElement('div');
 				div.style.position = 'absolute';
 				div.style.width = '100%';
@@ -252,30 +245,6 @@
 				navControls = document.createElement('div');
 				F5.addClass(navControls, 'f5navcontrols');
 				div.appendChild(navControls);
-			}
-
-			if (node.subflows) {
-				var subflowsEl = document.createElement('div');
-				F5.addClass(subflowsEl, 'f5subflows');
-
-				var showSubflows = false;
-				F5.forEach(node.subflows, function (id, subflow) {
-					if (!isLifecycleSubflow(id)) {
-						showSubflows = true;
-
-						var subflowEl = F5.createWidget('f5.widgets.Button', {id: id}, 'id');
-						F5.addClass(subflowEl, 'f5dosubflow');
-						subflowsEl.appendChild(subflowEl);
-
-						subflowEl.widget.setAction(function () {
-							F5.Global.flowController.doSubflow(node, id);
-						});
-					}
-				});
-
-				if (navControls && showSubflows) {
-					navControls.appendChild(subflowsEl);
-				}
 			}
 
 			if (node.transitions) {

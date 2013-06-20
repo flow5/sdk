@@ -2,34 +2,34 @@
 
 	Copyright (c) 2011 Paul Greyson
 
-	Permission is hereby granted, free of charge, to any person 
-	obtaining a copy of this software and associated documentation 
-	files (the "Software"), to deal in the Software without 
-	restriction, including without limitation the rights to use, 
-	copy, modify, merge, publish, distribute, sublicense, and/or 
-	sell copies of the Software, and to permit persons to whom the 
-	Software is furnished to do so, subject to the following 
+	Permission is hereby granted, free of charge, to any person
+	obtaining a copy of this software and associated documentation
+	files (the "Software"), to deal in the Software without
+	restriction, including without limitation the rights to use,
+	copy, modify, merge, publish, distribute, sublicense, and/or
+	sell copies of the Software, and to permit persons to whom the
+	Software is furnished to do so, subject to the following
 	conditions:
 
-	The above copyright notice and this permission notice shall be 
+	The above copyright notice and this permission notice shall be
 	included in all copies or substantial portions of the Software.
 
-	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, 
-	EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES 
-	OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
-	NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT 
-	HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
-	WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
-	FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR 
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+	EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+	OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+	NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+	HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+	WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+	FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 	OTHER DEALINGS IN THE SOFTWARE.
 
 ***********************************************************************************************************************/
 /*global F5, PhoneGap*/
 
 // TODO: use namespacing for Services like Widgets
-(function () {	
+(function () {
 	// TODO: move networkActivityUI stuff out
-	
+
 //	var networkActivityCount = 0;
 	function networkActivityStarted() {
 //		networkActivityCount += 1;
@@ -38,7 +38,7 @@
 			PhoneGap.exec(
 				function (result) { // success
 			}, function (result) { // failure
-			}, "com.flow5.networkactivity", "activityStarted", []);													
+			}, "com.flow5.networkactivity", "activityStarted", []);
 		}
 	}
 
@@ -49,11 +49,11 @@
 			PhoneGap.exec(
 				function (result) { // success
 			}, function (result) { // failure
-			}, "com.flow5.networkactivity", "activityCompleted", []);													
+			}, "com.flow5.networkactivity", "activityCompleted", []);
 		}
-	}		
+	}
 
-	F5.doXHR = function(method, url, body, success, error, headers, username, password) {				
+	F5.doXHR = function(method, url, body, success, error, headers, username, password) {
 		var xhr = new XMLHttpRequest();
 
 		xhr.onreadystatechange = function (e) {
@@ -63,30 +63,30 @@
 //				console.log('XMLHttpRequest.UNSENT');
 				break;
 			case xhr.OPENED:
-//				console.log('XMLHttpRequest.OPENED');							
+//				console.log('XMLHttpRequest.OPENED');
 				if (method === 'POST' || method === 'PUT') {
 					if (!headers || !headers['Content-Type']) {
-						xhr.setRequestHeader('Content-Type', 'application/json; charset=utf-8');						
+						xhr.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
 					}
 				}
 
 				if (username && password) {
-					xhr.setRequestHeader("Authorization", 'Basic ' + F5.Base64.encode(username + ':' + password));			
+					xhr.setRequestHeader("Authorization", 'Basic ' + F5.Base64.encode(username + ':' + password));
 				}
 
 				if (headers) {
 					F5.forEach(headers, function (id, value) {
 						xhr.setRequestHeader(id, value);
 					});
-				}			
+				}
 				break;
 			case xhr.HEADERS_RECEIVED:
-//				console.log('XMLHttpRequest.HEADERS_RECEIVED');					
+//				console.log('XMLHttpRequest.HEADERS_RECEIVED');
 				break;
 			case xhr.LOADING:
-//				console.log('XMLHttpRequest.LOADING');					
+//				console.log('XMLHttpRequest.LOADING');
 				break;
-			case xhr.DONE:	
+			case xhr.DONE:
 				if (xhr.status !== 0) {
 					if (success) {
 						var responseHeaders = {};
@@ -95,7 +95,7 @@
 								var index = header.indexOf(':');
 								var key = header.substring(0, index);
 								var value = header.substring(index + 1).replace(/^\s/, '');
-								responseHeaders[key] = value;								
+								responseHeaders[key] = value;
 							}
 						});
 
@@ -107,19 +107,19 @@
 					}
 				}
 //				console.log('XMLHttpRequest.LOADING');
-				break;				
-			}								
+				break;
+			}
 		};
-		
-		xhr.open(method, url, true);			
-		
+
+		xhr.open(method, url, true);
+
 		// WORKAROUND: it seems that xhr.send can cause pending events to fire with reentrancy
 		// TODO: reference RADAR bug report
 		setTimeout(function () {
 			xhr.send(body);
-		}, 0);	
+		}, 0);
 
-		return xhr;	
+		return xhr;
 	};
 
 	function pendingComplete(node, pending) {
@@ -128,7 +128,7 @@
 		pending.timeout = null;
 		if (pending.confirmWidget) {
 			pending.confirmWidget.dismiss();
-		}					
+		}
 	}
 
 	F5.networkErrorHandler = function (cb, url, message) {
@@ -153,10 +153,10 @@
 		if (F5.connection && !F5.connection.online()) {
 			// TODO: make this message configurable from client
 			F5.alert('Oops! No Network Connection', "Please enable your network connection and try again.", function () {
-				cb(null);				
+				cb(null);
 			});
 			return;
-		}				
+		}
 
 		// get the parameters
 		var components = id.split(':');
@@ -178,9 +178,9 @@
 					if (!value) {
 						value = service[which];
 					}
-					return value;					
+					return value;
 				}
-			}			
+			}
 
 			protocol = get('protocol') || protocol;
 			baseUrl = get('baseUrl') || baseUrl;
@@ -200,30 +200,30 @@
 			parameterSchema = get('parameterSchema') || parameterSchema;
 			responseSchema = get('responseSchema') || responseSchema;
 
-			F5.extend(parameters, get('parameters'));			
+			F5.extend(parameters, get('parameters'));
 		}
 
-		var service = F5.Services[F5.getNodePackage(node)];		
-		extendParameters(service);						
+		var service = F5.Services[F5.getNodePackage(node)];
+		extendParameters(service);
 		F5.forEach(name.split('.'), function (component) {
 			service = service && service[component];
 			if (service) {
-				extendParameters(service);										
+				extendParameters(service);
 			}
-		});			
+		});
 		// try at global scope (fully qualified service id)
 		if (!service) {
 			service = F5.Services;
-			extendParameters(service);						
+			extendParameters(service);
 			F5.forEach(name.split('.'), function (component) {
 				service = service && service[component];
 				if (service) {
-					extendParameters(service);										
+					extendParameters(service);
 				}
 			});
 		}
 
-		F5.assert(service, 'No service called: ' + name);		
+		F5.assert(service, 'No service called: ' + name);
 
 		var url = baseUrl ? (protocol + '://' + baseUrl) : '';
 		if (extendedUrl) {
@@ -237,7 +237,7 @@
 			console.log(schema);
 			var report = F5.JSV.env.validate(obj, schema);
 			F5.assert(report.errors.length === 0,
-				'Error validating service parameter schema: ' + 
+				'Error validating service parameter schema: ' +
 					JSON.stringify(obj) + ' : ' +
 					JSON.stringify(report.errors));
 
@@ -248,9 +248,9 @@
 			if (parameterSchema) {
 				validate(parameters, parameterSchema);
 			}
-		}		
+		}
 
-		// TODO: obsolete. use component replacement below 
+		// TODO: obsolete. use component replacement below
 		if (resourceName) {
 			url += '/' + resourceName;
 		}
@@ -262,13 +262,13 @@
 				url = url.replace(key, value);
 				delete parameters[id];
 			}
-		});		
+		});
 
 		var pending = {abort: function () {
 //			console.log('aborting pending')
 			if (this.xhr.readyState !== this.xhr.DONE) {
 				this.aborted = true;
-				this.xhr.abort();				
+				this.xhr.abort();
 			}
 		}};
 
@@ -281,47 +281,47 @@
 				pending.confirmWidget = F5.confirm(title, message, function (result) {
 								if (result) {
 									if (pending.timeout) {
-										pending.timeout = setTimeout(timeout, timeoutMS);									
+										pending.timeout = setTimeout(timeout, timeoutMS);
 									}
 								} else {
 									pending.abort();
 								}
 								delete pending.confirmWidget;
-							});				
+							});
 			} else {
 				console.log(title + ' ' + message);
-				pending.timeout = setTimeout(timeout, timeoutMS);				
+				pending.timeout = setTimeout(timeout, timeoutMS);
 			}
-		}					
+		}
 
 		// TODO: might also want to allow cancelling if there's no node (currently only done from tools)
 		pending.timeout = setTimeout(timeout, timeoutMS);
-		
+
 		function formatUrlParameters(parameters, keys) {
 			var urlParameters = [];
 			F5.forEach(parameters, function (id, value) {
 				if (!keys || keys.indexOf(id) !== -1) {
-					urlParameters.push(id + '=' + encodeURIComponent(value));					
+					urlParameters.push(id + '=' + encodeURIComponent(value));
 				}
 			});
 			if (urlParameters.length) {
-				return '?' + urlParameters.join('&');				
+				return '?' + urlParameters.join('&');
 			} else {
 				return '';
-			}			
-		}					
+			}
+		}
 
 		networkActivityStarted();
-		if (typeof document !== 'undefined' && jsonp) {	
+		if (typeof document !== 'undefined' && jsonp) {
 			// TODO: error handling for jsonp would be helpful
-					
+
 			var script = document.createElement('script');
 
 			var cbid = 'f5jsonp' + Date.now();
-			
-			url += formatUrlParameters(parameters);			
+
+			url += formatUrlParameters(parameters);
 			script.src = url + '&jsonp=' + cbid;
-			
+
 			var completed;
 
 			window[cbid] = function(json) {
@@ -330,7 +330,7 @@
 				delete window[cbid];
 				document.body.removeChild(script);
 				completed = true;
-			};		
+			};
 			script.onerror = function () {
 				cb(null, 404);
 			};
@@ -339,8 +339,8 @@
 					cb(null, 0);
 				}
 			};
-			document.body.appendChild(script);			
-		} else if (method === 'GET' || method === 'DELETE') {			
+			document.body.appendChild(script);
+		} else if (method === 'GET' || method === 'DELETE') {
 			url += formatUrlParameters(parameters);
 
 
@@ -348,12 +348,12 @@
 				url = proxy + '/proxy?url=' + encodeURIComponent(url);
 			}
 
-//			console.log(url);	
+//			console.log(url);
 
 			pending.xhr = F5.doXHR(method, url, null,
 				function success(response, status) {
 					networkActivityCompleted();
-					
+
 					pendingComplete(node, pending);
 
 					if (F5.isDebug() && responseSchema) {
@@ -362,31 +362,31 @@
 
 					try {
 //						console.log(response);
-						var obj = JSON.parse(response);												
+						var obj = JSON.parse(response);
 						if (service.postprocess) {
 							obj = service.postprocess(obj);
 						}
 						try {
-							cb(obj, status);							
+							cb(obj, status);
 						} catch (e1) {
 							console.log(e1.message);
 						}
-						// TODO: validateSchema(response, service.responseSchema);						
+						// TODO: validateSchema(response, service.responseSchema);
 					} catch (e2) {
 						console.log(e2.message);
-						F5.networkErrorHandler(cb, url, e2.message);						
+						F5.networkErrorHandler(cb, url, e2.message);
 					}
 				}, function error(response, status) {
 					networkActivityCompleted();
-					
-					pendingComplete(node, pending);						
+
+					pendingComplete(node, pending);
 					if (pending.aborted) {
-						cb(); 
+						cb();
 					} else {
 						F5.networkErrorHandler(cb, url, status);
-					}			
+					}
 				}, headers, username, password);
-		} else if (method === 'POST' || method === 'PUT'){	
+		} else if (method === 'POST' || method === 'PUT'){
 
 			var bodyParameters = {};
 			F5.forEach(parameters, function (id, value) {
@@ -396,7 +396,7 @@
 				}
 			});
 
-			url += formatUrlParameters(parameters, urlParameterKeys);			
+			url += formatUrlParameters(parameters, urlParameterKeys);
 
 			if (proxy) {
 				url = proxy + '/proxy?url=' + encodeURIComponent(url);
@@ -405,8 +405,8 @@
 			pending.xhr = F5.doXHR(method, url, JSON.stringify(bodyParameters),
 				function success(response, status) {
 					networkActivityCompleted();
-					
-					pendingComplete(node, pending);		
+
+					pendingComplete(node, pending);
 
 					if (F5.isDebug() && responseSchema) {
 						validate(JSON.parse(response), responseSchema);
@@ -424,52 +424,52 @@
 							obj = service.postprocess(obj);
 						}
 						try {
-							cb(obj, status);							
+							cb(obj, status);
 						} catch (e1) {
 							console.log(e1.message);
 						}
-						// TODO: validateSchema(response, service.responseSchema);						
+						// TODO: validateSchema(response, service.responseSchema);
 					} catch (e2) {
 						console.log(e2.message);
-						F5.networkErrorHandler(cb, url, e2.message);						
+						F5.networkErrorHandler(cb, url, e2.message);
 					}
 				}, function error(response, status) {
 					networkActivityCompleted();
-					
-					pendingComplete(node, pending);	
+
+					pendingComplete(node, pending);
 					if (pending.aborted) {
 						cb();
 					} else {
-						F5.networkErrorHandler(cb, url, status);						
-					}			
-				}, headers, username, password);							
-		}	
+						F5.networkErrorHandler(cb, url, status);
+					}
+				}, headers, username, password);
+		}
 
-		node.pending.push(pending);			
-	};	
-	
+		node.pending.push(pending);
+	};
+
 	function Connection() {
-		
+
 		this.callbacks = [];
-		
+
 		this.online = function () {
 			if (typeof PhoneGap !== 'undefined') {
 				return navigator.network.connection.type !== 'unknown';
 			} else {
 				return navigator.onLine;
 			}
-		};	
-		
+		};
+
 		this.addStatusChangeCallback = function (cb) {
 			this.callbacks.push(cb);
-		};				
-		
+		};
+
 		this.removeStatusChangeCallback = function (cb) {
 			this.callbacks.splice(this.callbacks.indexOf(cb), 1);
 		};
-		
+
 		var that = this;
-		
+
 		window.addEventListener("offline", function(e) {
 			that.callbacks.forEach(function (cb) {
 				cb(false);
@@ -482,6 +482,6 @@
 			});
 		}, false);
 	}
-			
-	F5.connection = new Connection();			
+
+	F5.connection = new Connection();
 }());

@@ -277,13 +277,6 @@
 		// TODO: would like to limit this to lifecycle event subflows
 		// other subflows should not have to be cancelled
 		function cancelSubflowRecursive(node) {
-			if (node.activeSubflow && node.activeSubflow.userInput) {
-				flowObservers.forEach(function (observer) {
-					if (observer.completeSubflow) {
-						observer.completeSubflow(node.activeSubflow);
-					}
-				});
-			}
 			delete node.activeSubflow;
 			if (node.children) {
 				F5.forEach(node.children, function (id, child) {
@@ -565,63 +558,25 @@
 		this.doSubflow = function (node, id, cb) {
 			F5.assert(node.subflows && node.subflows[id], 'No such subflow');
 
-			cb = cb || function () {
-//				console.log('subflow completed');
-			};
-
-			// setup
 			var subflow = node.subflows[id];
 			subflow.completionCb = cb;
 			subflow.active = true;
 			node.activeSubflow = subflow;
 
-			// see if this subflow is handled by the flow delegate
 			var delegate = node.flowDelegate;
 			var delegateMethod = delegate ? delegate[subflow.method] : null;
-			// if not, see if it's handled by the root delegate
 			if (!delegateMethod) {
-				delegate = F5.Global.flow.root.flowDelegate;
-				delegateMethod = delegate ? delegate[subflow.method] : null;
+				throw new Error('No delegate method found for subflow method' + subflow.method);
 			}
 
-			if (delegateMethod) {
-				delegateMethod.call(delegate, function subflowChoiceCb(choice) {
-					that.doSubflowChoice(node, choice);
-				});
-			} else {
-				// handle missing delegate method gracefully
-				if (!subflow.userInput) {
-					console.log('Subflow not flagged for user input but no delegate method found: ' + node.id + '-' + id);
-					subflow.userInput = true;
-				}
-
-				flowObservers.forEach(function (observer) {
-					if (observer.startSubflow) {
-						observer.startSubflow(node.activeSubflow);
-					}
-				});
-			}
+			delegateMethod.call(delegate, function subflowChoiceCb(choice) {
+				that.doSubflowChoice(node, choice);
+			});
 		};
 
 		this.doSubflowChoice = function (node, id) {
 			F5.assert(node.activeSubflow, 'No active subflow');
 			F5.assert(node.activeSubflow.choices.hasOwnProperty(id), 'No such choice: ' + id);
-
-			// if the user made the choice, pass the result to a flowDelegate if a handler exists
-			if (node.activeSubflow.userInput) {
-				// the flow delegate must name the method <methodName>Choice
-				var name = node.activeSubflow.method + 'Choice';
-				var delegate = node.flowDelegate;
-				var delegateMethod = delegate ? delegate[name] : null;
-				// try the root delegate
-				if (!delegateMethod) {
-					delegate = F5.Global.flow.root.flowDelegate;
-					delegateMethod = delegate ? delegate[name] : null;
-				}
-				if (delegateMethod) {
-					delegateMethod.call(delegate, id);
-				}
-			}
 
 			// carry the completion callback forward
 			var completionCb = node.activeSubflow.completionCb;
@@ -632,31 +587,8 @@
 			oldSubflow.active = false;
 			delete node.activeSubflow;
 
-			if (oldSubflow.userInput) {
-				flowObservers.forEach(function (observer) {
-					if (observer.completeSubflow) {
-						observer.completeSubflow(oldSubflow);
-					}
-				});
-			}
-
 			var nextAction = oldSubflow.choices[id];
 			if (nextAction) {
-				// if the next action is another subflow
-				if (typeof nextAction === 'object') {
-					F5.assert(nextAction.type === 'subflow', 'A subflow choice must be a node name or another subflow');
-					var subflow = nextAction;
-
-					subflow.completionCb = completionCb;
-					subflow.active = true;
-					node.activeSubflow = subflow;
-
-					flowObservers.forEach(function (observer) {
-						if (observer.startSubflow) {
-							observer.startSubflow(node.activeSubflow);
-						}
-					});
-				} else {
 					F5.assert(typeof nextAction === 'string', 'A subflow choice must be a node name or another subflow');
 
 					if (nextAction) {
@@ -699,7 +631,6 @@
 							}
 						}
 					}
-				}
 			} else {
 				completionCb();
 			}

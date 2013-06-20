@@ -431,64 +431,6 @@ body {
 }
 
 /***************************************/
-/*                Menus                */
-/***************************************/
-
-.f5menu {
-	position: absolute;
-	display: -webkit-box;
-	-webkit-box-pack: center;
-	-webkit-box-align: center;
-	-webkit-box-orient: vertical;
-	top: 25%;
-	left: 10%;
-	width: 80%;
-	height: 50%;
-	-webkit-transition: opacity .2s;
-	background-color: grey;
-	padding: .10em;
-	opacity: 0;
-}
-
-.f5menuitems {
-	border: .01em solid black;
-	width: 75%;
-	-webkit-box-align: center;
-	margin-top: .12em;
-	margin-bottom: .12em;
-}
-
-.f5menutitle {
-	font-size: .16em;
-}
-
-.f5menuitem {
-	border-bottom: 1px solid black;
-	padding:.06em;
-	width: 100%;
-	height: .30em;
-	-webkit-box-sizing: border-box;
-}
-
-.f5menuitem .f5button-label {
-	font-size: .16em;
-}
-
-.f5menuitem:last-child {
-	border-bottom: none;
-}
-
-.f5menuitem {
-	background-color: grey;
-	color: white;
-}
-
-.f5menuitem.f5button-press {
-	background-color: black;
-	color: white;
-}
-
-/***************************************/
 /*             slider switch           */
 /***************************************/
 
@@ -583,14 +525,14 @@ body {
 	border-radius: 0px;
 }
 
-.f5transitions .f5button-label, .f5subflows .f5button-label {
+.f5transitions .f5button-label{
 	overflow: hidden;
 	text-overflow: ellipsis;
 	width: 100%;
 	font-size: .16em;
 }
 
-.f5transitions, .f5subflows {
+.f5transitions {
 	border: .01em solid black;
 	width: 75%;
 	-webkit-box-align: center;
@@ -598,7 +540,7 @@ body {
 	margin-bottom: .12em;
 }
 
-.f5dotransition, .f5dosubflow {
+.f5dotransition {
 	border-bottom: 1px solid black;
 	padding:.06em;
 	width: 100%;
@@ -606,7 +548,7 @@ body {
 	height: .30em;
 }
 
-.f5dotransition:last-child, .f5dosubflow:last-child  {
+.f5dotransition:last-child {
 	border-bottom: none;
 }
 
@@ -614,11 +556,7 @@ body {
 	background-color: lightgrey;
 }
 
-.f5dosubflow{
-	background-color: darkslategrey;
-}
-
-.f5dotransition.f5button-press, .f5dosubflow.f5button-press {
+.f5dotransition.f5button-press {
 	background-color: black;
 	color: white;
 }
