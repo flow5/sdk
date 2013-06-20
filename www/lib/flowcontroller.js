@@ -103,26 +103,16 @@
 			flushWaitTasks(function () {
 				flowObservers.forEach(doLifecycleEvent);
 
-				function recurse(node) {
-					if (node.selection) {
-						doLifecycleEventRecursive(event, node.selection, cb);
-					} else {
-						var tasks = [];
-						F5.forEach(node.children, function (id, child) {
-							tasks.push(function (cb) {
-								doLifecycleEventRecursive(event, child, cb);
-							});
-						});
-						F5.parallelizeTasks(tasks, cb);
-					}
-				}
-
-				if (node.subflows && node.subflows[event]) {
-					that.doSubflow(node, event, function () {
-						recurse(node);
-					});
+				if (node.selection) {
+					doLifecycleEventRecursive(event, node.selection, cb);
 				} else {
-					recurse(node);
+					var tasks = [];
+					F5.forEach(node.children, function (id, child) {
+						tasks.push(function (cb) {
+							doLifecycleEventRecursive(event, child, cb);
+						});
+					});
+					F5.parallelizeTasks(tasks, cb);
 				}
 			});
 		}
@@ -273,18 +263,6 @@
 			});
 		};
 
-		// cancel out of any current subflow
-		// TODO: would like to limit this to lifecycle event subflows
-		// other subflows should not have to be cancelled
-		function cancelSubflowRecursive(node) {
-			delete node.activeSubflow;
-			if (node.children) {
-				F5.forEach(node.children, function (id, child) {
-					cancelSubflowRecursive(child);
-				});
-			}
-		}
-
 		this.addWaitTask = function (task) {
 			waitTasks.push(task);
 		};
@@ -344,6 +322,14 @@
 			delete node.parent.children[node.id];
 		};
 
+		this.selectChild = function (node, id) {
+			node.selection = node.children[id];
+			F5.forEach(node.children, function (id, child) {
+				child.active = false;
+			});
+			node.selection.active = true;
+		}
+
 		// select the child of node with the given id
 		this.doSelection = function (node, id, cb) {
 			F5.assert(node.type === 'tabset', 'Can only doSelection on a tabset');
@@ -371,8 +357,6 @@
 			lockout = true;
 
 			var oldSelection = node.selection;
-
-			cancelSubflowRecursive(node);
 
 			nodeWillBecomeInactive(oldSelection, function () {
 				nodeInitialize(node.children[id], function () {
@@ -460,8 +444,6 @@
 				}
 				node.transitions[id].to.back = back;
 			}
-
-			cancelSubflowRecursive(node);
 
 			// sets allow transition with 'back' semantics (cleanup views) where the
 			var target = id === 'back' && node.back ? node.back : node.transitions[id].to;
@@ -553,87 +535,6 @@
 			var backNode = that.getBackNode(from);
 			F5.assert(backNode, 'Cannot go back');
 			that.doTransition(backNode, 'back', {}, cb);
-		};
-
-		this.doSubflow = function (node, id, cb) {
-			F5.assert(node.subflows && node.subflows[id], 'No such subflow');
-
-			var subflow = node.subflows[id];
-			subflow.completionCb = cb;
-			subflow.active = true;
-			node.activeSubflow = subflow;
-
-			var delegate = node.flowDelegate;
-			var delegateMethod = delegate ? delegate[subflow.method] : null;
-			if (!delegateMethod) {
-				throw new Error('No delegate method found for subflow method' + subflow.method);
-			}
-
-			delegateMethod.call(delegate, function subflowChoiceCb(choice) {
-				that.doSubflowChoice(node, choice);
-			});
-		};
-
-		this.doSubflowChoice = function (node, id) {
-			F5.assert(node.activeSubflow, 'No active subflow');
-			F5.assert(node.activeSubflow.choices.hasOwnProperty(id), 'No such choice: ' + id);
-
-			// carry the completion callback forward
-			var completionCb = node.activeSubflow.completionCb;
-
-			// finish the old subflow
-			var oldSubflow = node.activeSubflow;
-			delete oldSubflow.completionCb;
-			oldSubflow.active = false;
-			delete node.activeSubflow;
-
-			var nextAction = oldSubflow.choices[id];
-			if (nextAction) {
-					F5.assert(typeof nextAction === 'string', 'A subflow choice must be a node name or another subflow');
-
-					if (nextAction) {
-						if (F5.lifecycleEvent === 'WillBecomeActive') {
-							// TODO: found a case where I need to reset on every selection. hmm.
-							if (true || !node.selection || node.selection.id !== nextAction) {
-
-								// TODO: might want to call willBecomeInactive on the previous active node. . .
-
-//								if (node.parent && node.parent.selection) {
-									node.selection = node.children[nextAction];
-									F5.forEach(node.children, function (id, child) {
-										child.active = false;
-									});
-									node.selection.active = true;
-//								}
-
-								doLifecycleEventRecursive('Initialize', node.selection, function () {
-									doLifecycleEventRecursive('WillBecomeActive', node.selection, function () {
-										flowObservers.forEach(function (observer) {
-											if (observer.syncSelection) {
-												observer.syncSelection(node);
-											}
-										});
-										completionCb();
-									});
-								});
-							} else {
-								completionCb();
-							}
-						} else {
-							if (node.type === 'flow') {
-								// for a flow, the string indicates a node to transition to
-								completionCb();
-								that.doTransition(node, nextAction);
-							} else if (node.type === 'tabset') {
-								// for a set, the string indicates a node to select
-								completionCb();
-								that.doSelection(node, nextAction);
-							}
-						}
-					}
-			} else {
-				completionCb();
-			}
 		};
 	};
 }());
