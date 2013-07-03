@@ -656,7 +656,15 @@ F5.registerModule(function(F5) {
 
 			};
 
-			this.staticOffset = 0;
+			this.jumpTo = function (offset) {
+				this.staticOffset = this.currentOffset = Math.round(offset);
+				this.el.scrollTop = offset;
+			};
+
+			this.__defineGetter__('staticOffset', function(){
+				return this.el.parentElement.scrollTop;
+			});
+
 
 			// used by mobile forms (to keep scroller from moving when an input is focused)
 			// but also by application layer (which it should not be)
