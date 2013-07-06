@@ -230,13 +230,16 @@ function Input() {
 
 	// TODO: might want to be able to make menu options dynamic also
 	this.refresh = function (data) {
-		if (data && (data.value || typeof data === 'string')) {
+		if (data && (data.placeholder || data.value || typeof data === 'string')) {
+			this.placeholder.style.display = 'none';
 			if (data.value) {
 				this.setValue(data.value);
+			} else if (data.placeholder) {
+				this.placeholder.textContent = data.placeholder;
+				this.placeholder.style.display = '';
 			} else {
 				this.setValue(data);
 			}
-			this.placeholder.style.display = 'none';
 		} else {
 			this.setValue('');
 			this.placeholder.style.display = '';

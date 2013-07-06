@@ -83,6 +83,9 @@ F5.registerModule(function(F5) {
 					this.image.onload = complete;
 					this.image.onerror = errorCb;
 				}
+			} else {
+				this.el.src = null;
+				this.el.style['background-image'] == '';
 			}
 		};
 	}
