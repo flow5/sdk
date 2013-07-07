@@ -328,6 +328,12 @@
 				child.active = false;
 			});
 			node.selection.active = true;
+
+			flowObservers.forEach(function (observer) {
+				if (observer.syncSelection) {
+					observer.syncSelection(node);
+				}
+			});
 		}
 
 		// select the child of node with the given id
