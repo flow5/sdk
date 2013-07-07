@@ -51,6 +51,7 @@
 		};
 
 		this.nodeWillBecomeActive = function (node) {
+			this.nodeInitialize(node);
 			doLifecycleEvent(node, 'WillBecomeActive');
 		};
 
