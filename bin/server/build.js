@@ -303,6 +303,10 @@ function inlineData(pkg, path, failure, success) {
 		get(pkg, path, 'utf8', failure, function (data) {
 			success(data);
 		});
+	} else if (ext === 'js') {
+		get(pkg, path, 'utf8', failure, function (data) {
+			success(data);
+		});
 	} else {
 		get(pkg, path, 'base64', failure, function (data) {
 			success('data:image/' + ext + ';base64,' + data);
