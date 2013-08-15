@@ -9,8 +9,6 @@
 #import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>
 
-#import "UIDevice+IdentifierAddition.h"
-
 #import "Location.h"
 #import "DebugConsole.h"
 #import "Connection.h"
@@ -524,7 +522,8 @@ BOOL gSplashScreenShown = NO;
     NSMutableDictionary *devProps = [NSMutableDictionary dictionaryWithCapacity:4];
     [devProps setObject:[device model] forKey:@"platform"];
     [devProps setObject:[device systemVersion] forKey:@"version"];
-    [devProps setObject:[device uniqueDeviceIdentifier] forKey:@"uuid"];
+    [devProps setObject:@"fakeUUID" forKey:@"uuid"];
+//    [devProps setObject:[device uniqueDeviceIdentifier] forKey:@"uuid"];
     [devProps setObject:[device name] forKey:@"name"];
 //    [devProps setObject:[[self class] phoneGapVersion ] forKey:@"gap"];
     
