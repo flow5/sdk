@@ -26,13 +26,13 @@
 ***********************************************************************************************************************/
 
 #import "F5Analytics.h"
-#import "FlurryAnalytics.h"
+//#import "FlurryAnalytics.h"
 #import "AppDelegate.h"
 
 void uncaughtExceptionHandler(NSException *exception);
 void uncaughtExceptionHandler(NSException *exception) 
 { 
-    [FlurryAnalytics logError:@"Uncaught" message:@"Crash!" exception:exception];
+//    [FlurryAnalytics logError:@"Uncaught" message:@"Crash!" exception:exception];
 }
 
 @implementation F5Analytics
@@ -44,12 +44,12 @@ void uncaughtExceptionHandler(NSException *exception)
     if (self) {
         NSString *flurryId = [[[AppDelegate class] getBundlePlist:@"f5"] objectForKey:@"flurryid"];
         if (flurryId) {
-            [FlurryAnalytics setShowErrorInLogEnabled:YES];
-            [FlurryAnalytics startSession:flurryId];        
-            NSSetUncaughtExceptionHandler(&uncaughtExceptionHandler);
+//            [FlurryAnalytics setShowErrorInLogEnabled:YES];
+//            [FlurryAnalytics startSession:flurryId];        
+//            NSSetUncaughtExceptionHandler(&uncaughtExceptionHandler);
             // workaround for simulator crash on app background
 #if TARGET_IPHONE_SIMULATOR
-            [FlurryAnalytics setSessionReportsOnPauseEnabled:NO];
+//            [FlurryAnalytics setSessionReportsOnPauseEnabled:NO];
 #endif
         }
     }
@@ -62,7 +62,7 @@ void uncaughtExceptionHandler(NSException *exception)
     PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK];  
     [self writeJavascript: [pluginResult toSuccessCallbackString:[arguments pop]]];
 
-    [FlurryAnalytics logEvent:[arguments pop] withParameters:options];       
+//    [FlurryAnalytics logEvent:[arguments pop] withParameters:options];
 }
 
 @end
