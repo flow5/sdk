@@ -120,6 +120,10 @@
 		};
 
 		this.release = function (node) {
+			if (!node.view) {
+				return;
+			}
+
 			F5.forEach(node.view.el.querySelectorAll('[f5widget]'), function (el) {
 				if (el.widget.release) {
 					el.widget.release();

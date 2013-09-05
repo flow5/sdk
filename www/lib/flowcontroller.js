@@ -191,6 +191,12 @@
 					that.release(child);
 				});
 			}
+
+			flowObservers.forEach(function (observer) {
+				if (observer.release) {
+					observer.release(node);
+				}
+			});
 		};
 
 		this.cancelPending = function (node) {
@@ -487,13 +493,7 @@
 								nodeDidBecomeActive(container.selection, function () {
 									if (id === 'back') {
 										delete node.back;
-
 										that.release(oldSelection);
-										flowObservers.forEach(function (observer) {
-											if (observer.release) {
-												observer.release(oldSelection);
-											}
-										});
 									}
 
 									flowObservers.forEach(function (observer) {
@@ -517,9 +517,11 @@
 
 		// NOTE: global navigation does not work unless the node has a selection
 		this.getBackNode = function (leaf) {
-			leaf = leaf || flow.root;
-			while (leaf.selection) {
-				leaf = leaf.selection;
+			if (!leaf) {
+				leaf = flow.root;
+				while (leaf.selection) {
+					leaf = leaf.selection;
+				}
 			}
 
 			while (!leaf.back && leaf.parent) {
