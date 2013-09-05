@@ -90,7 +90,7 @@
 			if (!animation && id === 'back') {
 				var qualifiedAnimation = container.selection.animation;
 				if (qualifiedAnimation.split('.').length == 1) {
-					qualifiedAnimation = F5.getNodePackage(container) + '.' + animation;
+					qualifiedAnimation = F5.getNodePackage(container) + '.' + qualifiedAnimation;
 				}
 
 				animation = F5.getInverseAnimation(qualifiedAnimation);
@@ -110,7 +110,7 @@
 
 			var qualifiedAnimation = animation;
 			if (qualifiedAnimation.split('.').length == 1) {
-				qualifiedAnimation = F5.getNodePackage(container) + '.' + animation;
+				qualifiedAnimation = F5.getNodePackage(container) + '.' + qualifiedAnimation;
 			}
 
 			var animationFunction = F5.getAnimation(qualifiedAnimation)(containerElement, oldEl, newEl);
