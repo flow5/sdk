@@ -130,7 +130,12 @@
 
 		function nodeDidBecomeInactive(node, cb) {
 			node.active = false;
-			doLifecycleEventRecursive('DidBecomeInactive', node, cb);
+			doLifecycleEventRecursive('DidBecomeInactive', node, function () {
+				if (node.modal) {
+					that.release(node);
+				}
+				cb();
+			});
 		}
 
 		function nodeWillBecomeActive(node, cb) {
@@ -491,10 +496,7 @@
 									container.selection = node.transitions[id].to;
 								}
 								nodeDidBecomeActive(container.selection, function () {
-									if (id === 'back') {
-										delete node.back;
-										that.release(oldSelection);
-									}
+									delete node.back;
 
 									flowObservers.forEach(function (observer) {
 										if (observer.update) {
@@ -539,8 +541,8 @@
 			return that.getBackNode() !== null;
 		};
 
-		this.doBack = function (cb, from) {
-			var backNode = that.getBackNode(from);
+		this.doBack = function (node, cb) {
+			var backNode = that.getBackNode(node);
 			F5.assert(backNode, 'Cannot go back');
 			that.doTransition(backNode, 'back', {}, cb);
 		};

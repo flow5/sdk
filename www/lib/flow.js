@@ -59,6 +59,7 @@
 			function injectNodeRecursive(id, nodeSpec, parent) {
 				var node = {id: id,
 							type: nodeSpec.type,
+							modal: nodeSpec.modal,
 							parent: parent,
 							spec: nodeSpec,
 							pkg: nodeSpec.pkg,
