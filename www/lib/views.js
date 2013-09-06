@@ -62,21 +62,14 @@
 					nodeEl.appendChild(headerTemplate);
 				}
 
-				var container = document.createElement('div');
-				var containerTemplate = F5.loadTemplate(node.id + '-container', node, null, true);
-				if (containerTemplate) {
-					var frame = document.createElement('div');
-					F5.addClass(frame, 'f5frame');
-					this.container = containerTemplate;
-					frame.appendChild(containerTemplate);
-					container.appendChild(frame);
-				} else {
-					F5.addClass(container, node.id + '-container');
-					this.container = container;
+				this.container = F5.loadTemplate(node.id + '-container', node, null, true);
+				if (!this.container) {
+					this.container = document.createElement('div');
+					F5.addClass(this.container, node.id + '-container');
 				}
 
-				F5.addClass(container, 'f5container');
-				nodeEl.appendChild(container);
+				F5.addClass(this.container, 'f5container');
+				nodeEl.appendChild(this.container);
 
 				var footerTemplate = F5.loadTemplate(node.id + '-footer', node, null, true);
 				if (footerTemplate) {
