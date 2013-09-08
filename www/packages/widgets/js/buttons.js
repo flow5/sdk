@@ -87,15 +87,20 @@ F5.registerModule(function (F5) {
 				}
 			}
 
-			var moveListener;
+			var moveListener, outListener;
 
 			function stopListener() {
-				release();
+				setTimeout(release, 150);
+//				release();
 				that.setState(that.savedState);
 
+				F5.removeMouseOutListener(that.el, outListener);
 				F5.removeTouchMoveListener(that.el, moveListener);
 				F5.removeTouchStopListener(that.el, stopListener);
-				F5.removeTouchStopListener(document.body, stopListener);
+			}
+
+			outListener = function () {
+				stopListener();
 			}
 
 			moveListener = function (e) {
@@ -118,9 +123,9 @@ F5.registerModule(function (F5) {
 				that.startLoc = F5.eventLocation(e);
 				press();
 
+				F5.addMouseOutListener(that.el, outListener);
 				F5.addTouchMoveListener(that.el, moveListener);
 				F5.addTouchStopListener(that.el, stopListener);
-				F5.addTouchStopListener(document.body, stopListener);
 			});
 			F5.addTapListener(this.el, function (e) {
 				e.preventDefault();
@@ -220,6 +225,8 @@ F5.registerModule(function (F5) {
 			}
 
 			function makeStretchyButton(values) {
+				F5.addClass(that.el, 'f5stretchybutton');
+
 				function makeImages(which, value) {
 					function makeImage(which, value, position) {
 						var img = document.createElement('img');
@@ -247,6 +254,8 @@ F5.registerModule(function (F5) {
 			}
 
 			function makeFixedButton(values) {
+				F5.addClass(that.el, 'f5fixedbutton');
+
 				function makeImage(which, value) {
 					var img = document.createElement('img');
 					img.src = value.src();
@@ -294,7 +303,11 @@ F5.registerModule(function (F5) {
 					});
 					that.className = resourceData.className;
 				}
+
+				F5.addClass(that.el, 'f5simplebutton');
+
 				if (resourceData.image) {
+					F5.removeClass(that.el, 'f5simplebutton');
 					if (resourceData.image.up) {
 						// simple button
 						if (F5.ImagePreloader.isImagePreloader(resourceData.image.up)) {
@@ -305,6 +318,7 @@ F5.registerModule(function (F5) {
 					}
 				}
 				if (resourceData.mask) {
+					F5.removeClass(that.el, 'f5simplebutton');
 					maskMaskButton(resourceData.mask);
 				}
 				if (resourceData.label) {
