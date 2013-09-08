@@ -225,7 +225,7 @@
 					}
 					// if (pressTime) {
 					// 	if (clickTime >= pressTime && clickMove <= F5.maxClickDistance) {
-							F5.callback(cb, stopEvent);
+//							F5.callback(cb, stopEvent);
 						// }
 					// } else {
 					// 	if (/*clickTime <= F5.maxClickTime &&*/ clickMove <= F5.maxClickDistance && !cancel) {
