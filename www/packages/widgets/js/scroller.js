@@ -662,7 +662,7 @@ F5.registerModule(function(F5) {
 			};
 
 			this.__defineGetter__('staticOffset', function(){
-				return this.el.parentElement.scrollTop;
+				return -this.el.parentElement.scrollTop;
 			});
 
 
