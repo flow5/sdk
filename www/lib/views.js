@@ -161,13 +161,35 @@
 
 		this.viewWillBecomeActive = function () {
 			if (this.delegate && this.delegate.viewWillBecomeActive) {
-				this.delegate.viewWillBecomeActive();
+				// views may return a simplified form of wait task before transitions
+				// this allows views to handle simple animations internally
+				// leaving the F5.Animation layer to handle coordinated animations
+				// e.g. when an element of one view "moves to" the next view
+				// or when timing needs to be managed "one level up"
+				// the start time of this wait task is in the same scope as that of the
+				// animation functions
+				// the waitTask is assumed to complete within the time of
+				// overall transition. so e.g. if a long opacity transition
+				// were started using this mechanism the results would be unpredictable
+				var waitTask = this.delegate.viewWillBecomeActive();
+				if (waitTask) {
+					F5.Global.flowController.addWaitTask(function (cb) {
+						waitTask();
+						cb();
+					});
+				}
 			}
 		};
 
 		this.viewWillBecomeInactive = function () {
 			if (this.delegate && this.delegate.viewWillBecomeInactive) {
-				this.delegate.viewWillBecomeInactive();
+				var waitTask = this.delegate.viewWillBecomeInactive();
+				if (waitTask) {
+					F5.Global.flowController.addWaitTask(function (cb) {
+						waitTask();
+						cb();
+					});
+				}
 			}
 		};
 
