@@ -153,12 +153,37 @@
 		});
 	};
 
-	F5.addMouseOutListener = function (el, cb) {
-		addEventListener(el, 'mouseout', cb);
+	F5.addMouseOutListener = function (el, cb, name) {
+		if (F5.isTouchDevice()) {
+			var cancelled = false;
+
+			addEventListener(el, moveEventName(), function (e) {
+				e.preventDefault();
+				if (cancelled) {
+					return;
+				}
+
+				var touch = e.touches[0];
+				if (el !== document.elementFromPoint(touch.pageX,touch.pageY)) {
+					cancelled = true;
+			        cb(e);
+			    }
+			}, false, 'mouseout');
+//			F5.addTouchMoveListener(el, function (e) {
+
+//			});
+		} else {
+			addEventListener(el, name || 'mouseout', cb);
+		}
 	}
 
-	F5.removeMouseOutListener = function (el) {
-		removeEventListener(el, 'mouseout');
+	F5.removeMouseOutListener = function (el, name) {
+		if (F5.isTouchDevice()) {
+			removeEventListener(el, moveEventName(), 'mouseout');
+//			F5.removeTouchMoveListener(el);
+		} else {
+			removeEventListener(el, name || 'mouseout');
+		}
 	};
 
 
@@ -189,49 +214,23 @@
 		removeEventListener(el, moveEventName());
 	};
 
-	F5.maxClickDistance = 20;
-//	F5.maxClickTime = 1000;
 
 	F5.addTapListener = function (el, cb, pressTime) {
 		addEventListener(el, startEventName(), function (startEvent) {
-			var cancel = false;
-
 			startEvent.preventDefault();
 
 			var startLoc = F5.eventLocation(startEvent);
 			removeEventListener(el, startEventName(), 'tap');
-
-			addEventListener(el, 'mouseout', function (moveEvent) {
-				// var moveLoc = F5.eventLocation(moveEvent);
-				// var moveDistance = F5.eventDistance(startLoc, moveLoc);
-				// if (moveDistance > F5.maxClickDistance) {
-					cancel = true;
-				// }
-			}, false, 'mouseout');
 
 			addEventListener(el, stopEventName(), function (stopEvent) {
 				stopEvent.preventDefault();
 
 				var stopLoc = F5.eventLocation(stopEvent);
 				removeEventListener(el, stopEventName(), 'tap');
-				removeEventListener(el, 'mouseout', 'mouseout');
-
-				var clickTime = stopEvent.timeStamp - startEvent.timeStamp;
-				var clickMove = F5.eventDistance(startLoc, stopLoc);
+				F5.removeMouseOutListener(el, 'tap');
 
 				function complete() {
-					if (!cancel) {
-						F5.callback(cb, stopEvent);
-					}
-					// if (pressTime) {
-					// 	if (clickTime >= pressTime && clickMove <= F5.maxClickDistance) {
-//							F5.callback(cb, stopEvent);
-						// }
-					// } else {
-					// 	if (/*clickTime <= F5.maxClickTime &&*/ clickMove <= F5.maxClickDistance && !cancel) {
-					// 		F5.callback(cb, stopEvent);
-					// 	}
-					// }
+					F5.callback(cb, stopEvent);
 				}
 
 				// NOTE: not sure why the set timeout is needed. but without, sometimes
@@ -248,12 +247,20 @@
 				F5.addTapListener(el, cb, pressTime);
 
 			}, false, 'tap');
+
+			F5.addMouseOutListener(el, function (moveEvent) {
+				removeEventListener(el, stopEventName(), 'tap');
+				F5.removeMouseOutListener(el, 'tap');
+				F5.addTapListener(el, cb);
+			}, 'tap');
+
+
 		}, false, 'tap');
 	};
 
 	F5.removeTapListener = function (el) {
 		removeEventListener(el, startEventName(), 'tap');
-		removeEventListener(el, 'mouseout', 'mouseout');
+		F5.removeMouseOutListener(el, 'tap');
 		removeEventListener(el, stopEventName(), 'tap');
 	};
 

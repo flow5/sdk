@@ -87,32 +87,14 @@ F5.registerModule(function (F5) {
 				}
 			}
 
-			var moveListener, outListener;
-
 			function stopListener() {
 				setTimeout(release, 150);
 //				release();
 				that.setState(that.savedState);
 
-				F5.removeMouseOutListener(that.el, outListener);
-				F5.removeTouchMoveListener(that.el, moveListener);
+				F5.removeMouseOutListener(that.el, stopListener);
 				F5.removeTouchStopListener(that.el, stopListener);
 			}
-
-			outListener = function () {
-				stopListener();
-			}
-
-			moveListener = function (e) {
-				e.preventDefault();
-				// TODO: not sure about this
-//				e.stopPropagation();
-
-				var moveLoc = F5.eventLocation(e);
-				if (F5.eventDistance(moveLoc, that.startLoc) > F5.maxClickDistance) {
-					stopListener();
-				}
-			};
 
 			F5.addTouchStartListener(this.el, function touchStartListenerCB(e) {
 				e.preventDefault();
@@ -123,8 +105,7 @@ F5.registerModule(function (F5) {
 				that.startLoc = F5.eventLocation(e);
 				press();
 
-				F5.addMouseOutListener(that.el, outListener);
-				F5.addTouchMoveListener(that.el, moveListener);
+				F5.addMouseOutListener(that.el, stopListener);
 				F5.addTouchStopListener(that.el, stopListener);
 			});
 			F5.addTapListener(this.el, function (e) {
