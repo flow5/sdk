@@ -215,8 +215,11 @@
 	};
 
 
-	F5.addTapListener = function (el, cb, pressTime) {
+	F5.addTapListener = function (el, cb) {
 		addEventListener(el, startEventName(), function (startEvent) {
+			startEvent.phase = 'press';
+			F5.callback(cb, startEvent);
+
 			startEvent.preventDefault();
 
 			var startLoc = F5.eventLocation(startEvent);
@@ -230,6 +233,7 @@
 				F5.removeMouseOutListener(el, 'tap');
 
 				function complete() {
+					stopEvent.phase = 'tap';
 					F5.callback(cb, stopEvent);
 				}
 
@@ -244,11 +248,14 @@
 					setTimeout(complete, 30);
 				}
 
-				F5.addTapListener(el, cb, pressTime);
+				F5.addTapListener(el, cb);
 
 			}, false, 'tap');
 
 			F5.addMouseOutListener(el, function (moveEvent) {
+				moveEvent.phase = 'cancel';
+				F5.callback(cb, moveEvent);
+
 				removeEventListener(el, stopEventName(), 'tap');
 				F5.removeMouseOutListener(el, 'tap');
 				F5.addTapListener(el, cb);

@@ -70,6 +70,7 @@ F5.registerModule(function (F5) {
 			this.unsetAction();
 
 			function press() {
+				that.savedState = that.state;
 				F5.addClass(that.el, that.data.press || 'f5button-press');
 				if (that.press) {
 					var tag = that.savedState ? 'down' : 'up';
@@ -79,6 +80,8 @@ F5.registerModule(function (F5) {
 			}
 
 			function release() {
+				that.setState(that.savedState);
+
 				F5.removeClass(that.el, that.data.press || 'f5button-press');
 				if (that.press) {
 					var tag = that.savedState ? 'down' : 'up';
@@ -87,35 +90,25 @@ F5.registerModule(function (F5) {
 				}
 			}
 
-			function stopListener() {
-				setTimeout(release, 150);
-//				release();
-				that.setState(that.savedState);
-
-				F5.removeMouseOutListener(that.el, stopListener);
-				F5.removeTouchStopListener(that.el, stopListener);
-			}
-
-			F5.addTouchStartListener(this.el, function touchStartListenerCB(e) {
-				e.preventDefault();
-				// TODO: not sure about this
-//				e.stopPropagation();
-
-				that.savedState = that.state;
-				that.startLoc = F5.eventLocation(e);
-				press();
-
-				F5.addMouseOutListener(that.el, stopListener);
-				F5.addTouchStopListener(that.el, stopListener);
-			});
 			F5.addTapListener(this.el, function (e) {
 				e.preventDefault();
 				// TODO: not sure about this
 //				e.stopPropagation();
 
-				stopListener();
-
-				cb(e);
+				switch (e.phase) {
+				case 'press':
+					press();
+					break;
+				case 'cancel':
+					release();
+					break;
+				case 'tap':
+					setTimeout(release, 150);
+					cb(e);
+					break;
+				default:
+					console.log('unknown phase in tap listener')
+				}
 			});
 		};
 	}
