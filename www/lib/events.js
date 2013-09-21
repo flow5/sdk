@@ -223,14 +223,14 @@
 			startEvent.preventDefault();
 
 			var startLoc = F5.eventLocation(startEvent);
-			removeEventListener(el, startEventName(), 'tap');
+			removeEventListener(el, startEventName(), 'tap-start');
 
 			addEventListener(el, stopEventName(), function (stopEvent) {
 				stopEvent.preventDefault();
 
 				var stopLoc = F5.eventLocation(stopEvent);
-				removeEventListener(el, stopEventName(), 'tap');
-				F5.removeMouseOutListener(el, 'tap');
+				removeEventListener(el, stopEventName(), 'tap-stop');
+				F5.removeMouseOutListener(el, 'tap-mouseout');
 
 				function complete() {
 					stopEvent.phase = 'tap';
@@ -250,25 +250,25 @@
 
 				F5.addTapListener(el, cb);
 
-			}, false, 'tap');
+			}, false, 'tap-stop');
 
 			F5.addMouseOutListener(el, function (moveEvent) {
 				moveEvent.phase = 'cancel';
 				F5.callback(cb, moveEvent);
 
-				removeEventListener(el, stopEventName(), 'tap');
-				F5.removeMouseOutListener(el, 'tap');
+				removeEventListener(el, stopEventName(), 'tap-stop');
+				F5.removeMouseOutListener(el, 'tap-mouseout');
 				F5.addTapListener(el, cb);
-			}, 'tap');
+			}, 'tap-mouseout');
 
 
-		}, false, 'tap');
+		}, false, 'tap-start');
 	};
 
 	F5.removeTapListener = function (el) {
-		removeEventListener(el, startEventName(), 'tap');
-		F5.removeMouseOutListener(el, 'tap');
-		removeEventListener(el, stopEventName(), 'tap');
+		removeEventListener(el, startEventName(), 'tap-start');
+		F5.removeMouseOutListener(el, 'tap-mouseout');
+		removeEventListener(el, stopEventName(), 'tap-stop');
 	};
 
 	F5.addTransitionEndListener = function (el, cb) {
