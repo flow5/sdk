@@ -173,7 +173,8 @@
 
 //			});
 		} else {
-			addEventListener(el, name || 'mouseout', cb);
+//			el, eventType, cb, capturing, eventName)
+			addEventListener(el, 'mouseout', cb, false, name || 'mouseout');
 		}
 	}
 
@@ -182,7 +183,7 @@
 			removeEventListener(el, moveEventName(), 'mouseout');
 //			F5.removeTouchMoveListener(el);
 		} else {
-			removeEventListener(el, name || 'mouseout');
+			removeEventListener(el, 'mouseout', name || 'mouseout');
 		}
 	};
 
