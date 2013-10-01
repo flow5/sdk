@@ -100,8 +100,14 @@
 
 			// NOTE: this handles the ios webapp case. android still needs wo
 			if (window.innerHeight !== screen.availHeight) {
-				portraitToolbar = 44;
-				landscapeToolbar = 30;
+				// TODO: hack for iOS7 browser. this sort of works but isn't really right (the toolbar isn't really 80 and landscape is broken)
+				if (navigator.userAgent.match(/(iPad|iPhone);.*CPU.*OS 7_\d/i)) {
+					portraitToolbar = 80;
+					landscapeToolbar = 30;
+				} else {
+					portraitToolbar = 44;
+					landscapeToolbar = 30;
+				}
 			}
 
 			style = document.createElement('style');
