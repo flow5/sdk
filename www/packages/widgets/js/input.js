@@ -139,6 +139,15 @@ function Input() {
 				this.input.setAttribute('autocapitalize', this.el.getAttribute('autocapitalize'));
 			}
 
+			this.input.addEventListener('focus', function () {
+				clearErrorAndLabel();
+			});
+			this.input.addEventListener('blur', function () {
+				if (!that.input.value) {
+					that.placeholder.style.display = '';
+				}
+			});
+
 			this.input.onkeypress = function (e) {
 				// enter key
 				if (e.keyCode === 13) {
