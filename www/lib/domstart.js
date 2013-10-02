@@ -102,7 +102,7 @@
 			if (window.innerHeight !== screen.availHeight) {
 				// TODO: hack for iOS7 browser. this sort of works but isn't really right (the toolbar isn't really 80 and landscape is broken)
 				if (navigator.userAgent.match(/(iPad|iPhone);.*CPU.*OS 7_\d/i)) {
-					portraitToolbar = 80;
+					portraitToolbar = 88;
 					landscapeToolbar = 88;
 				} else {
 					portraitToolbar = 44;
