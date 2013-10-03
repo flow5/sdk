@@ -78,7 +78,8 @@
 		var width, height, style;
 		// in mobile browser, to get the full height of the device, have to size content so that it overflows
 		// the window by the same amount as the top toolbar. then scrolling to 0 will move the toolbar up
-		if (isMobile && !isNative && navigator.userAgent.match(/iphone/i)) {
+		// With iOS7 the tool bars don't go away so screw the full screen thing
+		if (false && isMobile && !isNative && navigator.userAgent.match(/iphone/i)) {
 			if (window.innerWidth > window.innerHeight) {
 				width = window.innerHeight;
 				height = window.innerWidth;
