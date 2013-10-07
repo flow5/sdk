@@ -96,7 +96,7 @@
 				animation = F5.getInverseAnimation(qualifiedAnimation);
 			}
 			if (!animation)  {
-				animation = 'pushLeft'; // default
+				animation = 'f5.animation.pushLeft'; // default
 			}
 			if (id !== 'back') {
 				to.animation = animation;

@@ -496,7 +496,9 @@
 									container.selection = node.transitions[id].to;
 								}
 								nodeDidBecomeActive(container.selection, function () {
-									delete node.back;
+									if (id === 'back') {
+										delete node.back;
+									}
 
 									flowObservers.forEach(function (observer) {
 										if (observer.update) {
