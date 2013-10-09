@@ -1001,17 +1001,19 @@ exports.buildHtml = function (query, cb) {
 		// TODO: create a meta section in manifest for this stuff
 		// TODO: if manifest.type === 'app' add this stuff. otherwise not
 
-		// ios webapp stuff
-		appendMeta({name: 'apple-mobile-web-app-status-bar-style', content: 'black'});
-		appendMeta({name: 'apple-mobile-web-app-capable', content: 'yes'});
-		appendMeta({name: 'format-detection', content: 'telephone=no'});
-		// ios
-		appendMeta({'http-equiv': 'Content-Type', content: 'text/html; charset=UTF-8'});
-		// this causes a flash when using a home screen webapp on iOS. instead set it programmatically on the client
-//		appendMeta({name: 'viewport', content: 'width=device-width initial-scale=1.0 maximum-scale=1.0 user-scalable=0'});
+		if (query.platform === 'ios') {
+			appendMeta({name: 'apple-mobile-web-app-status-bar-style', content: 'black'});
+			appendMeta({name: 'apple-mobile-web-app-capable', content: 'yes'});
+			appendMeta({name: 'format-detection', content: 'telephone=no'});
+			// ios
+			appendMeta({'http-equiv': 'Content-Type', content: 'text/html; charset=UTF-8'});
+			// this causes a flash when using a home screen webapp on iOS. instead set it programmatically on the client
+	//		appendMeta({name: 'viewport', content: 'width=device-width initial-scale=1.0 maximum-scale=1.0 user-scalable=0'});
+		}
 
-		// android
-//		appendMeta({name: 'viewport', content: 'target-densitydpi=device-dpi'});
+		if (query.platform === 'android') {
+			appendMeta({name: 'viewport', content: 'target-densitydpi=device-dpi'});
+		}
 
 		var tasks = [];
 		tasks.push(function (cb) {
