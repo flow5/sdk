@@ -147,16 +147,21 @@
     }    
 }
 
-- (PluginResult*)show:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
-{
+- (void)show {
     self.overlayWebView.hidden = NO;
     [UIView animateWithDuration:.25 delay:0.0
                         options: UIViewAnimationOptionCurveEaseIn
                      animations:^{
                          self.overlayWebView.alpha = 1;
                      }
-                     completion:nil];     
-    return [PluginResult resultWithStatus:PGCommandStatus_OK];    
+                     completion:nil];
+}
+
+- (PluginResult*)show:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options
+{
+    [self performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:NO];
+
+    return [PluginResult resultWithStatus:PGCommandStatus_OK];
 }
 
 - (void)hide

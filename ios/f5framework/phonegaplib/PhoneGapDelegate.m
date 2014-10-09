@@ -24,6 +24,7 @@
 #define SYMBOL_TO_NSSTRING_HELPER(x) @#x
 #define SYMBOL_TO_NSSTRING(x) SYMBOL_TO_NSSTRING_HELPER(x)
 
+#define M_PI 3.1415927
 #define degreesToRadian(x) (M_PI * (x) / 180.0)
 
 // class extension
@@ -302,16 +303,49 @@ static NSString *gapVersion;
                 break;
         }
         
+        if ([NSProcessInfo instancesRespondToSelector:@selector(isOperatingSystemAtLeastVersion:)]) {
+            startupImageTransform = CGAffineTransformIdentity;
+        }
+        
         launchImage = [UIImage imageNamed:[[self class] resolveImageResource:orientedLaunchImageFile]];
     }
     else // not iPad
     {
         orientedLaunchImageFile = @"Default";
-        if (screenBounds.size.height == 568) {
+//        screen bounds is calculated at a different stage of launch on iOS7 and iOS8
+        if (screenBounds.size.height == 568 || screenBounds.size.width == 568) {
             orientedLaunchImageFile = @"Default-568h";
         }
         
         launchImage = [UIImage imageNamed:[[self class] resolveImageResource:orientedLaunchImageFile]];
+        
+//        available if >= iOS8
+        if ([NSProcessInfo instancesRespondToSelector:@selector(isOperatingSystemAtLeastVersion:)]) {
+            switch (deviceOrientation)
+            {
+                case UIDeviceOrientationLandscapeLeft: // this is where the home button is on the right (yeah, I know, confusing)
+                {
+                    startupImageTransform = CGAffineTransformMakeRotation(degreesToRadian(-90));
+                }
+                    break;
+                case UIDeviceOrientationLandscapeRight: // this is where the home button is on the left (yeah, I know, confusing)
+                {
+                    startupImageTransform = CGAffineTransformMakeRotation(degreesToRadian(90));
+                }
+                    break;
+                case UIDeviceOrientationPortraitUpsideDown:
+                {
+                    startupImageTransform = CGAffineTransformMakeRotation(degreesToRadian(180));
+                }
+                    break;
+                case UIDeviceOrientationPortrait:
+                default:
+                {
+                    startupImageTransform = CGAffineTransformIdentity;
+                }
+                break;
+            }
+        };
     }
     
     if (launchImage == nil) {

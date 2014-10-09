@@ -320,7 +320,7 @@ public class DroidGap extends PhonegapActivity {
         settings.setLayoutAlgorithm(LayoutAlgorithm.NORMAL);
         
         //Set the nav dump for HTC
-        settings.setNavDump(true);
+//        settings.setNavDump(true);
 
         // Enable database
         settings.setDatabaseEnabled(true);
