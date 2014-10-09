@@ -56,7 +56,7 @@ fi
 
 #get dependent packages
 IFS=","
-packages=`defaults read /Users/paulgreyson/Dev/Clients/liquidimage/app/ios/f5 packages | tr -d '(\n) '`
+packages=`defaults read ${SRCROOT}/f5 packages | tr -d '(\n) '`
 for pkg in $packages
 do
     #TODO: native=false is because PhoneGap only supports a single webview, isDevice lets the package know it can use the minimal messaging system
